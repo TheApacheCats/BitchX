@@ -1295,7 +1295,7 @@ int snprintf (char *str, size_t size, const char *format, ...)
   */
 
 /*
- * $Id: compat.c,v 1.1.1.1 2003/04/11 01:09:07 dan Exp $
+ * $Id$
  * $Log: compat.c,v $
  * Revision 1.1.1.1  2003/04/11 01:09:07  dan
  * inital import into backup cvs server
@@ -2060,7 +2060,7 @@ int	setsid	(void)
 #endif
 
 #ifndef HAVE_MEMMOVE
-/*  $Revision: 1.1.1.1 $
+/*  $Revision$
 **
 **  This file has been modified to get it to compile more easily
 **  on pre-4.4BSD systems.  Rich $alz, June 1991.

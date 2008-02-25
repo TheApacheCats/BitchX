@@ -1,7 +1,7 @@
 /*
  * flood.h: header file for flood.c
  *
- * @(#)$Id: flood.h,v 1.1.1.1 2003/04/11 01:09:07 dan Exp $
+ * @(#)$Id$
  */
 
 #ifndef __flood_h_

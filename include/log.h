@@ -7,7 +7,7 @@
  *
  * See the COPYRIGHT file, or do a HELP IRCII COPYRIGHT 
  *
- * @(#)$Id: log.h,v 1.1.1.1 2003/04/11 01:09:07 dan Exp $
+ * @(#)$Id$
  */
 
 #ifndef __log_h_

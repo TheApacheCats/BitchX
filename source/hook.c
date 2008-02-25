@@ -9,7 +9,7 @@
 
 #define __hook_c
 #include "irc.h"
-static char cvsrevision[] = "$Id: hook.c,v 1.1.1.1 2003/04/11 01:09:07 dan Exp $";
+static char cvsrevision[] = "$Id$";
 CVS_REVISION(hook_c)
 #include "struct.h"
 

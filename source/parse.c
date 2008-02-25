@@ -9,7 +9,7 @@
  */
 
 #include "irc.h"
-static char cvsrevision[] = "$Id: parse.c,v 1.1.1.2 2003/06/11 07:00:43 root Exp $";
+static char cvsrevision[] = "$Id$";
 CVS_REVISION(parse_c)
 #include "struct.h"
 

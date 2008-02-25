@@ -11,7 +11,7 @@
 #include "irc.h"
 #include "struct.h"
 
-static char cvsrevision[] = "$Id: irc.c,v 1.1.1.2 2003/06/11 07:00:42 root Exp $";
+static char cvsrevision[] = "$Id$";
 CVS_REVISION(irc_c)
 
 #include <sys/types.h>

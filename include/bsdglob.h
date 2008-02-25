@@ -34,7 +34,7 @@
  * SUCH DAMAGE.
  *
  *	from: @(#)glob.h	8.1 (Berkeley) 6/2/93
- *	$Id: bsdglob.h,v 1.1.1.1 2003/04/11 01:09:07 dan Exp $
+ *	$Id$
  */
 
 #ifndef _GLOB_H_

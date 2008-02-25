@@ -12,7 +12,7 @@
 
 
 #include "irc.h"
-static char cvsrevision[] = "$Id: numbers.c,v 1.1.1.3 2003/06/11 07:00:43 root Exp $";
+static char cvsrevision[] = "$Id$";
 CVS_REVISION(numbers_c)
 #include "struct.h"
 

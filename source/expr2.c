@@ -1,5 +1,5 @@
 /*
- * $Id: expr2.c,v 1.1.1.1 2003/04/11 01:09:07 dan Exp $
+ * $Id$
  * math.c - mathematical expression evaluation
  * This file is based on 'math.c', which is part of zsh, the Z shell.
  *
@@ -40,7 +40,7 @@
  * limitations of liability and the express disclaimer of all warranties.  
  * This software is provided "AS IS".
  *
- * $Id: expr2.c,v 1.1.1.1 2003/04/11 01:09:07 dan Exp $
+ * $Id$
  */
 
 #include "irc.h"

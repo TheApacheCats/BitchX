@@ -12,7 +12,7 @@
  */
 
 #if 0
-static	char	rcsid[] = "@(#)$Id: wserv.c,v 1.1.1.1 2003/04/11 01:09:08 dan Exp $";
+static	char	rcsid[] = "@(#)$Id$";
 #endif
 
 #include "defs.h"

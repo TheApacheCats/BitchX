@@ -11,7 +11,7 @@
  * use this version of IRCII!  Please read the INSTALL and New2.2 files
  * supplied with the distribution for details!
  *
- * @(#)$Id: config.h,v 1.1.1.2 2003/07/26 07:00:32 root Exp $
+ * @(#)$Id$
  */
 
 #ifndef __config_h_

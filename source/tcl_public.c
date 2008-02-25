@@ -1,6 +1,6 @@
 
 #include "irc.h"
-static char cvsrevision[] = "$Id: tcl_public.c,v 1.1.1.1 2003/04/11 01:09:07 dan Exp $";
+static char cvsrevision[] = "$Id$";
 CVS_REVISION(tcl_public_c)
 #include "ircaux.h"
 #include "struct.h"

@@ -16,7 +16,7 @@
 #define CDCC_FLUD
 
 #include "irc.h"
-static char cvsrevision[] = "$Id: cdcc.c,v 1.1.1.1 2003/04/11 01:09:07 dan Exp $";
+static char cvsrevision[] = "$Id$";
 CVS_REVISION(cdcc_c)
 #include "ircaux.h"
 #include "struct.h"

@@ -1,4 +1,4 @@
- /* $Id: cdns.h,v 1.1.1.1 2003/04/11 01:09:07 dan Exp $ */
+ /* $Id$ */
  
 /*
  * cdns.h: header for cdns.c

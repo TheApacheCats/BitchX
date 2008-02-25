@@ -7,7 +7,7 @@
  *
  * see the copyright file, or do a help ircii copyright 
  *
- * @(#)$Id: funny.h,v 1.1.1.1 2003/04/11 01:09:07 dan Exp $
+ * @(#)$Id$
  */
 
 #ifndef __funny_h_

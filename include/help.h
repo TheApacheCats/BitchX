@@ -5,7 +5,7 @@
  *
  * See the copyright file, or do a help ircii copyright 
  *
- * @(#)$Id: help.h,v 1.1.1.1 2003/04/11 01:09:07 dan Exp $
+ * @(#)$Id$
  */
 
 #ifndef __help_h

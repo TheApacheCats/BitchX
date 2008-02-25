@@ -13,7 +13,7 @@
 #define MAX_OUTPUT_MSG_LEN 4096
 #define BUF_LONG BUF_LEN * 2
 #define LANGUAGE "english"
-#define REVISION "gaim-libtoc:$Revision: 1.1.1.1 $"
+#define REVISION "gaim-libtoc:$Revision$"
 #define ROAST "Tic/Toc"
 #define TOC_HOST "toc.oscar.aol.com"
 #define TOC_PORT 9898

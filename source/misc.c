@@ -2,7 +2,7 @@
  *  Copyright Colten Edwards (c) 1996
  */
 #include "irc.h"
-static char cvsrevision[] = "$Id: misc.c,v 1.1.1.3 2003/06/11 07:00:42 root Exp $";
+static char cvsrevision[] = "$Id$";
 CVS_REVISION(misc_c)
 #include "struct.h"
 
