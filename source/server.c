@@ -107,14 +107,6 @@ void	BX_close_server (int cs_index, char *message)
 	if (cs_index < 0 || cs_index > number_of_servers)
 		return;
 
-#ifdef HAVE_SSL
-	if (get_server_ssl(cs_index) && server_list[cs_index].ssl_fd)
-	{
-		say("Closing SSL connection");
-		SSL_shutdown(server_list[cs_index].ssl_fd);
-	}
-#endif
-
 	if (serv_close_func)
 		(*serv_close_func)(cs_index, server_list[cs_index].local_addr, server_list[cs_index].port);
 	clean_server_queues(from_server);
@@ -159,7 +151,11 @@ void	BX_close_server (int cs_index, char *message)
 			strlcat(buffer, "\r\n", IRCD_BUFFER_SIZE + 1);
 #ifdef HAVE_SSL
 			if (get_server_ssl(cs_index))
+			{
 				SSL_write(server_list[cs_index].ssl_fd, buffer, strlen(buffer));
+				say("Closing SSL connection");
+				SSL_shutdown(server_list[cs_index].ssl_fd);
+			}
 			else
 #endif
 				send(server_list[cs_index].write, buffer, strlen(buffer), 0);
