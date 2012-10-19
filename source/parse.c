@@ -477,7 +477,7 @@ static	void p_privmsg(char *from, char **Args)
 	
 	if (is_channel(to) && im_on_channel(to, from_server))
 	{
-		set_display_target(to, LOG_MSG);
+		set_display_target(to, LOG_PUBLIC);
 		malloc_strcpy(&public_nick, from);
 		log_type = LOG_PUBLIC;
 		ignore_type = IGNORE_PUBLIC;
