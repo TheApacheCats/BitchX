@@ -1,5 +1,7 @@
 [Changes 1.2c01]
 
+* panasync OK'd releasing tcl.c, so here it is. (caf)
+
 * Rename include/bitchx to include/options.h, fixes building on
   case-insensitive platforms. (caf)
 
