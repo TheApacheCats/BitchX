@@ -1634,7 +1634,7 @@ BUILT_IN_COMMAND(servercmd)
 	{
 		if (!(server=new_next_arg(args,&args)))
 		{
-			say("Not enough paramters - supply server name");
+			say("Not enough parameters - supply server name");
 			return;
 		}
 		say("Trying to establish ssl connection with server: %s",server);
@@ -2279,6 +2279,9 @@ void	register_server (int ssn_index, char *nick)
 	int old_from_server = from_server;
 	if (server_list[ssn_index].password)
 		my_send_to_server(ssn_index, "PASS %s", server_list[ssn_index].password);
+
+	if (server_list[ssn_index].sasl_nick && server_list[ssn_index].sasl_pass)
+		my_send_to_server(ssn_index, "CAP REQ :sasl");
 		
 	my_send_to_server(ssn_index, "USER %s %s %s :%s", username, 
 			(send_umode && *send_umode) ? send_umode : 
@@ -3789,4 +3792,42 @@ int 	save_servers (FILE *fp)
 				server_list[i].nickname : empty_string);
 	}
 	return i;
+}
+
+#if 0
+void set_server_sasl_nick(int server, const char *nick)
+{
+	if (server <= -1 || server >= number_of_servers)
+		return;
+	if (nick)
+		malloc_strcpy(&server_list[server].sasl_nick, nick);
+	else
+		new_free(&server_list[server].sasl_nick);
+}
+#endif
+
+char *get_server_sasl_nick(int server)
+{
+	if (server <= -1 || server >= number_of_servers)
+		return NULL;
+	return server_list[server].sasl_nick;
+}
+
+#if 0
+void set_server_sasl_pass(int server, const char *pass)
+{
+	if (server <= -1 || server >= number_of_servers)
+		return;
+	if (pass)
+		malloc_strcpy(&server_list[server].sasl_pass, pass);
+	else
+		new_free(&server_list[server].sasl_pass);
+}
+#endif
+
+char *get_server_sasl_pass(int server)
+{
+	if (server <= -1 || server >= number_of_servers)
+		return NULL;
+	return server_list[server].sasl_pass;
 }

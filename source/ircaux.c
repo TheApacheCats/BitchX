@@ -3242,3 +3242,49 @@ unsigned long	BX_random_number (unsigned long l)
 	}
 }
 
+/*
+ * Copyright (c) 1995-2001 Kungliga Tekniska Högskolan
+ * (Royal Institute of Technology, Stockholm, Sweden).
+ * All rights reserved.
+ *
+ * This is licensed under the 3-clause BSD license, which is found above.
+ */
+/*
+ * Return a malloced, base64 string representation of the first 'size' bytes
+ * starting at 'data'.
+ */
+char *base64_encode(const void *data, size_t size)
+{
+	static const char base64_chars[] = 
+		"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+	char *s, *p;
+	size_t i;
+	unsigned c;
+	const unsigned char * const q = data;
+
+	p = s = new_malloc((size + 2) / 3 * 4 + 1);
+
+	for (i = 0; i < size;) {
+		c = q[i++];
+		c *= 256;
+		if (i < size)
+			c += q[i];
+		i++;
+		c *= 256;
+		if (i < size)
+			c += q[i];
+		i++;
+		p[0] = base64_chars[(c & 0x00fc0000) >> 18];
+		p[1] = base64_chars[(c & 0x0003f000) >> 12];
+		p[2] = base64_chars[(c & 0x00000fc0) >> 6];
+		p[3] = base64_chars[(c & 0x0000003f) >> 0];
+		if (i > size)
+			p[3] = '=';
+		if (i > size + 1)
+			p[2] = '=';
+		p += 4;
+	}
+	*p = 0;
+
+	return s;
+}

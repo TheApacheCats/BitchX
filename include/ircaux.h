@@ -134,6 +134,7 @@ char *	get_userhost		(void);
 
 char *	urlencode		(const char *);
 char *	urldecode		(char *);
+char *	base64_encode	(const void *data, size_t size);
 
 /* From words.c */
 #define SOS -32767

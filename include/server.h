@@ -165,6 +165,8 @@ typedef	struct
 	int ssl_error;
 	SSL* ssl_fd;
 #endif
+	char *sasl_nick;
+	char *sasl_pass;
 
 /* recv_nick: the nickname of the last person to send you a privmsg */
 	char *recv_nick;
@@ -395,6 +397,10 @@ NotifyItem	*get_server_notify_list		(int);
 	void	clean_split_server_list		(int, time_t);
 	void write_server_list(char *);
 	void write_server_file (char *);
+//	void set_server_sasl_nick(int, const char *);
+	char *get_server_sasl_nick(int);
+//	void set_server_sasl_pass(int, const char *);
+	char *get_server_sasl_pass(int);
 				
 #define USER_MODE	0x0001
 #define USER_MODE_A	USER_MODE << 0

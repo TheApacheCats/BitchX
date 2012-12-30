@@ -1220,6 +1220,17 @@ void numbered_command(char *from, int comm, char **ArgList)
 		set_server_flag(from_server, USER_MODE_R, 1);
 		break;
 	}
+	case 903:		/* SASL authentication successful */
+	case 904:		/* SASL authentication failed */
+	case 905:		/* SASL message too long */
+	case 906:		/* SASL authentication aborted */
+	case 907:		/* You have already completed SASL authentication */
+	{
+		my_send_to_server(from_server, "CAP END");
+		if (do_hook(current_numeric, "%s %s", from, *ArgList))
+			display_msg(from, ArgList);
+		break;
+	}
 	case 367:
 	{
 		number_of_bans++;
