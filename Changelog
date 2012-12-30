@@ -1,5 +1,7 @@
 [Changes 1.2c01]
 
+* Fix building plugins on FreeBSD-10. (caf)
+
 * Messages sent to channels should use lastlog level PUBLIC, not MSG. (caf)
 
 * panasync OK'd releasing tcl.c, so here it is. (caf)

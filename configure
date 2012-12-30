@@ -14756,15 +14756,12 @@ echo "${ECHO_T}$ac_cv_system_version" >&6
             SHLIB_LD="ld -shared"
         fi
         ;;
-      FreeBSD-1*)
+      FreeBSD-1.*)
                 { { echo "$as_me:$LINENO: error: sorry" >&5
 echo "$as_me: error: sorry" >&2;}
    { (exit no plugins on $ac_cv_system_version); exit no plugins on $ac_cv_system_version; }; }
         ;;
-      FreeBSD-2.2*)
-        SHLIB_LD="ld -Bshareable"
-        ;;
-      FreeBSD-2*)
+      FreeBSD-2.*)
         SHLIB_LD="ld -Bshareable"
         ;;
       FreeBSD*)
@@ -16242,15 +16239,12 @@ echo "${ECHO_T}$ac_cv_system_version" >&6
             SHLIB_LD="ld -shared"
         fi
         ;;
-      FreeBSD-1*)
+      FreeBSD-1.*)
                 { { echo "$as_me:$LINENO: error: sorry" >&5
 echo "$as_me: error: sorry" >&2;}
    { (exit no plugins on $ac_cv_system_version); exit no plugins on $ac_cv_system_version; }; }
         ;;
-      FreeBSD-2.2*)
-        SHLIB_LD="ld -Bshareable"
-        ;;
-      FreeBSD-2*)
+      FreeBSD-2.*)
         SHLIB_LD="ld -Bshareable"
         ;;
       FreeBSD*)
