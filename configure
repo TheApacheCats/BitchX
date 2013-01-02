@@ -6340,6 +6340,7 @@ echo $ECHO_N "checking for the iphlpapi library... $ECHO_C" >&6
 	LIBS="-liphlpapi $LIBS"
 	cat >conftest.$ac_ext <<_ACEOF
 
+	#define WIN32_LEAN_AND_MEAN
 	#include <windows.h>
 	#include <iphlpapi.h>
 

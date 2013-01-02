@@ -169,6 +169,7 @@ if test x"$bx_cv_lib_resolver" != x"not found"; then
 	OLDLIBS="$LIBS"
 	LIBS="-liphlpapi $LIBS"
 	AC_LINK_IFELSE([[
+	#define WIN32_LEAN_AND_MEAN
 	#include <windows.h>
 	#include <iphlpapi.h>
 

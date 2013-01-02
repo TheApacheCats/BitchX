@@ -4,6 +4,31 @@
 #include "irc.h"
 static char cvsrevision[] = "$Id$";
 CVS_REVISION(misc_c)
+
+#ifdef HAVE_LIBIPHLPAPI
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#include <iphlpapi.h>
+#endif
+
+#include <stdio.h>
+#include <ctype.h>
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <signal.h>
+
+#include <sys/time.h>
+#include <sys/types.h>
+#ifndef __OPENNT
+#include <sys/resource.h>
+#endif
+#include <unistd.h>
+
+#if defined(sparc) && defined(sun4c)
+#include <sys/rusage.h>
+#endif
+
 #include "struct.h"
 
 #include "server.h"
@@ -44,24 +69,6 @@ CVS_REVISION(misc_c)
 #include "if.h"
 #define MAIN_SOURCE
 #include "modval.h"
-
-#include <stdio.h>
-#include <ctype.h>
-
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <signal.h>
-
-#include <sys/time.h>
-#include <sys/types.h>
-#ifndef __OPENNT
-#include <sys/resource.h>
-#endif
-#include <unistd.h>
-
-#if defined(sparc) && defined(sun4c)
-#include <sys/rusage.h>
-#endif
 
 #ifdef GUI
 extern int guiipc[2];
@@ -2054,8 +2061,6 @@ static	struct	resstats {
 } ar_reinfo;
 
 #ifdef HAVE_LIBIPHLPAPI
-#include <windows.h>
-#include <iphlpapi.h>
 
 void ar_get_windows_dns(void)
 {
