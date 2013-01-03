@@ -173,4 +173,4 @@ distclean: clean
 
 install:
 	$(INSTALL) $(PLUGIN_NAME)$(SHLIB_SUFFIX) $(DESTDIR)$(PLUGINDIR)
-	$(INSTALL) $(srcdir)/BitchX.hints $(DESTDIR)$(PLUGINDIR)/@HINT_FILE@
+	$(INSTALL_DATA) $(srcdir)/BitchX.hints $(DESTDIR)$(PLUGINDIR)/@HINT_FILE@
