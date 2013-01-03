@@ -157,7 +157,7 @@ PLUGIN_NAME = aim
 
 OBJS = toc.o util.o cmd.o aim.o compat.o
 
-all: Makefile toc aim$(SHLIB_SUFFIX)
+all: Makefile aim$(SHLIB_SUFFIX)
 
 Makefile: Makefile.in
 	cd $(topdir) \
@@ -179,7 +179,7 @@ cmd.o: $(srcdir)/cmd.c
 aim.o: $(srcdir)/aim.c
 	$(CC) $(AIMDEFS) $(SHLIB_CFLAGS) $(CFLAGS) -c $(srcdir)/aim.c
 
-aim$(SHLIB_SUFFIX): $(OBJS) 
+aim$(SHLIB_SUFFIX): $(OBJS) toc
 	$(SHLIB_LD) $(OBJS) $(SHLIB_CFLAGS) -o aim$(SHLIB_SUFFIX) -Ltoc -ltoc
 
 dummy:
