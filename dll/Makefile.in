@@ -203,7 +203,6 @@ install: all
 	)
 	@( \
 		if test x"$(PLUGINS)" != x""; then \
-			strip --strip-unneeded $(DESTDIR)$(PLUGINDIR)/*$(SHLIB_SUFFIX) || :; \
 			echo Your plugins [$(PLUGINS)] are now located in $(PLUGINDIR);\
 		fi; \
 	)
