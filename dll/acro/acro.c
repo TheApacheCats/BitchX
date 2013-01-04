@@ -448,46 +448,58 @@ srec *end_vote(vrec *voters, prec *players, srec *stmp)
 	return stmp;
 }
 
-srec *sort_scores(srec *stmp)
-{
-	int i = 0;
-	srec *tmp;
-	srec **sort, **ctmp;
-	if (!stmp->next)
-		return stmp;
-	for (tmp = stmp; tmp; tmp = tmp->next)
-		i++;
-	ctmp = sort = (srec **)new_malloc(i*sizeof(srec *));
-	put_it("START SORTING");
-	put_scores(NULL, NULL, NULL, NULL, NULL);
-	for (tmp = stmp; tmp; tmp = tmp->next)
-		*ctmp++ = tmp;
-        qsort((void *)sort, i+1, sizeof(srec *), (int (*)(const void *, const void *))comp_score);
-	ctmp = sort;
-	for (tmp = *ctmp++; *ctmp; ctmp++)
-		tmp = tmp->next = *ctmp;
-	tmp->next = NULL;
-	tmp = *sort;
-	new_free(&sort);
-	put_scores(NULL, NULL, NULL, NULL, NULL);
-	put_it("END SCORES");
- 	return tmp;
-}
-
 /* 
  * Here we sort deeze babys ... The return values are "opposite" so we can
  * sort in descending order instead of ascending... Stupid declarations had 
  * me going for a while, no wonder it didnt sort right at first! :)
 */
 
-int comp_score(srec **one, srec **two)
+static int comp_score(const void *a, const void *b)
 {
+  srec * const *one = a;
+  srec * const *two = b;
+
   if ((*one)->score > (*two)->score)
     return -1;
   if ((*one)->score < (*two)->score)
     return 1;
   else
     return strcasecmp((*one)->nick, (*two)->nick);
+}
+
+srec *sort_scores(srec *stmp)
+{
+	size_t n = 0;
+	srec *tmp;
+	srec **sort, **ctmp;
+	
+	if (!stmp->next)
+		return stmp;
+
+	for (tmp = stmp; tmp; tmp = tmp->next)
+		n++;
+	ctmp = sort = (srec **)new_malloc(n * sizeof sort[0]);
+
+	put_it("START SORTING");
+	put_scores(NULL, NULL, NULL, NULL, NULL);
+
+	for (tmp = stmp; tmp; tmp = tmp->next)
+		*ctmp++ = tmp;
+	qsort(sort, n, sizeof sort[0], comp_score);
+
+	tmp = sort[0];
+	for (ctmp = &sort[1]; ctmp < &sort[n]; ctmp++)
+	{
+		tmp->next = *ctmp;
+		tmp = *ctmp;
+	}
+	tmp->next = NULL;
+
+	tmp = sort[0];
+	new_free(&sort);
+	put_scores(NULL, NULL, NULL, NULL, NULL);
+	put_it("END SCORES");
+ 	return tmp;
 }
 
 void show_acros(prec *players, char *chan)

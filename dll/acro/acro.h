@@ -104,7 +104,6 @@ prec *take_acro(grec *, prec *, char *, char *, char *);
 vrec *take_vote(grec *, vrec *, prec *, char *, char *, char *);
 srec *end_vote(vrec *, prec *, srec *);
 srec *sort_scores(srec *);
-int comp_score(srec **one, srec **two);
 void show_scores(grec *, srec *, srec *, char *);
 int warn_acro(void *, char *);
 int start_vote(void *, char *);
