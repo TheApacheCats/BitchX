@@ -1,5 +1,7 @@
 [Changes 1.2c01]
 
+* Fix timers in acro plugin, clears up some build warnings. (caf)
+
 * Applied patches from jdhore to clean up the plugin building
   and installing process. (caf)
 

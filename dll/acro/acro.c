@@ -51,7 +51,7 @@ static int acro_main (char *comm, char *from, char *userhost, char **args)
 		send_to_server("PRIVMSG %s :Round %d", args[0], game->round);
 		send_to_server("PRIVMSG %s :The acronym for this round is %s. You have 60 seconds.", args[0], game->nym);
 		send_to_server("PRIVMSG %s :/msg %s \"acro <your answer>\"", args[0], get_server_nickname(from_server));
-		add_timer(0, "Acro", 60 * 1000, 1, (int(*)(void *))warn_acro, m_sprintf("%s", args[0]), NULL, NULL, "acro");
+		add_timer(0, "Acro", 60 * 1000, 1, warn_acro, m_sprintf("%s", args[0]), NULL, -1, "acro");
 	}
 	return 0;
 }
@@ -76,25 +76,30 @@ BUILT_IN_DLL(put_scores)
 */
 }
 
-void warn_acro(char *chan)
+int warn_acro(void *arg, char *subarg)
 {
+	char *chan = arg;
+
 	send_to_server("PRIVMSG %s :30 seconds! Puzzle is: %s", chan, game->nym);
-	add_timer(0, "Acro", 30 * 1000, 1, (int(*)(void *))start_vote, m_sprintf("%s", chan), NULL, NULL, "acro");
+	add_timer(0, "Acro", 30 * 1000, 1, start_vote, m_sprintf("%s", chan), NULL, -1, "acro");
+	return 0;
 }
 
-void start_vote(char *chan)
+int start_vote(void *arg, char *subarg)
 {
+	char *chan = arg;
+
 	if (game->players >= MINPLAYERS)
 	{
 		send_to_server("PRIVMSG %s :Time's up, lets vote!\r\nPRIVMSG %s :/msg %s \"acro #\" to vote", chan, chan, get_server_nickname(from_server));
 		game->progress = 2;
 		show_acros(player, chan);
-		add_timer(0, "Acro", 30 * 1000, 1, (int(*)(void *))warn_vote, m_sprintf("%s", chan), NULL, NULL, "acro");
+		add_timer(0, "Acro", 30 * 1000, 1, warn_vote, m_sprintf("%s", chan), NULL, -1, "acro");
 	}
 	else if (game->extended < EXTENSIONS)
 	{
 		send_to_server("PRIVMSG %s :Aww, too few players! Puzzle is: %s", chan, game->nym);
-		add_timer(0, "Acro", 30 * 1000, 1, (int(*)(void *))start_vote, m_sprintf("%s", chan), NULL, NULL, "acro");
+		add_timer(0, "Acro", 30 * 1000, 1, start_vote, m_sprintf("%s", chan), NULL, -1, "acro");
 		game->extended++;
 	}
 	else
@@ -104,16 +109,22 @@ void start_vote(char *chan)
 		game->players = 0;
 		game->progress = 0;
 	}
+	return 0;
 }
  
-void warn_vote(char *chan)
+int warn_vote(void *arg, char *subarg)
 {
+	char *chan = arg;
+
 	send_to_server("PRIVMSG %s :30 seconds left to vote!", chan);
-	add_timer(0, "Acro", 30 * 1000, 1, (int(*)(void *))end_voting, m_sprintf("%s", chan), NULL, NULL, "acro");
+	add_timer(0, "Acro", 30 * 1000, 1, end_voting, m_sprintf("%s", chan), NULL, -1, "acro");
+	return 0;
 }
 
-void end_voting(char *chan)
+int end_voting(void *arg, char *subarg)
 {
+	char *chan = arg;
+
 	put_it("END_VOTING");
 	send_to_server("PRIVMSG %s :Voting complete, sorting scores...", chan);
 	gscores = end_vote(voter, player, gscores);
@@ -137,7 +148,7 @@ void end_voting(char *chan)
 		send_to_server("PRIVMSG %s :Round %d", chan, game->round);
 		send_to_server("PRIVMSG %s :The acronym for this round is %s. You have 60 seconds.", chan, game->nym);
 		send_to_server("PRIVMSG %s :/msg %s \"acro <your answer>\"", chan, get_server_nickname(from_server));
-		add_timer(0, "Acro", 60 * 1000, 1, (int(*)(void *))warn_acro, m_sprintf("%s", chan), NULL, NULL, "acro");
+		add_timer(0, "Acro", 60 * 1000, 1, warn_acro, m_sprintf("%s", chan), NULL, -1, "acro");
 	}		
 	else
 	{
@@ -147,6 +158,7 @@ void end_voting(char *chan)
 		new_free(&game->nym);
 		init_acro(game);
 	}
+	return 0;
 }
 
 grec *init_acro(grec *gtmp)
