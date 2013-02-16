@@ -10,7 +10,7 @@
 
 ${a} for president.
 
-${a}: a modern client for a old world
+${a}: a modern client for an old world
 ${a}: a new fragrance for men, by Calvin Klein
 ${a}: anything else would be uncivilized
 ${a}: better than a penis enlargement!
@@ -25,14 +25,12 @@ ${a} for president.
 ${a}: faster than a speeding bullet, more powerful than a locomotive
 ${a}: fit to feel groovy
 ${a}: for distribution only with a new PC
-${a}: for me to POOP ON!
 ${a}: good to the last drop!
 ${a}: it adds that extra uNF to your sex life!
 ${a}: it does a body good
 ${a}: it isn't only my script, it's also my client
 ${a}: it keeps going and going and going and going and...
 ${a}: it makes bath-time lots of fun!
-${a}: it tastes like poo
 ${a}: it won't get you laid
 ${a}: it'll get you in, out and on with life.
 ${a}: it's all day strong, all day long
@@ -84,7 +82,7 @@ ${a} for president.
 ${a}: the IRC client with hair on its balls
 ${a}: the NEW form of birth control!
 ${a}: the new hardcore, psycho, nitro client -- in a can
-${a}: the official IRC client of the 2004 Olympic Games
+${a}: the official IRC client of the ${((strftime(%Y)+3)/4)*4} Olympic Games
 ${a}: the ONLY bug-free client
 ${a}: the ONLY IRC client on Viagra!
 ${a}: the ONLY three day cure!
