@@ -1,5 +1,7 @@
 [Changes 1.2c01]
 
+* Fix abuses of the RESIZE macro.  Reported by nenolod. (caf)
+
 * Clears up a crash and some build warnings in the acro plugin. (caf)
 
 * Applied patches from jdhore to clean up the plugin building
