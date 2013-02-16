@@ -93,7 +93,7 @@ static inline void arcfourInit(arckey *arc, char *userkey, unsigned short len)
 
 	/* Seed the S-box linearly, then mix in the key while stiring briskly */
 	arc->i = arc->j = 0;				 /* Initialize i and j to 0 */
-	while((S[x] = --x));				 /* Initialize S-box, backwards */
+	while(--x, (S[x] = x));				 /* Initialize S-box, backwards */
 
 	/* Note: Some of these optimizations REQUIRE arcword to be 8-bit unsigned */
 	do {						 /* Spread user key into real key */
