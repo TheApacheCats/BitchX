@@ -168,6 +168,7 @@ AJoinList *ajoin_list = NULL;
  * etc.  Neato.  This list MUST be sorted.
  */
 
+BUILT_IN_COMMAND(obits);
 BUILT_IN_COMMAND(debug_user);
 BUILT_IN_COMMAND(debugmsg);
 BUILT_IN_COMMAND(debughook);
@@ -501,6 +502,7 @@ IrcCommand irc_command[] =
 	{ "NSLOOKUP",	"NSLookup",	nslookup,		0,	"%Y<%nhostname%Y>%n\n- Returns the IP adress and IP number for %Y<%nhostname%Y>%n" },
 	{ "NWHOIS",	NULL,		nwhois,			0,	"%Y<%Cnick|channel%Y>%n\n- Shows internal statistics for %Y<%Cnick%Y>%n" },
 	{ "NWHOWAS",	NULL,		whowas,			0,	"- Displays internal whowas info for all channels. This information expires after 20 minutes for users on internal list, 10 minutes for others" },
+	{ "OBITS",	NULL,		obits,			0,	"- Displays obituaries for some BitchX friends who have left us" },
 	{ "OFFERS",	"Offers",	do_offers,		0,	NULL },
 	{ "ON",		NULL,		oncmd,			0,	scripting_command },
 	{ "OOPS",	NULL,		do_oops,		SERVERREQ,	"%Y<%Cnick%Y>%n\n- Sends a oops message to last recipient of a message and sends the correct message to %Y<%Cnick%Y>%n" },
@@ -837,6 +839,47 @@ Mailing list is at <bitchx-devel@lists.sourceforge.net>\n";
 #endif
 #endif
 	strip_ansi_in_echo = i; 
+#endif
+}
+
+BUILT_IN_COMMAND(obits)
+{
+	charset_ibmpc();
+	put_it("%s", convert_output_format("%PÚÄÄÄÄÄ---%pÄ%P--%pÄÄ%P-%pÄÄÄÄÄÄ---%KÄ%p--Ä%KÄ-%pÄÄÄ%KÄÄÄÄ-%pÄ-%KÄÄ---%K --  -%n", NULL, NULL));
+	put_it("%s", convert_output_format("%P|%n ", NULL, NULL));
+	put_it("%s", convert_output_format("%P³%n  From its humble beginnings to the latest release, BitchX has always been", NULL, NULL));
+	put_it("%s", convert_output_format("%P³%n  about community. Over the years, a handful of people have voluntarily ", NULL, NULL));
+	put_it("%s", convert_output_format("%P|%n  contributed a great deal of time and energy to the project by writing ", NULL, NULL));
+	put_it("%s", convert_output_format("%p:%n  scripts, providing support, troubleshooting, patches, enhancements - or ", NULL, NULL));
+	put_it("%s", convert_output_format("%P|%n  simply making BitchX a fun thing to be involved with. With such a long ", NULL, NULL));
+	put_it("%s", convert_output_format("%p'%n  history, we have had our losses. Several of the friends that we came to ", NULL, NULL));
+	put_it("%s", convert_output_format("%p|%n  regard as a kind of extended family left us before their time, and we would", NULL, NULL));
+	put_it("%s", convert_output_format("%P³%n  like to remember them here.", NULL, NULL));
+	put_it("%s", convert_output_format("%p³%n ", NULL, NULL));
+	put_it("%s", convert_output_format("%p:%n                            %PÚ%n ", NULL, NULL));
+	put_it("%s", convert_output_format("%K|%n                            %P³%n Jason Higham, known to his friends on IRC as ", NULL, NULL));
+	put_it("%s", convert_output_format("%p|%n                            %P³%n %Wssshooter%n, left us on July 11th, 2004. He is ", NULL, NULL));
+	put_it("%s", convert_output_format("                             %P³%n remembered fondly by his family and friends.  ", NULL, NULL));
+	put_it("%s", convert_output_format("%K|%n  %PÚ%n", NULL, NULL));
+	put_it("%s", convert_output_format("   %P³%n On the 18th of July, 2004, our dearly missed", NULL, NULL));
+	put_it("%s", convert_output_format("   %P³%n friend Miles Wilson (also known as %Wsellfone%n)", NULL, NULL));
+	put_it("%s", convert_output_format("   %P³%n passed away in his sleep.", NULL, NULL));
+	put_it("%s", convert_output_format("                     %PÚ%n", NULL, NULL));
+	put_it("%s", convert_output_format("                     %P³%n Amy Elizabeth Haskew died on June 16, 2009 at", NULL, NULL));
+	put_it("%s", convert_output_format("                     %P³%n 34.  Goodbye %Wturtlex%n, you'll always be", NULL, NULL));
+	put_it("%s", convert_output_format("                     %P³%n remembered as someone very kind, and wise beyond", NULL, NULL));
+	put_it("%s", convert_output_format("                     %P³%n your years.", NULL, NULL));
+	put_it("%s", convert_output_format("      %PÚ%n", NULL, NULL));
+	put_it("%s", convert_output_format("      %P³%n RIP Marc Casillo aka %Wfrash%n [25/Nov/1970 - 28/Sep/2009] ", NULL, NULL));
+	put_it("%s", convert_output_format("                         %PÚ%n", NULL, NULL));
+	put_it("%s", convert_output_format("                         %P³%n Matthew Luberto, known to his many friends online", NULL, NULL));
+	put_it("%s", convert_output_format("                         %P³%n as %Wvoid%n, passed away in his sleep on February 16, ", NULL, NULL));
+	put_it("%s", convert_output_format("                         %P³%n 2013 in his 38th year.  We'll miss you, void.", NULL, NULL));
+	put_it(" ");
+#if defined(LATIN1)
+	charset_lat1();
+#elif defined(CHARSET_CUSTOM)
+	charset_cst();
 #endif
 }
 

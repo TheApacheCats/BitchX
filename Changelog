@@ -1,5 +1,7 @@
 [Changes 1.2c01]
 
+* Add /OBITS command, shows obituaries for some BitchX friends. (caf)
+
 * Fix abuses of the RESIZE macro.  Reported by nenolod. (caf)
 
 * Clears up a crash and some build warnings in the acro plugin. (caf)
