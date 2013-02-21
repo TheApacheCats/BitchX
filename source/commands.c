@@ -802,7 +802,7 @@ Mailing list is at <bitchx-devel@lists.sourceforge.net>\n";
 	put_it("[0;30;47m          Ananda, Hybrid, Reefa, BlackJac, GenX, MHacker, PSiLiCON,         [0m");
 	put_it("[0;30;47m          hop, Sheik, psykotyk, oweff, icetrey, Power, sideshow, Raistlin,  [0m");   
 	put_it("[0;30;47m          [Nuke], Rosmo and Bark0de!                                        [0m");
-	put_it("[0;30;47m A special thanks to ccm.net for co-locating BitchX.com                     [0m");
+	put_it("[0;30;47m                                                                            [0m");
 	put_it("[0;30;47m Mailing list is at <bitchx-devel@lists.sourceforge.net>                    [0m");
 	put_it(empty_string);
 #else
