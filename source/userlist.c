@@ -1043,7 +1043,6 @@ void run_user_flag(char *name, char *what, NickList *user, NickList *kicker)
 	}
 	if ((tmp = expand_alias(what, empty_string, &sa, NULL)))
 	{
-		stuff_copy = alloca(strlen(tmp) + 1);
 		name_copy = LOCAL_COPY(name);
 		stuff_copy = LOCAL_COPY(tmp);
 		will_catch_return_exceptions++;
