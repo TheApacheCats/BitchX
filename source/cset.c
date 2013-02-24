@@ -230,8 +230,7 @@ static int find_cset_variable(CSetArray *array, char *org_name, int *cnt)
 	char    *name = NULL;
 
 	len = strlen(org_name);
-	name = alloca(len + 1);
-	strcpy(name, org_name);
+	name = LOCAL_COPY(org_name);
 
 	upper(name);
 	var_index = 0;
@@ -708,8 +707,7 @@ static int find_wset_variable(WSetArray *array, char *org_name, int *cnt)
 	char    *name = NULL;
 
 	len = strlen(org_name);
-	name = alloca(len + 1);
-	strcpy(name, org_name);
+	name = LOCAL_COPY(org_name);
 
 	upper(name);
 	var_index = 0;

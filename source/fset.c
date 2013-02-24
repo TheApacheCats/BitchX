@@ -895,8 +895,7 @@ IrcVariable *fget_var_address(char *var_name)
 	IrcVariable *var = NULL;
 	int	cnt,
 		msv_index;
-	char	*tmp_var = alloca(strlen(var_name)+1);
-	strcpy(tmp_var, var_name);
+	char	*tmp_var = LOCAL_COPY(var_name);
 	upper(tmp_var);
 	if ((var = find_ext_fset_var(tmp_var)))
 		return var;

@@ -1198,8 +1198,7 @@ BUILT_IN_COMMAND(kickban)
 		if (rest && !*rest)
 			rest = NULL;
 	}
-	tspec = alloca(strlen(spec)+1);
-	strcpy(tspec, spec);
+	tspec = LOCAL_COPY(spec);
 	while ((tnick = next_in_comma_list(tspec, &tspec)))
 	{
 		int exact = 1;

@@ -467,8 +467,7 @@ ChannelList *chan = NULL;
 			if (!nick_isop(Nick) || get_cset_int_var(chan->csets, KICK_OPS_CSET))
 			{
 				char *ban, *u, *h;
-				u = alloca(strlen(Nick->host)+1);
-				strcpy(u, Nick->host);
+				u = LOCAL_COPY(Nick->host);
 				h = strchr(u, '@');
 				*h++ = 0;
 				ban = ban_it(Nick->nick, u, h, Nick->ip);

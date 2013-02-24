@@ -723,16 +723,14 @@ void numbered_command(char *from, int comm, char **ArgList)
 			 */               
                         if ((p = (char *)strchr(ArgList[2], '@'))) {
                                         *p++ = '\0';
-                                        ident = (char *)alloca(strlen(ArgList[2])+1);
-                                        strcpy(ident, ArgList[2]);
+					ident = LOCAL_COPY(ArgList[2]);
                                         for(;*p == ' ';)
                                                 p++;
                                         host = p;
                                         if ((p = (char *)strchr(p, '\n')))
                                                 *p = '\0';
                                         p = host;
-                                        host = (char *)alloca(strlen(p)+1);
-                                        strcpy(host, p);
+					host = LOCAL_COPY(p);
 			}
 
 			put_it("%s", convert_output_format(fget_string_var(FORMAT_WHOIS_HEADER_FSET), NULL));

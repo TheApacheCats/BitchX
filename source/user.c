@@ -83,8 +83,7 @@ long hvalue;
 	if (!strchr(uptr->channels, '*'))
 	{
 		char *channel, *ptr;
-		channel = alloca(strlen(uptr->channels)+1);
-		strcpy(channel, uptr->channels);
+		channel = LOCAL_COPY(uptr->channels);
 		while ((ptr = next_in_comma_list(channel, &channel)))
 		{
 			if (!*ptr)

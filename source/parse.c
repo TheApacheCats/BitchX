@@ -138,8 +138,7 @@ char *p = NULL;
 char *pat;
 	if (!str || !*str || !get_int_var(AUTO_RESPONSE_VAR))
 		return 0;
-	p = alloca(strlen(auto_str)+1);
-	strcpy(p, auto_str);
+	p = LOCAL_COPY(auto_str);
 	if (p && *p)
 	{
 		while ((pat = next_arg(p, &p)))
@@ -1090,8 +1089,7 @@ static	void p_channel(char *from, char **ArgList)
 #ifdef WANT_NSLOOKUP
 		char *host;
 #endif
-		user = alloca(strlen(FromUserHost)+1);
-		strcpy(user, FromUserHost);
+		user = LOCAL_COPY(FromUserHost);
 
 #ifdef WANT_NSLOOKUP
 		if ((host = strchr(user, '@')))

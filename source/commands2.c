@@ -1049,8 +1049,7 @@ int server = -1;
 			char *buffer = NULL;
 			char *save_buffer = NULL;
 			int num = 0, count = 0;
-			m_buff = alloca(strlen(match)+1);
-			strcpy(m_buff, match);
+			m_buff = LOCAL_COPY(match);
 			bitchsay("Killing all matching %s.", pattern);
 			while ((nick = next_in_comma_list(m_buff, &m_buff)))
 			{

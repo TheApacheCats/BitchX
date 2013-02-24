@@ -1259,8 +1259,7 @@ static void add_files(char *args, char *rest)
 	struct dirent *dir;
 	struct stat statbuf;
 
-	path = alloca(strlen(rest)+1);
-	strcpy(path, rest);
+	path = LOCAL_COPY(rest);
 	
 	temp = alloca(BIG_BUFFER_SIZE + 1);
 	*temp = 0;

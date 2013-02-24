@@ -798,8 +798,7 @@ BUILT_IN_KEYBINDING(input_add_character)
 		{
 			char	*ptr = NULL;
 
-			ptr = alloca(strlen(&(THIS_CHAR)) + 1);
-			strcpy(ptr, &(THIS_CHAR));
+			ptr = LOCAL_COPY(&(THIS_CHAR));
 			THIS_CHAR = key;
 			NEXT_CHAR = 0;
 			ADD_TO_INPUT(ptr);

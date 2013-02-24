@@ -152,8 +152,7 @@ int parse_debug(char *value, int nvalue, char **rv)
 	if  (!value)
 		return 0;
 
-	copy = alloca(strlen(value) + 1);
-	strcpy(copy, value);
+	copy = LOCAL_COPY(value);
 	
 	while ((str1 = new_next_arg(copy, &copy)))
 	{

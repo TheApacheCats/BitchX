@@ -1186,8 +1186,7 @@ char *ban;
 		ban = m_3dup(nicklist->nick, "!", nicklist->host);
 		if (nicklist->ip && nicklist->host)
 		{
-			char *user = alloca(strlen(nicklist->host)+1);
-			strcpy(user, nicklist->host);
+			char *user = LOCAL_COPY(nicklist->host);
 			if ((u = strchr(user, '@')))
 				*u = 0;
 			ipban = m_opendup(nicklist->nick, "!", user, "@", nicklist->ip, NULL);
@@ -1448,8 +1447,7 @@ int check_channel_match(char *tmp, char *channel)
 		return 0;
 	if (*channel == '*' && (strlen(channel)==1))
 		return 1;
-	q = chan = alloca(strlen(tmp)+1);
-	strcpy(chan, tmp);
+	q = chan = LOCAL_COPY(tmp);
 
 	while ((p = next_in_comma_list(chan, &chan)))
 	{

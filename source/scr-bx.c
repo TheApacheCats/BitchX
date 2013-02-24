@@ -196,8 +196,7 @@ char *new_path, *p;
 int count = 0;
 int doit = 0;
 
-	new_path = alloca(strlen(path)+1);
-	strcpy(new_path, path);
+	new_path = LOCAL_COPY(path);
 	if ((p = strrchr(new_path, '/')))
 		*p = 0;
 	if (!(dptr = opendir(new_path)))
@@ -247,8 +246,7 @@ struct	dirent	*dir;
 struct	stat	st;
 char *ret = NULL, *p;
 int count = 0;
-	new_path = alloca(strlen(path)+1);
-	strcpy(new_path, path);
+	new_path = LOCAL_COPY(path);
 	if ((p = strrchr(new_path, '/')))
 		*p = 0;
 	else
@@ -274,8 +272,7 @@ int count = 0;
 		if (name)
 		{
 			char *pid, *n_tty, *h_name;
-			pid = alloca(strlen(p)+1);
-			strcpy(pid, p);
+			pid = LOCAL_COPY(p);
 			n_tty = strchr(pid, '.'); *n_tty++ = 0;
 			h_name = strchr(n_tty, '.'); *h_name++ = 0;
 			if (strcmp(name, pid))
