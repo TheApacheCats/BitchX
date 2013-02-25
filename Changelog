@@ -1,5 +1,8 @@
 [Changes 1.2c01]
 
+* Remove special handling of 484 numeric, which is no longer needed and
+  was buggy (making BitchX think that usermode +G was set). (caf)
+
 * Add /OBITS command, shows obituaries for some BitchX friends. (caf)
 
 * Fix abuses of the RESIZE macro.  Reported by nenolod. (caf)

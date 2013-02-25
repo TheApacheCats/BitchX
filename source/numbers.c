@@ -1211,13 +1211,6 @@ void numbered_command(char *from, int comm, char **ArgList)
 		break;
 	}
 
-	case 484:
-	{
-		if (do_hook(current_numeric, "%s %s", from, ArgList[0]))
-			display_msg(from, ArgList);
-		set_server_flag(from_server, USER_MODE_R, 1);
-		break;
-	}
 	case 903:		/* SASL authentication successful */
 	case 904:		/* SASL authentication failed */
 	case 905:		/* SASL message too long */
