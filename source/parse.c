@@ -134,37 +134,37 @@ void fake (void)
 
 int check_auto_reply(char *str)
 {
-char *p = NULL;
-char *pat;
-	if (!str || !*str || !get_int_var(AUTO_RESPONSE_VAR))
+	char *p = NULL;
+	char *pat;
+
+	if (!str || !*str || !get_int_var(AUTO_RESPONSE_VAR) || !auto_str)
 		return 0;
+
 	p = LOCAL_COPY(auto_str);
-	if (p && *p)
+	while ((pat = next_arg(p, &p)))
 	{
-		while ((pat = next_arg(p, &p)))
+		switch(get_int_var(NICK_COMPLETION_TYPE_VAR))
 		{
-			switch(get_int_var(NICK_COMPLETION_TYPE_VAR))
-			{
-				case 3:
-					if (!my_stricmp(str, pat))
-						goto found_auto;
-					continue;
-				case 2:
-					if (wild_match(pat, str))
-						goto found_auto;
-					continue;
-				case 1:
-					if (stristr(str, pat))
-						goto found_auto;
-					continue;
-				default:
-				case 0:
-					if (!my_strnicmp(str, pat, strlen(pat)))
-						goto found_auto;
-					continue;
-			}
+			case 3:
+				if (!my_stricmp(str, pat))
+					goto found_auto;
+				continue;
+			case 2:
+				if (wild_match(pat, str))
+					goto found_auto;
+				continue;
+			case 1:
+				if (stristr(str, pat))
+					goto found_auto;
+				continue;
+			default:
+			case 0:
+				if (!my_strnicmp(str, pat, strlen(pat)))
+					goto found_auto;
+				continue;
 		}
 	}
+
 	return 0;
 found_auto:
 #ifdef GUI
