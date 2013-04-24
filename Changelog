@@ -1,5 +1,7 @@
 [Changes 1.2c01]
 
+* Fix longstanding bug with ordering of rfc1459[] array. (caf)
+
 * Fix crash after /SETAR -, reported by riderplus. (caf)
 
 * Remove special handling of 484 numeric, which is no longer needed and
