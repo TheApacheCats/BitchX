@@ -1,5 +1,8 @@
 [Changes 1.2c01]
 
+* Fix off-by-one error in add_socketread() and set_socketwrite() found
+  by Coverity. (caf)
+
 * Fix longstanding bug with ordering of rfc1459[] array. (caf)
 
 * Fix crash after /SETAR -, reported by riderplus. (caf)
