@@ -1,5 +1,7 @@
 [Changes 1.2c01]
 
+* Fix out-of-bounds error in cryptit() found by Coverity. (flashback)
+
 * Cleanup save_formats(). (caf)
 
 * Fix off-by-one error in add_socketread() and set_socketwrite() found

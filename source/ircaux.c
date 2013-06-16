@@ -2826,8 +2826,8 @@ static char saltChars[] =
 	"abcdefghijklmnopqrstuvwxyzABCDEFGHJIKLMNOPQRSTUVWXYZ./";
 char *cpass = (char *)string;
 char salt[3];
-	salt[0] = saltChars[random_number(0) % 64];
-	salt[1] = saltChars[random_number(0) % 64];
+	salt[0] = saltChars[random_number(0) % sizeof(saltChars)];
+	salt[1] = saltChars[random_number(0) % sizeof(saltChars)];
 	salt[2] = 0;
 #if !defined(WINNT)
 	cpass = crypt(string, salt);
