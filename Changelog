@@ -1,5 +1,7 @@
 [Changes 1.2c01]
 
+* Cleanup save_formats(). (caf)
+
 * Fix off-by-one error in add_socketread() and set_socketwrite() found
   by Coverity. (caf)
 
