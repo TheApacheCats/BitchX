@@ -2823,11 +2823,11 @@ char *crypt();
 char *BX_cryptit(const char *string) 
 {
 static char saltChars[] = 
-	"abcdefghijklmnopqrstuvwxyzABCDEFGHJIKLMNOPQRSTUVWXYZ./";
+	"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ./0123456789";
 char *cpass = (char *)string;
 char salt[3];
-	salt[0] = saltChars[random_number(0) % sizeof(saltChars)];
-	salt[1] = saltChars[random_number(0) % sizeof(saltChars)];
+	salt[0] = saltChars[random_number(0) % (sizeof(saltChars) - 1)];
+	salt[1] = saltChars[random_number(0) % (sizeof(saltChars) - 1)];
 	salt[2] = 0;
 #if !defined(WINNT)
 	cpass = crypt(string, salt);
