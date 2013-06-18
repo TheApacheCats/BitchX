@@ -1,5 +1,8 @@
 [Changes 1.2c01]
 
+* Fix file descriptor leak on SOCKS4 connection failure found by
+  Coverity. (caf)
+
 * Fix out-of-bounds error in cryptit() found by Coverity. (flashback)
 
 * Cleanup save_formats(). (caf)
