@@ -282,8 +282,8 @@ BUILT_IN_COMMAND(lastlog)
 	Lastlog *start_pos;
 	char	*match = NULL,
 		*arg;
-	char	*file_open[] = { "wt", "at" };
-	int	file_open_type = 0;
+	const char *file_open_type = "w";
+	const char *filename = NULL;
 	char	*blah = NULL;
 	FILE	*fp = NULL;
 	
@@ -343,7 +343,7 @@ BUILT_IN_COMMAND(lastlog)
 				return;
 			}
 			else if (!my_strnicmp(arg, "APPEND", len))
-				file_open_type = 1;
+				file_open_type = "a";
 			else if (!my_strnicmp(arg, "FILE", len))
 			{
 #ifdef PUBLIC_ACCESS
@@ -352,13 +352,11 @@ BUILT_IN_COMMAND(lastlog)
 #else
 				if (args && *args)
 				{
-					char *filename;
-					filename = next_arg(args, &args);
-					if (!(fp = fopen(filename, file_open[file_open_type])))
-					{
-						bitchsay("cannot open file %s", filename);
-						return;
-					}
+					char *filename_arg = next_arg(args, &args);
+					if (filename)
+						say("Additional -FILE argument ignored");
+					else
+						filename = filename_arg;
 				} 
 				else
 				{
@@ -436,6 +434,13 @@ BUILT_IN_COMMAND(lastlog)
 			}
 		}
 	}
+
+	if (!(fp = fopen(filename, file_open_type)))
+	{
+		bitchsay("cannot open file %s", filename);
+		return;
+	}
+
 	start_pos = current_window->lastlog_head;
 	level = current_window->lastlog_level;
 	msg_level = set_lastlog_msg_level(0);

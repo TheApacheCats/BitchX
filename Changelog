@@ -1,5 +1,7 @@
 [Changes 1.2c01]
 
+* Fix open file leak in /LASTLOG found by Coverity. (caf)
+
 * Fix file descriptor leak on SOCKS4 connection failure found by
   Coverity. (caf)
 
