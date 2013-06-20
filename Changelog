@@ -1,5 +1,7 @@
 [Changes 1.2c01]
 
+* Improve robustness of CDCC save file loading. (caf)
+
 * Fix open file leak in /LASTLOG found by Coverity. (caf)
 
 * Fix file descriptor leak on SOCKS4 connection failure found by

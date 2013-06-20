@@ -1182,11 +1182,11 @@ static int l_load(char *args, char *rest)
 		chop(buffer, 1);
 
 		temp = strrchr(buffer, ' ');
-		*temp = '\0';
-		temp++;
+		if (temp)
+			*temp++ = '\0';
 		malloc_strcpy(&ptr->desc, buffer);
 
-		if (*temp && !isdigit((unsigned char)*temp))
+		if (!temp || !isdigit((unsigned char)*temp))
 		{
 			put_it("%s: not a cdcc pack aborting",  cparse(get_string_var(CDCC_PROMPT_VAR)));
 			new_free(&ptr->file);
