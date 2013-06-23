@@ -2750,7 +2750,7 @@ register int		i = 0;
 /*		chop(transfer_buffer, 1);*/
 		if (fget_string_var(FORMAT_DCC_FSET))
 		{
-			sprintf(DCC_current_transfer_buffer, convert_output_format(fget_string_var(FORMAT_DCC_FSET), "%s", transfer_buffer));
+			sprintf(DCC_current_transfer_buffer, "%s", convert_output_format(fget_string_var(FORMAT_DCC_FSET), "%s", transfer_buffer));
 			chop(DCC_current_transfer_buffer, 4);
 		}
 		else

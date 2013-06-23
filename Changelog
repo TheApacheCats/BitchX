@@ -1,5 +1,7 @@
 [Changes 1.2c01]
 
+* Ensure proper handling of % when /FSET DCC is used. (caf)
+
 * Improve robustness of CDCC save file loading. (caf)
 
 * Fix open file leak in /LASTLOG found by Coverity. (caf)
