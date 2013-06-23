@@ -407,23 +407,16 @@ void	save_digraphs(FILE *fp)
 {
 	if (digraph_changed)
 	{
+		int	i;
 
-		int	i = 0;
-		char	*command = "\nDIGRAPH -ADD ";
-
-		fprintf(fp, "DIGRAPH -CLEAR");
-		fprintf(fp, command);
-		while(1)
-		{
+		fputs("DIGRAPH -CLEAR", fp);
+		for (i = 0; dig_table_lo[i]; i++) {
+			if (!(i % 5))
+				fputs("\nDIGRAPH -ADD ", fp);
 			fprintf(fp, "%d %d %d  ", dig_table_lo[i],
 				dig_table_hi[i], dig_table_di[i]);
-			if (!dig_table_lo[++i])
-				break;
-			if (!(i % 5))
-				fprintf(fp, command);
 		}
 		fputc('\n', fp);
-
 	}
 }
 
