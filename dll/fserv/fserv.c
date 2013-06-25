@@ -244,7 +244,7 @@ char *make_mp3_string(FILE *fp, Files *f, char *fs, char *dirbuff)
 		fs++;
 	}
 	if (fp && *buffer)
-		fprintf(fp, buffer);
+		fputs(buffer, fp);
 	return buffer;
 }
 
