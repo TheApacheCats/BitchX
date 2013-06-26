@@ -637,9 +637,6 @@ void achange_idle(Window *w, char *s, int i) {
 }
 
 void aaway (IrcCommandDll *intp, char *command, char *args, char *subargs, char *helparg) {
-	char *loc;
-
-	loc = LOCAL_COPY(args);
 	CHECK_TOC_ONLINE();
 		
 	serv_set_away(args);
