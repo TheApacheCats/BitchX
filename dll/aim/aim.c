@@ -294,7 +294,7 @@ void toggle_aimwin (Window *win, char *unused, int onoff){
 	Window *tmp;
 	if (onoff)
 	{
-		if ((tmp = get_window_by_name("AIM")))
+		if (get_window_by_name("AIM"))
 			return;
 		if ((tmp = new_window(win->screen)))
 		{
