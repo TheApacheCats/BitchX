@@ -198,8 +198,12 @@ UserList *new;
 			chop(buffer, 1);
 			u = buffer;
 			h = strchr(u, '!');
+			if (!h)
+				continue;
 			*h++ = 0;
 			p = strchr(h, ',');
+			if (!p)
+				continue;
 			*p++ = 0;
 			if ((c = strchr(p, ',')))
 				*c++ = 0;

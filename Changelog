@@ -1,5 +1,8 @@
 [Changes 1.2c01]
 
+* Skip malformed abots.sav entries in read_abot(), avoiding null
+  dereferences found by Coverity. (flashback)
+
 * Ensure proper handling of % when /FSET DCC is used. (caf)
 
 * Improve robustness of CDCC save file loading. (caf)
