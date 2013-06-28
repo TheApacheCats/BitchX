@@ -362,8 +362,8 @@ srec *read_scores()
 				*p++ = 0;
 			else if (!p)
 			{
-				return tmp2;
 				fclose(sf);
+				return tmp2;
 			}
 			tmp->nick = (char *)new_malloc(strlen(buff+1));
 			strcpy(tmp->nick, buff);
