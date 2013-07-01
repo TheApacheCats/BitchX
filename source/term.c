@@ -842,8 +842,7 @@ int term_init (char *term)
 		fprintf(stdout, "Using terminal type [%s]\n", term);
 #endif
 #ifdef HAVE_TERMINFO
-	setupterm(NULL, 1, &i);
-	if (i != 1)
+	if (setupterm(NULL, 1, &i) == ERR)
 	{
 		fprintf(stderr, "setupterm failed: %d\n", i);
 		fprintf(stderr, "So we'll be running in dumb mode...\n");
