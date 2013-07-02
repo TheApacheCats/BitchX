@@ -98,7 +98,7 @@ BUILT_IN_DLL(put_scores);
 grec *init_acro(grec *);
 void make_acro(grec *);
 int valid_acro(grec *, char *);
-srec *read_scores(void);
+void read_scores(void);
 int write_scores(srec *);
 prec *take_acro(grec *, prec *, char *, char *, char *);
 vrec *take_vote(grec *, vrec *, prec *, char *, char *, char *);

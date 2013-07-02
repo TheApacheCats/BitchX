@@ -11,7 +11,7 @@ int Acro_Init(IrcCommandDll **intp, Function_ptr *global_table)
 	add_module_proc(RAW_PROC, "acro", "PRIVMSG", NULL, 0, 0, acro_main, NULL);
 	add_module_proc(COMMAND_PROC, "scores", "scores", NULL, 0, 0, put_scores, NULL);
 
-	gscores = read_scores();
+	read_scores();
 	if (!game)
 		game = init_acro(game);
 	put_it("BitchX Acromania dll v0.9b by By-Tor loaded...");
@@ -338,43 +338,26 @@ vrec *take_vote(grec *acro, vrec *voters, prec *players, char *nick, char *host,
 	return voters;
 }
 
-srec *read_scores()
+void read_scores(void)
 {
-	srec *tmp, *tmp2;
-	char buff[100], *p;
-	FILE *sf;
-	tmp = tmp2 = (srec *)new_malloc(sizeof(srec));
-	memset(buff, 0, sizeof(buff));
-	sf = fopen(SCOREFILE, "r");
-	if (!sf)
-		return 0;
-	while (!feof(sf))
+	FILE *infile;
+	srec *record;
+	unsigned long score;
+	char nick[64];
+
+	infile = fopen(SCOREFILE, "r");
+	if (infile == NULL)
+		return;
+
+	while (fscanf(infile, " %63[^ ,] , %lu", nick, &score) == 2)
 	{
-		if (fgets(buff, 51, sf))
-		{
-			if (tmp->nick)
-				tmp = tmp->next = (srec *)new_malloc(sizeof(srec));
-			if (buff[strlen(buff)-1] == '\n')
-				buff[strlen(buff)-1] = 0;
-			if (!*buff)
-				break;
-			if ((p = (char *)strchr(buff, ',')))
-				*p++ = 0;
-			else if (!p)
-			{
-				fclose(sf);
-				return tmp2;
-			}
-			tmp->nick = (char *)new_malloc(strlen(buff+1));
-			strcpy(tmp->nick, buff);
-			if (p)
-				tmp->score = strtoul(p, NULL, 10);
-		}
-		else
-			break;
+		record = new_malloc(sizeof(srec));
+		record->nick = m_strdup(nick);
+		record->score = score;
+		add_to_list((List **)&gscores, (List *)record);
 	}
-	fclose(sf);
-	return tmp2;
+
+	fclose(infile);
 }
 
 int write_scores(srec *tmp)
