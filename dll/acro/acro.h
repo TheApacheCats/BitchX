@@ -72,9 +72,9 @@ typedef struct {
 /* srec -- linked list of scores */
 
 typedef struct _srec {
+	struct _srec *next;
 	char *nick;
 	unsigned long score;
-	struct _srec *next;
 } srec;
 
 struct settings {
