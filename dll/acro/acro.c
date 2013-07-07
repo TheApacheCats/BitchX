@@ -489,26 +489,10 @@ void show_acros(prec *players, char *chan)
 {
 	prec *tmp;
 	int i = 1;
-	char *line, buff[201];
 	if (!players)
 		return;
-	line = (char *)new_malloc(513);
-	memset(buff, 0, sizeof(buff));
 	for (tmp = players; tmp; tmp = tmp->next)
-	{
-		snprintf(buff, 198, "PRIVMSG %s :%2d: %s", chan, i++, tmp->acro);
-		strcat(buff, "\r\n");
-		if (strlen(line)+strlen(buff) >= 512)
-		{
-			send_to_server("%s", line);
-			memset(line, 0, 513);
-		}
-		strcat(line, buff);
-		memset(buff, 0, sizeof(buff));
-	}
-	if (line)
-		send_to_server("%s", line);
-	new_free(&line);
+		send_to_server("PRIVMSG %s :%2d: %s", chan, i++, tmp->acro);
 } 
 
 void show_scores(grec *acro, srec *score, srec *gscore, char *chan)
