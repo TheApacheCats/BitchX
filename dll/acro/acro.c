@@ -513,59 +513,42 @@ void show_acros(prec *players, char *chan)
 
 void show_scores(grec *acro, srec *score, srec *gscore, char *chan)
 {
-	char *line, buff[201];
 	int i;
-	line = (char *)new_malloc(513);
-	memset(buff, 0, sizeof(buff));
 	if (score)
 		score = sort_scores(score);
 	if (gscore && (acro->round >= acro->rounds))
 		gscore = sort_scores(gscore);
 	if (acro->round < acro->rounds)
-		sprintf(line, "PRIVMSG %s :Scores for round %d\r\nPRIVMSG %s :Nick        Score\r\nPRIVMSG %s :-----------------\r\n", chan, acro->round, chan, chan);
+		send_to_server("PRIVMSG %s :Scores for round %d\r\nPRIVMSG %s :Nick        Score\r\nPRIVMSG %s :-----------------", chan, acro->round, chan, chan);
 	else
-		sprintf(line, "PRIVMSG %s :Game over, tallying final scores...\r\nPRIVMSG %s :   Game Score          Overall Score\r\nPRIVMSG %s :Nick        Score    Nick        Score\r\nPRIVMSG %s :-----------------    -----------------\r\n", chan, chan, chan, chan);
+		send_to_server("PRIVMSG %s :Game over, tallying final scores...\r\nPRIVMSG %s :   Game Score          Overall Score\r\nPRIVMSG %s :Nick        Score    Nick        Score\r\nPRIVMSG %s :-----------------    -----------------", chan, chan, chan, chan);
 	for (i = 0; i < acro->top && (score || gscore); i++)
 	{
 		if ((acro->round < acro->rounds) && score)
 		{
-			snprintf(buff, 198, "PRIVMSG %s :%-9s    %lu", chan, score->nick, score->score);
-			strcat(buff, "\r\n");
+			send_to_server("PRIVMSG %s :%-9s    %lu", chan, score->nick, score->score);
 			score = score->next;
 		}
 		else if (acro->round == acro->rounds && (score || gscore)) 
 		{
 			if (!score && gscore)
 			{
-				snprintf(buff, 198, "PRIVMSG %s :                     %-9s   %lu", chan, gscore->nick, gscore->score);
-				strcat(buff, "\r\n");
+				send_to_server("PRIVMSG %s :                     %-9s   %lu", chan, gscore->nick, gscore->score);
 				gscore = gscore->next;
 			}
 			else if (score && !gscore)
 			{
-				snprintf(buff, 198, "PRIVMSG %s :%-9s    %lu", chan, score->nick, score->score);
-				strcat(buff, "\r\n");
+				send_to_server("PRIVMSG %s :%-9s    %lu", chan, score->nick, score->score);
 				score = score->next;
 			}
 			else if (gscore && score)
 			{
-				snprintf(buff, 198, "PRIVMSG %s :%-9s    %-5lu   %-9s    %lu", chan, score->nick, score->score, gscore->nick, gscore->score);
-				strcat(buff, "\r\n");
+				send_to_server("PRIVMSG %s :%-9s    %-5lu   %-9s    %lu", chan, score->nick, score->score, gscore->nick, gscore->score);
 				gscore = gscore->next;
 				score = score->next;
 			}
 		}
-		if (strlen(line)+strlen(buff) >= 512)
-		{
-			send_to_server("%s", line);
-			memset(line, 0, 513);
-		}
-		strcat(line, buff);
-		memset(buff, 0, sizeof(buff));
 	}
-	if (line)
-		send_to_server("%s", line);
-	new_free(&line);
 } 
 
 void free_round(prec **players, vrec **voters)
