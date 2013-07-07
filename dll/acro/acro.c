@@ -237,13 +237,10 @@ prec *take_acro(grec *acro, prec *players, char *nick, char *host, char *stuff)
 	prec *tmp, *last = NULL;
 	if (!players)
 	{
-		players = (prec *)new_malloc(sizeof(prec));
-		players->nick = (char *)new_malloc(strlen(nick)+1);
-		players->host = (char *)new_malloc(strlen(host)+1);
-		players->acro = (char *)new_malloc(strlen(stuff)+1);
-		strcpy(players->nick, nick);
-		strcpy(players->host, host);
-		strcpy(players->acro, stuff);
+		players = new_malloc(sizeof(prec));
+		players->nick = m_strdup(nick);
+		players->host = m_strdup(host);
+		players->acro = m_strdup(stuff);
 		send_to_server("PRIVMSG %s :Answer set to \"%s\"\r\nPRIVMSG %s :You are player #%d", nick, stuff, nick, ++acro->players);
 		return players;
 	}
@@ -265,8 +262,7 @@ prec *take_acro(grec *acro, prec *players, char *nick, char *host, char *stuff)
 				return players;
 			}
 			else {
-				tmp->last = (char *)new_malloc(strlen(stuff)+1);
-				strcpy(tmp->last, stuff);
+				tmp->last = m_strdup(stuff);
 				send_to_server("PRIVMSG %s :You already submitted an answer, submit once more to change.", nick);
 				return players;
 			}
@@ -275,13 +271,10 @@ prec *take_acro(grec *acro, prec *players, char *nick, char *host, char *stuff)
 	}
 	if (acro->players < MAXPLAYERS && last)
 	{
-		tmp = last->next = (prec *)new_malloc(sizeof(prec));
-		tmp->nick = (char *)new_malloc(strlen(nick)+1);
-		tmp->host = (char *)new_malloc(strlen(host)+1);
-		tmp->acro = (char *)new_malloc(strlen(stuff)+1);
-		strcpy(tmp->nick, nick);
-		strcpy(tmp->host, host);
-		strcpy(tmp->acro, stuff);
+		tmp = last->next = new_malloc(sizeof(prec));
+		tmp->nick = m_strdup(nick);
+		tmp->host = m_strdup(host);
+		tmp->acro = m_strdup(stuff);
 		send_to_server("PRIVMSG %s :Answer set to \"%s\"\r\nPRIVMSG %s :You are player #%d", nick, stuff, nick, ++acro->players);
 	}
 	else
