@@ -300,12 +300,10 @@ vrec *take_vote(grec *acro, vrec *voters, prec *players, char *nick, char *host,
 	}
 	if (!voters)
 	{
-		voters = (vrec *)new_malloc(sizeof(vrec));
-		voters->nick = (char *)new_malloc(strlen(nick)+1);
-		voters->host = (char *)new_malloc(strlen(host)+1);
+		voters = new_malloc(sizeof(vrec));
+		voters->nick = m_strdup(nick);
+		voters->host = m_strdup(host);
 		voters->vote = atoi(num)-1;
-		strcpy(voters->nick, nick);
-		strcpy(voters->host, host);
 		send_to_server("PRIVMSG %s :Vote recorded...", nick);
 		return voters;
 	}
@@ -320,12 +318,10 @@ vrec *take_vote(grec *acro, vrec *voters, prec *players, char *nick, char *host,
 	}
 	if (last && !last->next)
 	{
-		last = last->next = (vrec *)new_malloc(sizeof(vrec));
-		last->nick = (char *)new_malloc(strlen(nick)+1+sizeof(char *));
-		last->host = (char *)new_malloc(strlen(host)+1+sizeof(char *));
+		last = last->next = new_malloc(sizeof(vrec));
+		last->nick = m_strdup(nick);
+		last->host = m_strdup(host);
 		last->vote = atoi(num)-1;
-		strcpy(last->nick, nick);
-		strcpy(last->host, host);
 		send_to_server("PRIVMSG %s :Vote recorded...", nick);
 	}
 	return voters;
