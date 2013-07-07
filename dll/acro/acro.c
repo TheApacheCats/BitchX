@@ -385,7 +385,7 @@ srec *end_vote(vrec *voters, prec *players, srec *stmp)
 	prec *tmp2 = NULL;
 	srec *tmp3 = NULL, *last;
 	if (!stmp && voters && players)
-		stmp = (srec *)new_malloc(sizeof(srec));
+		stmp = new_malloc(sizeof(srec));
 	for (tmp = voters; tmp; tmp = tmp->next)
 	{
 		gotscore = 0;
@@ -394,8 +394,7 @@ srec *end_vote(vrec *voters, prec *players, srec *stmp)
 			tmp2 = tmp2->next;
 		if (stmp && !stmp->nick)
 		{
-			stmp->nick = (char *)new_malloc(strlen(tmp2->nick)+1);
-			strcpy(stmp->nick, tmp2->nick);
+			stmp->nick = m_strdup(tmp2->nick);
 			stmp->score = 1;
 			continue;
 		}
@@ -411,9 +410,8 @@ srec *end_vote(vrec *voters, prec *players, srec *stmp)
 		}
 		if (!gotscore)
 		{
-			tmp3 = last->next = (srec *)new_malloc(sizeof(srec));
-			tmp3->nick = (char *)new_malloc(strlen(tmp2->nick)+1);
-			strcpy(tmp3->nick, tmp2->nick);
+			tmp3 = last->next = new_malloc(sizeof(srec));
+			tmp3->nick = m_strdup(tmp2->nick);
 			tmp3->score = 1;
 		}
 	}
