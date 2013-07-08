@@ -278,8 +278,6 @@ SocketList *sa;
 void dcc_sdcc (char *name, char *args)
 {
 	char *p;
-	int tmp, i;
-	DCC_int *new_sdcc;
 	if (!my_stricmp(name, "schat") && (strlen(args) > 0)) {
 		if (*args == ' ')
 			new_next_arg(args, &args);
@@ -288,13 +286,7 @@ void dcc_sdcc (char *name, char *args)
 			if (p && *p)
 				*p = 0;
 		}
-		new_sdcc = dcc_create(args, "SCHAT", NULL, 0, 0, typenum, DCC_TWOCLIENTS, start_dcc_chat);
-/*		find_dcc_pending(new_sdcc->user, new_sdcc->filename, NULL, typenum, 1, -1); */
-/*		new_i = find_dcc_pending(nick, filename, NULL, type, 1, -1); */
-		tmp = sizeof(keyboxes)/sizeof(arclist *);
-		for (i = 0; i < tmp; i++)
-			if (!keyboxes[i])
-/*				keyboxes[i]->sock = new_i->sock */;
+		dcc_create(args, "SCHAT", NULL, 0, 0, typenum, DCC_TWOCLIENTS, start_dcc_chat);
 	}
 }
 
