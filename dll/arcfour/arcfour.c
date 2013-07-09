@@ -70,11 +70,7 @@ static char *init_box(char *ukey, arckey *key)
 		close(fd);
 	}
 	else
-	{
-		buf[(int)buf[69]] ^= getpid();
-		buf[(int)buf[226]] ^= getuid();
-		buf[(int)buf[119]] ^= getpid();
-	}
+		return NULL;
 
 	MD5Init(&md5context);
 	MD5Update(&md5context, buf, sizeof(buf));
@@ -196,7 +192,11 @@ static int start_dcc_crypt (int s, int type, unsigned long d_addr, int d_port)
 		memset(randkey, 0, sizeof(randkey));
 		memset(buf, 0, sizeof(buf));
 		tmpbox->outbox = (arckey *)new_malloc(sizeof(arckey));
-		init_box(randkey, tmpbox->outbox);
+		if (init_box(randkey, tmpbox->outbox) == NULL)
+		{
+			new_free(&tmpbox->outbox);
+			return -1;
+		}
 		snprintf(buf, BIG_BUFFER_SIZE, "SecureDCC %s\r\n%n", randkey, &len);
 		write(s, buf, len);
 		memset(buf, 0, sizeof(buf));
