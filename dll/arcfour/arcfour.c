@@ -123,13 +123,7 @@ int Arcfour_Init(IrcCommandDll **intp, Function_ptr *global_table)
 {
 	initialize_module("arcfour");
 	memset(keyboxes, 0, sizeof(keyboxes));
-/*
-	dcc_output_func = send_dcc_encrypt;
-	dcc_input_func = get_dcc_encrypt;
-	dcc_open_func = start_dcc_crypt;
-	dcc_close_func = end_dcc_crypt;
-*/
-	typenum = add_dcc_bind("SCHAT", "schat", init_schat, start_dcc_crypt, get_dcc_encrypt, send_dcc_encrypt, end_dcc_crypt);
+	typenum = add_dcc_bind("SCHAT", "schat", NULL, start_dcc_crypt, get_dcc_encrypt, send_dcc_encrypt, end_dcc_crypt);
 	add_module_proc(DCC_PROC, "schat", "schat", "Secure DCC Chat", 0, 0, dcc_sdcc, NULL);
 	return 0;
 }
@@ -288,12 +282,4 @@ void dcc_sdcc (char *name, char *args)
 		}
 		dcc_create(args, "SCHAT", NULL, 0, 0, typenum, DCC_TWOCLIENTS, start_dcc_chat);
 	}
-}
-
-/* thanks to the new add_dcc_bind, we dont have to worry about any hooking... */
-
-static int init_schat(char *type, char *nick, char *userhost, char *description, char *size, char *extra, unsigned long ip, unsigned int port)
-{
-/*	new_sdcc = dcc_create(args, "SCHAT", NULL, 0, 0, typenum, DCC_TWOCLIENTS, start_dcc_chat); */
-	return 0;
 }
