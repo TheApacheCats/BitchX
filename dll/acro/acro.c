@@ -9,7 +9,7 @@ int Acro_Init(IrcCommandDll **intp, Function_ptr *global_table)
 {
 	initialize_module("Acromania");
 	add_module_proc(RAW_PROC, "acro", "PRIVMSG", NULL, 0, 0, acro_main, NULL);
-	add_module_proc(COMMAND_PROC, "scores", "scores", NULL, 0, 0, put_scores, NULL);
+	add_module_proc(COMMAND_PROC, "acro", "scores", NULL, 0, 0, put_scores, NULL);
 
 	read_scores();
 	if (!game)
