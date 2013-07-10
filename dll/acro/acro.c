@@ -352,15 +352,18 @@ void read_scores(void)
 int write_scores(srec *tmp)
 {
 	FILE *sf;
+
 	if (!tmp)
 		return 0;
-	tmp = sort_scores(tmp);
+
 	sf = fopen(SCOREFILE, "w");
 	if (!sf)
 		return 0;
+
 	for (; tmp; tmp = tmp->next)
 		if (tmp->score > 0)
 			fprintf(sf, "%s,%lu\n", tmp->nick, tmp->score);
+
 	fclose(sf);
 	return 1;
 }
