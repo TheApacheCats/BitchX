@@ -49,7 +49,7 @@ unsigned int lport = 0, rport = 0;
 void identd_handler(int s)
 {
 struct  sockaddr_in     remaddr;
-int sra = sizeof(struct sockaddr_in);
+socklen_t sra = sizeof(struct sockaddr_in);
 int sock = -1;
 #if 0
 	if (!(get_dllint_var("identd")) || !(get_dllstring_var("identd_user")))
