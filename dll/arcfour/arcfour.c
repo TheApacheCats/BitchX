@@ -229,7 +229,7 @@ static int end_dcc_crypt (int s, unsigned long d_addr, int d_port)
 static void start_dcc_chat(int s)
 {
 struct	sockaddr_in	remaddr;
-int	sra;
+socklen_t	sra;
 int	type;
 int	new_s = -1;
 char	*nick = NULL;	
