@@ -3931,7 +3931,7 @@ SocketList *s;
 				int sock, s1;
 				DCC_int *new;
 				struct sockaddr_in data_addr = { 0 };
-				int len = sizeof(struct sockaddr_in);
+				socklen_t len;
 				char tmp[BIG_BUFFER_SIZE+1], *bufptr;
 				if ((sock = open_listen_port(s->is_read)) == -1)
 					return -1;
