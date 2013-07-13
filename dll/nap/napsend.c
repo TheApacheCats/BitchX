@@ -1670,7 +1670,7 @@ int rc;
 void naplink_handlelink(int snum)
 {
 struct  sockaddr_in     remaddr;
-int sra = sizeof(struct sockaddr_in);
+socklen_t sra = sizeof(struct sockaddr_in);
 int sock = -1;
 	if ((sock = accept(snum, (struct sockaddr *) &remaddr, &sra)) > -1)
 	{
