@@ -500,7 +500,7 @@ int BX_connect_by_number(char *hostn, unsigned short *portnum, int service, int 
 	else if (!is_unix && (service == SERVICE_CLIENT))
 	{
 		struct sockaddr_foobar server;
-		int server_len;
+		socklen_t server_len;
 		struct hostent *hp;
 #ifdef WINNT
 		char buf[BIG_BUFFER_SIZE+1];
