@@ -781,7 +781,7 @@ extern char *BX_one_to_another (const char *what)
  * has been closed in the interim.  This wrapper for accept() attempts to
  * defeat this by making the accept() call nonblocking.
  */
-int	my_accept (int s, struct sockaddr *addr, int *addrlen)
+int	my_accept (int s, struct sockaddr *addr, socklen_t *addrlen)
 {
 	int	retval;
 	set_non_blocking(s);
