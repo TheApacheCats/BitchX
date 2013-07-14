@@ -1,5 +1,7 @@
 [Changes 1.2c01]
 
+* Improve the list_channels() function. (caf)
+
 * Use socklen_t instead of plain int where available. (flashback)
 
 * Use <termios.h> in preference to <sys/termios.h> where it's available. (caf)

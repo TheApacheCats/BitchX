@@ -1491,35 +1491,35 @@ static	void show_channel(ChannelList *chan)
 void list_channels(void)
 {
 	ChannelList *tmp;
-	int	server,
-		no = 1;
+	int server;
+	int shown_current = 0;
+	int shown_others = 0;
 	
-	if (get_server_channels(from_server))
+	if (get_current_channel_by_refnum(0))
+		say("Current channel %s", get_current_channel_by_refnum(0));
+	else
+		say("No current channel for this window");
+
+	for (tmp = get_server_channels(get_window_server(0)); tmp; tmp = tmp->next)
 	{
-		if (get_current_channel_by_refnum(0))
-			say("Current channel %s", get_current_channel_by_refnum(0));
-		else
-			say("No current channel for this window");
-		if ((tmp = get_server_channels(get_window_server(0))))
+		show_channel(tmp);
+		shown_current = 1;
+	}
+
+	for (server = 0; server < server_list_size(); server++)
+	{
+		if (server == get_window_server(0))
+			continue;
+		for (tmp = get_server_channels(server); tmp; tmp = tmp->next)
 		{
-			for (; tmp; tmp = tmp->next)
-				show_channel(tmp);
-			no = 0;
-		}
-		if (connected_to_server != 1)
-		{
-			for (server = 0; server < server_list_size(); server++)
-			{
-				if (server == get_window_server(0))
-					continue;
+			if (!shown_others)
 				say("Other servers:");
-				for (tmp = get_server_channels(server); tmp; tmp = tmp->next)
-					show_channel(tmp);
-				no = 0;
-			}
+			show_channel(tmp);
+			shown_others = 1;
 		}
 	}
-	else
+
+	if (!shown_current && !shown_others)
 		say("You are not on any channels");
 }
 
