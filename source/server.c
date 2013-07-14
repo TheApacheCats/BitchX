@@ -1170,7 +1170,7 @@ static	int	connect_to_server_direct (char *server_name, int port)
 {
 	int		new_des;
 	struct sockaddr_foobar	*localaddr;
-	int		address_len;
+	socklen_t	address_len;
 	unsigned short	this_sucks;
 
 

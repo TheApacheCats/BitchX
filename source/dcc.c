@@ -3692,7 +3692,7 @@ int err;
 int open_listen_port(int s)
 {
 struct sockaddr_in data_addr = { 0 };
-int len = sizeof(struct sockaddr_in), data = -1;
+socklen_t len = sizeof(struct sockaddr_in), data = -1;
 int on = 1;
 char *a, *p;
 

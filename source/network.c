@@ -451,7 +451,7 @@ int BX_connect_by_number(char *hostn, unsigned short *portnum, int service, int 
 	/* Inet domain server */
 	if (!is_unix && (service == SERVICE_SERVER))
 	{
-		int length;
+		socklen_t length;
 #ifdef IP_PORTRANGE
 		int ports;
 #endif
