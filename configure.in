@@ -60,7 +60,7 @@ AC_CHECK_LIB(m, pow, LIBS="-lm $LIBS",)
 
 dnl Checks for header files.
 AC_HEADER_DIRENT
-AC_CHECK_HEADERS([sys/socket.h sys/time.h sys/fcntl.h fcntl.h sys/file.h netinet/in.h netdb.h sys/un.h sys/filio.h regex.h arpa/nameser.h dirent.h sys/ndir.h sys/dir.h ndir.h])
+AC_CHECK_HEADERS([sys/socket.h sys/time.h sys/fcntl.h fcntl.h sys/file.h netinet/in.h netdb.h sys/un.h sys/filio.h regex.h arpa/nameser.h dirent.h sys/ndir.h sys/dir.h ndir.h termios.h])
 
 AC_CHECK_HEADERS([net/if.h], [], [],
 [AC_INCLUDES_DEFAULT
