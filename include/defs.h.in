@@ -291,6 +291,9 @@
 /* Define this if you have terminfo support. */
 #undef HAVE_TERMINFO
 
+/* Define to 1 if you have the <termios.h> header file. */
+#undef HAVE_TERMIOS_H
+
 /* Define this if you have the tparm function in an included lib. */
 #undef HAVE_TPARM
 
