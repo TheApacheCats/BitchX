@@ -1,5 +1,7 @@
 [Changes 1.2c01]
 
+* Use <termios.h> in preference to <sys/termios.h> where it's available. (caf)
+
 * Skip malformed abots.sav entries in read_abot(), avoiding null
   dereferences found by Coverity. (flashback)
 
