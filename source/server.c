@@ -3056,7 +3056,7 @@ unsigned int lport = 0, rport = 0;
 void identd_handler(int s)
 {
 struct  sockaddr_in     remaddr;
-int sra = sizeof(struct sockaddr_in);
+socklen_t sra = sizeof(struct sockaddr_in);
 int sock = -1;
 	if ((sock = my_accept(s, (struct sockaddr *) &remaddr, &sra)) > -1)
 	{

@@ -730,7 +730,7 @@ DCC_List		*new_i;
 static void start_dcc_chat(int s)
 {
 struct	sockaddr_in	remaddr;
-int	sra;
+socklen_t	sra;
 int	type;
 int	new_s = -1;
 char	*nick = NULL;	
@@ -1789,7 +1789,7 @@ char *buffer = alloca(MAX_DCC_BLOCK_SIZE+1);
 void start_dcc_send(int s)
 {
 struct	sockaddr_in	remaddr;
-int	sra;
+socklen_t	sra;
 int	type;
 int	new_s = -1;
 int	tdcc = 0;
@@ -3832,7 +3832,7 @@ void open_ftpget(SocketList *s, char *args)
 SocketList *sock;
 DCC_int *new;
 struct sockaddr_in data_addr = { 0 };
-int len = sizeof(struct sockaddr_in);
+socklen_t len = sizeof(struct sockaddr_in);
 char tmp[BIG_BUFFER_SIZE+1];
 int data = -1, s1 = -1;
 char *p, *bufptr;

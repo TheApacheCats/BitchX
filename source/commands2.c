@@ -2451,7 +2451,7 @@ struct param parm;
 
 void handle_reconnect(int s)
 {
-int len;
+socklen_t len;
 struct sockaddr_in addr;
 int n;
 	memset(&addr, 0, sizeof(addr));
