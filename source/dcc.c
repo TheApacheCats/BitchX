@@ -535,7 +535,7 @@ DCC_List		*new_i;
 		SocketList 		*s = NULL;
 		int			new_s;
 		struct	sockaddr_in	remaddr;
-		int			rl = sizeof(remaddr);
+		socklen_t		rl = sizeof(remaddr);
 
 
 		if (!new_i && !(new_i = find_dcc_pending(nick, filename, NULL, type, 1, -1)))
@@ -3784,7 +3784,7 @@ int i = 0;
 	if (s->flags & DCC_WAIT)
 	{
 		struct	sockaddr_in	remaddr;
-		int			rl = sizeof(remaddr);
+		socklen_t		rl = sizeof(remaddr);
                                 
 		/* maybe we should login here. */
 		if (getpeername(snum, (struct sockaddr *) &remaddr, &rl) != -1)

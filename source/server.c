@@ -472,7 +472,7 @@ static	time_t	last_timeout = 0;
 		if (((des = server_list[i].write) > -1) && FD_ISSET(des, wr) && !(server_list[i].login_flags & LOGGED_IN))
 		{
 			struct sockaddr_in sa;
-			int salen = sizeof(struct sockaddr_in);
+			socklen_t salen = sizeof(struct sockaddr_in);
 
 			if (getpeername(des, (struct sockaddr *) &sa, &salen) != -1)
 			{
