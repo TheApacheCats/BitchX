@@ -26,15 +26,7 @@
 #include "screen.h"
 #include "ircaux.h"
 
-#if defined(_ALL_SOURCE) || defined(__EMX__) || defined(__QNX__)
-#include <termios.h>
-#else
-#include <sys/termios.h>
-#endif
-
 #include <sys/ioctl.h>
-
-
 
 #ifdef HAVE_SYS_UN_H
 #include <sys/un.h>

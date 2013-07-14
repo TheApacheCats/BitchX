@@ -10,14 +10,7 @@ static char cvsrevision[] = "$Id$";
 CVS_REVISION(commands2_c)
 #include "struct.h"
 #include <sys/stat.h>
-
-#if defined(_ALL_SOURCE) || defined(__EMX__) || defined(__QNX__)
-#include <termios.h>
-#else
-#include <sys/termios.h>
-#endif
 #include <sys/ioctl.h>
-
 
 #ifdef HAVE_UNAME
 #include <sys/utsname.h>
