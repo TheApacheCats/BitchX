@@ -46,7 +46,7 @@ DWORD gdwPlatform;
 #define MAIN_SOURCE
 #include "modval.h"
 
-#if defined(_ALL_SOURCE) || defined(__EMX__) || defined(__QNX__)
+#ifdef HAVE_TERMIOS_H
 #include <termios.h>
 #else
 #include <sys/termios.h>
