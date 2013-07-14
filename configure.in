@@ -105,6 +105,12 @@ AC_TYPE_SIZE_T
 AC_TYPE_SIGNAL
 AC_HEADER_TIME
 
+AC_CHECK_TYPES([socklen_t], [], [], [
+AC_INCLUDES_DEFAULT
+#ifdef HAVE_SYS_SOCKET_H
+#include <sys/socket.h>
+#endif])
+
 AC_CHECK_SIZEOF(unsigned int, 4)
 if test x"$ac_cv_sizeof_unsigned_int" = x"4"; then
   AC_DEFINE(UNSIGNED_INT32, 1, Define this if an unsigned long is 32 bits.)
