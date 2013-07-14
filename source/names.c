@@ -624,7 +624,7 @@ NickList	*tnl = NULL;
 					tucm->v_ed = 1;
 					tucm->dev_ed = 0;
 				} 
-				else if (!add & isvoiced) 
+				else if (!add && isvoiced) 
 				{
 					tucm->v_ed = 0;
 					tucm->dev_ed = 1;
