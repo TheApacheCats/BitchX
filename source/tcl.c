@@ -7,8 +7,6 @@
 
 #include "irc.h"
 #include "struct.h"
-
-#include "dcc.h"
 #include "parse.h"
 #include "ircterm.h"
 #include "server.h"
