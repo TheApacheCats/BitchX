@@ -875,6 +875,8 @@ int term_init (char *term)
 		}
 		else
 		{
+			char *tmp = termcap2;
+
 			cval = Tgetstr(tcaps[i], tmp);
 			if (cval == (char *) -1)
 				*(char **)tcaps[i].ptr = NULL;
