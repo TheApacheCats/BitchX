@@ -78,7 +78,7 @@ extern	int		setupterm();
 extern	char		*tigetstr();
 extern	int		tigetnum();
 extern	int		tigetflag();
-#define Tgetstr(x, y) 	tigetstr(x.iname)
+#define Tgetstr(x, y) 	((void)&(y), tigetstr((x).iname))
 #define Tgetnum(x) 	tigetnum(x.iname);
 #define Tgetflag(x) 	tigetflag(x.iname);
 #else
