@@ -31,7 +31,6 @@ CVS_REVISION(screen_c)
 #include "input.h"
 #include "log.h"
 #include "hook.h"
-#include "dcc.h"
 #include "exec.h"
 #include "newio.h"
 #include "misc.h"
