@@ -29,7 +29,6 @@ CVS_REVISION(window_c)
 #include "output.h"
 #include "log.h"
 #include "hook.h"
-#include "dcc.h"
 #include "misc.h"
 #include "cset.h"
 #include "module.h"
