@@ -13,7 +13,6 @@ static char cvsrevision[] = "$Id$";
 CVS_REVISION(exec_c)
 #include "struct.h"
 
-#include "dcc.h"
 #include "exec.h"
 #include "vars.h"
 #include "ircaux.h"
