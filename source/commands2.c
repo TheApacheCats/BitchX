@@ -51,7 +51,6 @@ CVS_REVISION(commands2_c)
 #include "history.h"
 #include "funny.h"
 #include "ctcp.h"
-#include "dcc.h"
 #include "output.h"
 #include "exec.h"
 #include "notify.h"
