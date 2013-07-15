@@ -136,6 +136,10 @@ char *alloca();
 extern	int	errno;
 #endif
 
+#ifndef HAVE_SOCKLEN_T
+typedef int socklen_t;
+#endif
+
 #ifndef NBBY
 # define NBBY		8			/* number of bits in a byte */
 #endif /* NBBY */
