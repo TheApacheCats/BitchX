@@ -1,5 +1,6 @@
 /* MD5 Message Digest algorithm */
 
+#include <string.h>
 #include "md5.h"
 
 /* Prototypes */
