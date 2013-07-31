@@ -1,5 +1,9 @@
 [Changes 1.2c01]
 
+* Fix listing bans on local channels (/BANS &channel). (flashback)
+
+* Fix unbanning by number (/UNBAN #channel #number). (caf)
+
 * Improve the list_channels() function. (caf)
 
 * Use socklen_t instead of plain int where available. (flashback)
