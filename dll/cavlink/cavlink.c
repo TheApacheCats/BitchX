@@ -822,9 +822,9 @@ void cav_away(SocketList *Client, char *nick)
 NickTab *tmp;
 	if (get_server_away(from_server) && nick)
 	{
-		for (tmp = tabkey_array;tmp; tmp = tmp->next);
+		for (tmp = tabkey_array; tmp; tmp = tmp->next)
 		{
-			if (!tmp || (tmp->nick && !my_stricmp(tmp->nick, nick)))
+			if (tmp->nick && !my_stricmp(tmp->nick, nick))
 				return;
 		}
 		dcc_printf(Client->is_read, "msg %s AWAY %s\n", nick, get_server_away(from_server));
