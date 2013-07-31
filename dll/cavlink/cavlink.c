@@ -399,7 +399,7 @@ char *channel;
 	if (server == -1)
 		return 1;
 	chan = get_server_channels(server);
-	if (!chan || !(chan = (ChannelList *)find_in_list((List **)chan, channel, 0)))
+	if (!chan || !find_in_list((List **)chan, channel, 0))
 	{
 		my_send_to_server(server, "JOIN %s%s%s\n", channel, key?" ":empty_string, key?key:empty_string);
 		joined = 1;
