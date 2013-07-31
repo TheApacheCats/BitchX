@@ -296,7 +296,6 @@ char *fs = NULL;
 		if (!pattern || (pattern && wild_match(pattern, new->filename)))
 		{
 			char *p;
-			p = LOCAL_COPY(new->filename);
 			p = strrchr(new->filename, '/');
 			p++;
 			if (do_hook(MODULE_LIST, "FS: File \"%s\" %s %u %lu %lu %u", p, mode_str(new->stereo), new->bitrate, new->time, new->filesize, new->freq))
