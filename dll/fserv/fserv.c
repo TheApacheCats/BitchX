@@ -1162,7 +1162,7 @@ char buffer[BIG_BUFFER_SIZE+1];
 	add_completion_type("fsload", 3, FILE_COMPLETION);
 
 	add_timer(0, empty_string, get_dllint_var("fserv_time"), 1, impress_me, NULL, NULL, -1, "fserv");
-	strcpy(FSstr, cparse(FS, NULL, NULL));
+	strmcpy(FSstr, cparse(FS, NULL, NULL), sizeof(FSstr));
 	put_it("%s %s", FSstr, convert_output_format("$0 v$1 by panasync.", "%s %s", fserv_version, AUTO_VERSION));
 	sprintf(buffer, "$0+%s by panasync - $2 $3", fserv_version);
 	fset_string_var(FORMAT_VERSION_FSET, buffer);
