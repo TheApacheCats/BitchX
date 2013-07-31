@@ -130,7 +130,7 @@ int sucks = 0;
 		set_dllint_var("cavlink_port", sucks);
 	}
 	else
-		cav_say("No %s specified", !host?"host":!passwd?"passwd":"arrggh");
+		cav_say("No %s specified", !host?"host":"passwd");
 }
 
 BUILT_IN_DLL(cmode)
