@@ -720,44 +720,60 @@ Files *search_list(char *nick, char *pat, int wild)
 	return NULL;
 }
 
-
 char *make_temp_list(char *nick)
 {
-	char	*nam;
-	char	*real_nam;
-	FILE	*fp;
-	
-	if (!(nam = get_dllstring_var("fserv_filename")) || !*nam)
-		nam = tmpnam(NULL);
-	real_nam = expand_twiddle(nam);
-	if (!fserv_files || !real_nam || !*real_nam)
-	{
-		new_free(&real_nam);
+	Files *file;
+	FILE *fp;
+	const time_t when = now;
+	int count;
+	char *fmt, *name;
+	char buf[BIG_BUFFER_SIZE + 1];
+
+	if (fserv_files == NULL)
 		return NULL;
-	}
-	if ((fp = fopen(real_nam, "w")))
+
+	name = get_dllstring_var("fserv_filename");
+	if (name != NULL && *name != '\0')
 	{
-		char	buffer2[BIG_BUFFER_SIZE+1];
-		char	*fs;
-		int	count = 0;
-		
-		time_t t = now;
-		Files *new;
-		strftime(buffer2, 200, "%X %d/%m/%Y", localtime(&t));
-		for (new = fserv_files; new; new = new->next)
-			count++;
-		fprintf(fp, "Temporary mp3 list created for %s by %s on %s with %d mp3's\n\n", nick, get_server_nickname(from_server), buffer2, count);
-		*buffer2 = 0;
-		if (!(fs = get_dllstring_var("fserv_format")) || !*fs)
-			fs = " %6.3s %3b [%t]\t %f\n";
-		for (new = fserv_files; new; new = new->next)
-			make_mp3_string(fp, new, fs, buffer2);
-		fclose(fp);
-		new_free(&real_nam);
-		return nam;
+		char *real_name = expand_twiddle(name);
+
+		if (real_name == NULL || *real_name == '\0')
+			return NULL;
+		fp = fopen(real_name, "w");
+		new_free(&real_name);
+		if (fp == NULL)
+			return NULL;
 	}
-	new_free(&real_nam);
-	return NULL;
+	else
+	{
+		int fd;
+		static char template[sizeof("fserv_XXXXXX")];
+
+		name = strcpy(template, "fserv_XXXXXX");
+		fd = mkstemp(template);
+		if (fd == -1)
+			return NULL;
+		fp = fdopen(fd, "w");
+		if (fp == NULL)
+		{
+			close(fd);
+			return NULL;
+		}
+	}
+
+	for (count = 0, file = fserv_files; file != NULL; file = file->next)
+		count++;
+	strftime(buf, sizeof(buf), "%X %d/%m/%Y", localtime(&when));
+	fprintf(fp, "Temporary mp3 list created for %s by %s on %s with %d mp3's\n\n",
+		nick, get_server_nickname(from_server), buf, count);
+	fmt = get_dllstring_var("fserv_format");
+	if (fmt == NULL || *fmt == '\0')
+		fmt = " %6.3s %3b [%t]\t %f\n";
+	for (*buf = '\0', file = fserv_files; file != NULL; file = file->next)
+		make_mp3_string(fp, file, fmt, buf);
+
+	fclose(fp);
+	return name;
 }
 
 BUILT_IN_DLL(list_fserv)
