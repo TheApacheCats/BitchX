@@ -1,5 +1,7 @@
 [Changes 1.2c01]
 
+* Ensure add_socketread() doesn't leak file descriptors. (caf)
+
 * Fix listing bans on local channels (/BANS &channel). (flashback)
 
 * Fix unbanning by number (/UNBAN #channel #number). (caf)

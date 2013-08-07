@@ -3514,7 +3514,11 @@ int BX_add_socketread(int s, int port, unsigned long flags, char *server, void (
 		set_socket_read(&rd, &rd);
 	}
 	if (s >= FD_SETSIZE)
+	{
+		yell("File descriptor limit reached, dropping new socket.");
+		close(s);
 		return -1;
+	}
 	if (s > sock_manager.max_fd)
 		sock_manager.max_fd = s;
 	sock_manager.count++;
