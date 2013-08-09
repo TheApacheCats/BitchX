@@ -396,7 +396,7 @@ char buffer[BIG_BUFFER_SIZE+1];
 			}
 			modelock++;
 		}
-		if (chan && chan->have_op && buffer)
+		if (chan && chan->have_op && *buffer)
 			send_to_server("MODE %s %s", chan->channel, buffer);
 		new_free(&save);
 		new_free(&save1);
