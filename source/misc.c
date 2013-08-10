@@ -4626,12 +4626,17 @@ char *timestamp_str = get_string_var(TIMESTAMP_STRING_VAR);
 			char *cs;
 			tmpc++;
 			this_color = BLACK;
+			if (*tmpc == '\0')
+			{
+				*s++ = '%';
+				continue;
+			}
 			if (*tmpc == '%')
 			{
 				*s++ = *tmpc++;
 				continue;
 			}
-			else if (isdigit((unsigned char)*tmpc))
+			if (isdigit((unsigned char)*tmpc))
 			{
 				char background_mod[] = "01234567";
 				char *blah = background_mod;
@@ -4708,6 +4713,11 @@ char *timestamp_str = get_string_var(TIMESTAMP_STRING_VAR);
 		{
 			char *new_str = NULL;
 			tmpc++;
+			if (*tmpc == '\0')
+			{
+				*s++ = '$';
+				continue;
+			}
 			if (*tmpc == '$')
 			{
 				*s++ = *tmpc++;
