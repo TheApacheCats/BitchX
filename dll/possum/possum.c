@@ -209,7 +209,7 @@ BUILT_IN_DLL(pm_read)
       put_it("%s", cparse(PM_PROMPT"  %W<%YSubject%W>%n $0-", "%s", h->subject));
       fseek(f, h->body_offset, SEEK_SET);
       do {
-        strchop(fgets(s, 2560, f));
+        strchop(fgets(s, MAX_FBUFFER_SIZE, f));
         if (ishead(s)) {
           have_head = 1;
           break;
