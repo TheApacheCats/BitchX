@@ -46,13 +46,13 @@ char *validate_wav_header(char *header)
 {
 Wave_Header *w = (Wave_Header *)header;
 
-	if (strncmp(w->riffID, WAV_RIFF_MAGIC, 4))
+	if (memcmp(w->riffID, WAV_RIFF_MAGIC, 4))
 		return NULL;
 
-	if (strncmp(w->waveID, WAV_WAVE_MAGIC, 4))
+	if (memcmp(w->waveID, WAV_WAVE_MAGIC, 4))
 		return NULL;
 
-	if (strncmp(w->fmtID, WAV_FMT_MAGIC, 4))
+	if (memcmp(w->fmtID, WAV_FMT_MAGIC, 4))
 		return NULL;
 
 	if (w->fmtsize != 16)
@@ -66,7 +66,7 @@ Wave_Header *w = (Wave_Header *)header;
 		return NULL;
 #endif
 
-	if (strncmp(w->dataID, WAV_DATA_MAGIC, 4))
+	if (memcmp(w->dataID, WAV_DATA_MAGIC, 4))
 		return(NULL);
 	return (header + sizeof(Wave_Header));
 }
