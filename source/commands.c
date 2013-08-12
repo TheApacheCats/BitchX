@@ -1044,14 +1044,14 @@ BUILT_IN_COMMAND(realname_cmd)
 	
         if (*args)
 	{
-                strmcpy(realname, args, REALNAME_LEN);
+                strlcpy(realname, args, sizeof realname);
 		say("Realname at next server connnection: %s", realname);
 	}
 	else
 	{
 		char *s = NULL;
 		s = get_realname(get_server_nickname(from_server));
-		strmcpy(realname, s, REALNAME_LEN);
+		strlcpy(realname, s, sizeof realname);
 		say("Randomly chose a new ircname: %s", realname);
 	}
 }
