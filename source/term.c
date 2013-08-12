@@ -62,14 +62,6 @@ static	struct	termios	oldb, newb;
 	int		BClen, UPlen;
 extern	int		already_detached;
 
-#ifdef WTERM_C
-int use_socks = 0;
-char *get_string_var(enum VAR_TYPES var) { return NULL; }
-char username[40];
-void put_it(const char *str, ...) { return; }
-#endif
-
-                
 #if !defined(WTERM_C)
 
 /* Systems cant seem to agree where to put these... */

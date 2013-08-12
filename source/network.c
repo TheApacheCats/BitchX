@@ -34,7 +34,11 @@ CVS_REVISION(network_c)
 #endif
 
 extern char hostname[NAME_LEN+1];
+#ifndef WTERM_C
 extern int  use_socks;
+#else
+#define use_socks 0
+#endif
 char *socks_user = NULL;
 
 #if !defined(WTERM_C) && !defined(STERM_C)
