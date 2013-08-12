@@ -1024,9 +1024,9 @@ BUILT_IN_COMMAND(set_username)
 	if ((blah = next_arg(args, &args)))
 	{
 		if (!strcmp(blah, "-"))
-			strmcpy(username, empty_string, NAME_LEN);
+			strlcpy(username, empty_string, sizeof username);
 		else 
-			strmcpy(username, blah, NAME_LEN);
+			strlcpy(username, blah, sizeof username);
 		say("Username has been changed to '%s'",username);
 	}
 }
