@@ -1063,23 +1063,28 @@ static	char	*parse_args (char *argv[], int argc, char **envp)
 		{
 #ifdef GECOS_DELIMITER
 			if ((ptr = strchr(entry->pw_gecos, GECOS_DELIMITER)))
-				*ptr = (char) 0;
+				*ptr = 0;
 #endif
-			if ((ptr = strchr(entry->pw_gecos, '&')) == NULL)
-				strlcpy(realname, entry->pw_gecos, sizeof realname);
-			else {
-				int len = ptr - entry->pw_gecos;
+			/* The first '&' character in pw_gecos is replaced with pw_name */
+			if ((ptr = strchr(entry->pw_gecos, '&')))
+				*ptr = 0;
 
-				if (len < REALNAME_LEN && *(entry->pw_name)) {
-					char *q = realname + len;
+			strlcpy(realname, entry->pw_gecos, sizeof realname);
 
-					strlcpy(realname, entry->pw_gecos, len);
-					strmcat(realname, entry->pw_name, REALNAME_LEN);
-					strmcat(realname, ptr + 1, REALNAME_LEN);
-					if (islower((unsigned char)*q) && (q == realname || isspace((unsigned char)*(q - 1))))
-						*q = toupper(*q);
-				} else
-					strlcpy(realname, entry->pw_gecos, sizeof realname);
+			if (ptr)
+			{
+				size_t len = ptr - entry->pw_gecos;
+
+				strlcat(realname, entry->pw_name, sizeof realname);
+				strlcat(realname, ptr + 1, sizeof realname);
+
+				/* Make the first character of the username uppercase, if
+				   it's preceeded by a space */
+				if (len < sizeof realname && *(entry->pw_name) && 
+				   (len == 0 || isspace((unsigned char)realname[len - 1])))
+				{
+					realname[len] = toupper((unsigned char)realname[len]);
+				}
 			}
 		}
 		if (entry->pw_name && *(entry->pw_name) && !*username)
