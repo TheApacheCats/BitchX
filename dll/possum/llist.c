@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 #include "llist.h"
 
 llist *lmake(size_t size) {
