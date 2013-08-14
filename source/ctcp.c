@@ -82,7 +82,6 @@ static	char	*do_whoami 	(CtcpEntry *, char *, char *, char *);
 static	char	*do_ctcpops 	(CtcpEntry *, char *, char *, char *);
 static	char	*do_ctcpunban 	(CtcpEntry *, char *, char *, char *);
 static	char	*do_botlink 	(CtcpEntry *, char *, char *, char *);
-static	char	*do_botlink_rep	(CtcpEntry *, char *, char *, char *);
 static	char	*do_ctcp_uptime	(CtcpEntry *, char *, char *, char *);
 static	char	*do_ctcpident	(CtcpEntry *, char *, char *, char *);
 
@@ -158,7 +157,7 @@ static CtcpEntry ctcp_cmd[] =
 		do_ctcpident,	NULL },
 	{ "XLINK",	CTCP_BOTLINK,	CTCP_SPECIAL,
 		"x-filez rule",
-		do_botlink,	do_botlink_rep },
+		do_botlink,	NULL },
 
 	{ "UPTIME",	CTCP_UPTIME,	CTCP_SPECIAL,
 		"my uptime",
@@ -365,29 +364,6 @@ char *nick = NULL, *password = NULL, *port = NULL;
 
 	return NULL;
 }
-
-CTCP_HANDLER(do_botlink_rep)
-{
-#ifndef BITCHX_LITE
-char *type, *description, *inetaddr, *port, *extra_flags;
-	if (my_stricmp(to, get_server_nickname(from_server)))
-		return NULL;
-
-	if     (!(type = next_arg(cmd, &cmd)) ||
-		!(description = next_arg(cmd, &cmd)) ||
-		!(inetaddr = next_arg(cmd, &cmd)) ||
-		!(port = next_arg(cmd, &cmd)))
-			return NULL;
-
-	extra_flags = next_arg(cmd, &cmd);
-	set_int_var(BOT_MODE_VAR, 1);
-	register_dcc_type(from, type, description, inetaddr, port, NULL, extra_flags, FromUserHost, NULL);
-#endif
-	return NULL;
-}
-
-
-
 
 CTCP_HANDLER(do_cinvite)
 {

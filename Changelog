@@ -1,5 +1,7 @@
 [Changes 1.2c01]
 
+* Remove unused XLINK CTCP reply handler. (caf)
+
 * Ensure add_socketread() doesn't leak file descriptors. (caf)
 
 * Fix listing bans on local channels (/BANS &channel). (flashback)
