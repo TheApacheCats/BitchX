@@ -437,8 +437,7 @@ void BX_irc_exit (int really_quit, char *reason, char *format, ...)
 
 	close_all_servers(reason ? reason : buffer);
 
-	put_it("%s", buffer ? buffer : reason ? reason : empty_string);
-
+	put_it("%s", !format && reason ? reason : buffer);
 
 	clean_up_processes();
 	if (!dumb_mode && term_initialized)
@@ -1138,7 +1137,7 @@ static	char	*parse_args (char *argv[], int argc, char **envp)
 #endif
 	}
 
-	if (!nickname || !*nickname)
+	if (!*nickname)
 		strlcpy(nickname, username, sizeof nickname);
 
 	if (!check_nickname(nickname))
@@ -1201,23 +1200,19 @@ extern void set_screens (fd_set *, fd_set *);
 
 void BX_io (const char *what)
 {
-	static	int	first_time = 1,	
-			level = 0;
-		long	clock_timeout = 0, 
-			timer_timeout = 0,
-			server_timeout = 0,
-			real_timeout = 0; 
-static	struct	timeval my_now,
-			my_timer,
-			*time_ptr = &my_timer;
-
-	int		hold_over,
-			rc;
-	fd_set		rd, 
-			wd;
-	static int 	old_level = 0;
-static	const	char	*caller[51] = { NULL }; /* XXXX */
-	static	int	last_warn = 0;
+	static int level = 0;
+	long clock_timeout = 0, 
+		timer_timeout = 0,
+		server_timeout = 0,
+		real_timeout = 0; 
+	static struct timeval my_now,
+		my_timer,
+		*time_ptr = &my_timer;
+	int hold_over, rc;
+	fd_set rd, wd;
+	static int old_level = 0;
+	static const char *caller[51] = { NULL }; /* XXXX */
+	static int last_warn = 0;
 
 	level++;
 
@@ -1304,7 +1299,6 @@ static	const	char	*caller[51] = { NULL }; /* XXXX */
 		case -1:
 		{
 			/* if we just got a sigint */
-			first_time = 0;
 			if (cntl_c_hit)
 			{
 				edit_char('\003');
