@@ -883,7 +883,7 @@ static	char	*parse_args (char *argv[], int argc, char **envp)
 					fprintf(stderr,"Missing argument for -n\n");
 					exit(1);
 				}
-				strmcpy(nickname, what, NICKNAME_LEN);
+				strlcpy(nickname, what, sizeof nickname);
 				break;
 			}
 			case 'N':
@@ -916,7 +916,7 @@ static	char	*parse_args (char *argv[], int argc, char **envp)
 				}
 				else
 					break;
-				strmcpy(username, what, NAME_LEN);
+				strlcpy(username, what, sizeof username);
 				break;
 			}
 			case 'H':
@@ -971,7 +971,7 @@ static	char	*parse_args (char *argv[], int argc, char **envp)
 		else
 		{
 			if (!strchr(argv[ac], '.') && !strchr(argv[ac], ',') && !*nickname)
-				strmcpy(nickname, argv[ac], NICKNAME_LEN);
+				strlcpy(nickname, argv[ac], sizeof nickname);
 			else
 				build_server_list(argv[ac]);
 #ifdef HAVE_SSL
@@ -981,7 +981,7 @@ static	char	*parse_args (char *argv[], int argc, char **envp)
 	}
 
 	if (!*nickname && (ptr = getenv("IRCNICK")))
-		strmcpy(nickname, ptr, NICKNAME_LEN);
+		strlcpy(nickname, ptr, sizeof nickname);
 
 	if (!ircservers_file)
 #if defined(WINNT) || defined(__EMX__)
@@ -1005,9 +1005,9 @@ static	char	*parse_args (char *argv[], int argc, char **envp)
 		malloc_strcpy(&send_umode, ptr);
 
 	if ((ptr = getenv("IRCNAME")))
-		strmcpy(realname, ptr, REALNAME_LEN);
+		strlcpy(realname, ptr, sizeof realname);
 	else if ((ptr = getenv("NAME")))
-		strmcpy(realname, ptr, REALNAME_LEN);
+		strlcpy(realname, ptr, sizeof realname);
 
 	if ((ptr = getenv("IRCPATH")))
 		malloc_strcpy(&irc_path, ptr);
@@ -1033,8 +1033,8 @@ static	char	*parse_args (char *argv[], int argc, char **envp)
         * option. If not check IRCUSER, then USER, then the IDENT_HACK file, then
         * fallback to gecos below.
         */
-	if (!*username && (ptr = getenv("IRCUSER"))) strmcpy(username, ptr, NAME_LEN);
-	else if (!*username && (ptr = getenv("USER"))) strmcpy(username, ptr, NAME_LEN);
+	if (!*username && (ptr = getenv("IRCUSER"))) strlcpy(username, ptr, sizeof username);
+	else if (!*username && (ptr = getenv("USER"))) strlcpy(username, ptr, sizeof username);
 	else if (!*username)
 	{
 #ifdef IDENT_FAKE
@@ -1052,7 +1052,7 @@ static	char	*parse_args (char *argv[], int argc, char **envp)
 		new_free(&p); new_free(&q);
 		if (!*username)
 #endif
-			strmcpy(username, "Unknown", NAME_LEN); 
+			strlcpy(username, "Unknown", sizeof username); 
 
 	}
 
@@ -1066,24 +1066,24 @@ static	char	*parse_args (char *argv[], int argc, char **envp)
 				*ptr = (char) 0;
 #endif
 			if ((ptr = strchr(entry->pw_gecos, '&')) == NULL)
-				strmcpy(realname, entry->pw_gecos, REALNAME_LEN);
+				strlcpy(realname, entry->pw_gecos, sizeof realname);
 			else {
 				int len = ptr - entry->pw_gecos;
 
 				if (len < REALNAME_LEN && *(entry->pw_name)) {
 					char *q = realname + len;
 
-					strmcpy(realname, entry->pw_gecos, len);
+					strlcpy(realname, entry->pw_gecos, len);
 					strmcat(realname, entry->pw_name, REALNAME_LEN);
 					strmcat(realname, ptr + 1, REALNAME_LEN);
 					if (islower((unsigned char)*q) && (q == realname || isspace((unsigned char)*(q - 1))))
 						*q = toupper(*q);
 				} else
-					strmcpy(realname, entry->pw_gecos, REALNAME_LEN);
+					strlcpy(realname, entry->pw_gecos, sizeof realname);
 			}
 		}
 		if (entry->pw_name && *(entry->pw_name) && !*username)
-			strmcpy(username, entry->pw_name, NAME_LEN);
+			strlcpy(username, entry->pw_name, sizeof username);
 		if (entry->pw_dir && *(entry->pw_dir))
 			malloc_strcpy(&my_path, entry->pw_dir);
 	}
@@ -1109,7 +1109,7 @@ static	char	*parse_args (char *argv[], int argc, char **envp)
 	convert_unix(my_path);
 #endif
 	if (!*realname)
-		strmcpy(realname, "* I'm too lame to read BitchX.doc *", REALNAME_LEN);
+		strlcpy(realname, "* I'm too lame to read BitchX.doc *", sizeof realname);
 
 	if (!LocalHostName && ((ptr = getenv("IRC_HOST")) || (ptr = getenv("IRCHOST"))))
 		LocalHostName = m_strdup(ptr);
@@ -1134,7 +1134,7 @@ static	char	*parse_args (char *argv[], int argc, char **envp)
 	}
 
 	if (!nickname || !*nickname)
-		strmcpy(nickname, username, NICKNAME_LEN);
+		strlcpy(nickname, username, sizeof nickname);
 
 	if (!check_nickname(nickname))
 	{
