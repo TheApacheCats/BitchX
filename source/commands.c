@@ -4637,7 +4637,8 @@ static	unsigned int	 level = 0;
 		if ((rest = strchr(line, ' ')))
 		{
 			cline = alloca((rest - line) + 1);
-			strmcpy(cline, line, (rest - line));
+			memcpy(cline, line, rest - line);
+			cline[rest - line] = 0;
 			rest++;
 		}
 		else
