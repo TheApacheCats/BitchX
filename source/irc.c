@@ -1062,7 +1062,7 @@ static	char	*parse_args (char *argv[], int argc, char **envp)
 		if (!*realname && entry->pw_gecos && *(entry->pw_gecos))
 		{
 #ifdef GECOS_DELIMITER
-			if ((ptr = index(entry->pw_gecos, GECOS_DELIMITER)))
+			if ((ptr = strchr(entry->pw_gecos, GECOS_DELIMITER)))
 				*ptr = (char) 0;
 #endif
 			if ((ptr = strchr(entry->pw_gecos, '&')) == NULL)
