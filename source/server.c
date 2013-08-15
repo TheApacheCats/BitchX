@@ -2244,7 +2244,7 @@ void 	BX_set_server_nickname (int ssn_index, char *nick)
 	{
 		malloc_strcpy(&(server_list[ssn_index].nickname), nick);
 		if (ssn_index == primary_server)
-			strmcpy(nickname,nick, NICKNAME_LEN );
+			strlcpy(nickname, nick, sizeof nickname);
 	}
 	update_all_status(current_window, NULL, 0);
 }
