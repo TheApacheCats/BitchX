@@ -3428,7 +3428,7 @@ void show_server_map (void)
 	{
 		map = tmp->next;
 		if (!tmp->hopcount || tmp->hopcount != prevdist)
-			strmcpy(tmp1, convert_output_format("%K[%G$0%K]", "%d", tmp->hopcount), 79);
+			strlcpy(tmp1, convert_output_format("%K[%G$0%K]", "%d", tmp->hopcount), sizeof tmp1);
 		else
 			*tmp1 = 0;
 		snprintf(tmp2, BIG_BUFFER_SIZE, "$G %%W$[-%d]1%%c $0 %s", tmp->hopcount*3, tmp1);
