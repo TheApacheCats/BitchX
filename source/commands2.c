@@ -2576,7 +2576,7 @@ static int create_ipc_socket(void)
 
 	init_socketpath();
 
-	if ((s = connect_by_number(NULL, &port, SERVICE_SERVER, PROTOCOL_TCP, 0)) < 0)
+	if ((s = connect_by_number("127.0.0.1", &port, SERVICE_SERVER, PROTOCOL_TCP, 0)) < 0)
 	{
 		bitchsay("Error creating IPC socket: [%d] %s", s, strerror(errno));
 		return 1;

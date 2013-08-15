@@ -466,7 +466,11 @@ int BX_connect_by_number(char *hostn, unsigned short *portnum, int service, int 
 
 		memset(&name, 0, sizeof name);
 		name.sin_family = AF_INET;
-		name.sin_addr.s_addr = htonl(INADDR_ANY);
+
+		if (hostn)
+			inet_aton(hostn, &name.sin_addr);
+		else
+			name.sin_addr.s_addr = htonl(INADDR_ANY);
 
 		name.sin_port = htons(*portnum);
 #ifdef PARANOID
