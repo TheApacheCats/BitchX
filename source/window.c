@@ -233,7 +233,7 @@ void BX_delete_window(Window *window)
 		}
 	}
 	if (window->name)
-		strmcpy(buffer, window->name, BIG_BUFFER_SIZE - 1);
+		strlcpy(buffer, window->name, sizeof buffer);
 	else
 		sprintf(buffer, "%u", window->refnum);
 
