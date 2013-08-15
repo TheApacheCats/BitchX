@@ -1,5 +1,7 @@
 [Changes 1.2c01]
 
+* Make RANDOM_LOCAL_PORTS actually random. (caf)
+
 * Show same message on local terminal as used in emergency exit QUIT. (caf)
 
 * Remove unused XLINK CTCP reply handler. (caf)

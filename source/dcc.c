@@ -622,7 +622,7 @@ DCC_List		*new_i;
 		 * generate a random port to use.
 		 */
 		if (!port && get_int_var(RANDOM_LOCAL_PORTS_VAR))
-			portnum = random_number(65535 - 1024) + 1024;
+			portnum = random_number(0) % (65536 - 1024) + 1024;
 
 		if (get_int_var(DCC_FORCE_PORT_VAR))
 			portnum = get_int_var(DCC_FORCE_PORT_VAR);
@@ -637,7 +637,7 @@ DCC_List		*new_i;
 			 * random local ports is on, try a random port.
 			 */
 			if(port && get_int_var(RANDOM_LOCAL_PORTS_VAR))
-				portnum = random_number(65535 - 1024) + 1024;
+				portnum = random_number(0) % (65536 - 1024) + 1024;
 			else
 				portnum = 0;
 			if ((s = connect_by_number(NULL, &portnum, SERVICE_SERVER, PROTOCOL_TCP, 1)) < 0)
