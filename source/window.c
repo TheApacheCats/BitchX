@@ -3438,7 +3438,7 @@ static Window *window_log (Window *window, char **args, char *usage)
 	else if (!(logfile = get_string_var(LOGFILE_VAR)))
 		logfile = empty_string;
 
-	strmcpy(buffer,  logfile, BIG_BUFFER_SIZE);
+	strlcpy(buffer, logfile, sizeof buffer);
 
 	if (add_ext)
 	{
