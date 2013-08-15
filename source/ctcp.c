@@ -1001,14 +1001,14 @@ const	char	*my_host;
 	 * latter because it invokes less suspicion in the long run
 	 *				-- Jake [WinterHawk] Khuon
 	 */
-	if ((ctcpuser = getenv("IRCUSER"))) 
-		strmcpy(pwd->pw_name, ctcpuser, NAME_LEN);
-	if ((ctcpfinger = getenv("IRCFINGER"))) 
-		strmcpy(pwd->pw_gecos, ctcpfinger, NAME_LEN);
+	if (!(ctcpuser = getenv("IRCUSER"))) 
+		ctcpuser = pwd->pw_name;
+	if (!(ctcpfinger = getenv("IRCFINGER")))
+		ctcpfinger = pwd->pw_gecos;
 
 	send_ctcp(CTCP_NOTICE, from, CTCP_FINGER, 
 		"%s (%s@%s) Idle %ld second%s", 
-		pwd->pw_gecos, pwd->pw_name, my_host, diff, plural(diff));
+		ctcpfinger, ctcpuser, my_host, diff, plural(diff));
 	return NULL;
 }
 
