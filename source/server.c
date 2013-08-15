@@ -2811,7 +2811,7 @@ void	accept_server_nickname (int ssn_index, char *nick)
 	server_list[ssn_index].fudge_factor = 0;
 
 	if (ssn_index == primary_server)
-		strmcpy(nickname, nick, NICKNAME_LEN);
+		strlcpy(nickname, nick, sizeof nickname);
 
 	update_all_status(current_window, NULL, 0);
 	update_input(UPDATE_ALL);
