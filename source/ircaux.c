@@ -989,7 +989,7 @@ char	*BX_expand_twiddle (char *str)
 		if (*str == '/')
 #endif
 		{
-			strmcpy(buffer, my_path, BIG_BUFFER_SIZE/4);
+			strlcpy(buffer, my_path, sizeof buffer);
 			strmcat(buffer, str, BIG_BUFFER_SIZE/4);
 		}
 		else
@@ -1004,16 +1004,16 @@ char	*BX_expand_twiddle (char *str)
 			if (((entry = getpwnam(str)) != NULL) || (p = getenv("HOME")))
 			{
 				if (p)
-					strmcpy(buffer, p, BIG_BUFFER_SIZE/4);
+					strlcpy(buffer, p, sizeof buffer);
 				else
-					strmcpy(buffer, entry->pw_dir, BIG_BUFFER_SIZE/4);
+					strlcpy(buffer, entry->pw_dir, sizeof buffer);
 #else
 			if ((entry = getpwnam(str)) != NULL || (p = getenv("HOME")))
 			{
 				if (p)
-					strmcpy(buffer, p, BIG_BUFFER_SIZE/4);
+					strlcpy(buffer, p, sizeof buffer);
 				else
-					strmcpy(buffer, entry->pw_dir, BIG_BUFFER_SIZE/4);
+					strlcpy(buffer, entry->pw_dir, sizeof buffer);
 #endif
 				if (rest)
 				{
@@ -1026,7 +1026,7 @@ char	*BX_expand_twiddle (char *str)
 		}
 	}
 	else
-		strmcpy(buffer, str, BIG_BUFFER_SIZE/4);
+		strlcpy(buffer, str, sizeof buffer);
 
 	/* This isnt legal! */
 	str2 = NULL;
