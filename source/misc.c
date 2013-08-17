@@ -4026,9 +4026,9 @@ char *newusername = NULL;
 #endif
 		fclose(outfile);
 #endif
-		strmcpy(username, newusername, NAME_LEN);
+		strlcpy(username, newusername, sizeof username);
 		if (subargs && *subargs)
-                        strmcpy(realname, subargs, REALNAME_LEN);
+                        strlcpy(realname, subargs, sizeof realname);
 #ifdef IDENT_FAKE
 		new_free(&p); new_free(&q);
 #endif
