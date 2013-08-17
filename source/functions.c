@@ -5442,19 +5442,19 @@ BUILT_IN_FUNCTION(function_ftime, words)
 	if ((filename = new_next_arg(words, &words)))
 	{
 		if (*filename == '/')
-			strlcpy(FileBuf, filename, BIG_BUFFER_SIZE);
+			strlcpy(FileBuf, filename, sizeof FileBuf);
 
 		else if (*filename == '~') 
 		{
 			if (!(fullname = expand_twiddle(filename)))
 				RETURN_EMPTY;
 
-			strmcpy(FileBuf, fullname, BIG_BUFFER_SIZE);
+			strlcpy(FileBuf, fullname, sizeof FileBuf);
 			new_free(&fullname);
 		}
 #if defined(__EMX__) || defined(WINNT)
 		else if (is_dos(filename))
-			strmcpy(FileBuf, filename, BIG_BUFFER_SIZE);
+			strlcpy(FileBuf, filename, sizeof FileBuf);
 #endif
 		else 
 		{
