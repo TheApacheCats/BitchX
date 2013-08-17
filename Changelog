@@ -1,5 +1,7 @@
 [Changes 1.2c01]
 
+* Improve the initial seeding of the randm() fallback RNG. (caf)
+
 * Strengthen the cookie generation algorithm for /detach. (caf)
 
 * RANDOM_SOURCE now only affects the rand() scripting function. (caf)

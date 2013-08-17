@@ -3135,19 +3135,26 @@ char *	get_userhost (void)
 unsigned long randm(unsigned long l)
 {
 	/* patch from Sarayan to make $rand() better */
-static	const	long	RAND_A = 16807L;
-static	const	long	RAND_M = 2147483647L;
-static	const	long	RAND_Q = 127773L;
-static	const	int	RAND_R = 2836L;
-static		u_long	z = 0;
-		long	t;
+	static const long RAND_A = 16807L;
+	static const long RAND_M = 2147483647L;
+	static const long RAND_Q = 127773L;
+	static const int RAND_R = 2836L;
+	static unsigned long z = 0;
 
 	if (z == 0)
-		z = (u_long) getuid();
+	{
+		struct timeval tv;
+
+		get_time(&tv);
+		z = tv.tv_usec << 12;
+		z ^= (unsigned long)tv.tv_sec;
+		z ^= (unsigned long)getuid() << 16;
+		z ^= (unsigned long)getpid();
+	}
 
 	if (l == 0)
 	{
-		t = RAND_A * (z % RAND_Q) - RAND_R * (z / RAND_Q);
+		long t = RAND_A * (z % RAND_Q) - RAND_R * (z / RAND_Q);
 		if (t > 0)
 			z = t;
 		else
@@ -3156,10 +3163,7 @@ static		u_long	z = 0;
 	}
 	else
 	{
-		if (l < 0)
-			z = (u_long) getuid();
-		else
-			z = l;
+		z = l;
 		return 0;
 	}
 }
