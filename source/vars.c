@@ -1360,9 +1360,9 @@ static	void eight_bit_characters(Window *win, char *unused, int value)
 static	void set_realname(Window *win, char *value, int unused)
 {
 	if (value)
-		strmcpy(realname, value, REALNAME_LEN);
+		strlcpy(realname, value, sizeof realname);
 	else
-		strmcpy(realname, empty_string, REALNAME_LEN);
+		strlcpy(realname, empty_string, sizeof realname);
 }
 
 void reinit_autoresponse(Window *win, char *value, int unused)
