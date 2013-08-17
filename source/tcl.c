@@ -1169,8 +1169,7 @@ char s[BIG_BUFFER_SIZE+1],*p;
 
 	
 	BADARGS(2,2," \"text\"");
-	strmcpy(s,argv[1],BIG_BUFFER_SIZE-1); 
-	s[BIG_BUFFER_SIZE-1]=0;
+	strlcpy(s, argv[1], sizeof s);
 	if ((p=strchr(s,'\n')))
 		*p = 0;
 	if ((p=strchr(s,'\r')))
