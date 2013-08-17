@@ -128,8 +128,10 @@ char *  BX_strmpcat		(char *, size_t, const char *, ...);
 char *	chomp			(char *);
 size_t	BX_ccspan			(const char *, int);
 u_char *BX_strcpy_nocolorcodes	(u_char *, const u_char *);
-
-u_long	BX_random_number		(u_long);
+unsigned long randm(unsigned long);
+unsigned long randt(unsigned long);
+unsigned long randd(unsigned long);
+unsigned long BX_random_number(unsigned long);
 char *	get_userhost		(void);
 
 char *	urlencode		(const char *);

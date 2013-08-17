@@ -1347,13 +1347,31 @@ BUILT_IN_FUNCTION(function_mid, word)
  */
 BUILT_IN_FUNCTION(function_rand, word)
 {
-	long	tempin;
-	int 	result;
+	long tempin;
+	unsigned long rand_n;
+	int result;
 
 	GET_INT_ARG(tempin, word);
-	if (tempin == 0)
-		tempin = (unsigned long) -1;	/* This is cheating. :P */
-	result = random_number(0L) % tempin;
+
+	switch (get_int_var(RANDOM_SOURCE_VAR))
+	{
+		case 0:
+		default:
+			rand_n = randd(0);
+			break;
+		case 1:
+			rand_n = randm(0);
+			break;
+		case 2:
+			rand_n = randt(0);
+			break;
+	}
+
+	if (tempin)
+		result = rand_n % tempin;
+	else
+		result = rand_n;
+
 	RETURN_INT(result);
 }
 
@@ -1365,7 +1383,9 @@ BUILT_IN_FUNCTION(function_rand, word)
  */
 BUILT_IN_FUNCTION(function_srand, word)
 {
-	random_number((long) now);
+	/* randd() and randt() do not accept seeding */
+	randm((long)now);
+
 	RETURN_EMPTY;
 }
 

@@ -3132,7 +3132,7 @@ char *	get_userhost (void)
  * to call it once to set the seed.  Subsequent calls should use 'l' 
  * as 0, and it will return a value.
  */
-static	unsigned long	randm (unsigned long l)
+unsigned long randm(unsigned long l)
 {
 	/* patch from Sarayan to make $rand() better */
 static	const	long	RAND_A = 16807L;
@@ -3178,7 +3178,7 @@ static unsigned long randt_2 (void)
 	return (unsigned long) tp1.tv_usec;
 }
 
-static	unsigned long randt (unsigned long l)
+unsigned long randt(unsigned long l)
 {
 #ifdef HAVE_GETTIMEOFDAY
 	unsigned long t1, t2, t;
@@ -3203,7 +3203,7 @@ static	unsigned long randt (unsigned long l)
  * substantial unpredictable numbers.  At worst, it is mathematical psuedo-
  * random sequence (which randm() is).
  */
-static unsigned long randd (unsigned long l)
+unsigned long randd(unsigned long l)
 {
 	unsigned long	value;
 static	int		random_fd = -1;
@@ -3227,19 +3227,10 @@ static	int		random_fd = -1;
 	return value;
 }
 
-
-unsigned long	BX_random_number (unsigned long l)
+unsigned long BX_random_number(unsigned long l)
 {
-	switch (get_int_var(RANDOM_SOURCE_VAR))
-	{
-		case 0:
-		default:
-			return randd(l);
-		case 1:
-			return randm(l);
-		case 2:
-			return randt(l);
-	}
+	/* Always use the strongest random source for internal client use. */
+	return randd(l);
 }
 
 /*

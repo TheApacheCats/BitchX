@@ -1,5 +1,7 @@
 [Changes 1.2c01]
 
+* RANDOM_SOURCE now only affects the rand() scripting function. (caf)
+
 * Make RANDOM_LOCAL_PORTS actually random. (caf)
 
 * Show same message on local terminal as used in emergency exit QUIT. (caf)
