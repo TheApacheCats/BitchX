@@ -4955,7 +4955,7 @@ static char buffer[IRCD_BUFFER_SIZE+1];
         if (*chan != '#' && *chan != '&' && *chan != '+' && *chan != '!')
 		snprintf(buffer, IRCD_BUFFER_SIZE-2, "#%s", chan);
 	else
-		strmcpy(buffer, chan, IRCD_BUFFER_SIZE-1);
+		strlcpy(buffer, chan, sizeof buffer);
 	return buffer;
 }
 
