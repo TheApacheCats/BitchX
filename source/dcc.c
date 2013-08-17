@@ -1031,7 +1031,7 @@ char		thing = 0;
 		if (!strcmp(cmd, "PRIVMSG"))
 			strlcpy(tmp, "CTCP_MESSAGE ", sizeof tmp);
 		else
-			strmcpy(tmp, "CTCP_REPLY ", sizeof tmp);
+			strlcpy(tmp, "CTCP_REPLY ", sizeof tmp);
 	}
 
 	strmcat(tmp, text, n->blocksize-3);
