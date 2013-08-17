@@ -776,7 +776,7 @@ void make_status(Window *win)
 			int  af = 0;
 
 			str = expand_alias(buffer, empty_string, &af, NULL);
-			strmcpy(buffer, str, BIG_BUFFER_SIZE);
+			strlcpy(buffer, str, sizeof buffer);
 			new_free(&str);
 		}
 
