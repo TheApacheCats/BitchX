@@ -1096,7 +1096,7 @@ char logtext[BIG_BUFFER_SIZE+1];
 
 	
 	BADARGS(2,2," text");
-	strmcpy(logtext,argv[1],BIG_BUFFER_SIZE); 
+	strlcpy(logtext, argv[1], sizeof logtext);
 	putlog(LOG_ALL,"*","%s",logtext);
 	return TCL_OK;
 }
