@@ -1110,7 +1110,7 @@ static char my_buffer[MY_BUFFER/2+1];
 		*localbuf = 0;
 	else {
 		if (window->server > -1)
-			strmcpy(localbuf, get_umode(window->server), MY_BUFFER);
+			strlcpy(localbuf, get_umode(window->server), sizeof localbuf);
 		else
 			*localbuf = 0;
 	}
