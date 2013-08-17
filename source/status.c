@@ -1406,7 +1406,7 @@ char	*text;
 static	char	*status_refnum(Window *window)
 {
 static char my_buffer[MY_BUFFER/3+1];
-	strmcpy(my_buffer, window->name ? window->name : ltoa(window->refnum), MY_BUFFER/3);
+	strlcpy(my_buffer, window->name ? window->name : ltoa(window->refnum), sizeof my_buffer);
 	return (my_buffer);
 }
 
