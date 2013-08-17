@@ -1029,9 +1029,9 @@ char		thing = 0;
 	if (cmd && *text == CTCP_DELIM_CHAR && strncmp(text+1, "ACTION", 6))
 	{
 		if (!strcmp(cmd, "PRIVMSG"))
-			strmcpy(tmp, "CTCP_MESSAGE ", n->blocksize);
+			strlcpy(tmp, "CTCP_MESSAGE ", sizeof tmp);
 		else
-			strmcpy(tmp, "CTCP_REPLY ", n->blocksize);
+			strmcpy(tmp, "CTCP_REPLY ", sizeof tmp);
 	}
 
 	strmcat(tmp, text, n->blocksize-3);
