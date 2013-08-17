@@ -1183,9 +1183,9 @@ static	char	my_buffer[IRCD_BUFFER_SIZE + 1];
 		    is_channel_mode(window->current_channel,
 				MODE_PRIVATE | MODE_SECRET,
 				window->server))
-			strmcpy(channel, "*private*", IRCD_BUFFER_SIZE);
+			strlcpy(channel, "*private*", sizeof channel);
 		else
-			strmcpy(channel, window->current_channel, IRCD_BUFFER_SIZE);
+			strlcpy(channel, window->current_channel, sizeof channel);
 
 		#ifdef WANT_HEBREW
 		if (get_int_var(HEBREW_TOGGLE_VAR))
