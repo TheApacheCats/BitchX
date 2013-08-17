@@ -286,7 +286,7 @@ char *ov_server(int server)
 		string = get_server_name(server);
 	if (!string || !*string)
 		return  empty_string;
-	strmcpy(tmpstr, string, 60);
+	strlcpy(tmpstr, string, sizeof tmpstr);
 	if (!(c = strrchr(tmpstr,'.')))
 		return(string);
 	*c = 0;
