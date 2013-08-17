@@ -2559,13 +2559,16 @@ void kill_attached_if_needed(int type)
 
 void make_cookie(void)
 {
-int i, j;
-	memset(connect_cookie, 0, sizeof(connect_cookie));
-	for (i = 0; i < (int) (20.0 * rand()/RAND_MAX) + 5; i++)
-	{
-		j = (int)(95.0 * rand()/RAND_MAX);
-		connect_cookie[i] = j + 32;
-	}
+	unsigned char rand_bytes[21];
+	int i;
+	char *cookie;
+
+	for (i = 0; i < sizeof rand_bytes; i++)
+		rand_bytes[i] = random_number(0);
+
+	cookie = base64_encode(rand_bytes, sizeof rand_bytes);
+	strlcpy(connect_cookie, cookie, sizeof connect_cookie);
+	new_free(&cookie);
 }
 
 static int create_ipc_socket(void)
