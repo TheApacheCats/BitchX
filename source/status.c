@@ -1655,7 +1655,7 @@ static	char	*status_windowspec	(Window *window)
 {
 static char my_buffer[81];
 	if (window->wset->window_special_format)
-		strmcpy(my_buffer, window->wset->window_special_format, 80);
+		strlcpy(my_buffer, window->wset->window_special_format, sizeof my_buffer);
 	else
 		*my_buffer = 0;
 
