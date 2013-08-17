@@ -4395,7 +4395,7 @@ BUILT_IN_FUNCTION(function_rot13, input)
 	char temp[BIG_BUFFER_SIZE+1];
 	register char *p = NULL;
 	int rotate = 13;
-	strmcpy(temp, input, BIG_BUFFER_SIZE);
+	strlcpy(temp, input, sizeof temp);
 	for (p = temp; *p; p++) {
 		if (*p >= 'A' && *p <='Z')
 			*p = (*p - 'A' + rotate) % 26 + 'A';
