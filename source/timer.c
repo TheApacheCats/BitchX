@@ -321,7 +321,7 @@ static	int	create_timer_ref (char *refnum_want, char *refnum_gets)
 			if (refnum < ref)
 				refnum = ref;
 		}
-		strmcpy(refnum_gets, ltoa(refnum+1), REFNUM_MAX);
+		strlcpy(refnum_gets, ltoa(refnum+1), REFNUM_MAX);
 	}
 	else
 	{
@@ -331,7 +331,7 @@ static	int	create_timer_ref (char *refnum_want, char *refnum_gets)
 			if (!my_stricmp(tmp->ref, refnum_want))
 				return -1;
 		}
-		strmcpy(refnum_gets, refnum_want, REFNUM_MAX);
+		strlcpy(refnum_gets, refnum_want, REFNUM_MAX);
 	}
 
 	return 0;
