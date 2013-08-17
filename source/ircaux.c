@@ -3110,7 +3110,7 @@ int i = 0, j = 0, len;
 /* XXXX this doesnt belong here. im not sure where it goes, though. */
 char *	get_userhost (void)
 {
-	strmcpy(userhost, username, NAME_LEN);
+	strlcpy(userhost, username, sizeof userhost);
 	strmcat(userhost, "@", NAME_LEN);
 	strmcat(userhost, hostname, NAME_LEN);
 	return userhost;
