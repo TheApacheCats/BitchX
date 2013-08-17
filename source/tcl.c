@@ -1132,7 +1132,7 @@ char logtext[BIG_BUFFER_SIZE + 1];
 			lev=LOG_USER5; 
 			break;
 	}
-	strmcpy(logtext,argv[3],BIG_BUFFER_SIZE); 
+	strlcpy(logtext, argv[3], sizeof logtext);
 	putlog(lev,argv[2],"%s",logtext);
 	return TCL_OK;
 }
