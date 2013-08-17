@@ -1364,7 +1364,7 @@ static  char	my_buffer[MY_BUFFER+41];
 				snprintf(my_buffer, MY_BUFFER, window->wset->topic_format, stripansicodes(t2));
 			}
 			else
-				strmcpy(my_buffer, "No Topic", MY_BUFFER);
+				strlcpy(my_buffer, "No Topic", sizeof my_buffer);
 			return(my_buffer);
 		}
 	}
