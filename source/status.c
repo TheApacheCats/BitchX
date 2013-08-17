@@ -463,7 +463,7 @@ int		in_rhs = 0,
 		Window *old = current_window;
 		current_window = win;
 		stuff = expand_alias(buffer, empty_string, &af, NULL);
-		strmcpy(buffer, stuff, BIG_BUFFER_SIZE);
+		strlcpy(buffer, stuff, sizeof buffer);
 		new_free(&stuff);
 		current_window = old;
 	}
