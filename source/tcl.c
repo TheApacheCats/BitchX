@@ -1184,9 +1184,8 @@ char s[BIG_BUFFER_SIZE+1];
 int idx = 0;
 	BADARGS(3,3 ," hand idx text");
 
-	strmcpy(s,argv[2],BIG_BUFFER_SIZE-2); 
-	strncat(s,"\n",BIG_BUFFER_SIZE-1);
-	s[BIG_BUFFER_SIZE]=0;
+	strlcpy(s, argv[2], sizeof s - 1);
+	strlcat(s, "\n", sizeof s);
 	idx = atoi(argv[1]);
 	send(idx, s, strlen(s), 0);
 	return TCL_OK;
