@@ -4189,16 +4189,13 @@ BUILT_IN_FUNCTION(function_crypt, words)
 #if defined(WINNT)
 	RETURN_STR(empty_string);
 #else
-        char pass[9] = "\0";
-        char seed[3] = "\0";
-        char *blah, *bleh, *crypt (const char *, const char *);
+	char *pass, *salt;
+	extern char *crypt(const char *, const char *);
 
-	GET_STR_ARG(blah, words)
-	GET_STR_ARG(bleh, words)
-	strmcpy(pass, blah, 8);
-	strmcpy(seed, bleh, 2);
+	GET_STR_ARG(pass, words)
+	GET_STR_ARG(salt, words)
 
-	RETURN_STR(crypt(pass, seed));
+	RETURN_STR(crypt(pass, salt));
 #endif
 }
 
