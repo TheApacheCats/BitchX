@@ -1637,8 +1637,8 @@ void BX_split_CTCP(char *raw_message, char *ctcp_dest, char *after_ctcp)
 	}
 
 	*ctcp_end++ = 0;
-	strmcpy(ctcp_dest, ctcp_start, IRCD_BUFFER_SIZE-2);
-	strmcpy(after_ctcp, ctcp_end, IRCD_BUFFER_SIZE-2);
+	strlcpy(ctcp_dest, ctcp_start, IRCD_BUFFER_SIZE - 2);
+	strlcpy(after_ctcp, ctcp_end, IRCD_BUFFER_SIZE - 2);
 
 	return;		/* All done! */
 }
