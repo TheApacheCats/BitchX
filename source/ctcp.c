@@ -1109,9 +1109,9 @@ extern 	char *do_ctcp (char *from, char *to, char *str)
 	flag = check_ignore(from, FromUserHost, to, IGNORE_CTCPS, NULL);
 
 	in_ctcp_flag++;
-	strmcpy(local_ctcp_buffer, str, IRCD_BUFFER_SIZE-2);
+	strlcpy(local_ctcp_buffer, str, sizeof local_ctcp_buffer - 2);
 
-	for (;;strmcat(local_ctcp_buffer, last, IRCD_BUFFER_SIZE-2))
+	for (;;strlcat(local_ctcp_buffer, last, sizeof local_ctcp_buffer - 2))
 	{
 		split_CTCP(local_ctcp_buffer, the_ctcp, last);
 
@@ -1271,10 +1271,10 @@ extern 	char *do_ctcp (char *from, char *to, char *str)
 		/* If its an inline CTCP paste it back in */
 #ifdef WANT_DLL
 		if ((ctcp_cmd[i].flag & CTCP_INLINE) || (dll && (dll->flag & CTCP_INLINE)))
-			strmcat(local_ctcp_buffer, ptr, BIG_BUFFER_SIZE);
+			strlcat(local_ctcp_buffer, ptr, sizeof local_ctcp_buffer);
 #else
 		if ((ctcp_cmd[i].flag & CTCP_INLINE))
-			strmcat(local_ctcp_buffer, ptr, BIG_BUFFER_SIZE);
+			strlcat(local_ctcp_buffer, ptr, sizeof local_ctcp_buffer);
 #endif
 		/* If its interesting, tell the user. */
 #ifdef WANT_DLL
@@ -1304,10 +1304,8 @@ extern 	char *do_ctcp (char *from, char *to, char *str)
 	reset_display_target();
 
 	in_ctcp_flag--;
-	if (*local_ctcp_buffer)
-		return strcpy(str, local_ctcp_buffer);
-	else
-		return empty_string;
+	strlcpy(str, local_ctcp_buffer, BIG_BUFFER_SIZE);
+	return str;
 }
 
 
