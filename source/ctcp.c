@@ -1342,10 +1342,10 @@ extern 	char *do_notice_ctcp (char *from, char *to, char *str)
 		in_ctcp_flag = -1;
 
 	tbuf = stripansi(str);
-	strmcpy(local_ctcp_buffer, tbuf, IRCD_BUFFER_SIZE-2);
+	strlcpy(local_ctcp_buffer, tbuf, sizeof local_ctcp_buffer - 2);
 	new_free(&tbuf);
 		
-	for (;;strmcat(local_ctcp_buffer, last, IRCD_BUFFER_SIZE-2))
+	for (;;strlcat(local_ctcp_buffer, last, sizeof local_ctcp_buffer - 2))
 	{
 		split_CTCP(local_ctcp_buffer, the_ctcp, last);
 		if (!*the_ctcp)
@@ -1397,7 +1397,7 @@ extern 	char *do_notice_ctcp (char *from, char *to, char *str)
 		{
 			if ((ptr = ctcp_cmd[i].repl(ctcp_cmd + i, from, to, ctcp_argument)))
 			{
-				strmcat(local_ctcp_buffer, ptr, BIG_BUFFER_SIZE);
+				strlcat(local_ctcp_buffer, ptr, sizeof local_ctcp_buffer);
 				new_free(&ptr);
 				continue;
 			}
@@ -1407,7 +1407,7 @@ extern 	char *do_notice_ctcp (char *from, char *to, char *str)
 		{
 			if ((ptr = dll->repl(dll, from, to, ctcp_argument)))
 			{
-				strmcat(local_ctcp_buffer, ptr, BIG_BUFFER_SIZE);
+				strlcat(local_ctcp_buffer, ptr, sizeof local_ctcp_buffer);
 				new_free(&ptr);
 				continue;
 			}
@@ -1433,7 +1433,8 @@ extern 	char *do_notice_ctcp (char *from, char *to, char *str)
 	/* Reset the window level/logging */
 	reset_display_target();
 
-	return strcpy(str, local_ctcp_buffer);
+	strlcpy(str, local_ctcp_buffer, BIG_BUFFER_SIZE);
+	return str;
 }
 
 
