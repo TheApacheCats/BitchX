@@ -294,26 +294,22 @@ char *s;
 
 int check_mode_lock(char *channel, char *mode_list, int server)
 {
-ChannelList *chan;
-char buffer[BIG_BUFFER_SIZE+1];
+	ChannelList *chan;
+	char buffer[BIG_BUFFER_SIZE];
 	
 	if ((chan = lookup_channel(channel, server, 0)) && chan->modelock_key)
 	{
-		char *newmode;
-		char *modelock = NULL;
-		char *new_mode_list = NULL;
-		char *save, *save1;
+		char *modelock, *new_mode_list, *newmode, *save, *save1;
 		char *args = NULL, *args1 = NULL;
 		int add = 0;
-		memset(buffer, 0, sizeof(buffer));
-		
-		
-		malloc_strcpy(&modelock, chan->modelock_key);
-		malloc_strcpy(&new_mode_list, mode_list);
-		save1 = new_mode_list;
+
+		*buffer = 0;
+		modelock = m_strdup(chan->modelock_key);
+		new_mode_list = m_strdup(mode_list);
 		save = modelock;
-		new_mode_list = next_arg(new_mode_list, &args1);
+		save1 = new_mode_list;
 		modelock = next_arg(modelock, &args);		
+		new_mode_list = next_arg(new_mode_list, &args1);
 
 		while (*modelock)
 		{
@@ -335,25 +331,25 @@ char buffer[BIG_BUFFER_SIZE+1];
 							key = next_arg(args1, &args1);
 							if (chan->key)
 							{
-								strcat(buffer, "-k " );
-								strcat(buffer, chan->key);
+								strlcat(buffer, "-k ", sizeof buffer);
+								strlcat(buffer, chan->key, sizeof buffer);
 							}
 							key = next_arg(args, &args);
 							if (key)
 							{
-								strcat(buffer, " +k ");
-								strcat(buffer, key);
-								strcat(buffer, space);
+								strlcat(buffer, " +k ", sizeof buffer);
+								strlcat(buffer, key, sizeof buffer);
+								strlcat(buffer, space, sizeof buffer);
 							}
 						}
 						else
 						{
 							if (!chan->key)
 								break;
-							strcat(buffer, "-k ");
-							strcat(buffer, chan->key);
+							strlcat(buffer, "-k ", sizeof buffer);
+							strlcat(buffer, chan->key, sizeof buffer);
 						}
-						strcat(buffer, space);
+						strlcat(buffer, space, sizeof buffer);
 					}
 					break;
 				case 'l':
@@ -366,15 +362,15 @@ char buffer[BIG_BUFFER_SIZE+1];
 								limit = strtoul(args, &args, 10);
 							if (limit > 0)
 							{
-								strcat(buffer, "+l ");
-								strcat(buffer, ltoa(limit));
-								strcat(buffer, space);
+								strlcat(buffer, "+l ", sizeof buffer);
+								strlcat(buffer, ltoa(limit), sizeof buffer);
+								strlcat(buffer, space, sizeof buffer);
 							}
 						}
 						else
 						{
 							chan->limit = 0;
-							strcat(buffer, "-l");
+							strlcat(buffer, "-l", sizeof buffer);
 						}
 					}
 					break;
@@ -383,14 +379,14 @@ char buffer[BIG_BUFFER_SIZE+1];
 					{
 						if (add)
 						{
-							strcat(buffer, "+");
+							strlcat(buffer, "+", sizeof buffer);
 						}
 						else
 						{
-							strcat(buffer, "-");
+							strlcat(buffer, "-", sizeof buffer);
 						}
 						buffer[strlen(buffer)] = *modelock;
-						strcat(buffer, space);
+						strlcat(buffer, space, sizeof buffer);
 					}
 					break;
 			}
