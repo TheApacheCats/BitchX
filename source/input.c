@@ -502,7 +502,7 @@ extern void	input_move_cursor (int dir)
  */
 void	BX_set_input (char *str)
 {
-	strmcpy(INPUT_BUFFER + MIN_POS, str, INPUT_BUFFER_SIZE - MIN_POS);
+	strlcpy(INPUT_BUFFER + MIN_POS, str, INPUT_BUFFER_SIZE - MIN_POS);
 	THIS_POS = strlen(INPUT_BUFFER);
 }
 
