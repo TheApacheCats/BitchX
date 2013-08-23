@@ -1328,7 +1328,7 @@ void	BX_ircpanic (char *format, ...)
 	yell("An unrecoverable logic error has occured.");
 	yell("Please email " BUG_EMAIL " and include the following message:");
 
-	yell("Panic: [%s:%s %s]", irc_version, buffer, cx_function?cx_function:empty_string);
+	yell("Panic: [%s:%s %s]", irc_version, buffer, cx_function);
 	dump_call_stack();
 	irc_exit(1, "BitchX panic... Could it possibly be a bug?  Nahhhh...", NULL);
 }
