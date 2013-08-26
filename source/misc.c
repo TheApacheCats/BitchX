@@ -1276,14 +1276,11 @@ FILE	*f;
 #endif
 }
 
-int rename_file (char *old_file, char **new_file)
+int rename_file(char *old_file, char **new_file)
 {
-	char *tmp = NULL;
-	char buffer[BIG_BUFFER_SIZE+4];
-	char *c = NULL;
 	FILE *fp;
-			
-
+	char *c, *tmp = NULL;
+	char buffer[BIG_BUFFER_SIZE];
 	
 	c = alloca(10);
 	sprintf(c, "%03i.", getrandom(0, 999));
@@ -1293,7 +1290,7 @@ int rename_file (char *old_file, char **new_file)
 		malloc_sprintf(&tmp, "%s", c); 
 
 	malloc_strcat(&tmp, *new_file);
-	strmcpy(buffer, *new_file, BIG_BUFFER_SIZE);
+	strlcpy(buffer, *new_file, sizeof buffer);
 	while ((fp = fopen(tmp, "r")) != NULL)
 	{
 		fclose(fp);
