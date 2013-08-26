@@ -513,7 +513,7 @@ void	BX_set_input (char *str)
  */
 void	BX_set_input_heb (char *str)
 {
-	strmcpy(INPUT_BUFFER + MIN_POS, str, INPUT_BUFFER_SIZE - MIN_POS);
+	strlcpy(INPUT_BUFFER + MIN_POS, str, INPUT_BUFFER_SIZE - MIN_POS);
 }
 #endif
 
