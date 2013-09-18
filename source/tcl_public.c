@@ -453,7 +453,7 @@ Tcl_GetKeyedListKeys (tcl_interp, subFieldName, keyedList, keysArgcPtr,
                         NULL);
         TclFindElement (tcl_interp, fieldPtr, &keyPtr, &dummyPtr, &keySize, NULL);
         keyArgv [idx++] = nextByte;
-        strmcpy (nextByte, keyPtr, keySize);
+        strlcpy (nextByte, keyPtr, keySize);
         nextByte [keySize] = '\0';
         nextByte += keySize + 1; 
     }
