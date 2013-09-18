@@ -250,11 +250,11 @@ char 	*decrypt_msg (char *str, char *key)
 
 	if ((ptr = do_crypt(str, key, 0)) != NULL)
 	{
-		strmcpy(buffer, ptr, CRYPT_BUFFER_SIZE);
+		strlcpy(buffer, ptr, CRYPT_BUFFER_SIZE);
 		new_free(&ptr);
 	}
 	else
-		strmcat(buffer, str, CRYPT_BUFFER_SIZE);
+		strlcat(buffer, str, CRYPT_BUFFER_SIZE);
 
 	return buffer;
 }
