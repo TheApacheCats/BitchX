@@ -3188,9 +3188,9 @@ char *cluster (char *hostname)
 			
 			if (ident_len <= 9) {
 				/* copy ident@ */
-				strmcpy(result, hostname, ident_len + 1);
+				strlcpy(result, hostname, ident_len + 1);
 			} else {
-				strmcpy(result, hostname, 8);
+				strlcpy(result, hostname, 8);
 				result[8] = '*';
 				result[9] = '@';
 				result[10] = '\0';
