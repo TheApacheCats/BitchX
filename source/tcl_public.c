@@ -578,7 +578,7 @@ int Tcl_GetKeyedListField (tcl_interp, fieldName, keyedList, fieldValuePtr)
 			fieldValue = ckalloc (valueSize + 1);
 			if (braced) 
 			{
-	        		strmcpy (fieldValue, valuePtr, valueSize);
+	        		strlcpy (fieldValue, valuePtr, valueSize);
 				fieldValue [valueSize] = 0;
 			}
 			else
