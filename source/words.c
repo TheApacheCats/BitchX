@@ -335,7 +335,7 @@ extern char	*BX_extract(char *start, int firstword, int lastword)
 		return m_strdup(empty_string);
 	
 	booya = new_malloc(mark2 - mark + 1);
-	strmcpy(booya, mark, (mark2 - mark));
+	strlcpy(booya, mark, mark2 - mark + 1);
 #if 0
 		malloc_strcpy(&booya, empty_string);
 	else
