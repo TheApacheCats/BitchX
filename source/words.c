@@ -244,7 +244,7 @@ extern char	*BX_extract2(const char *start, int firstword, int lastword)
 		*mark2 = tmp;
 #endif
 		booya = new_malloc(mark2 - mark + 1);
-		strmcpy(booya, mark, (mark2 - mark));
+		strlcpy(booya, mark, mark2 - mark + 1);
 	}
 
 	return booya;
