@@ -453,7 +453,7 @@ Tcl_GetKeyedListKeys (tcl_interp, subFieldName, keyedList, keysArgcPtr,
                         NULL);
         TclFindElement (tcl_interp, fieldPtr, &keyPtr, &dummyPtr, &keySize, NULL);
         keyArgv [idx++] = nextByte;
-        strlcpy (nextByte, keyPtr, keySize);
+        memcpy (nextByte, keyPtr, keySize);
         nextByte [keySize] = '\0';
         nextByte += keySize + 1; 
     }
@@ -578,7 +578,7 @@ int Tcl_GetKeyedListField (tcl_interp, fieldName, keyedList, fieldValuePtr)
 			fieldValue = ckalloc (valueSize + 1);
 			if (braced) 
 			{
-	        		strlcpy (fieldValue, valuePtr, valueSize);
+	        		memcpy (fieldValue, valuePtr, valueSize);
 				fieldValue [valueSize] = 0;
 			}
 			else
