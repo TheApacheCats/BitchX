@@ -3179,6 +3179,7 @@ char *cluster (char *hostname)
 	if (!hostname)
 		return NULL;
 
+	*result = 0;
 	atsign = strchr(hostname, '@');
 	if (atsign) {
 		if (*hostname == '~') {
@@ -3188,17 +3189,13 @@ char *cluster (char *hostname)
 			
 			if (ident_len <= 9) {
 				/* copy ident@ */
-				strlcpy(result, hostname, ident_len + 1);
+				strncat(result, hostname, ident_len + 1);
 			} else {
-				strlcpy(result, hostname, 8);
-				result[8] = '*';
-				result[9] = '@';
-				result[10] = '\0';
+				strncat(result, hostname, 8);
+				strcat(result, "*@");
 			}
 		}
 		hostname = atsign + 1;
-	} else {
-		*result = 0;
 	}
 
 	strlcpy(temphost, hostname, sizeof temphost);
