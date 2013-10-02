@@ -7186,8 +7186,8 @@ BUILT_IN_FUNCTION(function_prefix, input)
 		 */
 		if (my_strnicmp(words[0], words[word_index], len_index))
 		{
-			retval = new_malloc(len_index + 1);
-			strmcpy(retval, words[0], len_index - 1);
+			retval = new_malloc(len_index);
+			strlcpy(retval, words[0], len_index);
 			new_free((char **)&words);
 			return retval;
 		}
