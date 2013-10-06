@@ -1936,7 +1936,7 @@ int BX_get_num_queue(void)
 
 /* this is required for functions.c to compile properly */
 
-BUILD_IN_FUNCTION(function_cdcc)
+BUILT_IN_FUNCTION(function_cdcc)
 {
 	return m_strdup(empty_string);
 }
@@ -1946,7 +1946,7 @@ BUILT_IN_FUNCTION(function_sendcdcc)
 	return m_strdup(empty_string);
 }
 
-int get_num_queue(void)
+int BX_get_num_queue(void)
 {
 	return 0;
 }
