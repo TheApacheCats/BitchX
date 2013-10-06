@@ -217,7 +217,7 @@ static void Transform(UINT_32 *buf, UINT_32 *in)
    buf[2] += c;
    buf[3] += d;
 
-   memset((void *)in, 0, sizeof(in));
+   memset(in, 0, 16 * sizeof in[0]);
 }
 
 #if 0
