@@ -1,5 +1,7 @@
 [Changes 1.2c01]
 
+* Use system setenv() in preference to compat bsd_setenv(). (caf)
+
 * Allow selection of alternate hashing methods with $crypt(). (caf)
 
 * Improve the initial seeding of the randm() fallback RNG. (caf)
