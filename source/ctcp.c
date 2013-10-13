@@ -800,19 +800,19 @@ CTCP_HANDLER(do_clientinfo)
 	}
 	else
 	{
-		char buffer[BIG_BUFFER_SIZE + 1];
-		*buffer = '\0';
+		char buffer[BIG_BUFFER_SIZE];
 
+		*buffer = '\0';
 		for (i = 0; i < NUMBER_OF_CTCPS; i++)
 		{
-			strmcat(buffer, ctcp_cmd[i].name, BIG_BUFFER_SIZE);
-			strmcat(buffer, space, BIG_BUFFER_SIZE);
+			strlcat(buffer, ctcp_cmd[i].name, sizeof buffer);
+			strlcat(buffer, space, sizeof buffer);
 		}
 #ifdef WANT_DLL
 		for (dll = dll_ctcp; dll; dll = dll->next)
 		{
-			strmcat(buffer, dll->name, BIG_BUFFER_SIZE);
-			strmcat(buffer, space, BIG_BUFFER_SIZE);
+			strlcat(buffer, dll->name, sizeof buffer);
+			strlcat(buffer, space, sizeof buffer);
 		}
 #endif
 		send_ctcp(CTCP_NOTICE, from, CTCP_CLIENTINFO,
