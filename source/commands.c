@@ -5652,15 +5652,14 @@ BUILT_IN_COMMAND(returncmd)
 
 BUILT_IN_COMMAND(help)
 {
-int cnt = 1;
-int cntdll = 0;
-IrcCommand *cmd = NULL;
+	IrcCommand *cmd = NULL;
 #ifdef WANT_DLL
-IrcCommandDll *cmddll = NULL;
+	IrcCommandDll *cmddll = NULL;
 #endif
-int c, i;
-char buffer[BIG_BUFFER_SIZE+1];
-char *comm = NULL;
+	int cnt = 1, cntdll = 0, c, i;
+	char *comm = NULL;
+	char buffer[BIG_BUFFER_SIZE];
+
 	reset_display_target();
 	if (args && *args)
 	{
@@ -5719,8 +5718,8 @@ char *comm = NULL;
 	c = 0;
 	for (i = 0; i < cnt; i++)
 	{
-		strmcat(buffer, cmd[i].name, BIG_BUFFER_SIZE);
-		strmcat(buffer, space, BIG_BUFFER_SIZE);
+		strlcat(buffer, cmd[i].name, sizeof buffer);
+		strlcat(buffer, space, sizeof buffer);
 		if (++c == 5)
 		{
 			put_it("%s", convert_output_format("$G $[13]0 $[13]1 $[13]2 $[13]3 $[13]4", "%s", buffer));
@@ -5731,8 +5730,8 @@ char *comm = NULL;
 #ifdef WANT_DLL
 	for (i = 0; i < cntdll && cmddll; cmddll = cmddll->next, i++)
 	{
-		strmcat(buffer, cmddll->name, BIG_BUFFER_SIZE);
-		strmcat(buffer, space, BIG_BUFFER_SIZE);
+		strlcat(buffer, cmddll->name, sizeof buffer);
+		strlcat(buffer, space, sizeof buffer);
 		if (++c == 5)
 		{
 			put_it("%s", convert_output_format("$G $[13]0 $[13]1 $[13]2 $[13]3 $[13]4", "%s", buffer));
@@ -5745,5 +5744,3 @@ char *comm = NULL;
 		put_it("%s", convert_output_format("$G $[13]0 $[13]1 $[13]2 $[13]3 $[13]4", "%s", buffer));
 	userage("help", "%R[%ncommand%R]%n or /command -help %n to get help on specific commands");
 }
-
-
