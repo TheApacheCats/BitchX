@@ -74,18 +74,18 @@ BUILT_IN_COMMAND(xdebugcmd)
 
 	if (!args || !*args)
 	{
-		char buffer[540];
+		char buffer[512];
 		char *q;
 		int i = 0;
 
 		buffer[0] = 0;
-		strmcat(buffer, "[-][+][option(s)] ", 511);
+		strlcat(buffer, "[-][+][option(s)] ", sizeof buffer);
 		q = &buffer[strlen(buffer)];
 		for (i = 0; opts[i].command; i++)
 		{
 			if (q)
-				strmcat(q, ", ", 511);
-			strmcat(q, opts[i].command, 511);
+				strlcat(q, ", ", sizeof buffer);
+			strlcat(q, opts[i].command, sizeof buffer);
 		}
 		return;
 	}
