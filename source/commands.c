@@ -4199,7 +4199,7 @@ void command_completion(char unused, char *not_used)
 #ifdef WANT_DLL
 	IrcCommandDll	*dll = NULL;
 #endif
-	char	buffer[BIG_BUFFER_SIZE + 1];
+	char	buffer[BIG_BUFFER_SIZE];
 	
 	
 	malloc_strcpy(&line, get_input());
@@ -4255,7 +4255,7 @@ void command_completion(char unused, char *not_used)
 #endif
 			if ((alias_cnt == 1) && (cmd_cnt == 0) && (dll_cnt <= 0))
 			{
-				snprintf(buffer, BIG_BUFFER_SIZE, "%s%s %s", firstcmdchar, *aliases, rest);
+				snprintf(buffer, sizeof buffer, "%s%s %s", firstcmdchar, *aliases, rest);
 				set_input(buffer);
 				new_free((char **)aliases);
 				new_free((char **)&aliases);
@@ -4270,7 +4270,7 @@ void command_completion(char unused, char *not_used)
 #endif
 			    ))
 			{
-				snprintf(buffer, BIG_BUFFER_SIZE, "%s%s%s %s",
+				snprintf(buffer, sizeof buffer, "%s%s%s %s",
 					firstcmdchar,
 					do_aliases ? empty_string : firstcmdchar,
 #ifdef WANT_DLL
@@ -4293,8 +4293,8 @@ void command_completion(char unused, char *not_used)
 					{
 						if (i == 0)
 							bitchsay("Commands:");
-						strmcat(buffer, command[i].name, BIG_BUFFER_SIZE);
-						strmcat(buffer, space, BIG_BUFFER_SIZE);
+						strlcat(buffer, command[i].name, sizeof buffer);
+						strlcat(buffer, space, sizeof buffer);
 						if (++c == 4)
 						{
 							put_it("%s", convert_output_format("$G $[15]0 $[15]1 $[15]2 $[15]3", "%s", buffer));
@@ -4313,8 +4313,8 @@ void command_completion(char unused, char *not_used)
 					{
 						if (com && *com && my_strnicmp(com, dll->name, strlen(com)))
 							continue;
-						strmcat(buffer, dll->name, BIG_BUFFER_SIZE);
-						strmcat(buffer, space, BIG_BUFFER_SIZE);
+						strlcat(buffer, dll->name, sizeof buffer);
+						strlcat(buffer, space, sizeof bufer);
 						if (++c == 4)
 						{
 							put_it("%s", convert_output_format("$G $[15]0 $[15]1 $[15]2 $[15]3", "%s", buffer));
@@ -4334,8 +4334,8 @@ void command_completion(char unused, char *not_used)
 					{
 						if (i == 0)
 							bitchsay("Aliases:");
-						strmcat(buffer, aliases[i], BIG_BUFFER_SIZE);
-						strmcat(buffer, space, BIG_BUFFER_SIZE);
+						strlcat(buffer, aliases[i], sizeof buffer);
+						strlcat(buffer, space, sizeof buffer);
 						if (++c == 4)
 						{
 							put_it("%s", convert_output_format("$G $[15]0 $[15]1 $[15]2 $[15]3", "%s", buffer));
@@ -4356,8 +4356,8 @@ void command_completion(char unused, char *not_used)
 					{
 						if (i == 0)
 							bitchsay("Functions:");
-						strmcat(buffer, functions[i], BIG_BUFFER_SIZE);
-						strmcat(buffer, space, BIG_BUFFER_SIZE);
+						strlcat(buffer, functions[i], sizeof buffer);
+						strlcat(buffer, space, sizeof buffer);
 						if (++c == 4)
 						{
 							put_it("%s", convert_output_format("$G $[15]0 $[15]1 $[15]2 $[15]3", "%s", buffer));
