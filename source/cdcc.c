@@ -241,16 +241,17 @@ BUILT_IN_COMMAND(cdcc)
 			
 static int l_help(char *cmd, char *args)
 {
-int i;
-char buffer[BIG_BUFFER_SIZE+1];
+	int i;
+	char buffer[BIG_BUFFER_SIZE];
+
 	if (!cmd)
 	{
 		int c = 0;
 		*buffer = 0;
 		for (i = 0; *local[i].name; i++)
 		{
-			strmcat(buffer, local[i].name, BIG_BUFFER_SIZE);
-			strmcat(buffer, space, BIG_BUFFER_SIZE);
+			strlcat(buffer, local[i].name, sizeof buffer);
+			strlcat(buffer, space, sizeof buffer);
 			if (++c == 5)
 			{
 				put_it("%s", convert_output_format("$G $[13]0 $[13]1 $[13]2 $[13]3 $[13]4", "%s", buffer));
@@ -269,7 +270,8 @@ char buffer[BIG_BUFFER_SIZE+1];
 		{
 			if (my_stricmp(local[i].name, cmd))
 				continue;
-			sprintf(buffer, "CDCC %s", cmd);
+			strlcpy(buffer, "CDCC ", sizeof buffer);
+			strlcat(buffer, cmd, sizeof buffer);
 			userage(buffer, local[i].help?local[i].help:" - No help available");
 			done++;
 		}
