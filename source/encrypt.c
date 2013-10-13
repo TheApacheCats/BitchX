@@ -214,21 +214,21 @@ static	char	*do_crypt(char *str, char *key, int flag)
  */
 char	*crypt_msg(char *str, char *key)
 {
-	char	buffer[CRYPT_BUFFER_SIZE + 1];
-	char	thing[6] = "";
-	char	*ptr;
+	char thing[6] = { CTCP_DELIM_CHAR, 0 };
+	char buffer[CRYPT_BUFFER_SIZE];
+	char *ptr;
 
-	sprintf(thing, "%cSED ", CTCP_DELIM_CHAR);
-	*buffer = (char) 0;
+	strlcat(thing, "SED ", sizeof thing);
+	*buffer = 0;
 	if ((ptr = do_crypt(str, key, 1)))
 	{
-		strmcat(buffer, thing, CRYPT_BUFFER_SIZE);
-		strmcat(buffer, ptr, CRYPT_BUFFER_SIZE-1);
-		strmcat(buffer, CTCP_DELIM_STR, CRYPT_BUFFER_SIZE);
+		strlcat(buffer, thing, sizeof buffer);
+		strlcat(buffer, ptr, sizeof buffer);
+		strlcat(buffer, CTCP_DELIM_STR, sizeof buffer);
 		new_free(&ptr);
 	}
 	else
-		strmcat(buffer, str, CRYPT_BUFFER_SIZE);
+		strlcat(buffer, str, sizeof buffer);
 
 	return (m_strdup(buffer));
 }
