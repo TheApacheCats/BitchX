@@ -5451,7 +5451,7 @@ BUILT_IN_FUNCTION(function_ftime, words)
 #ifdef PUBLIC_ACCESS
 	RETURN_INT(0);
 #else
-        char	FileBuf[BIG_BUFFER_SIZE+1];
+        char	FileBuf[BIG_BUFFER_SIZE];
 	char	*filename, *fullname;
 	struct stat s;
 
@@ -5476,8 +5476,8 @@ BUILT_IN_FUNCTION(function_ftime, words)
 		else 
 		{
 			getcwd(FileBuf, BIG_BUFFER_SIZE);
-			strmcat(FileBuf, "/", BIG_BUFFER_SIZE);
-			strmcat(FileBuf, filename, BIG_BUFFER_SIZE);
+			strlcat(FileBuf, "/", sizeof FileBuf);
+			strlcat(FileBuf, filename, sizeof FileBuf);
 		}
 #if defined(__EMX__) || defined(WINNT)
 		convert_dos(FileBuf);
