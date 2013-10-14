@@ -214,21 +214,21 @@ static	char	*do_crypt(char *str, char *key, int flag)
  */
 char	*crypt_msg(char *str, char *key)
 {
-	char thing[6] = { CTCP_DELIM_CHAR, 0 };
+	static const char sed_prefix[] = { CTCP_DELIM_CHAR, 'S', 'E', 'D', ' ', 0 };
 	char buffer[CRYPT_BUFFER_SIZE];
 	char *ptr;
 
-	strlcat(thing, "SED ", sizeof thing);
-	*buffer = 0;
 	if ((ptr = do_crypt(str, key, 1)))
 	{
-		strlcat(buffer, thing, sizeof buffer);
-		strlcat(buffer, ptr, sizeof buffer);
+		/* The - 1 terms here are to ensure that the trailing CTCP_DELIM_CHAR
+		 * always gets added. */
+		strlcpy(buffer, sed_prefix, sizeof buffer - 1);
+		strlcat(buffer, ptr, sizeof buffer - 1);
 		strlcat(buffer, CTCP_DELIM_STR, sizeof buffer);
 		new_free(&ptr);
 	}
 	else
-		strlcat(buffer, str, sizeof buffer);
+		strlcpy(buffer, str, sizeof buffer);
 
 	return (m_strdup(buffer));
 }
