@@ -4101,7 +4101,7 @@ BUILT_IN_FUNCTION(function_fexist, words)
 #endif
 		else 
 		{
-			getcwd(FileBuf, BIG_BUFFER_SIZE);
+			getcwd(FileBuf, sizeof FileBuf);
 			strlcat(FileBuf, "/", sizeof FileBuf);
 			strlcat(FileBuf, filename, sizeof FileBuf);
 		}
@@ -4150,7 +4150,7 @@ BUILT_IN_FUNCTION(function_fsize, words)
 #endif
 		else 
 		{
-			getcwd(FileBuf, BIG_BUFFER_SIZE);
+			getcwd(FileBuf, sizeof FileBuf);
 			strlcat(FileBuf, "/", sizeof FileBuf);
 			strlcat(FileBuf, filename, sizeof FileBuf);
 		}
@@ -5475,7 +5475,7 @@ BUILT_IN_FUNCTION(function_ftime, words)
 #endif
 		else 
 		{
-			getcwd(FileBuf, BIG_BUFFER_SIZE);
+			getcwd(FileBuf, sizeof FileBuf);
 			strlcat(FileBuf, "/", sizeof FileBuf);
 			strlcat(FileBuf, filename, sizeof FileBuf);
 		}
