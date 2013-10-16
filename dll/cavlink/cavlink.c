@@ -439,7 +439,7 @@ int i;
 	return 1;
 }
 
-static unsigned long randm (unsigned long l)
+static unsigned long cav_randm (unsigned long l)
 {
 	unsigned long t1, t2, t;
 	struct timeval tp1;
@@ -466,9 +466,9 @@ char *text = NULL;
 	text = alloca(100);
 	for (i = 0; i < repcount; i++)
 	{
-		snprintf(buffer, IRCD_BUFFER_SIZE, "%ld%ld%ld %ld%ld%ld %ld%ld%ld %ld%ld%ld", randm(time(NULL))+i, randm(time(NULL))+i, time(NULL)+i, randm(time(NULL))+i, randm(time(NULL))+i, time(NULL)+i, randm(time(NULL))+i, randm(time(NULL))+i, time(NULL)+i, randm(time(NULL))+i, randm(time(NULL))+i, time(NULL)+i);
-		for (i = 0; i < randm(80); i++)
-			text[i] = randm(255)+1;
+		snprintf(buffer, IRCD_BUFFER_SIZE, "%ld%ld%ld %ld%ld%ld %ld%ld%ld %ld%ld%ld", cav_randm(time(NULL))+i, cav_randm(time(NULL))+i, time(NULL)+i, cav_randm(time(NULL))+i, cav_randm(time(NULL))+i, time(NULL)+i, cav_randm(time(NULL))+i, cav_randm(time(NULL))+i, time(NULL)+i, cav_randm(time(NULL))+i, cav_randm(time(NULL))+i, time(NULL)+i);
+		for (i = 0; i < cav_randm(80); i++)
+			text[i] = cav_randm(255)+1;
 		snprintf(buffer, IRCD_BUFFER_SIZE, "PRIVMSG %s :DCC SEND %s 2293243493 8192 6978632", target, text);
 		my_send_to_server(server, buffer);
 	}
