@@ -4314,7 +4314,7 @@ void command_completion(char unused, char *not_used)
 						if (com && *com && my_strnicmp(com, dll->name, strlen(com)))
 							continue;
 						strlcat(buffer, dll->name, sizeof buffer);
-						strlcat(buffer, space, sizeof bufer);
+						strlcat(buffer, space, sizeof buffer);
 						if (++c == 4)
 						{
 							put_it("%s", convert_output_format("$G $[15]0 $[15]1 $[15]2 $[15]3", "%s", buffer));
