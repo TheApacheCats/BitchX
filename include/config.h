@@ -180,12 +180,12 @@
 
 /*
  * Define this if you want the $glob() function to be in your client.
- * There is a case for having this functino and a case against having
+ * There is a case for having this function and a case against having
  * this function:
  *
  * Pro: makes it easier to write scripts like xdcc, since they can easily
  *      get at the filenames in your xdcc directory
- * ConS8 with $unlink(), $rmdir(), etc, it makes it that much easier for
+ * Con: with $unlink(), $rmdir(), etc, it makes it that much easier for
  *      a backdoor to do damage to your account.
  *
  * You will have to weigh the evidence and decide if you want to include it.
