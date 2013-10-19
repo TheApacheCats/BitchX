@@ -258,7 +258,7 @@ extern int last_function_call_level;
  */
 static char *	fill_it_out (char *str, int params)
 {
-	char	buffer[BIG_BUFFER_SIZE + 1];
+	char	buffer[BIG_BUFFER_SIZE];
 	char	*arg,
 		*ptr;
 	int	i = 0;
@@ -269,19 +269,19 @@ static char *	fill_it_out (char *str, int params)
 	while ((arg = next_arg(ptr, &ptr)) != NULL)
 	{
 		if (*buffer)
-			strmcat(buffer, space, BIG_BUFFER_SIZE);
-		strmcat(buffer, arg, BIG_BUFFER_SIZE);
+			strlcat(buffer, space, sizeof buffer);
+		strlcat(buffer, arg, sizeof buffer);
 		if (++i == params)
 			break;
 	}
 
 	for (; i < params; i++)
-		strmcat(buffer, (i < params-1) ? " %" : " *", BIG_BUFFER_SIZE);
+		strlcat(buffer, (i < params-1) ? " %" : " *", sizeof buffer);
 
 	if (*ptr)
 	{
-		strmcat(buffer, space, BIG_BUFFER_SIZE);
-		strmcat(buffer, ptr, BIG_BUFFER_SIZE);
+		strlcat(buffer, space, sizeof buffer);
+		strlcat(buffer, ptr, sizeof buffer);
 	}
 	return m_strdup(buffer);
 }
