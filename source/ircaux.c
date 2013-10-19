@@ -990,7 +990,7 @@ char	*BX_expand_twiddle (char *str)
 #endif
 		{
 			strlcpy(buffer, my_path, sizeof buffer);
-			strmcat(buffer, str, BIG_BUFFER_SIZE/4);
+			strlcat(buffer, str, sizeof buffer);
 		}
 		else
 		{
@@ -1017,8 +1017,8 @@ char	*BX_expand_twiddle (char *str)
 #endif
 				if (rest)
 				{
-					strmcat(buffer, "/", BIG_BUFFER_SIZE/4);
-					strmcat(buffer, rest, BIG_BUFFER_SIZE/4);
+					strlcat(buffer, "/", sizeof buffer);
+					strlcat(buffer, rest, sizeof buffer);
 				}
 			}
 			else
