@@ -3111,8 +3111,8 @@ int i = 0, j = 0, len;
 char *	get_userhost (void)
 {
 	strlcpy(userhost, username, sizeof userhost);
-	strmcat(userhost, "@", NAME_LEN);
-	strmcat(userhost, hostname, NAME_LEN);
+	strlcat(userhost, "@", sizeof userhost);
+	strlcat(userhost, hostname, sizeof userhost);
 	return userhost;
 }
 
