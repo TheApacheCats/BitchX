@@ -625,9 +625,9 @@ long ret = -1;
 
 #define HANDLE_TYPE(x, y)						\
 	     if ((tmp->dont & x) == x)					\
-		strmcat(buffer, " DONT-" y, BIG_BUFFER_SIZE);		\
+		strlcat(buffer, " DONT-" y, sizeof buffer);		\
 	else if ((tmp->type & x) == x)					\
-		strmcat(buffer, " " y, BIG_BUFFER_SIZE);		\
+		strlcat(buffer, " " y, sizeof buffer);			\
 	else if ((tmp->high & x) == x)					\
 		strmopencat(buffer, BIG_BUFFER_SIZE, space, high, y, high, NULL);
 
