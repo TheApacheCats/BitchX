@@ -2754,8 +2754,8 @@ do_more_tab:
 							q++;
 						else 
 							q = n;
-						strmcat(buffer, q, BIG_BUFFER_SIZE);
-						strmcat(buffer, space, BIG_BUFFER_SIZE);
+						strlcat(buffer, q, sizeof buffer);
+						strlcat(buffer, space, sizeof buffer);
 						if (++count == 4)
 						{
 							put_it("%s", convert_output_format(fget_string_var(FORMAT_COMPLETE_FSET),"%s", buffer));
@@ -2778,8 +2778,8 @@ do_more_tab:
 					count = 0;
 					while (n && *n)
 					{
-						strmcat(buffer, n, BIG_BUFFER_SIZE);
-						strmcat(buffer, space, BIG_BUFFER_SIZE);
+						strlcat(buffer, n, sizeof buffer);
+						strlcat(buffer, space, sizeof buffer);
 						if (++count == 4)
 						{
 							put_it("%s", convert_output_format(fget_string_var(FORMAT_COMPLETE_FSET),"%s", buffer));
