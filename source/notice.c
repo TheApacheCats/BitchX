@@ -1095,14 +1095,15 @@ char *p;
 
 void set_operview_flags(int server, unsigned long flags, int neg)
 {
-unsigned long old = get_server_ircop_flags(server);
-	switch(neg)
+	unsigned long old_flags = get_server_ircop_flags(server);
+
+	switch (neg)
 	{
 		case IGNORE_DONT:
-			set_server_ircop_flags(server, old & (~flags));
+			set_server_ircop_flags(server, old_flags & ~flags);
 			break;
 		default:
-			set_server_ircop_flags(server, old | flags);
+			set_server_ircop_flags(server, old_flags | flags);
 			break;
 	}
 }
