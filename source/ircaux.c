@@ -1202,13 +1202,12 @@ char	*BX_rfgets (char *buffer, int size, FILE *file)
  */
 char	*BX_path_search (char *name, char *path)
 {
-	static	char	buffer[BIG_BUFFER_SIZE/2 + 1];
-	char	*ptr,
-		*free_path = NULL;
+	char *free_path, *ptr;
+	static char buffer[BIG_BUFFER_SIZE/2];
 
 	/* A "relative" path is valid if the file exists */
 	/* A "relative" path is searched in the path if the
-	   filename doesnt really exist from where we are */
+	   filename doesn't really exist from where we are */
 	if (strchr(name, '/'))
 		if (!access(name, F_OK))
 			return name;
@@ -1242,12 +1241,12 @@ char	*BX_path_search (char *name, char *path)
 		*buffer = 0;
 		if (path[0] == '~')
 		{
-			strmcat(buffer, my_path, BIG_BUFFER_SIZE/4);
+			strlcat(buffer, my_path, sizeof buffer);
 			path++;
 		}
-		strmcat(buffer, path, BIG_BUFFER_SIZE/4);
-		strmcat(buffer, "/", BIG_BUFFER_SIZE/4);
-		strmcat(buffer, name, BIG_BUFFER_SIZE/4);
+		strlcat(buffer, path, sizeof buffer);
+		strlcat(buffer, "/", sizeof buffer);
+		strlcat(buffer, name, sizeof buffer);
 
 		if (access(buffer, F_OK) == 0)
 			break;
