@@ -87,9 +87,9 @@ unsigned long BX_set_lastlog_msg_level(unsigned long level)
  */
 char	* bits_to_lastlog_level(unsigned long level)
 {
-	static	char	buffer[481]; /* this *should* be enough for this */
-	int	i;
-unsigned long	p;
+	int i;
+	unsigned long p;
+	static char buffer[512];
 
 	if (level == LOG_ALL)
 		strcpy(buffer, "ALL");
@@ -97,14 +97,13 @@ unsigned long	p;
 		strcpy(buffer, "NONE");
 	else
 	{
-		*buffer = '\0';
-		for (i = 0, p = 1; i < NUMBER_OF_LEVELS; i++, p <<= 1)
+		for (*buffer = i = 0, p = 1; i < NUMBER_OF_LEVELS; i++, p <<= 1)
 		{
 			if (level & p)
 			{
 				if (*buffer)
-					strmcat(buffer, space, 480);
-				strmcat(buffer, levels[i],480);
+					strlcat(buffer, space, sizeof buffer);
+				strlcat(buffer, levels[i], sizeof buffer);
 			}
 		}
 	}
