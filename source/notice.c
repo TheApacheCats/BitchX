@@ -1109,36 +1109,37 @@ unsigned long old = get_server_ircop_flags(server);
 
 BUILT_IN_COMMAND(s_watch)
 {
-unsigned long flag = 0;
-unsigned long old_flags;
-int gotargs = 0;
+	int gotargs = 0;
+	unsigned long old_flags, flag;
 
 	if (from_server == -1)
 	{
 		put_it("%s", convert_output_format("$G Try connecting to a server first", NULL, NULL));
 		return;
 	}
+
 	if (args && *args)
 		gotargs = 1;
+
 	old_flags = get_server_ircop_flags(from_server);	
 	flag = ircop_str_to_flags(old_flags, args);
 	if (flag != old_flags)
 		set_server_ircop_flags(from_server, flag);
 	else if (gotargs && old_flags != -1)
 	{
-		char buffer[BIG_BUFFER_SIZE+1];
 		int i;
+		char buffer[BIG_BUFFER_SIZE];
+
 		strcpy(buffer, all);
 		for (i = 0; opflags[i]; i++)
 		{
-			strmcat(buffer, space, BIG_BUFFER_SIZE);
-			strmcat(buffer, opflags[i], BIG_BUFFER_SIZE);
+			strlcat(buffer, space, sizeof buffer);
+			strlcat(buffer, opflags[i], sizeof buffer);
 		}
-		strmcat(buffer, space, BIG_BUFFER_SIZE);
-		strmcat(buffer, none, BIG_BUFFER_SIZE);
+		strlcat(buffer, space, BIG_BUFFER_SIZE);
+		strlcat(buffer, none, BIG_BUFFER_SIZE);
 		bitchsay("You must specify from the following:");
 		put_it("\t%s", buffer);
-		/*ALL COLLIDE KILLS MISMATCH HACK IDENTD FAKES UNAUTHS CLIENTS TRAFFIC CRAP REHASH KLINE BOTS OPER SQUIT SERVER CONNECT FLOOD USER STATS NICK ACTIVEK NONE");*/
 		return;
 	}
 	print_ircop_flags(from_server);
