@@ -1749,17 +1749,15 @@ extern	void set_channel_window(Window *window, char *channel, int server)
 
 extern	char	* BX_create_channel_list(Window *window)
 {
-	ChannelList	*tmp;
-	char	buffer[BIG_BUFFER_SIZE + 1];
+	ChannelList *chan;
+	char buffer[BIG_BUFFER_SIZE];
 	
-	
-	*buffer = 0;
-	for (tmp = get_server_channels(window->server); tmp; tmp = tmp->next)
+	for (*buffer = 0, chan = get_server_channels(window->server); chan; chan = chan->next)
 	{
-		if (tmp->server == from_server)
+		if (chan->server == from_server)
 		{
-			strmcat(buffer, tmp->channel, BIG_BUFFER_SIZE);
-			strmcat(buffer, space, BIG_BUFFER_SIZE);
+			strlcat(buffer, chan->channel, sizeof buffer);
+			strlcat(buffer, space, sizeof buffer);
 		}
 	}
 	return m_strdup(buffer);
