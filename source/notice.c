@@ -1050,15 +1050,15 @@ int i, j;
 
 char *ircop_flags_to_str(long flag)
 {
-int p, i;
-char *buffer = new_malloc(BIG_BUFFER_SIZE+1);
+	int i, p;
+	char *buffer = new_malloc(IRCD_BUFFER_SIZE);
 
 	for (i = 0, p = 1; opflags[i]; i++, p <<= 1)
 	{
 		if (flag & p)
 		{
-			strmcat(buffer, opflags[i], BIG_BUFFER_SIZE);
-			strmcat(buffer, ",", BIG_BUFFER_SIZE);
+			strlcat(buffer, opflags[i], sizeof buffer);
+			strlcat(buffer, ",", sizeof buffer);
 		}
 	}
 	if (*buffer)
