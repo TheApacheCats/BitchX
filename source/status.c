@@ -555,18 +555,14 @@ int		in_rhs = 0,
 
 char	*stat_convert_format(Window *win, char *form)
 {
-unsigned char	buffer[2 * BIG_BUFFER_SIZE + 1];
-	 char   *ptr = form;
-	 int	pos = 0;
-	 int	map;
-	 char	key;
-	 int	i;
-
+	int map, key, i, pos = 0;
+	char *ptr = form;
+	unsigned char buffer[2 * BIG_BUFFER_SIZE + 1];
 
 	if (!form || !*form)
 		return m_strdup(empty_string);	
-	*buffer = 0;
 
+	*buffer = 0;
 	while (*ptr && pos < (2 * BIG_BUFFER_SIZE) - 4)
 	{
 		if (*ptr != '%')
@@ -600,7 +596,7 @@ unsigned char	buffer[2 * BIG_BUFFER_SIZE + 1];
 		{
 			if (status_expandos[i].map != map || status_expandos[i].key != key)
 				continue;
-			strmcat(buffer, (status_expandos[i].callback_function)(win), BIG_BUFFER_SIZE);
+			strlcat(buffer, status_expandos[i].callback_function(win), sizeof buffer);
 			pos = strlen(buffer);
 			break;
 		}
