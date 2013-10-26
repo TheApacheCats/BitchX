@@ -975,27 +975,28 @@ static	char	my_buffer[] = "\f";
 
 static	char	*status_notify_windows(Window *window)
 {
-	int	doneone = 0;
-	char	buf2[MY_BUFFER+2];
-static	char	my_buffer[MY_BUFFER/2+1];
+	int doneone = 0;
+	char notes[MY_BUFFER + 2];
+	static char my_buffer[MY_BUFFER / 2 + 1];
+
 	if (get_int_var(SHOW_STATUS_ALL_VAR) || window == window->screen->current_window)
 	{
-		*buf2='\0';
+		*notes = 0;
 		window = NULL;
 		while ((traverse_all_windows(&window)))
 		{
 			if (window->miscflags & WINDOW_NOTIFIED)
 			{
 				if (doneone++)
-					strmcat(buf2, ",", MY_BUFFER/2);
-				strmcat(buf2, ltoa(window->refnum), MY_BUFFER/2);
+					strlcat(notes, ",", sizeof notes);
+				strlcat(notes, ltoa(window->refnum), sizeof notes);
 			}
 		}
 	}
 	if (doneone && window->wset->notify_format)
 	{
-		snprintf(my_buffer, MY_BUFFER/2, window->wset->notify_format, buf2);
-		return (my_buffer);
+		snprintf(my_buffer, sizeof my_buffer, window->wset->notify_format, notes);
+		return my_buffer;
 	}
 	RETURN_EMPTY;
 }
