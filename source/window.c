@@ -3426,37 +3426,35 @@ Window *window_list (Window *window, char **args, char *usage)
  */
 static Window *window_log (Window *window, char **args, char *usage)
 {
-	char *logfile;
 	int add_ext = 1;
-	char buffer[BIG_BUFFER_SIZE + 1];
+	char logfile[MAXPATHLEN];
 
 	if (get_boolean("LOG", args, &window->log))
 		return NULL;
 
-	if ((logfile = window->logfile))
+	if (window->logfile)
+	{
 		add_ext = 0;
-	else if (!(logfile = get_string_var(LOGFILE_VAR)))
-		logfile = empty_string;
-
-	strlcpy(buffer, logfile, sizeof buffer);
+		strlcpy(logfile, window->logfile, sizeof logfile);
+	}
+	else if (!get_string_var(LOGFILE_VAR))
+		*logfile = 0;
 
 	if (add_ext)
 	{
-		char *title = empty_string;
-
-		strmcat(buffer, ".", BIG_BUFFER_SIZE);
-		if ((title = window->current_channel))
-			strmcat(buffer, title, BIG_BUFFER_SIZE);
-		else if ((title = window->query_nick))
-			strmcat(buffer, title, BIG_BUFFER_SIZE);
+		strlcat(logfile, ".", sizeof logfile);
+		if (window->current_channel)
+			strlcat(logfile, window->current_channel, sizeof logfile);
+		else if (window->query_nick)
+			strlcat(logfile, window->query_nick, sizeof logfile);
 		else
 		{
-			strmcat(buffer, "Window_", BIG_BUFFER_SIZE);
-			strmcat(buffer, ltoa(window->refnum), BIG_BUFFER_SIZE);
+			strlcat(logfile, "Window_", sizeof logfile);
+			strlcat(logfile, ltoa(window->refnum), sizeof logfile);
 		}
 	}
-	strip_chars(buffer, "|\\:", '-'); 
-	do_log(window->log, buffer, &window->log_fp);
+	strip_chars(logfile, "|\\:", '-'); 
+	do_log(window->log, logfile, &window->log_fp);
 	if (!window->log_fp)
 		window->log = 0;
 
