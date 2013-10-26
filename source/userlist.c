@@ -155,24 +155,24 @@ int done;
 
 char * convert_flags_to_str(unsigned long flags)
 {
-unsigned int i;
-unsigned long p;
-static char buffer[290];
-	*buffer = 0;
-	for (i = 0, p = 1; strflags[i]; i++, p <<= 1)
+	unsigned int i;
+	unsigned long p;
+	static char buffer[256];
+
+	for (*buffer = i = 0, p = 1; strflags[i]; i++, p <<= 1)
 	{
 		if (flags & p)
 		{
-			strmcat(buffer, strflags[i], 280);
-			strmcat(buffer, ",", 280);
+			strlcat(buffer, strflags[i], sizeof buffer);
+			strlcat(buffer, ",", sizeof buffer);
 		}
 	}
 	for (i = 0, p = PROT_REOP; protflags[i]; i++, p <<= 1)
 	{
 		if (flags & p)
 		{
-			strmcat(buffer, protflags[i], 280);
-			strmcat(buffer, ",", 280);
+			strlcat(buffer, protflags[i], sizeof buffer);
+			strlcat(buffer, ",", sizeof buffer);
 		}
 	}
 	if (*buffer)
