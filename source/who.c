@@ -783,8 +783,7 @@ void BX_userhostbase(char *args, void (*line) (UserhostItem *, char *, char *), 
 	int total = 0, userhost_cmd = 0, server_query_reqd = 0;
 	char *nick, *ptr, *next_ptr, *body = NULL;
 	va_list ap;
-	char buffer[BIG_BUFFER_SIZE];
-	char text[BIG_BUFFER_SIZE];
+	char buffer[BIG_BUFFER_SIZE], text[BIG_BUFFER_SIZE];
 
 	if (from_server < 0 || !is_server_connected(from_server))
 		return;
@@ -873,8 +872,8 @@ void BX_userhostbase(char *args, void (*line) (UserhostItem *, char *, char *), 
 	{
 		while (ptr && *ptr)
 		{
-			const char *old_uh = fetch_userhost(from_server, nick);
 			char *uh, *nick = next_arg(ptr, &ptr);
+			const char *old_uh = fetch_userhost(from_server, nick);
 			UserhostItem item = { 0 };
 
 			uh = LOCAL_COPY(old_uh);
