@@ -1810,12 +1810,10 @@ UserList *n;
 
 int check_on_hook(int which, char *buffer)
 {
-int ret = 0;
-char name[BIG_BUFFER_SIZE+1];
+	char name[BIG_BUFFER_SIZE];
 
-	*name = 0;
 	if (!buffer || !*buffer)
-		return ret;
+		return 0;
 		
 	if (which > -1 && which < NUMBER_OF_LISTS)
 	{
@@ -1829,9 +1827,8 @@ char name[BIG_BUFFER_SIZE+1];
 	}
 	strcat(name, " ");
 	Tcl_SetVar(tcl_interp, "_aa", buffer, TCL_GLOBAL_ONLY);
-	strmcat(name, buffer, BIG_BUFFER_SIZE);
-	ret = check_tcl_bind(&H_hook, name, -1, " $_a $_aa", MATCH_MASK|BIND_STACKABLE|BIND_WANTRET,NULL);
-	return ret;
+	strlcat(name, buffer, sizeof name);
+	return check_tcl_bind(&H_hook, name, -1, " $_a $_aa", MATCH_MASK | BIND_STACKABLE | BIND_WANTRET, NULL);
 }
 
 void check_tcl_join(char *nick,char *uhost, char *hand, char *channel)
