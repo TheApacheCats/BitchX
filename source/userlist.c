@@ -182,13 +182,12 @@ char * convert_flags_to_str(unsigned long flags)
 
 char * convert_flags(unsigned long flags)
 {
-unsigned int i;
-unsigned long p;
-static char buffer[40];
-char *q;
-	*buffer = 0;
-	q = buffer;
-	for (i = 0, p = 1; strflags[i]; i++, p <<= 1)
+	unsigned int i;
+	unsigned long p;
+	char *q;
+	static char buffer[64];
+
+	for (*buffer = i = 0, q = buffer, p = 1; strflags[i]; i++, p <<= 1)
 	{
 		if (flags & p)
 			*q = '1';
