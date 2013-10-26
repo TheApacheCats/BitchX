@@ -2522,46 +2522,47 @@ QueueSend *tmp, *tmp1;
 
 static void vsend_to_server(int type, const char *format, va_list args)
 {
-	char	buffer[BIG_BUFFER_SIZE + 1];	/* make this buffer *much*
-						 * bigger than needed */
-	char 	*buf = buffer;
-	int	server;
-	int 	des;
-	if ((server = from_server) == -1)
+	int des, len, server = from_server;
+	char buffer[IRCD_BUFFER_SIZE + 1];
+
+	if (server == -1)
 		server = primary_server;
+	if (server < 0 || !format)
+		return;
 
-	if (server > -1 && ((des = server_list[server].write) != -1) && format)
+	des = server_list[server].write;
+	if (des == -1)
+ 	{
+		if (do_hook(DISCONNECT_LIST, "No Connection to %d", server))
+			put_it("%s", convert_output_format(fget_string_var(FORMAT_DISCONNECT_FSET),
+				"%s %s", update_clock(GET_TIME),
+				"You are not connected to a server. Use /SERVER to connect."));
+		return;
+	}
+
+	len = vsnprintf(buffer, sizeof buffer, format, args);
+	if (len < 0)
+		return;
+
+	if (outbound_line_mangler)
+		mangle_line(buffer, outbound_line_mangler, sizeof buffer);
+
+	buffer[MAX_PROTOCOL_SIZE] = 0;
+	if (x_debug & DEBUG_OUTBOUND)
+		debugyell("[%d] -> [%d] [%s]", des, len, buffer);
+	strlcat(buffer, "\r\n", sizeof buffer);
+
+	if (oper_command)
 	{
-		int len; 
-		vsnprintf(buf, BIG_BUFFER_SIZE, format, args);
-
-		if (outbound_line_mangler)
-			mangle_line(buf, outbound_line_mangler, strlen(buf));
-
-		server_list[server].sent = 1;
-		len = strlen(buffer);
-		if (len > (IRCD_BUFFER_SIZE - 2) || len == -1)
-			buffer[IRCD_BUFFER_SIZE - 2] = (char) 0;
-		if (x_debug & DEBUG_OUTBOUND)
-			debugyell("[%d] -> [%s]", des, buffer);
-		strmcat(buffer, "\r\n", IRCD_BUFFER_SIZE);
-
-		if (get_int_var(QUEUE_SENDS_VAR) && (type == QUEUE_SEND) && !oper_command)
-		{
-			add_to_server_queue(server, des, buffer);
-			return;
-		}
-
 		write_to_server(server, des, buffer);
-		if (oper_command)
-			memset(buffer, 0, len);
+		memset(buffer, 0, sizeof buffer);
+	}
+	else if (get_int_var(QUEUE_SENDS_VAR) && type == QUEUE_SEND)
+		add_to_server_queue(server, des, buffer);
+	else
+		write_to_server(server, des, buffer);
 
-	}
-	else if (from_server == -1 && server > -1)
-	{
-		if (do_hook(DISCONNECT_LIST,"No Connection to %d", server))
-			put_it("%s", convert_output_format(fget_string_var(FORMAT_DISCONNECT_FSET), "%s %s", update_clock(GET_TIME), "You are not connected to a server. Use /SERVER to connect."));
-	}
+	server_list[server].sent = 1;
 }
 
 /* send_to_server: sends the given info the the server */
