@@ -4320,17 +4320,18 @@ static window_ops options [] = {
 
 static Window *window_help (Window *window, char **args, char *usage)
 {
-int i, c = 0;
-char buffer[BIG_BUFFER_SIZE+1];
-char *arg = NULL;
-int done = 0;
+	int i, c = 0, done = 0;
+	char *cmd;
+	char buffer[BIG_BUFFER_SIZE];
+
 	*buffer = 0;
-	if (!(arg = next_arg(*args, args)))
+	cmd = next_arg(*args, args);
+	if (!cmd)
 	{
 		for (i = 0; options[i].command; i++)
 		{
-			strmcat(buffer, options[i].command, BIG_BUFFER_SIZE);
-			strmcat(buffer, space, BIG_BUFFER_SIZE);
+			strlcat(buffer, options[i].command, sizeof buffer);
+			strlcat(buffer, space, sizeof buffer);
 			if (++c == 5)
 			{
 				put_it("%s", convert_output_format("$G $[13]0 $[13]1 $[13]2 $[13]3 $[13]4", "%s", buffer));
@@ -4346,10 +4347,10 @@ int done = 0;
 	{
 		for (i = 0; options[i].command; i++)
 		{
-			if (!my_stricmp(options[i].command, arg))
+			if (!my_stricmp(options[i].command, cmd))
 			{
-				sprintf(buffer, "WINDOW %s", arg);
-				userage(buffer, options[i].usage?options[i].usage:" - No help available");
+				snprintf(buffer, sizeof buffer, "WINDOW %s", cmd);
+				userage(buffer, options[i].usage ? options[i].usage : " - No help available");
 				done++;
 			}
 		}
