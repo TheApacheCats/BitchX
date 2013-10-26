@@ -798,17 +798,6 @@ void make_status(Window *win)
 				 (*ptr == ALL_OFF) || (*ptr == BOLD_TOG) ||
 				 (*ptr == BLINK_TOG))
 					*cp++ = *ptr++;
-#if 0
-			else if (*ptr == 9)	/* TAB */
-			{
-				fillchar[0] = ' ';
-				fillchar[1] = 0;
-				do
-					*cp++ = ' ';
-				while (++(*prc) % 8);
-				ptr++;
-			}
-#endif
 			/*
 			 * So it is a printable character.
 			 * Or maybe its a tab. ;-)
@@ -849,8 +838,8 @@ void make_status(Window *win)
 
 			numf = win->screen->co - pr_lhs - pr_rhs  -1;
 			while (numf-- >= 0)
-				strmcat(lhs_buffer, lhs_fillchar, 
-						BIG_BUFFER_SIZE);
+				strlcat(lhs_buffer, lhs_fillchar, 
+						sizeof lhs_buffer);
 		}
 
 		/*
@@ -861,13 +850,13 @@ void make_status(Window *win)
 			int chars = win->screen->co - pr_lhs - 1;
 
 			while (chars-- >= 0)
-				strmcat(lhs_buffer, lhs_fillchar, 
-						BIG_BUFFER_SIZE);
+				strlcat(lhs_buffer, lhs_fillchar, 
+						sizeof lhs_buffer);
 		}
 
 		strcpy(buffer, lhs_buffer);
-		strmcat(buffer, rhs_buffer, BIG_BUFFER_SIZE);
-		strmcat(buffer, ALL_OFF_STR, BIG_BUFFER_SIZE);
+		strlcat(buffer, rhs_buffer, sizeof buffer);
+		strlcat(buffer, ALL_OFF_STR, sizeof buffer);
 		new_free(&str);
 
 		do_hook(STATUS_UPDATE_LIST, "%d %d %s", 
