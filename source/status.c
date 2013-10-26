@@ -275,50 +275,46 @@ void *default_status_output_function = make_status;
 /*
  * convert_sub_format: This is used to convert the formats of the
  * sub-portions of the status line to a format statement specially designed
- * for that sub-portions.  convert_sub_format looks for a single occurence of
+ * for that sub-portion.  convert_sub_format looks for a single occurence of
  * %c (where c is passed to the function). When found, it is replaced by "%s"
- * for use is a sprintf.  All other occurences of % followed by any other
+ * for use in an sprintf.  All other occurences of % followed by any other
  * character are left unchanged.  Only the first occurence of %c is
- * converted, all subsequence occurences are left unchanged.  This routine
+ * converted, all subsequent occurences are left unchanged.  This routine
  * mallocs the returned string. 
  */
 static	char	* convert_sub_format(char *format, char c, char *padded)
 {
-	char	buffer[BIG_BUFFER_SIZE + 1];
-	static	char	bletch[] = "%% ";
-	char	*ptr = NULL;
-	int	dont_got_it = 1;
+	char *ptr = NULL;
+	char buffer[BIG_BUFFER_SIZE];
+	static char bletch[] = "%% ";
 	
-	if (format == NULL)
-		return (NULL);
-	*buffer = (char) 0;
-	memset(buffer, 0, sizeof(buffer));
+	if (!format)
+		return NULL;
+
+	*buffer = 0;
 	while (format)
 	{
-#if 0
-/wset status_mode +#%+%
-#endif
-		if ((ptr = (char *) strchr(format, '%')) != NULL)
+		if ((ptr = strchr(format, '%')) != NULL)
 		{
-			*ptr = (char) 0;
-			strmcat(buffer, format, BIG_BUFFER_SIZE);
-			*(ptr++) = '%';
-			if ((*ptr == c)/* && dont_got_it*/)
+			*ptr = 0;
+			strlcat(buffer, format, sizeof buffer);
+			*ptr++ = '%';
+			if (*ptr == c)
 			{
-				dont_got_it = 0;
 				if (*padded)
 				{
-					strmcat(buffer, "%", BIG_BUFFER_SIZE);
-					strmcat(buffer, padded, BIG_BUFFER_SIZE);
-					strmcat(buffer, "s", BIG_BUFFER_SIZE);
+					strlcat(buffer, "%", sizeof buffer);
+					strlcat(buffer, padded, sizeof buffer);
+					strlcat(buffer, "s", sizeof buffer);
 				}
 				else
-					strmcat(buffer, "%s", BIG_BUFFER_SIZE);
+					strlcat(buffer, "%s", sizeof buffer);
 			}
 			else if (*ptr == '<')
 			{
 				char *s = ptr + 1;
-				while(*ptr && *ptr != '>') ptr++;				
+
+				while (*ptr && *ptr != '>') ptr++;
 				if (*ptr)
 				{
 					ptr++;
@@ -327,9 +323,9 @@ static	char	* convert_sub_format(char *format, char c, char *padded)
 					else if (*ptr == c)
 					{
 
-						strmcat(buffer, "%", BIG_BUFFER_SIZE);
-						strmcat(buffer, s, (ptr - s));
-						strmcat(buffer, "s", BIG_BUFFER_SIZE);
+						strlcat(buffer, "%", sizeof buffer);
+						strlcat(buffer, s, ptr - s);
+						strlcat(buffer, "s", sizeof buffer);
 					}
 				}
 			
@@ -337,7 +333,7 @@ static	char	* convert_sub_format(char *format, char c, char *padded)
 			else
 			{
 				bletch[2] = *ptr;
-				strmcat(buffer, bletch, BIG_BUFFER_SIZE);
+				strlcat(buffer, bletch, sizeof buffer);
 				if (!*ptr)
 				{
 					format = ptr;
@@ -347,11 +343,11 @@ static	char	* convert_sub_format(char *format, char c, char *padded)
 			ptr++;
 		}
 		else
-			strmcat(buffer, format, BIG_BUFFER_SIZE);
+			strlcat(buffer, format, sizeof buffer);
 		format = ptr;
 	}
 	malloc_strcpy(&ptr, buffer);
-	return (ptr);
+	return ptr;
 }
 
 static	char	*convert_format(Window *win, char *format, int k)
