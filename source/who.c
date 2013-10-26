@@ -780,28 +780,23 @@ BUILT_IN_COMMAND(usripcmd)
 
 void BX_userhostbase(char *args, void (*line) (UserhostItem *, char *, char *), int userhost, char *format, ...)
 {
-	int	total = 0,
-		userhost_cmd = 0;
-	int	server_query_reqd = 0;
-	char	*nick;
-	char	buffer[BIG_BUFFER_SIZE + 1];
-	char	buf_data[BIG_BUFFER_SIZE + 1];
-	char 	*ptr, 
-		*next_ptr,
-		*body = NULL;
+	int total = 0, userhost_cmd = 0, server_query_reqd = 0;
+	char *nick, *ptr, *next_ptr, *body = NULL;
+	va_list ap;
+	char buffer[BIG_BUFFER_SIZE];
+	char text[BIG_BUFFER_SIZE];
 
-	if (from_server <= -1 || !is_server_connected(from_server))
+	if (from_server < 0 || !is_server_connected(from_server))
 		return;
 
 	if (format)
 	{
-		va_list args;
-		va_start(args, format);
-		vsnprintf(buf_data, BIG_BUFFER_SIZE, format, args);
-		va_end(args);
+		va_start(ap, format);
+		vsnprintf(text, sizeof text, format, ap);
+		va_end(ap);
 	}
 	else 
-		*buf_data = 0;
+		*text = 0;
 		
 	*buffer = 0;
 	while ((nick = next_arg(args, &args)) != NULL)
@@ -813,15 +808,15 @@ void BX_userhostbase(char *args, void (*line) (UserhostItem *, char *, char *), 
 				server_query_reqd++;
 
 			if (*buffer)
-				strmcat(buffer, space, BIG_BUFFER_SIZE);
-			strmcat(buffer, nick, BIG_BUFFER_SIZE);
+				strlcat(buffer, space, sizeof buffer);
+			strlcat(buffer, nick, sizeof buffer);
 		}
 
 		else if (!my_strnicmp(nick, "-cmd", 2))
 		{
 			if (!total)
 			{
-				say("%s -cmd with no nicks specified", (userhost == 1) ? "USERHOST":(userhost == 0)?"USERIP":"USRIP");
+				say("%s -cmd with no nicks specified", userhost == 1 ? "USERHOST" : userhost == 0 ? "USERIP" : "USRIP");
 				return;
 			}
 
@@ -842,37 +837,34 @@ void BX_userhostbase(char *args, void (*line) (UserhostItem *, char *, char *), 
 	if (!userhost_cmd && !total)
 	{
 		server_query_reqd++;
-		strlcpy(buffer, get_server_nickname(from_server), BIG_BUFFER_SIZE);
+		strlcpy(buffer, get_server_nickname(from_server), sizeof buffer);
 	}
 		
 	ptr = buffer;
-
 	if (server_query_reqd || (!line && !userhost_cmd))
 	{
-		ptr = buffer;
 		while (ptr && *ptr)
 		{
-			UserhostEntry *new_u = get_new_userhost_entry();
+			UserhostEntry *new_uh = get_new_userhost_entry();
 
 			move_to_abs_word(ptr, &next_ptr, 5);
-
 			if (next_ptr && *next_ptr && next_ptr > ptr)
 				next_ptr[-1] = 0;
 
-			new_u->userhost_asked = m_strdup(ptr);
-			send_to_server("%s %s", (userhost == 1) ? "USERHOST" : (!userhost)?"USERIP":"USRIP", new_u->userhost_asked);
+			new_uh->userhost_asked = m_strdup(ptr);
+			send_to_server("%s %s", userhost == 1 ? "USERHOST" : !userhost ? "USERIP" : "USRIP", new_uh->userhost_asked);
 
 			if (userhost_cmd)
-				new_u->text = m_strdup(body);
-			else if (*buf_data)
-				new_u->text = m_strdup(buf_data);
+				new_uh->text = m_strdup(body);
+			else if (*text)
+				new_uh->text = m_strdup(text);
 				
 			if (line)
-				new_u->func = line;
+				new_uh->func = line;
 			else if (userhost_cmd)
-				new_u->func = userhost_cmd_returned;
+				new_uh->func = userhost_cmd_returned;
 			else
-				new_u->func = NULL;
+				new_uh->func = NULL;
 
 			ptr = next_ptr;
 		}
@@ -881,12 +873,11 @@ void BX_userhostbase(char *args, void (*line) (UserhostItem *, char *, char *), 
 	{
 		while (ptr && *ptr)
 		{
-			char *nick = next_arg(ptr, &ptr);
-			const char *ouh = fetch_userhost(from_server, nick);
-			char *uh;
-			UserhostItem item = {0};
+			const char *old_uh = fetch_userhost(from_server, nick);
+			char *uh, *nick = next_arg(ptr, &ptr);
+			UserhostItem item = { 0 };
 
-			uh = LOCAL_COPY(ouh);
+			uh = LOCAL_COPY(old_uh);
 			item.nick = nick;
 			item.oper = 0;
 			item.connected = 1;
@@ -899,11 +890,11 @@ void BX_userhostbase(char *args, void (*line) (UserhostItem *, char *, char *), 
 				item.host = "<UNKNOWN>";
 
 			if (line)
-				line(&item, nick, body ?  body : *buf_data ? buf_data : NULL);
+				line(&item, nick, body ? body : *text ? text : NULL);
 			else if (userhost_cmd)
 				userhost_cmd_returned(&item, nick, body);
 			else
-				yell("Yowza!  I dont know what to do here!");
+				yell("Yowza! I don't know what to do here!");
 		}
 	}
 }
