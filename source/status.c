@@ -528,17 +528,6 @@ int		in_rhs = 0,
 			 (*ptr == ALL_OFF) || (*ptr == BOLD_TOG) ||
 			 (*ptr == BLINK_TOG))
 				*cp++ = *ptr++;
-#if 0
-		else if (*ptr == 9)	/* TAB */
-		{
-			fillchar[0] = ' ';
-			fillchar[1] = 0;
-			do
-				*cp++ = ' ';
-			while (++(*prc) % 8);
-			ptr++;
-		}
-#endif
 		/*
 		 * So it is a printable character.
 		 * Or maybe its a tab. ;-)
@@ -559,40 +548,8 @@ int		in_rhs = 0,
 		}
 	}
 	*cp = 0;
-#if 0
-	/* What will we be filling with? */
-	if (get_int_var(STATUS_NO_REPEAT_VAR))
-	{
-		lhs_fillchar[0] = ' ';
-		lhs_fillchar[1] = 0;
-		rhs_fillchar[0] = ' ';
-		rhs_fillchar[1] = 0;
-	}
-
-	/*
-	 * Now if we have a rhs, then we have to adjust it.
-	 */
-	if (start_rhs)
-	{
-		int numf = 0;
-			numf = win->screen->co - pr_lhs - pr_rhs  -1;
-		while (numf-- >= 0)
-			strmcat(lhs_buffer, lhs_fillchar, 
-					BIG_BUFFER_SIZE);
-	}
-	/*
-	 * No rhs?  If the user wants us to pad it out, do so.
-	 */
-	else if (get_int_var(FULL_STATUS_LINE_VAR))
-	{
-		int chars = win->screen->co - pr_lhs - 1;
-		while (chars-- >= 0)
-			strmcat(lhs_buffer, lhs_fillchar, 
-					BIG_BUFFER_SIZE);
-	}
-#endif
 	strcpy(buffer, lhs_buffer);
-	strmcat(buffer, rhs_buffer, BIG_BUFFER_SIZE);
+	strlcat(buffer, rhs_buffer, sizeof buffer);
 	new_free(&str);
 }
 
