@@ -3426,7 +3426,6 @@ Window *window_list (Window *window, char **args, char *usage)
  */
 static Window *window_log (Window *window, char **args, char *usage)
 {
-	int add_ext = 1;
 	char logfile[MAXPATHLEN];
 
 	if (get_boolean("LOG", args, &window->log))
@@ -3434,24 +3433,24 @@ static Window *window_log (Window *window, char **args, char *usage)
 
 	if (window->logfile)
 	{
-		add_ext = 0;
 		strlcpy(logfile, window->logfile, sizeof logfile);
 	}
-	else if (!get_string_var(LOGFILE_VAR))
-		*logfile = 0;
-
-	if (add_ext)
+	else
 	{
-		strlcat(logfile, ".", sizeof logfile);
+		char *logfile_base = get_string_var(LOGFILE_VAR);
+
+		if (!logfile_base)
+			logfile_base = empty_string;
+
 		if (window->current_channel)
-			strlcat(logfile, window->current_channel, sizeof logfile);
+			snprintf(logfile, sizeof logfile, "%s.%s", logfile_base, 
+				window->current_channel);
 		else if (window->query_nick)
-			strlcat(logfile, window->query_nick, sizeof logfile);
+			snprintf(logfile, sizeof logfile, "%s.%s", logfile_base,
+				window->query_nick);
 		else
-		{
-			strlcat(logfile, "Window_", sizeof logfile);
-			strlcat(logfile, ltoa(window->refnum), sizeof logfile);
-		}
+			snprintf(logfile, sizeof logfile, "%s.Window_%u", logfile_base,
+				window->refnum);
 	}
 	strip_chars(logfile, "|\\:", '-'); 
 	do_log(window->log, logfile, &window->log_fp);
