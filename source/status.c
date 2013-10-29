@@ -114,7 +114,7 @@ static	char	*status_refnum (Window *);
 static	char	*status_topic (Window *);
 static	char	*status_null_function (Window *);
 static	char	*status_notify_windows (Window *);
-static	char	*convert_sub_format (char *, char, char *);
+static	char	*convert_sub_format (const char *, char, const char *);
 static	char	*status_voice (Window *);
 static	char	*status_cpu_saver_mode (Window *);
 static	char	*status_dcccount (Window *);
@@ -275,79 +275,79 @@ void *default_status_output_function = make_status;
 /*
  * convert_sub_format: This is used to convert the formats of the
  * sub-portions of the status line to a format statement specially designed
- * for that sub-portion.  convert_sub_format looks for a single occurence of
- * %c (where c is passed to the function). When found, it is replaced by "%s"
- * for use in an sprintf.  All other occurences of % followed by any other
- * character are left unchanged.  Only the first occurence of %c is
- * converted, all subsequent occurences are left unchanged.  This routine
- * mallocs the returned string. 
+ * for that sub-portion.  convert_sub_format looks for occurences of %c
+ * (where c is passed to the function); when found, it is replaced by %s
+ * for use in an sprintf.  All other occurences of % are replaced by %%.
+ * The string returned by this function must be freed.
  */
-static	char	* convert_sub_format(char *format, char c, char *padded)
+static char *convert_sub_format(const char *format, char c, const char *padded)
 {
-	char *ptr = NULL;
+	size_t i = 0;
 	char buffer[BIG_BUFFER_SIZE];
-	static char bletch[] = "%% ";
 	
 	if (!format)
 		return NULL;
 
-	*buffer = 0;
-	while (format)
+	while (*format && i < sizeof buffer)
 	{
-		if ((ptr = strchr(format, '%')) != NULL)
+		buffer[i++] = *format;
+
+		if (*format == '%')
 		{
-			*ptr = 0;
-			strlcat(buffer, format, sizeof buffer);
-			*ptr++ = '%';
-			if (*ptr == c)
+			format++;
+
+			if (*format == c)
 			{
-				if (*padded)
+				if (i < sizeof buffer)
+					i += strlcpy(buffer + i, padded, sizeof buffer - i);
+
+				if (i < sizeof buffer)
+					buffer[i++] = 's';
+			}
+			else if (*format == '<')
+			{
+				const char *saved_format = format;
+				size_t saved_i = i;
+				format++;
+
+				while (strchr("0123456789.", *format) && i < sizeof buffer)
+					buffer[i++] = *format++;
+		
+				while (*format != '>' && *format)
+					format++;
+				if (*format)
+					format++;
+
+				if (*format == c)
 				{
-					strlcat(buffer, "%", sizeof buffer);
-					strlcat(buffer, padded, sizeof buffer);
-					strlcat(buffer, "s", sizeof buffer);
+					if (i < sizeof buffer)
+						buffer[i++] = 's';
 				}
 				else
-					strlcat(buffer, "%s", sizeof buffer);
-			}
-			else if (*ptr == '<')
-			{
-				char *s = ptr + 1;
-
-				while (*ptr && *ptr != '>') ptr++;
-				if (*ptr)
 				{
-					ptr++;
-					if (!*ptr)
-						continue;
-					else if (*ptr == c)
-					{
-
-						strlcat(buffer, "%", sizeof buffer);
-						strlcat(buffer, s, ptr - s);
-						strlcat(buffer, "s", sizeof buffer);
-					}
-				}
-			
-			}
-			else
-			{
-				bletch[2] = *ptr;
-				strlcat(buffer, bletch, sizeof buffer);
-				if (!*ptr)
-				{
-					format = ptr;
+					i = saved_i;
+					format = saved_format;
+					
+					if (i < sizeof buffer)
+						buffer[i++] = '%';
 					continue;
 				}
 			}
-			ptr++;
+			else
+			{
+				if (i < sizeof buffer)
+					buffer[i++] = '%';
+				continue;
+			}
 		}
-		else
-			strlcat(buffer, format, sizeof buffer);
-		format = ptr;
-	}
-	malloc_strcpy(&ptr, buffer);
-	return ptr;
+		format++;
+	}	
+
+	if (i > sizeof buffer - 1)
+		i = sizeof buffer - 1;
+	buffer[i] = 0;
+
+	return m_strdup(buffer);
 }
 
 static	char	*convert_format(Window *win, char *format, int k)
@@ -389,12 +389,18 @@ static	char	*convert_format(Window *win, char *format, int k)
 		}
 		else if (*format == '<')
 		{
-			char *p = padded;
+			size_t pad_len;
+	
 			format++;
+			pad_len = strspn(format, "0123456789.");
+			memcpy(padded, format, pad_len);
+			padded[pad_len] = 0;
+
+			format += pad_len;
 			while(*format && *format != '>') 
-				*p++ = *format++;
-			*p = 0;
-			format++;
+				format++;
+			if (*format)
+				format++;
 		}
 		key = *format++;
 
