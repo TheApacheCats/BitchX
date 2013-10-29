@@ -988,14 +988,14 @@ static	char	*status_notify_windows(Window *window)
 	if (get_int_var(SHOW_STATUS_ALL_VAR) || window == window->screen->current_window)
 	{
 		*notes = 0;
-		window = NULL;
-		while ((traverse_all_windows(&window)))
+		Window *notify_win = NULL;
+		while ((traverse_all_windows(&notify_win)))
 		{
-			if (window->miscflags & WINDOW_NOTIFIED)
+			if (notify_win->miscflags & WINDOW_NOTIFIED)
 			{
 				if (doneone++)
 					strlcat(notes, ",", sizeof notes);
-				strlcat(notes, ltoa(window->refnum), sizeof notes);
+				strlcat(notes, ltoa(notify_win->refnum), sizeof notes);
 			}
 		}
 	}
