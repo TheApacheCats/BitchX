@@ -2,7 +2,7 @@
 
 * Fix STATUS_NOTIFY so that it appears in the right window. (caf)
 
-* Improve handling of padding in status formats. (caf)
+* Improve robustness of status formats handling. (caf)
 
 * Use system setenv() in preference to compat bsd_setenv(). (caf)
 

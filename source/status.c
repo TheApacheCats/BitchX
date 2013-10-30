@@ -114,7 +114,7 @@ static	char	*status_refnum (Window *);
 static	char	*status_topic (Window *);
 static	char	*status_null_function (Window *);
 static	char	*status_notify_windows (Window *);
-static	char	*convert_sub_format (const char *, char, const char *);
+static	char	*convert_sub_format (const char *, int, char, const char *);
 static	char	*status_voice (Window *);
 static	char	*status_cpu_saver_mode (Window *);
 static	char	*status_dcccount (Window *);
@@ -142,8 +142,8 @@ struct status_formats {
 	int	map;
 	char 	key;
 	char	*(*callback_function)(Window *);
-	char	**format_var;
-	int	format_set;
+	int args;	/* number of arguments used by the subformat */
+	int	format_set;	/* WSET for subformat, if any */
 };
 
 
@@ -173,97 +173,97 @@ char	*away_format = NULL,
  * specifying the map.
  */
 struct status_formats status_expandos[] = {
-{ 0, 'A', status_away,           NULL,		STATUS_AWAY_WSET },
-{ 0, 'B', status_hold_lines,     NULL,		STATUS_HOLD_LINES_WSET },
-{ 0, 'C', status_channel,        NULL,		STATUS_CHANNEL_WSET },
-{ 0, 'D', status_dcc, 	         NULL, 			-1 },
-{ 0, 'E', status_scrollback,     NULL, 			-1 },
-{ 0, 'F', status_notify_windows, NULL,		STATUS_NOTIFY_WSET },
-{ 0, 'H', status_hold,		 NULL,			-1 },
-{ 0, 'G', status_halfop,	 NULL,			-1 },
-{ 0, 'I', status_insert_mode,    NULL,			-1 },
-{ 0, 'J', status_cpu_saver_mode, NULL,		STATUS_CPU_SAVER_WSET },
-{ 0, 'K', status_oper_kills,	 NULL,		STATUS_OPER_KILLS_WSET },
-{ 0, 'L', status_lag, 		 NULL,		STATUS_LAG_WSET },
+{ 0, 'A', status_away,           1,		STATUS_AWAY_WSET },
+{ 0, 'B', status_hold_lines,     1,		STATUS_HOLD_LINES_WSET },
+{ 0, 'C', status_channel,        1,		STATUS_CHANNEL_WSET },
+{ 0, 'D', status_dcc, 	         0, 			-1 },
+{ 0, 'E', status_scrollback,     0, 			-1 },
+{ 0, 'F', status_notify_windows, 1,		STATUS_NOTIFY_WSET },
+{ 0, 'H', status_hold,		 0,			-1 },
+{ 0, 'G', status_halfop,	 0,			-1 },
+{ 0, 'I', status_insert_mode,    0,			-1 },
+{ 0, 'J', status_cpu_saver_mode, 1,		STATUS_CPU_SAVER_WSET },
+{ 0, 'K', status_oper_kills,	 2,		STATUS_OPER_KILLS_WSET },
+{ 0, 'L', status_lag, 		 1,		STATUS_LAG_WSET },
 
-{ 0, 'M', status_mail,		 NULL,		STATUS_MAIL_WSET },
-{ 0, 'N', status_nickname,	 NULL,		STATUS_NICKNAME_WSET },
-{ 0, 'O', status_overwrite_mode, NULL,			-1 },
-{ 0, 'P', status_position,       NULL,			-1 },
-{ 0, 'Q', status_query_nick,     NULL,		STATUS_QUERY_WSET },
-{ 0, 'R', status_refnum,         NULL, 			-1 },
-{ 0, 'S', status_server,         NULL,     	STATUS_SERVER_WSET },
-{ 0, 'T', status_clock,          NULL,      	STATUS_CLOCK_WSET },
-{ 0, 'U', status_user0s,		 NULL, 			-1 },
-{ 0, 'V', status_version,	 NULL, 			-1 },
-{ 0, 'W', status_window,	 NULL, 			-1 },
-{ 0, 'X', status_user1s,		 NULL, 			-1 },
-{ 0, 'Y', status_user2s,		 NULL, 			-1 },
-{ 0, 'Z', status_user3s,		 NULL, 			-1 },
-{ 0, '&', status_dcccount,	 NULL,		STATUS_DCCCOUNT_WSET },
-{ 0, '|', status_cdcccount,	 NULL,		STATUS_CDCCCOUNT_WSET },
-{ 0, '^', status_msgcount,	 NULL,		STATUS_MSGCOUNT_WSET },
-{ 0, '#', status_umode,		 NULL,	     	STATUS_UMODE_WSET },
-{ 0, '%', status_percent,	 NULL, 			-1 },
-{ 0, '*', status_oper,		 NULL, 			-1 },
-{ 0, '+', status_mode,		 NULL,       	STATUS_MODE_WSET },
-{ 0, '.', status_windowspec,	 NULL, 			-1 },
-{ 0, '=', status_voice,		 NULL, 			-1 },
-{ 0, '>', status_right_justify,	 NULL, 			-1 },
-{ 0, '-', status_topic,		 NULL,		STATUS_TOPIC_WSET },
-{ 0, '!', status_users,		 NULL,		STATUS_USERS_WSET },
-{ 0, '@', status_chanop,	 NULL, 			-1 },
-{ 0, '0', status_user0s,		 NULL, 			-1 },
-{ 0, '1', status_user1s,		 NULL, 			-1 },
-{ 0, '2', status_user2s,		 NULL, 			-1 },
-{ 0, '3', status_user3s,		 NULL, 			-1 },
-{ 0, '4', status_user4s,		 NULL, 			-1 },
-{ 0, '5', status_user5s,		 NULL, 			-1 },
-{ 0, '6', status_user6s,		 NULL, 			-1 },
-{ 0, '7', status_user7s,		 NULL, 			-1 },
-{ 0, '8', status_user8s,		 NULL, 			-1 },
-{ 0, '9', status_user9s,		 NULL, 			-1 },
-{ 0, 'f', status_shitlist,		 NULL,			-1 },
-{ 0, 'a', status_aop,			 NULL,			-1 },
-{ 0, 'b', status_bitch,			 NULL,			-1 },
-{ 0, 'h', status_nethack,		 NULL,			-1 },
-{ 0, 'l', status_lastjoin,		 NULL,			-1 },
-{ 0, 'n', status_notifyusers,		 NULL,			-1 },
-{ 0, 's', status_newserver,		 NULL,			-1 },
-{ 0, 'u', status_userlist,		 NULL,			-1 },
+{ 0, 'M', status_mail,		 1,		STATUS_MAIL_WSET },
+{ 0, 'N', status_nickname,	 1,		STATUS_NICKNAME_WSET },
+{ 0, 'O', status_overwrite_mode, 0,			-1 },
+{ 0, 'P', status_position,       0,			-1 },
+{ 0, 'Q', status_query_nick,     1,		STATUS_QUERY_WSET },
+{ 0, 'R', status_refnum,         0, 			-1 },
+{ 0, 'S', status_server,         1,     	STATUS_SERVER_WSET },
+{ 0, 'T', status_clock,          1,      	STATUS_CLOCK_WSET },
+{ 0, 'U', status_user0s,		 0, 			-1 },
+{ 0, 'V', status_version,	 0, 			-1 },
+{ 0, 'W', status_window,	 0, 			-1 },
+{ 0, 'X', status_user1s,		 0, 			-1 },
+{ 0, 'Y', status_user2s,		 0, 			-1 },
+{ 0, 'Z', status_user3s,		 0, 			-1 },
+{ 0, '&', status_dcccount,	 2,		STATUS_DCCCOUNT_WSET },
+{ 0, '|', status_cdcccount,	 2,		STATUS_CDCCCOUNT_WSET },
+{ 0, '^', status_msgcount,	 1,		STATUS_MSGCOUNT_WSET },
+{ 0, '#', status_umode,		 1,	     	STATUS_UMODE_WSET },
+{ 0, '%', status_percent,	 0, 			-1 },
+{ 0, '*', status_oper,		 0, 			-1 },
+{ 0, '+', status_mode,		 1,       	STATUS_MODE_WSET },
+{ 0, '.', status_windowspec,	 0, 			-1 },
+{ 0, '=', status_voice,		 0, 			-1 },
+{ 0, '>', status_right_justify,	 0, 			-1 },
+{ 0, '-', status_topic,		 1,		STATUS_TOPIC_WSET },
+{ 0, '!', status_users,		 5,		STATUS_USERS_WSET },
+{ 0, '@', status_chanop,	 0, 			-1 },
+{ 0, '0', status_user0s,		 0, 			-1 },
+{ 0, '1', status_user1s,		 0, 			-1 },
+{ 0, '2', status_user2s,		 0, 			-1 },
+{ 0, '3', status_user3s,		 0, 			-1 },
+{ 0, '4', status_user4s,		 0, 			-1 },
+{ 0, '5', status_user5s,		 0, 			-1 },
+{ 0, '6', status_user6s,		 0, 			-1 },
+{ 0, '7', status_user7s,		 0, 			-1 },
+{ 0, '8', status_user8s,		 0, 			-1 },
+{ 0, '9', status_user9s,		 0, 			-1 },
+{ 0, 'f', status_shitlist,		 0,			-1 },
+{ 0, 'a', status_aop,			 0,			-1 },
+{ 0, 'b', status_bitch,			 0,			-1 },
+{ 0, 'h', status_nethack,		 0,			-1 },
+{ 0, 'l', status_lastjoin,		 0,			-1 },
+{ 0, 'n', status_notifyusers,		 0,			-1 },
+{ 0, 's', status_newserver,		 0,			-1 },
+{ 0, 'u', status_userlist,		 0,			-1 },
 
-{ 1, '0', status_user10s,		NULL,			-1 },
-{ 1, '1', status_user11s,		NULL,			-1 },
-{ 1, '2', status_user12s,		NULL,			-1 },
-{ 1, '3', status_user13s,		NULL,			-1 },
-{ 1, '4', status_user14s,		NULL,			-1 },
-{ 1, '5', status_user15s,		NULL,			-1 },
-{ 1, '6', status_user16s,		NULL,			-1 },
-{ 1, '7', status_user17s,		NULL,			-1 },
-{ 1, '8', status_user18s,		NULL,			-1 },
-{ 1, '9', status_user19s,		NULL,			-1 },
+{ 1, '0', status_user10s,		0,			-1 },
+{ 1, '1', status_user11s,		0,			-1 },
+{ 1, '2', status_user12s,		0,			-1 },
+{ 1, '3', status_user13s,		0,			-1 },
+{ 1, '4', status_user14s,		0,			-1 },
+{ 1, '5', status_user15s,		0,			-1 },
+{ 1, '6', status_user16s,		0,			-1 },
+{ 1, '7', status_user17s,		0,			-1 },
+{ 1, '8', status_user18s,		0,			-1 },
+{ 1, '9', status_user19s,		0,			-1 },
 
-{ 2, '0', status_user20s,		NULL,			-1 },
-{ 2, '1', status_user21s,		NULL,			-1 },
-{ 2, '2', status_user22s,		NULL,			-1 },
-{ 2, '3', status_user23s,		NULL,			-1 },
-{ 2, '4', status_user24s,		NULL,			-1 },
-{ 2, '5', status_user25s,		NULL,			-1 },
-{ 2, '6', status_user26s,		NULL,			-1 },
-{ 2, '7', status_user27s,		NULL,			-1 },
-{ 2, '8', status_user28s,		NULL,			-1 },
-{ 2, '9', status_user29s,		NULL,			-1 },
+{ 2, '0', status_user20s,		0,			-1 },
+{ 2, '1', status_user21s,		0,			-1 },
+{ 2, '2', status_user22s,		0,			-1 },
+{ 2, '3', status_user23s,		0,			-1 },
+{ 2, '4', status_user24s,		0,			-1 },
+{ 2, '5', status_user25s,		0,			-1 },
+{ 2, '6', status_user26s,		0,			-1 },
+{ 2, '7', status_user27s,		0,			-1 },
+{ 2, '8', status_user28s,		0,			-1 },
+{ 2, '9', status_user29s,		0,			-1 },
 
-{ 3, '0', status_user30s,		NULL,			-1 },
-{ 3, '1', status_user31s,		NULL,			-1 },
-{ 3, '2', status_user32s,		NULL,			-1 },
-{ 3, '3', status_user33s,		NULL,			-1 },
-{ 3, '4', status_user34s,		NULL,			-1 },
-{ 3, '5', status_user35s,		NULL,			-1 },
-{ 3, '6', status_user36s,		NULL,			-1 },
-{ 3, '7', status_user37s,		NULL,			-1 },
-{ 3, '8', status_user38s,		NULL,			-1 },
-{ 3, '9', status_user39s,		NULL,			-1 },
+{ 3, '0', status_user30s,		0,			-1 },
+{ 3, '1', status_user31s,		0,			-1 },
+{ 3, '2', status_user32s,		0,			-1 },
+{ 3, '3', status_user33s,		0,			-1 },
+{ 3, '4', status_user34s,		0,			-1 },
+{ 3, '5', status_user35s,		0,			-1 },
+{ 3, '6', status_user36s,		0,			-1 },
+{ 3, '7', status_user37s,		0,			-1 },
+{ 3, '8', status_user38s,		0,			-1 },
+{ 3, '9', status_user39s,		0,			-1 },
 
 };
 
@@ -277,10 +277,11 @@ void *default_status_output_function = make_status;
  * sub-portions of the status line to a format statement specially designed
  * for that sub-portion.  convert_sub_format looks for occurences of %c
  * (where c is passed to the function); when found, it is replaced by %s
- * for use in an sprintf.  All other occurences of % are replaced by %%.
- * The string returned by this function must be freed.
+ * for use in an sprintf.  Only the first 'args' instances are replaced.
+ * All other occurences of % are replaced by %%.  The string returned by 
+ * this function must be freed.
  */
-static char *convert_sub_format(const char *format, char c, const char *padded)
+static char *convert_sub_format(const char *format, int args, char c, const char *padded)
 {
 	size_t i = 0;
 	char buffer[BIG_BUFFER_SIZE];
@@ -296,8 +297,10 @@ static char *convert_sub_format(const char *format, char c, const char *padded)
 		{
 			format++;
 
-			if (*format == c)
+			if (*format == c && args)
 			{
+				args--;
+
 				if (i < sizeof buffer)
 					i += strlcpy(buffer + i, padded, sizeof buffer - i);
 
@@ -318,8 +321,10 @@ static char *convert_sub_format(const char *format, char c, const char *padded)
 				if (*format)
 					format++;
 
-				if (*format == c)
+				if (*format == c && args)
 				{
+					args--;
+
 					if (i < sizeof buffer)
 						buffer[i++] = 's';
 				}
@@ -419,9 +424,13 @@ static	char	*convert_format(Window *win, char *format, int k)
 			{
 				s = get_wset_format_var_address(win->wset, status_expandos[i].format_set);
 				if (s)
+				{
 					new_free(s);
-				if (s)
-					*s = convert_sub_format(get_wset_string_var(win->wset, status_expandos[i].format_set), key, padded);
+					*s = convert_sub_format(
+						get_wset_string_var(win->wset, 
+							status_expandos[i].format_set), 
+						status_expandos[i].args, key, padded);
+				}
 			}
 			buffer[pos++] = '%';
 			buffer[pos++] = 's';
