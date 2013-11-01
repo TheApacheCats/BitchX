@@ -797,9 +797,6 @@ PROCESS_INFORMATION pi = { 0 };
 #endif /* STERM_C */
 #endif /* NOT IN WTERM_C */
 
-
-
-
 /*
  * term_init: does all terminal initialization... reads termcap info, sets
  * the terminal to CBREAK, no ECHO mode.   Chooses the best of the terminal
@@ -812,9 +809,9 @@ int termfeatures = 0;
 int term_init (char *term)
 {
 #ifndef WTERM_C
-	int	i;
-	int	desired;
-
+	int i;
+	int desired;
+	char *termcap2_ptr = termcap2;
 
 #if !defined(__EMX__) && !defined(WINNT) && !defined(GUI)
 	memset(current_term, 0, sizeof(struct term_struct));
@@ -852,28 +849,20 @@ int term_init (char *term)
 
 	for (i = 0; i < numcaps; i++)
 	{
-		int ival;
-		char *cval;
-
 		if (tcaps[i].type == CAP_TYPE_INT)
 		{
-			ival = Tgetnum(tcaps[i]);
-			*(int *)tcaps[i].ptr = ival;
+			*(int *)tcaps[i].ptr = Tgetnum(tcaps[i]);
 		}
 		else if (tcaps[i].type == CAP_TYPE_BOOL)
 		{
-			ival = Tgetflag(tcaps[i]);
-			*(int *)tcaps[i].ptr = ival;
+			*(int *)tcaps[i].ptr = Tgetflag(tcaps[i]);
 		}
 		else
 		{
-			char *tmp = termcap2;
-
-			cval = Tgetstr(tcaps[i], tmp);
+			char *cval = Tgetstr(tcaps[i], termcap2_ptr);
 			if (cval == (char *) -1)
-				*(char **)tcaps[i].ptr = NULL;
-			else
-				*(char **)tcaps[i].ptr = cval;
+				cval = NULL;
+			*(char **)tcaps[i].ptr = cval;
 		}
 	}
 

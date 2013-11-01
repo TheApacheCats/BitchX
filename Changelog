@@ -1,5 +1,7 @@
 [Changes 1.2c01]
 
+* Fix output when built against termcap. (caf)
+
 * Fix STATUS_NOTIFY so that it appears in the right window. (caf)
 
 * Improve robustness of status formats handling. (caf)
