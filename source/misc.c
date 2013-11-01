@@ -246,21 +246,21 @@ BUILT_IN_COMMAND(extern_write)
 }
 
 
-int check_serverlag (void)
+int check_serverlag(void)
 {
 	int i;
-	time_t new_t = now;
 		
 	for (i = 0; i < server_list_size(); i++)
 	{
-		if (is_server_connected(i) && (new_t != get_server_lagtime(i)))
+		if (is_server_connected(i) && now != get_server_lagtime(i))
 		{
-			set_server_lagtime(i, new_t);
-			my_send_to_server(i, "PING %lu %s", get_server_lagtime(i), get_server_itsname(i) ? get_server_itsname(i): get_server_name(i));
+			set_server_lagtime(i, now);
+			my_send_to_server(i, "PING %lu %s", get_server_lagtime(i), get_server_itsname(i));
 			in_server_ping++;
 			set_server_lag(i, -1);
 		}
 	}
+
 	return 0;
 }
 
