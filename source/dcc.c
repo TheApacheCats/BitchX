@@ -2373,7 +2373,6 @@ int count = 0;
 DCC_List *c;
 char stats[80];
 char kilobytes[20];
-int barlen = BAR_LENGTH;
 double barsize = 0.0;
 char spec[BIG_BUFFER_SIZE];
 char *filename, *p;
@@ -2539,12 +2538,12 @@ char *filename, *p;
 					seconds = minutes = perc = 0;
 				
 				iperc = ((int)perc) / 10;
-				barsize = ((double) (n->filesize)) / (double) barlen;
+				barsize = ((double) (n->filesize)) / (double) BAR_LENGTH;
 	
 				size = (int) ((double) bytes / (double)barsize);
 	
 				if (n->filesize == 0)
-					size = barlen;
+					size = BAR_LENGTH;
 				sprintf(stats, "%4.1f", perc);
 				if (!get_int_var(DCC_BAR_TYPE_VAR))
 					sprintf(spec, "%s %s%s %02d:%02d", get_bar_percent(iperc), stats, "%%", minutes, seconds);
@@ -2570,31 +2569,27 @@ char *filename, *p;
 					strip_path(filename)));
 			}
 
+			/* This prints the second DCC stat line, if DCC_BAR_TYPE is non-zero. */
 			if (do_hook(DCC_STATF1_LIST, "%s %lu %lu %d %d", stats, (unsigned long)bytes, (unsigned long)n->filesize, minutes, seconds))
 			{
-				char *bar_end, *c;
+				char *stat_ptr, *spec_ptr;
 				if (!get_int_var(DCC_BAR_TYPE_VAR))
 					continue;
-				memset(spec, 0, 500);
-				sprintf(stats, "%4.1f%% (%lu of %lu bytes)", perc, (unsigned long)bytes, (unsigned long)n->filesize);
-				strcpy( spec, "\002[\026");
-				sprintf(spec+3, "%*s", size+1, space);
-				bar_end = spec + strlen(spec);
-				sprintf(bar_end, "%*s", barlen-size+1, space);
-				if (size <= barlen)
+
+				snprintf(stats, sizeof stats, "%4.1f%% (%lu of %lu bytes)", 
+					perc, (unsigned long)bytes, (unsigned long)n->filesize);
+				snprintf(spec, sizeof spec, BOLD_TOG_STR "[" 
+					REV_TOG_STR "%*.*s" REV_TOG_STR "%*.*s]" BOLD_TOG_STR 
+					" ETA " BOLD_TOG_STR "%02d:%02d",
+					size, size, space, BAR_LENGTH - size, BAR_LENGTH - size, 
+					space, minutes, seconds);
+				spec_ptr = spec + 3 + (BAR_LENGTH - strlen(stats)) / 2;
+				for (stat_ptr = stats; *stat_ptr && *spec_ptr; spec_ptr++)
 				{
-					memmove(bar_end+1, bar_end, strlen(bar_end));
-					*bar_end = '\026';
+					if (*spec_ptr != REV_TOG && *spec_ptr != BOLD_TOG)
+						*spec_ptr = *stat_ptr++;
 				}
-				strcat(spec, "]\002 ETA \002%02d:%02d\002");
-				bar_end = (spec+(((BAR_LENGTH+2) / 2) - (strlen(stats) / 2)));
-				for (c = stats;*c; bar_end++)
-				{
-					if (*bar_end == '\026' || *bar_end == '\002')
-						continue;
-					*bar_end = *c++;
-				}
-				put_it(spec, minutes, seconds);	
+				put_it("%s", spec);	
 			}
 		}
 	}
