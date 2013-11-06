@@ -416,15 +416,14 @@ char *othername = NULL;
  */
 DCC_List *find_dcc_pending(char *nick, char *desc, char *othername, int type, int remove, int num)
 {
-unsigned long dcc_type;
-unsigned long flags;
-SocketList *s;
-DCC_int *n;
-DCC_List *new_i;
-DCC_List *last_i = NULL;
+	unsigned long dcc_type;
+	SocketList *s;
+	DCC_int *n;
+	DCC_List *new_i;
+	DCC_List *last_i = NULL;
+
 	for (new_i = pending_dcc; new_i; last_i = new_i, new_i = new_i->next)
 	{
-		flags = new_i->sock.flags;
 		s = &new_i->sock;
 		n = (DCC_int *)s->info;
 		dcc_type = s->flags & DCC_TYPES;
@@ -2087,19 +2086,11 @@ void BX_dcc_resend(char *command, char *args)
 
 void start_dcc_get(int snum)
 {
-DCC_int *n;
-SocketList *s;
-int bytes_read;
-unsigned long type;
-int tdcc = 0;
-char buffer[MAX_DCC_BLOCK_SIZE+1];
-int err;
-	s = get_socket(snum);
-	n = (DCC_int *)s->info;
-	type = s->flags & DCC_TYPES;
-	tdcc = s->flags & DCC_TDCC;
-
-
+	SocketList *s = get_socket(snum);
+	DCC_int *n = s->info;
+	int bytes_read;
+	char buffer[MAX_DCC_BLOCK_SIZE+1];
+	int err;
 
 	set_display_target(NULL, LOG_DCC);
 	bytes_read = read(snum, buffer, MAX_DCC_BLOCK_SIZE);
@@ -2996,7 +2987,7 @@ char *nick;
 			count++;
 		}
 		if (count == 0)
-			userage("/dcc exempt", "+nick to add, nick to remove"); 
+			userage("dcc exempt", "+nick to add, nick to remove"); 
 		return;
 	}
 	nick = next_arg(args, &args);
@@ -3021,32 +3012,27 @@ char *nick;
 			bitchsay("added %s to dcc exempt list", nick);
 		}
 		else if (remove && !nptr)
-			put_it("%s", convert_output_format("$G: %RDCC%n No such nick on the exempt list %K[%W$0%K]", "%s", nick));
+			put_it("%s", convert_output_format("$G %RDCC%n No such nick on the exempt list %K[%W$0%K]", "%s", nick));
 		nick = next_arg(args, &args);
 	}
 }
 
 int dcc_exempt_save(FILE *fptr)
 {
-int count = 0;
-List *nptr = NULL;
-	if (dcc_no_flood)
-	{
-		fprintf(fptr, "# Dcc Exempt from autoget OFF list\n");
-		fprintf(fptr, "DCC EXEMPT ");
-	}
+	int count = 0;
+	List *nptr = NULL;
+
+	fprintf(fptr, "# Exemptions from DCC autoget / flooding controls\n");
+
 	for (nptr = next_namelist(dcc_no_flood, NULL, DCC_HASHSIZE); nptr; nptr = next_namelist(dcc_no_flood, nptr, DCC_HASHSIZE))
 	{
-		fprintf(fptr, "+%s ", nptr->name);
+		fprintf(fptr, "DCC EXEMPT +%s\n", nptr->name);
 		count++;
 	}
-	if (dcc_no_flood)
-	{
-		fprintf(fptr, "\n");
-		if (count && do_hook(SAVEFILE_LIST, "DCCexempt %d", count))
-			bitchsay("Saved %d DccExempt entries", count);
+
+	if (count && do_hook(SAVEFILE_LIST, "DCCexempt %d", count))
+		bitchsay("Saved %d DccExempt entries", count);
 		                        
-	}
 	return count;
 }
 
