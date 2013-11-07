@@ -573,7 +573,7 @@ int server;
 			log_denied("UNBAN", from, FromUserHost, to, cmd);
 			return NULL;
 		}
-		sprintf(ban, "%s!%s", from, FromUserHost);
+		snprintf(ban, sizeof ban, "%s!%s", from, FromUserHost);
 		if (chan && chan->have_op)
 		{
 			if ((b = ban_is_on_channel(ban, chan)))
@@ -1472,7 +1472,7 @@ extern	void	send_ctcp (int type, char *to, int datatag, char *format, ...)
 	{
 		va_list args;
 		va_start(args, format);
-		vsnprintf(putbuf, BIG_BUFFER_SIZE, format, args);
+		vsnprintf(putbuf, sizeof putbuf, format, args);
 		va_end(args);
 		
 		do_hook(SEND_CTCP_LIST, "%s %s %s %s", 

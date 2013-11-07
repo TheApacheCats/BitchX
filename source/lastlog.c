@@ -465,7 +465,6 @@ BUILT_IN_COMMAND(lastlog)
 
 	if (match)
 	{
-
 		blah = (char *) alloca(strlen(match)+4);
 		sprintf(blah, "*%s*", match);
 	}
@@ -594,7 +593,7 @@ int logmsg(unsigned long log_type, char *from, int flag, char *format, ...)
 	{
 		va_list ap;
 		va_start(ap, format);
-		vsnprintf(msglog_buffer, BIG_BUFFER_SIZE, format, ap);
+		vsnprintf(msglog_buffer, sizeof msglog_buffer, format, ap);
 		va_end(ap);
 	}
 

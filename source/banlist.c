@@ -67,8 +67,7 @@ int delay_flush_all(void *arg, char *sub)
 		from_server = atoi(serv_num);
 	if (channel && *channel && mode_str && user)
 	{
-		sprintf(buffer, "MODE %s %s%s %s\r\n", channel, plus_mode, mode_str, user);
-		push_len = strlen(buffer);
+		push_len = snprintf(buffer, sizeof buffer, "MODE %s %s%s %s\r\n", channel, plus_mode, mode_str, user);	
 		add_mode_buffer(buffer, push_len);
 		mode_str_len = 0;
 		new_free(&mode_str);
@@ -88,8 +87,7 @@ void flush_mode_all(ChannelList *chan)
 	
 	if (mode_str && user)
 	{
-		sprintf(buffer, "MODE %s %s%s %s\r\n", chan->channel, plus_mode, mode_str, user);
-		push_len = strlen(buffer);
+		push_len = snprintf(buffer, sizeof buffer, "MODE %s %s%s %s\r\n", chan->channel, plus_mode, mode_str, user);
 		add_mode_buffer(buffer, push_len);
 		mode_str_len = 0;
 		new_free(&mode_str);
@@ -112,8 +110,7 @@ void add_mode(ChannelList *chan, char *mode, int plus, char *nick, char *reason,
 
 	if (reason)
 	{
-		sprintf(buffer, "KICK %s %s :%s\r\n", chan->channel, nick, reason);
-		push_len = strlen(buffer);
+		push_len = snprintf(buffer, sizeof buffer, "KICK %s %s :%s\r\n", chan->channel, nick, reason);
 		add_mode_buffer(buffer, push_len);
 	}
 	else
@@ -124,8 +121,7 @@ void add_mode(ChannelList *chan, char *mode, int plus, char *nick, char *reason,
 		m_s3cat(&user, space, nick);
 		if (mode_str_len >= max_modes)
 		{
-			sprintf(buffer, "MODE %s %s%s %s\r\n", chan->channel, plus_mode, mode_str, user);
-			push_len = strlen(buffer);
+			push_len = snprintf(buffer, sizeof buffer, "MODE %s %s%s %s\r\n", chan->channel, plus_mode, mode_str, user);
 			add_mode_buffer(buffer, push_len);
 			new_free(&mode_str);
 			new_free(&user);
@@ -150,7 +146,7 @@ BUILT_IN_COMMAND(fuckem)
 		add_mode(chan, "b", 0, Bans->ban, NULL, get_int_var(NUM_BANMODES_VAR));
 	for (c = 'a'; c <= 'z'; c++)
 	{
-		sprintf(buffer, "*!*@*%c*", c);
+		snprintf(buffer, sizeof buffer, "*!*@*%c*", c);
 		add_mode(chan, "b", 1, buffer, NULL, get_int_var(NUM_BANMODES_VAR));
 	}         
 	flush_mode_all(chan);
@@ -501,7 +497,7 @@ BUILT_IN_COMMAND(massdeop)
 
 	for (nicks = next_nicklist(chan, NULL); nicks; nicks = next_nicklist(chan, nicks))
 	{
-		sprintf(buffer, "%s!%s", nicks->nick, nicks->host);
+		snprintf(buffer, sizeof buffer, "%s!%s", nicks->nick, nicks->host);
 		if ((all || (!isvoice && nick_isop(nicks)) || (isvoice && nick_isvoice(nicks))) &&
 		    my_stricmp(nicks->nick, get_server_nickname(from_server)) &&
 		    wild_match(spec, buffer))
@@ -620,7 +616,7 @@ BUILT_IN_COMMAND(massop)
 
 	for (nicks = next_nicklist(chan, NULL); nicks; nicks = next_nicklist(chan, nicks))
 	{
-		sprintf(buffer, "%s!%s", nicks->nick, nicks->host);
+		snprintf(buffer, sizeof buffer, "%s!%s", nicks->nick, nicks->host);
 		if ((my_stricmp(nicks->nick, get_server_nickname(from_server)) && wild_match(spec, buffer)))
 		{
 			if ((massvoice && !nick_isvoice(nicks) && !nick_isop(nicks)) || !nick_isop(nicks))
@@ -700,8 +696,7 @@ BUILT_IN_COMMAND(masskick)
 		*reason = 0;
 		quote_it(rest ? rest : "MassKick", NULL, reason);						
 		bitchsay("Performing (%s) Mass Kick on %s", all? "opz/non-opz" : ops ? "ops":"non-opz", chan->channel);
-		sprintf(buf, "KICK %%s %%s :\002%s\002", reason);
-		len = strlen(buf);
+		len = snprintf(buf, sizeof buf, "KICK %%s %%s :\002%s\002", reason);
 		for (new = masskick_list; new; new = new->next)
 		{
 			send_buf = m_s3cat(&send_buf, ",", new->filter);

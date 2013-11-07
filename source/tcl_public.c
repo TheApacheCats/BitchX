@@ -1089,7 +1089,7 @@ int Tcl_RelativeExpr (Tcl_Interp *tcl_interp, char *cstringExpr, long stringLen,
 	return Tcl_ExprLong (tcl_interp, cstringExpr, exprResultPtr);
     }
 
-    sprintf (staticBuf, "%ld",
+    snprintf (staticBuf, sizeof staticBuf, "%ld",
              stringLen - ((cstringExpr [0] == 'e') ? 1 : 0));
     exprLen = strlen (staticBuf) + strlen (cstringExpr) - 2;
 

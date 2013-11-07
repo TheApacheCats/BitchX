@@ -824,7 +824,7 @@ void load_scripts(void)
 		never_connected = 0;
 #if !defined(WINNT) && !defined(__EMX__)
 		window_display = 0;
-		sprintf(buffer, "%s/bxglobal", SCRIPT_PATH);
+		snprintf(buffer, sizeof buffer, "%s/bxglobal", SCRIPT_PATH);
 		loading_global = 1;
 		load("LOAD", buffer, empty_string, NULL);
 		loading_global = 0;

@@ -837,7 +837,7 @@ static	void p_pong(char *from, char **ArgList)
 			timethen.tv_sec = my_atol(ArgList[1]+3);
 #endif
 			get_time(&timenow);
-			sprintf(buff, "%2.4f", BX_time_diff(timethen, timenow));
+			snprintf(buff, sizeof buff, "%2.4f", BX_time_diff(timethen, timenow));
 			put_it("%s", convert_output_format("$G Server pong from %W$0%n $1 seconds", "%s %s", ArgList[0], buff));
 			clear_server_sping(from_server, ArgList[0]);
 		}
@@ -850,10 +850,10 @@ static	void p_pong(char *from, char **ArgList)
 #ifdef HAVE_GETTIMEOFDAY
 				struct timeval timenow = {0};
 				get_time(&timenow);
-				sprintf(buff, "%2.4f", BX_time_diff(tmp->in_sping, timenow));
+				snprintf(buff, sizeof buff, "%2.4f", BX_time_diff(tmp->in_sping, timenow));
 				put_it("%s", convert_output_format("$G Server pong from %W$0%n $1 seconds", "%s %s", ArgList[0], buff));
 #else
-				sprintf(buff, "%2ld.x", now - tmp->in_sping);
+				snprintf(buff, sizeof buff, "%2ld.x", now - tmp->in_sping);
 				put_it("%s", convert_output_format("$G Server pong from %W$0%n $1 seconds", "%s %s", ArgList[0], buff));
 #endif
 				clear_server_sping(from_server, ArgList[0]);
@@ -960,10 +960,11 @@ void add_user_who (WhoEntry *w, char *from, char **ArgList)
 	char *userhost;
 	ChannelList *chan;
 	int op = 0, voice = 0;
+	size_t userhost_size = strlen(ArgList[1]) + strlen(ArgList[2]) + 2;
 
 	/* Obviously this is safe. */
-	userhost = alloca(strlen(ArgList[1]) + strlen(ArgList[2]) + 2);
-	sprintf(userhost, "%s@%s", ArgList[1], ArgList[2]);
+	userhost = alloca(userhost_size);
+	snprintf(userhost, userhost_size, "%s@%s", ArgList[1], ArgList[2]);
 	voice = (strchr(ArgList[5], '+') != NULL);
 	op = (strchr(ArgList[5], '@') != NULL);
 	chan = add_to_channel(ArgList[0], ArgList[4], from_server, op, voice, userhost, ArgList[3], ArgList[5], 0, ArgList[6] ? my_atol(ArgList[6]) : 0);
@@ -1286,7 +1287,7 @@ static	void p_kill(char *from, char **ArgList)
 	}
 
 	port = get_server_port(from_server);
-	snprintf(sc, 19, "+%i %d", from_server, port);
+	snprintf(sc, sizeof sc, "+%i %d", from_server, port);
 	
 	localkill = !serverkill && ArgList[1] && 
 		strstr(ArgList[1], get_server_name(from_server));
@@ -1312,7 +1313,7 @@ static	void p_kill(char *from, char **ArgList)
 			int i = from_server + 1;
 			if (i >= server_list_size())
 				i = 0;
-			snprintf(sc, 19, "+%i", i);
+			snprintf(sc, sizeof sc, "+%i", i);
 			from_server = -1;
 		}
 		if (do_hook(DISCONNECT_LIST,"Killed by %s (%s)",from,

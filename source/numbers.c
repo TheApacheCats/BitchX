@@ -79,7 +79,7 @@ char	*numeric_banner(void)
 	static	char	thing[4];
 	if (!get_int_var(SHOW_NUMERICS_VAR))
 		return (thing_ansi?thing_ansi:empty_string);
-	sprintf(thing, "%3.3u", -current_numeric);
+	snprintf(thing, sizeof thing, "%3.3u", -current_numeric);
 	return (thing);
 }
 

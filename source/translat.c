@@ -367,7 +367,7 @@ BUILT_IN_COMMAND(digraph)
 		i = 0;
 		while(dig_table_lo[i])
 		{
-			sprintf(buffer1, "%c%c %c   ", dig_table_lo[i],
+			snprintf(buffer1, sizeof buffer1, "%c%c %c   ", dig_table_lo[i],
 			    dig_table_hi[i], dig_table_di[i]);
 			strcat(buffer2, buffer1);
 			if ((++i % 10) == 0)
@@ -378,7 +378,7 @@ BUILT_IN_COMMAND(digraph)
 		}
 		if (buffer2[0])
 			put_it(buffer2);
-		sprintf(buffer2, "%d digraphs listed.", i);
+		snprintf(buffer2, sizeof buffer2, "%d digraphs listed.", i);
 		say(buffer2);
 	}
 }

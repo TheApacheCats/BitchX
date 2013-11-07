@@ -328,7 +328,7 @@ void aprintf(char *format, ...) {
 	USHORT  i, o;
 
 	va_start(args, format);
-	vsprintf(putbuf, format, args);
+	vsnprintf(putbuf sizeof putbuf, format, args);
 	va_end(args);
 
 	i = o = 0;
@@ -386,7 +386,7 @@ MRESULT EXPENTRY FontDlgProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2)
 		{
 			if(fonts[i].lAveCharWidth != 5)
 			{
-				sprintf(buf, "%s %ux%u", fonts[i].szFacename, (unsigned int)fonts[i].lMaxBaselineExt, (unsigned int)fonts[i].lAveCharWidth);
+				snprintf(buf, sizeof buf, "%s %ux%u", fonts[i].szFacename, (unsigned int)fonts[i].lMaxBaselineExt, (unsigned int)fonts[i].lAveCharWidth);
 				WinSendMsg(WinWindowFromID(hwnd, 101),
 						   LM_INSERTITEM,
 						   MPFROMSHORT(LIT_END),
@@ -423,7 +423,7 @@ MRESULT EXPENTRY FontDlgProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2)
 				       0);
 		if(i2)
 		{
-			sprintf(fontsize, "%dx%d", (int)fonts[i].lAveCharWidth, (int)fonts[i].lMaxBaselineExt);
+			snprintf(fontsize, sizeof fontsize, "%dx%d", (int)fonts[i].lAveCharWidth, (int)fonts[i].lMaxBaselineExt);
 			set_string_var(DEFAULT_FONT_VAR, fontsize);
 		}
 
@@ -545,7 +545,7 @@ int mesg(char *format, ...) {
 	char outbuf[256];
 
 	va_start(args, format);
-	vsprintf(outbuf, format, args);
+	vsnprintf(outbuf, sizeof outbuf, format, args);
 	va_end(args);
 
 	WinMessageBox(HWND_DESKTOP, HWND_DESKTOP, outbuf, "PMBitchX", 0, MB_OK | MB_INFORMATION | MB_MOVEABLE);
@@ -1935,7 +1935,7 @@ MRESULT EXPENTRY NotebookPage1DlgProc(HWND hWnd, ULONG msg, MPARAM mp1,	MPARAM m
 				case INT_TYPE_VAR:
 					WinEnableWindow(WinWindowFromID(hWnd, CB_ONOFF1), FALSE);
 					WinEnableWindow(WinWindowFromID(hWnd, EF_ENTRY1), TRUE);
-					sprintf(szBuffer, "%d", get_int_var(p1e));
+					snprintf(szBuffer, sizeof szBuffer, "%d", get_int_var(p1e));
 					WinSetDlgItemText(hWnd,	EF_ENTRY1, szBuffer);
 					break;
 				case STR_TYPE_VAR:
@@ -2075,7 +2075,7 @@ MRESULT	EXPENTRY NotebookPage2DlgProc(HWND hWnd, ULONG msg, MPARAM mp1,	MPARAM m
 				 case INT_TYPE_VAR:
 					 WinEnableWindow(WinWindowFromID(hWnd, CB_ONOFF2), FALSE);
 					 WinEnableWindow(WinWindowFromID(hWnd, EF_ENTRY2), TRUE);
-					 sprintf(szBuffer, "%d", get_cset_int_var(chan->csets, p2e));
+					 snprintf(szBuffer, sizeof szBuffer, "%d", get_cset_int_var(chan->csets, p2e));
 					 WinSetDlgItemText(hWnd,	EF_ENTRY2, szBuffer);
 					 break;
 				 case STR_TYPE_VAR:
@@ -2341,7 +2341,7 @@ MRESULT	EXPENTRY NotebookDlgProc(HWND hWnd, ULONG msg, MPARAM mp1, MPARAM mp2)
 		GpiQueryFontMetrics(hPS = WinGetPS(hWnd), sizeof(FONTMETRICS), &fm);
 
 		if(nb_window->current_channel)
-			sprintf(szBuffer, "PMBitchX Properties for %s", nb_window->current_channel);
+			snprintf(szBuffer, sizeof szBuffer, "PMBitchX Properties for %s", nb_window->current_channel);
 		else
 			strcpy(szBuffer, "PMBitchX Properties");
 
@@ -3697,7 +3697,7 @@ void gui_setfileinfo(char *filename, char *nick, int server)
 	update_clock(RESET_TIME);
 	t = update_clock(GET_TIME);
 
-	sprintf(buffer, "%s@%s %s", nick, s ? s : "IRC", t ? t : "clock problem");
+	snprintf(buffer, sizeof buffer, "%s@%s %s", nick, s ? s : "IRC", t ? t : "clock problem");
 
 	time_format = NULL;
 	update_clock(RESET_TIME);

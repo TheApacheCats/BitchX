@@ -1170,9 +1170,9 @@ int term_init (char *term)
 		else if (current_term->TI_setf)
 			strcat(cbuf, (char *)tparm(current_term->TI_setf, i & 0x07, 0));
 		else if (i >= 8)
-			sprintf(cbuf, "\033[1;%dm", (i & 0x07) + 30);
+			snprintf(cbuf, sizeof cbuf, "\033[1;%dm", (i & 0x07) + 30);
 		else
-			sprintf(cbuf, "\033[%dm", (i & 0x07) + 30);
+			snprintf(cbuf, sizeof cbuf, "\033[%dm", (i & 0x07) + 30);
 
 		current_term->TI_forecolors[i] = m_strdup(cbuf);
 	}
@@ -1190,9 +1190,9 @@ int term_init (char *term)
 		else if (current_term->TI_setb)
 			strcat (cbuf, tparm(current_term->TI_setb, i & 0x07, 0));
 		else if (i >= 8)
-			sprintf(cbuf, "\033[1;%dm", (i & 0x07) + 40);
+			snprintf(cbuf, sizeof cbuf, "\033[1;%dm", (i & 0x07) + 40);
 		else
-			sprintf(cbuf, "\033[%dm", (i & 0x07) + 40);
+			snprintf(cbuf, sizeof cbuf, "\033[%dm", (i & 0x07) + 40);
 
 		current_term->TI_backcolors[i] = m_strdup(cbuf);
 	}

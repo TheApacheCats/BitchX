@@ -230,7 +230,7 @@ void prepare_addshit(UserhostItem *stuff, char *nick, char *args)
 	
 	uh = clear_server_flags(stuff->user);
 	while (strlen(uh) > 7) uh++;
-	sprintf(listbuf, "*%s@%s", uh, stuff->host);
+	snprintf(listbuf, sizeof listbuf, "*%s@%s", uh, stuff->host);
 	add_to_a_list(listbuf, thetype, "*", channels, reason, shit);
 }
 
@@ -653,7 +653,7 @@ char *check;
 			for (nick = next_nicklist(chan, NULL); nick; nick = next_nicklist(chan, nick))
 			{
 				check = clear_server_flags(nick->host);
-				sprintf(tmp, "%s!%s", nick->nick, check);
+				snprintf(tmp, sizeof tmp, "%s!%s", nick->nick, check);
 				if (wild_match(added->filter, tmp))
 				{
 					if (type) 
@@ -863,7 +863,7 @@ register ShitList *thisptr = shitlist_list;
 	if (!uh || !niq)
 		return NULL;
 	u = clear_server_flags(uh);
-	sprintf(theuh, "%s!%s", niq, u);
+	snprintf(theuh, sizeof theuh, "%s!%s", niq, u);
 	while (thisptr)
 	{
 		if (!strcmp(thisptr->filter, theuh) || (/*wild_match(theuh, thisptr->filter) || */wild_match(thisptr->filter, theuh))) 
@@ -1568,7 +1568,7 @@ BUILT_IN_COMMAND(savelists)
 	int size = -1;
 	
 	
-	sprintf(thefile, "%s/%s.sav", get_string_var(CTOOLZ_DIR_VAR), version);
+	snprintf(thefile, sizeof thefile, "%s/%s.sav", get_string_var(CTOOLZ_DIR_VAR), version);
 	if ((p = expand_twiddle(thefile)))
 		outfile = fopen(p, "w");
 

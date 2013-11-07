@@ -243,7 +243,7 @@ char user[BIG_BUFFER_SIZE];
 	{
 		if (check_channel_match(added->channels, tmp->channel)) 
 		{
-			sprintf(user, "%s!%s", tmp->nicklist->nick, tmp->nicklist->host);
+			snprintf(user, sizeof user, "%s!%s", tmp->nicklist->nick, tmp->nicklist->host);
 			if (wild_match(added->filter, user))
 				tmp->nicklist->shitlist = added;
 		}
@@ -252,7 +252,7 @@ char user[BIG_BUFFER_SIZE];
 	{
 		if (check_channel_match(added->channels, tmp->channel))
 		{
-			sprintf(user, "%s!%s", tmp->nicklist->nick, tmp->nicklist->host);
+			snprintf(user, sizeof user, "%s!%s", tmp->nicklist->nick, tmp->nicklist->host);
 			if (wild_match(added->filter, user))
 				tmp->nicklist->shitlist = added;
 		}

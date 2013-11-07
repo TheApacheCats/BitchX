@@ -338,7 +338,7 @@ char *BX_malloc_sprintf (char **to, const char *pattern, ...)
 	{
 		va_list args;
 		va_start (args, pattern);
-		vsnprintf(booya, BIG_BUFFER_SIZE * 3, pattern, args);
+		vsnprintf(booya, sizeof booya, pattern, args);
 		va_end(args);
 	}
 	malloc_strcpy(to, booya);
@@ -355,7 +355,7 @@ char *BX_m_sprintf (const char *pattern, ...)
 	{
 		va_list args;
 		va_start (args, pattern);
-		vsnprintf(booya, BIG_BUFFER_SIZE * 3, pattern, args);
+		vsnprintf(booya, sizeof booya, pattern, args);
 		va_end(args);
 	}
 	return m_strdup(booya);
@@ -1320,7 +1320,7 @@ void	BX_ircpanic (char *format, ...)
 	{
 		va_list arglist;
 		va_start(arglist, format);
-		vsnprintf(buffer, BIG_BUFFER_SIZE, format, arglist);
+		vsnprintf(buffer, sizeof buffer, format, arglist);
 		va_end(arglist);
 	}
 
@@ -2780,7 +2780,7 @@ char	*BX_strpcat (char *source, const char *format, ...)
 	char	buffer[BIG_BUFFER_SIZE + 1];
 
 	va_start(args, format);
-	vsnprintf(buffer, BIG_BUFFER_SIZE, format, args);
+	vsnprintf(buffer, sizeof buffer, format, args);
 	va_end(args);
 
 	strcat(source, buffer);
@@ -2793,7 +2793,7 @@ char *	BX_strmpcat (char *source, size_t siz, const char *format, ...)
 	char	buffer[BIG_BUFFER_SIZE + 1];
 
 	va_start(args, format);
-	vsnprintf(buffer, BIG_BUFFER_SIZE, format, args);
+	vsnprintf(buffer, sizeof buffer, format, args);
 	va_end(args);
 
 	strmcat(source, buffer, siz);
@@ -2858,7 +2858,7 @@ char *BX_stripdev(char *ttynam)
 	if (!strncmp(ttynam, "/dev/pts", 8) && ttynam[8] >= '0' && ttynam[8] <= '9')
 	{
 		static char b[13];
-		sprintf(b, "pts/%d", atoi(ttynam + 8));
+		snprintf(b, sizeof b, "pts/%d", atoi(ttynam + 8));
 		return b;
 	}
 #endif /* SVR4 */
@@ -3066,8 +3066,7 @@ char buffer[40];
 static char buff[40];
 char *s = buff;
 int i = 0, j = 0, len;
-	sprintf(buffer, "%ld", val);
-	len = strlen(buffer);
+	len = snprintf(buffer, sizeof buffer, "%ld", val);
 	for (i = len % 3; i > 0; i--)
 		*s++ = buffer[j++];	 
 	if (len > 3 && len % 3)
@@ -3089,8 +3088,7 @@ char buffer[40];
 static char buff[40];
 char *s = buff;
 int i = 0, j = 0, len;
-	sprintf(buffer, "%lu", val);
-	len = strlen(buffer);
+	len = snprintf(buffer, sizeof buffer, "%lu", val);
 	for (i = len % 3; i > 0; i--)
 		*s++ = buffer[j++];	 
 	if (len > 3 && len % 3)

@@ -707,7 +707,7 @@ void make_status(Window *win)
 		else
 			len = 0;
 		str = &buffer[len];                                        
-		snprintf(str, BIG_BUFFER_SIZE - 1, 
+		snprintf(str, sizeof buffer, 
 			win->wset->status_format[line],
 			func_value[0], func_value[1], func_value[2],
 			func_value[3], func_value[4], func_value[5],
@@ -939,7 +939,7 @@ void make_status(Window *win)
 static	char	*status_nickname(Window *window)
 {
 static char my_buffer[MY_BUFFER/2+1];
-	snprintf(my_buffer, MY_BUFFER/2, window->wset->nick_format, get_server_nickname(window->server));
+	snprintf(my_buffer, sizeof my_buffer, window->wset->nick_format, get_server_nickname(window->server));
 	return my_buffer;
 }
 
@@ -955,7 +955,7 @@ static	char	my_buffer[MY_BUFFER+1];
 			{
 				if (!(name = get_server_itsname(window->server)))
 					name = get_server_name(window->server);
-				snprintf(my_buffer, MY_BUFFER, window->wset->server_format, name);
+				snprintf(my_buffer, sizeof my_buffer, window->wset->server_format, name);
 			}
 			else
 				RETURN_EMPTY;
@@ -974,7 +974,7 @@ static	char my_buffer[BIG_BUFFER_SIZE+1];
 
 	if (window->query_nick && window->wset->query_format)
 	{
-		snprintf(my_buffer, BIG_BUFFER_SIZE, window->wset->query_format, window->query_nick);
+		snprintf(my_buffer, sizeof my_buffer, window->wset->query_format, window->query_nick);
 		return my_buffer;
 	}
 	else
@@ -1023,7 +1023,7 @@ static	char	my_buf[MY_BUFFER+1];
 	if ((get_int_var(CLOCK_VAR) && window->wset->clock_format)  &&
 	    (get_int_var(SHOW_STATUS_ALL_VAR) ||
 	    (window == window->screen->current_window)))
-		snprintf(my_buf, MY_BUFFER, window->wset->clock_format, update_clock(GET_TIME));
+		snprintf(my_buf, sizeof my_buf, window->wset->clock_format, update_clock(GET_TIME));
 	else
 		RETURN_EMPTY;
 	return my_buf;
@@ -1044,7 +1044,7 @@ static  char	my_buffer[MY_BUFFER+1];
 				double_quote(mode, "$", mode2);
 				mode = mode2;
 			}
-			snprintf(my_buffer, MY_BUFFER, window->wset->mode_format, mode);
+			snprintf(my_buffer, sizeof my_buffer, window->wset->mode_format, mode);
 		}
 		else
 			RETURN_EMPTY;
@@ -1070,7 +1070,7 @@ static char my_buffer[MY_BUFFER/2+1];
 	}
 	
 	if (*localbuf && window->wset->umode_format)
-		snprintf(my_buffer, MY_BUFFER/2, window->wset->umode_format, localbuf);
+		snprintf(my_buffer, sizeof my_buffer, window->wset->umode_format, localbuf);
 	else
 		RETURN_EMPTY;
 	return my_buffer;
@@ -1107,7 +1107,7 @@ static  char	my_buffer[MY_BUFFER/2+1];
 	
 	if ((num = (window->lines_held /10) * 10))
 	{
-		snprintf(my_buffer, MY_BUFFER/2, window->wset->hold_lines_format, ltoa(num));
+		snprintf(my_buffer, sizeof my_buffer, window->wset->hold_lines_format, ltoa(num));
 		return(my_buffer);
 	}
 	RETURN_EMPTY;
@@ -1119,7 +1119,7 @@ static  char	my_buffer[MY_BUFFER/2+1];
 
 	if (get_int_var(MSGCOUNT_VAR) && window->wset->msgcount_format)
 	{
-		snprintf(my_buffer, MY_BUFFER/2, window->wset->msgcount_format, ltoa(get_int_var(MSGCOUNT_VAR)));
+		snprintf(my_buffer, sizeof my_buffer, window->wset->msgcount_format, ltoa(get_int_var(MSGCOUNT_VAR)));
 		return my_buffer;
 	}
 	RETURN_EMPTY;
@@ -1149,7 +1149,7 @@ static	char	my_buffer[IRCD_BUFFER_SIZE + 1];
 		if ((num = get_int_var(CHANNEL_NAME_WIDTH_VAR)) &&
 		    ((int) strlen(channel) > num))
 			channel[num] = (char) 0;
-		snprintf(my_buffer, IRCD_BUFFER_SIZE, window->wset->channel_format, channel);
+		snprintf(my_buffer, sizeof my_buffer, window->wset->channel_format, channel);
 		return my_buffer;
 	}
 	RETURN_EMPTY;
@@ -1164,7 +1164,7 @@ static	char	my_buffer[MY_BUFFER/2+1];
 	    (get_int_var(SHOW_STATUS_ALL_VAR) ||
 	    (window == window->screen->current_window)))
 	{
-		snprintf(my_buffer, MY_BUFFER/2, window->wset->mail_format, number);
+		snprintf(my_buffer, sizeof my_buffer, window->wset->mail_format, number);
 		return my_buffer;
 	}
 	RETURN_EMPTY;
@@ -1205,7 +1205,7 @@ static char	my_buffer[MY_BUFFER+1];
 	{
 		if (window->server != -1 && get_server_away(window->server))
 		{
-			snprintf(my_buffer, MY_BUFFER, window->wset->away_format, ltoa(get_int_var(MSGCOUNT_VAR)));
+			snprintf(my_buffer, sizeof my_buffer, window->wset->away_format, ltoa(get_int_var(MSGCOUNT_VAR)));
 			return my_buffer;
 		}
 		else
@@ -1289,11 +1289,11 @@ static  char	my_buffer[MY_BUFFER/2+1];
 		if (get_server_lag(window->server) > -1)
 		{
 			char p[40];
-			sprintf(p, "%2d",get_server_lag(window->server)); 
-			snprintf(my_buffer,MY_BUFFER/2, window->wset->lag_format, p);
+			snprintf(p, sizeof p, "%2d", get_server_lag(window->server)); 
+			snprintf(my_buffer, sizeof my_buffer, window->wset->lag_format, p);
 		}
 		else
-			snprintf(my_buffer, MY_BUFFER/2, window->wset->lag_format, "??");
+			snprintf(my_buffer, sizeof my_buffer, window->wset->lag_format, "??");
 		return(my_buffer);
 	}
 	RETURN_EMPTY;
@@ -1315,7 +1315,7 @@ static  char	my_buffer[MY_BUFFER+41];
 					double_quote(t, "()[]$\"", t2);
 				else
 					strcpy(t2, t);
-				snprintf(my_buffer, MY_BUFFER, window->wset->topic_format, stripansicodes(t2));
+				snprintf(my_buffer, sizeof my_buffer, window->wset->topic_format, stripansicodes(t2));
 			}
 			else
 				strlcpy(my_buffer, "No Topic", sizeof my_buffer);
@@ -1378,8 +1378,8 @@ static char my_buffer[MY_BUFFER+1];
 	if (window->wset->kills_format && (nick_collisions || oper_kills))
 	{
 		char tmp[30];
-		snprintf(tmp, 29, "%ld", nick_collisions); 
-		snprintf(my_buffer, MY_BUFFER, window->wset->kills_format, tmp, ltoa(oper_kills));
+		snprintf(tmp, sizeof tmp, "%ld", nick_collisions); 
+		snprintf(my_buffer, sizeof my_buffer, window->wset->kills_format, tmp, ltoa(oper_kills));
 		return my_buffer;
 	}
 	RETURN_EMPTY;	
@@ -1393,7 +1393,7 @@ static char my_buffer[2 * MY_BUFFER+1];
 	{
 		char tmp[30];
 		strcpy(tmp, ltoa(send_count_stat));
-		snprintf(my_buffer, 2 * MY_BUFFER, window->wset->dcccount_format, ltoa(get_count_stat), tmp);
+		snprintf(my_buffer, sizeof my_buffer, window->wset->dcccount_format, ltoa(get_count_stat), tmp);
 		return my_buffer;
 	}
 	RETURN_EMPTY;
@@ -1408,7 +1408,7 @@ static char my_buffer[2 * MY_BUFFER+1];
 	{
 		char tmp[30];
 		strcpy(tmp, ltoa(cdcc_numpacks));
-		snprintf(my_buffer, 2 * MY_BUFFER, window->wset->cdcc_format, ltoa(send_numpacks), tmp);
+		snprintf(my_buffer, sizeof my_buffer, window->wset->cdcc_format, ltoa(send_numpacks), tmp);
 		return my_buffer;
 	}
 #endif
@@ -1420,7 +1420,7 @@ static char *status_cpu_saver_mode (Window *window)
 static char my_buffer[MY_BUFFER/2+1];
 	if (cpu_saver && window->wset->cpu_saver_format)
 	{
-		snprintf(my_buffer, MY_BUFFER/2, window->wset->cpu_saver_format, "cpu");
+		snprintf(my_buffer, sizeof my_buffer, window->wset->cpu_saver_format, "cpu");
 		return my_buffer;
 	}
 
@@ -1458,7 +1458,7 @@ int serv = window->server;
 			strcpy(buff2,ltoa(ircop)); 
 			strcpy(buff3, ltoa(voice));
 			strcpy(buff4, ltoa(friends));
-			snprintf(my_buffer, MY_BUFFER*2, window->wset->status_users_format, buff, buff1, buff2, buff3, buff4);
+			snprintf(my_buffer, sizeof my_buffer, window->wset->status_users_format, buff, buff1, buff2, buff3, buff4);
 			return my_buffer;
 		}
 	}
@@ -1482,7 +1482,7 @@ static char *status_position (Window *window)
 {
 static char my_buffer[MY_BUFFER/2+1];
 
-	snprintf(my_buffer, MY_BUFFER/2, "(%d-%d)", window->lines_scrolled_back,
+	snprintf(my_buffer, sizeof my_buffer, "(%d-%d)", window->lines_scrolled_back,
 					window->distance_from_display);
 	return my_buffer;
 }
@@ -1573,7 +1573,7 @@ int serv = window->server;
 static char my_buffer[40] = "\0";
 int on, off;
 	notify_count(serv, &on, &off);
-	sprintf(my_buffer, "%d %d", on, off);
+	snprintf(my_buffer, sizeof my_buffer, "%d %d", on, off);
 	return my_buffer;
 }
 

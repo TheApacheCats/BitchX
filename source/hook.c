@@ -767,7 +767,7 @@ static int show_numeric_list (int numeric)
 
 	if (numeric)
 	{
-		sprintf(buf, "%3.3u", numeric);
+		snprintf(buf, sizeof buf, "%3.3u", numeric);
 		if ((tmp = find_numeric_list(numeric)))
 		{
 			for (list = tmp->list; list; list = list->next, cnt++)
@@ -888,7 +888,7 @@ int 	BX_do_hook (int which, char *format, ...)
 	{
 		va_list args;
 		va_start (args, format);
-		vsnprintf(buffer, BIG_BUFFER_SIZE * 5, format, args);
+		vsnprintf(buffer, sizeof buffer, format, args);
 		va_end(args);
 	}
 	else

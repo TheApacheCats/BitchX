@@ -502,7 +502,7 @@ static void 	show_binding (int meta, uc c)
 	if (meta < 1 || meta > MAX_META)
 		meta = 0;
 	else
-		sprintf(meta_str, "META%d-", meta);
+		snprintf(meta_str, sizeof meta_str, "META%d-", meta);
 
 	if (keys[meta] && KEY(meta, c))
 	{
@@ -560,7 +560,7 @@ void 	save_bindings (FILE *fp, int do_all)
 	for (meta = 0; meta <= MAX_META; meta++)
 	{
 		if (meta != 0)
-			sprintf(meta_str, "META%d-", meta);
+			snprintf(meta_str, sizeof meta_str, "META%d-", meta);
 
 		for (j = 0; j < charsize; j++)
 		{
@@ -1283,8 +1283,8 @@ static char keyloc[80];
 				if (KEY(i, j) && KEY(i, j)->key_index == loc)
 				{
 					if (i > 0)
-						sprintf(meta_str, "META%d-", i);
-					sprintf(keyloc, "%s%s", meta_str, display_key(j));
+						snprintf(meta_str, sizeof meta_str, "META%d-", i);
+					snprintf(keyloc, sizeof keyloc, "%s%s", meta_str, display_key(j));
 					return keyloc;  
 				}
 		}

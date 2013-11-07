@@ -1651,7 +1651,7 @@ extern	Window	*BX_create_additional_screen (void)
 			}
 			else if (screen_type == ST_XTERM)
 			{
-				snprintf(geom, 31, "%dx%d", current_term->TI_cols, current_term->TI_lines);
+				snprintf(geom, sizeof geom, "%dx%d", current_term->TI_cols, current_term->TI_lines);
 				opts = LOCAL_COPY(get_string_var(XTERM_OPTIONS_VAR));
 				if (!(xterm = getenv("XTERM")))
 					if (!(xterm = get_string_var(XTERM_VAR)))
@@ -1960,10 +1960,10 @@ void BX_xterm_settitle(void)
 					if ((o = convert_output_format(s, "%d %s %s %s %s %s", wincount, is_server_connected(tmp->current_window->server) ?get_server_nickname(tmp->current_window->server):nickname,
 												   tmpwindowchan ? tmpwindowchan : "<none>", irc_version, is_server_connected(from_server) ?get_server_itsname(from_server):"<unconnected>", tmptopic ? tmptopic : empty_string)))
 						chop(o, 4);
-					snprintf(titlestring, BIG_BUFFER_SIZE, "%s", o);
+					snprintf(titlestring, sizeof titlestring, "%s", o);
 				}
 				else
-					snprintf(titlestring, BIG_BUFFER_SIZE, "[%d] %s: %s - %s on %s", wincount, irc_version, tmp->current_window->current_channel ? tmp->current_window->current_channel : "<none>", is_server_connected(tmp->current_window->server) ?get_server_nickname(tmp->current_window->server):nickname,
+					snprintf(titlestring, sizeof titlestring, "[%d] %s: %s - %s on %s", wincount, irc_version, tmp->current_window->current_channel ? tmp->current_window->current_channel : "<none>", is_server_connected(tmp->current_window->server) ?get_server_nickname(tmp->current_window->server):nickname,
 							 is_server_connected(tmp->current_window->server) ?get_server_itsname(tmp->current_window->server):"<unconnected>");
 #ifdef GUI
 				gui_settitle(stripansicodes(titlestring), tmp);
@@ -1988,9 +1988,9 @@ void BX_xterm_settitle(void)
 				t = attach_ttyname;
 			if ((o = convert_output_format(s, "%s %s %s", t, nickname, c ? c : empty_string)))
 				chop(o, 4);
-			snprintf(titlestring, BIG_BUFFER_SIZE, "\033]2;%s:  %s", irc_version, o);
+			snprintf(titlestring, sizeof titlestring, "\033]2;%s:  %s", irc_version, o);
 		} else
-			snprintf(titlestring, BIG_BUFFER_SIZE, "\033]2;%s:  %s on %s:%s", irc_version, is_server_connected(current_window->server) ?get_server_nickname(current_window->server):nickname,
+			snprintf(titlestring, sizeof titlestring, "\033]2;%s:  %s on %s:%s", irc_version, is_server_connected(current_window->server) ?get_server_nickname(current_window->server):nickname,
 					 is_server_connected(current_window->server) ?get_server_itsname(current_window->server):"<not connected>", c);
         	tputs_x(titlestring);
 		term_flush();

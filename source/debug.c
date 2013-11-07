@@ -127,7 +127,7 @@ unsigned long old_alias_debug = alias_debug;
 		va_list args;
 		va_start (args, format);
 		*debugbuf = 0;
-		vsnprintf(debugbuf, BIG_BUFFER_SIZE, format, args);
+		vsnprintf(debugbuf, sizeof debugbuf, format, args);
 		va_end(args);
 		in_debug_yell = 1;
 		if (*debugbuf && do_hook(DEBUG_LIST, "%s", debugbuf))
