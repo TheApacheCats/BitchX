@@ -1217,7 +1217,7 @@ void do_logchannel(unsigned long level, ChannelList *chan, char *format, ...)
 		char s[BIG_BUFFER_SIZE+1];
 		va_list args;
 		va_start(args, format);
-		vsnprintf(s, sizeof s, format, args);
+		vsnprintf(s, BIG_BUFFER_SIZE, format, args);
 		va_end(args);
 		add_to_log(chan->msglog_fp, now, s, logfile_line_mangler);
 	}

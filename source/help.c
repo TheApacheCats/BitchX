@@ -196,7 +196,7 @@ static	void	help_prompt (char *name, char *line)
 		{
 			char	tmp[BIG_BUFFER_SIZE + 1];
 
-			snprintf(tmp, sizeof tmp, "%s%sHelp? ", help_topic_list,
+			sprintf(tmp, "%s%sHelp? ", help_topic_list,
 				*help_topic_list ? space : empty_string);
 			if (!dumb_mode)
 				add_wait_prompt(tmp, help_me, help_topic_list,
@@ -256,7 +256,7 @@ static 	void 	help_pause_add_line (char *format, ...)
 	va_list args;
 
 	va_start (args, format);
-	vsnprintf(buf, sizeof buf, format, args);
+	vsnprintf(buf, BIG_BUFFER_SIZE - 1, format, args);
 	va_end (args);
 	if ((help_paused_lines + 1) >= HELP_PAUSED_LINES_MAX)
 		ircpanic("help_pause_add_line: would overflow the buffer");
@@ -310,7 +310,7 @@ static	void	help_show_paused_topic (char *name, char *line)
 		{
 			char	buf[BIG_BUFFER_SIZE];
 
-			snprintf(buf, sizeof buf, "%s%sHelp? ", name, (name && *name) ? space : empty_string);
+			sprintf(buf, "%s%sHelp? ", name, (name && *name) ? space : empty_string);
 			if (!dumb_mode)
 				add_wait_prompt(buf, help_me, name, WAIT_PROMPT_LINE, 1);
 		}
@@ -349,7 +349,7 @@ static	void	help_me (char *topics, char *args)
 	strcpy(help_topic_list, topics);
 	ptr = get_string_var(HELP_PATH_VAR);
 
-	snprintf(path, sizeof path, "%s/%s", ptr, topics);
+	sprintf(path, "%s/%s", ptr, topics);
 	for (ptr = path; (ptr = strchr(ptr, ' '));)
 		*ptr = '/';
 
@@ -380,7 +380,7 @@ static	void	help_me (char *topics, char *args)
 		else
 			*help_topic_list = '\0';
 
-		snprintf(tmp, sizeof tmp, "%s%sHelp? ", help_topic_list, *help_topic_list ? space : empty_string);
+		sprintf(tmp, "%s%sHelp? ", help_topic_list, *help_topic_list ? space : empty_string);
 
 		if (!dumb_mode)
 			add_wait_prompt(tmp, help_me, help_topic_list, WAIT_PROMPT_LINE, 1);
@@ -525,7 +525,7 @@ switch (entries)
 			set_help_screen(NULL);
 			break;
 		}
-		snprintf(tmp, sizeof tmp, "%s%sHelp? ", help_topic_list, *help_topic_list ? space : empty_string);
+		sprintf(tmp, "%s%sHelp? ", help_topic_list, *help_topic_list ? space : empty_string);
 		if (!dumb_mode)
 			add_wait_prompt(tmp, help_me, help_topic_list, WAIT_PROMPT_LINE, 1);
 
@@ -541,7 +541,7 @@ switch (entries)
 	}
 	case 1:
 	{
-		snprintf(tmp, sizeof tmp, "%s/%s", path, g.gl_pathv[0]);
+		sprintf(tmp, "%s/%s", path, g.gl_pathv[0]);
 		stat(tmp, &stat_buf);
 		if (stat_buf.st_mode & S_IFDIR)
 		{
@@ -737,7 +737,7 @@ static	void	help_put_it	(const char *topic, const char *format, ...)
 	{
 		va_list args;
 		va_start (args, format);
-		vsnprintf(putbuf, sizeof putbuf, format, args);
+		vsnprintf(putbuf, BIG_BUFFER_SIZE * 3, format, args);
 		va_end(args);
 
 		if (do_hook(HELP_LIST, "%s %s", topic, putbuf))

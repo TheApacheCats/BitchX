@@ -355,7 +355,7 @@ int gtkprintf(char *format, ...)
 	char    putbuf[400];
 
 	va_start(args, format);
-	vsnprintf(putbuf, sizeof putbuf, format, args);
+	vsprintf(putbuf, format, args);
 	va_end(args);
 
 	if(output_screen && output_screen->pipe[1])
@@ -1085,7 +1085,7 @@ void select_row(GtkWidget *widget,  gint row, gint column, GdkEventButton *event
 			gtk_widget_set_sensitive(gtkprop->entryfield, TRUE);
 			gtk_widget_set_sensitive(gtkprop->check, FALSE);
 
-			snprintf(szBuffer, sizeof szBuffer, "%d", get_int_var(row));
+			sprintf(szBuffer, "%d", get_int_var(row));
 			gtk_entry_set_text((GtkEntry *)gtkprop->entryfield, szBuffer);
 			break;
 		}
@@ -1130,7 +1130,7 @@ void select_row(GtkWidget *widget,  gint row, gint column, GdkEventButton *event
 				gtk_widget_set_sensitive(gtkprop->entryfield, TRUE);
 				gtk_widget_set_sensitive(gtkprop->check, FALSE);
 
-				snprintf(szBuffer, sizeof szBuffer, "%d", get_cset_int_var(chan->csets, row));
+				sprintf(szBuffer, "%d", get_cset_int_var(chan->csets, row));
 				gtk_entry_set_text((GtkEntry *)gtkprop->entryfield, szBuffer);
 				break;
 			}

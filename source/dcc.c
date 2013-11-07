@@ -330,7 +330,7 @@ static time_t last_reject = 0;
 		va_list args;
 		char buffer[BIG_BUFFER_SIZE+1];
 		va_start(args, format);
-		vsnprintf(buffer, sizeof buffer, format, args);
+		vsnprintf(buffer, BIG_BUFFER_SIZE, format, args);
 		va_end(args);
 		put_it("%s", buffer);
 	}
@@ -1273,7 +1273,7 @@ UserList *ul = NULL;
 			struct in_addr in;	
 			char buf[40];
 			in.s_addr = htonl(TempLong);
-			snprintf(buf, sizeof buf, "%2.4g",_GMKv(filesize));
+			sprintf(buf, "%2.4g",_GMKv(filesize));
 			if (filesize)
 				put_it("%s", convert_output_format(fget_string_var(FORMAT_DCC_REQUEST_FSET), 
 					"%s %s \"%s\" %s %s %s %d %s %s", 
@@ -1625,11 +1625,11 @@ char		lame_type[30];
 	if (xtime == 0.0)
 		xtime = 1.0;
 	temp = xfer / xtime;
-	snprintf(lame_ultrix, sizeof lame_ultrix, "%2.4g %s", _GMKv(temp), _GMKs(temp));
+	sprintf(lame_ultrix, "%2.4g %s", _GMKv(temp), _GMKs(temp));
 	/* Cant pass %g to put_it (lame ultrix/dgux), fix suggested by sheik. */
-	snprintf(lame_ultrix2, sizeof lame_ultrix2, "%2.4g%s", _GMKv(xfer), _GMKs(xfer));
-	snprintf(lame_ultrix3, sizeof lame_ultrix3, "%2.4g", xtime);
-	snprintf(buffer, sizeof buffer, "%%s %s %%s %%s TRANSFER COMPLETE", lame_type);
+	sprintf(lame_ultrix2, "%2.4g%s", _GMKv(xfer), _GMKs(xfer));
+	sprintf(lame_ultrix3, "%2.4g", xtime);
+	sprintf(buffer, "%%s %s %%s %%s TRANSFER COMPLETE", lame_type);
 
 	filename = LOCAL_COPY(n->filename);
 	p = filename;
@@ -2505,7 +2505,7 @@ char *filename, *p;
 
 			bytes = n->bytes_read + n->bytes_sent;
 
-			snprintf(kilobytes, sizeof kilobytes, "%2.4g", bytes / 1024.0 / xtime);
+			sprintf(kilobytes, "%2.4g", bytes / 1024.0 / xtime);
 
 			type = s->flags & DCC_TYPES;
 			tdcc = s->flags & DCC_TDCC;
@@ -2535,11 +2535,11 @@ char *filename, *p;
 	
 				if (n->filesize == 0)
 					size = BAR_LENGTH;
-				snprintf(stats, sizeof stats, "%4.1f", perc);
+				sprintf(stats, "%4.1f", perc);
 				if (!get_int_var(DCC_BAR_TYPE_VAR))
-					snprintf(spec, sizeof spec, "%s %s%s %02d:%02d", get_bar_percent(iperc), stats, "%%", minutes, seconds);
+					sprintf(spec, "%s %s%s %02d:%02d", get_bar_percent(iperc), stats, "%%", minutes, seconds);
 				else
-					snprintf(spec, sizeof spec, "%s%s %02d:%02d", stats, "%%", minutes, seconds);
+					sprintf(spec, "%s%s %02d:%02d", stats, "%%", minutes, seconds);
 
 				strcpy(spec, convert_output_format(spec, NULL, NULL));
 			}	
@@ -2717,7 +2717,7 @@ register int		i = 0;
 			}		
 			strmopencat(transfer_buffer, BIG_BUFFER_SIZE, ltoa((int)perc), "% ", NULL);
 #if 0
-			snprintf(temp_str, sizeof temp_str, "%d%% ",(int) perc);
+			sprintf(temp_str,"%d%% ",(int) perc);
 			strcat(transfer_buffer,temp_str);
 #endif
 		}
@@ -2736,11 +2736,11 @@ register int		i = 0;
 /*		chop(transfer_buffer, 1);*/
 		if (fget_string_var(FORMAT_DCC_FSET))
 		{
-			snprintf(DCC_current_transfer_buffer, sizeof DCC_current_transfer_buffer, "%s", convert_output_format(fget_string_var(FORMAT_DCC_FSET), "%s", transfer_buffer));
+			sprintf(DCC_current_transfer_buffer, "%s", convert_output_format(fget_string_var(FORMAT_DCC_FSET), "%s", transfer_buffer));
 			chop(DCC_current_transfer_buffer, 4);
 		}
 		else
-			snprintf(DCC_current_transfer_buffer, sizeof DCC_current_transfer_buffer, "[%s]", transfer_buffer);
+			sprintf(DCC_current_transfer_buffer, "[%s]", transfer_buffer);
 	}
 	else
 		*DCC_current_transfer_buffer = 0;
@@ -2825,10 +2825,10 @@ char min_rate_in[20];
 char max_rate_out[20];
 char min_rate_out[20];
 
-	snprintf(max_rate_in, sizeof max_rate_in, "%6.2f", dcc_max_rate_in/1024.0);
-	snprintf(min_rate_in, sizeof min_rate_in, "%6.2f", ((dcc_min_rate_in != DBL_MAX )?dcc_min_rate_in/1024.0: 0.0));
-	snprintf(max_rate_out, sizeof max_rate_out, "%6.2f", dcc_max_rate_out/1024.0);
-	snprintf(min_rate_out, sizeof min_rate_out, "%6.2f", ((dcc_min_rate_out != DBL_MAX) ? dcc_min_rate_out/1024.0: 0.0));
+	sprintf(max_rate_in, "%6.2f", dcc_max_rate_in/1024.0);
+	sprintf(min_rate_in, "%6.2f", ((dcc_min_rate_in != DBL_MAX )?dcc_min_rate_in/1024.0: 0.0));
+	sprintf(max_rate_out, "%6.2f", dcc_max_rate_out/1024.0);
+	sprintf(min_rate_out, "%6.2f", ((dcc_min_rate_out != DBL_MAX) ? dcc_min_rate_out/1024.0: 0.0));
 	if (do_hook(DCC_TRANSFER_STAT_LIST, "%lu %s %s %lu %s %s %lu %u %u %s %s %s %s", 
 		(unsigned long)dcc_bytes_in, max_rate_in, min_rate_in,
 		(unsigned long)dcc_bytes_out, max_rate_out, min_rate_out,
@@ -2838,8 +2838,8 @@ char min_rate_out[20];
 		on_off(dcc_quiet), on_off(dcc_overwrite_var)))
 	{
 		char in[50], out[50];
-		snprintf(in, sizeof in, "%3.2f%s", _GMKv(dcc_bytes_in),  _GMKs(dcc_bytes_in));
-		snprintf(out, sizeof out, "%3.2f%s", _GMKv(dcc_bytes_out), _GMKs(dcc_bytes_out));
+		sprintf(in,  "%3.2f%s", _GMKv(dcc_bytes_in),  _GMKs(dcc_bytes_in));
+		sprintf(out, "%3.2f%s", _GMKv(dcc_bytes_out), _GMKs(dcc_bytes_out));
 
 #ifdef ONLY_CTD_CHARS
 		put_it("%s",convert_output_format("       %G========================%K[%Cdcc transfer stats%K]%G=======================", NULL));
@@ -3270,8 +3270,8 @@ unsigned long flags;
 					this_speed = (double)((double) sent / (double)(now- n->starttime.tv_sec));
 					if (this_speed < (float)cdcc_minspeed)
 					{
-						snprintf(lame_ultrix, sizeof lame_ultrix, "%2.4g", (double)(sent / (now - n->starttime.tv_sec)));
-						snprintf(lame_ultrix1, sizeof lame_ultrix1, "%2.4g", (double)cdcc_minspeed);
+						sprintf(lame_ultrix, "%2.4g", (double)(sent / (now - n->starttime.tv_sec)));
+						sprintf(lame_ultrix1,"%2.4g", (double)cdcc_minspeed);
 						if (!last_notify || strcmp(s->server,last_notify))
 						{
 							send_to_server("NOTICE %s :CDCC Slow dcc %s Auto Closed. Require %sKB/s got %sKB/s", s->server, dcc_types[flags]->name, lame_ultrix1, lame_ultrix);

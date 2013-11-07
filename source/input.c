@@ -2521,9 +2521,9 @@ char	buffer[BIG_BUFFER_SIZE+1];
 	if (old && *old)
 	{
 		if (strchr(completes[0], ' '))
-			snprintf(buffer, sizeof buffer, "%s%s\"%s\"", inp, space, i ? completes[0] : old);
+			sprintf(buffer, "%s%s\"%s\"", inp, space, i ? completes[0] : old);
 		else
-			snprintf(buffer, sizeof buffer, "%s%s%s", inp, space, i ? completes[0] : old);
+			sprintf(buffer, "%s%s%s", inp, space, i ? completes[0] : old);
 	}
 	else
 		strcpy(buffer, completes[0]);
@@ -2684,13 +2684,13 @@ do_more_tab:
 			else if (suggested && *suggested)
 				p = m_3dup("/", suggested, "");
 			if (type == TABKEY_COMPLETION)
-				snprintf(buffer, sizeof buffer, "%s %s%s%s ", (p && *p == '/') ? p : "/m", get, (p && (*p != '/'))?space:empty_string, (p && (*p != '/'))?p:empty_string);
+				snprintf(buffer, BIG_BUFFER_SIZE, "%s %s%s%s ", (p && *p == '/') ? p : "/m", get, (p && (*p != '/'))?space:empty_string, (p && (*p != '/'))?p:empty_string);
 			else
 			{
 				if (wcount == 1 && got_space)
-					snprintf(buffer, sizeof buffer, "%s %s ", get_input(), get);
+					snprintf(buffer, BIG_BUFFER_SIZE, "%s %s ", get_input(), get);
 				else
-					snprintf(buffer, sizeof buffer, "%s%s%s ", p ? p : get, p ? space : empty_string, p ? get : empty_string);
+					snprintf(buffer, BIG_BUFFER_SIZE, "%s%s%s ", p ? p : get, p ? space : empty_string, p ? get : empty_string);
 			}
 			if ((type == CDCC_COMPLETION || type == LOAD_COMPLETION || type == FILE_COMPLETION || type == DCC_COMPLETION) || ((type == EXEC_COMPLETION) && (get[strlen(get)-1] == '/')))
 				chop(buffer, 1);

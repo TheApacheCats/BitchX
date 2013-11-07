@@ -1398,7 +1398,7 @@ FILE *t;
 	if (!do_check_pid)
 		return;
 	p = expand_twiddle(DEFAULT_CTOOLZ_DIR);
-	snprintf(pidfile, sizeof pidfile, "%s/pid.%s", p, nickname);
+	snprintf(pidfile, 79, "%s/pid.%s", p, nickname);
 	if ((t = fopen(pidfile, "r")))
 	{
 		char buffer[80];
@@ -1424,7 +1424,7 @@ FILE *t;
 	if (!do_check_pid)
 		return;
 	p = expand_twiddle(DEFAULT_CTOOLZ_DIR);
-	snprintf(pidfile, sizeof pidfile, "%s/pid.%s", p, nickname);
+	snprintf(pidfile, 79, "%s/pid.%s", p, nickname);
 	if ((t = fopen(pidfile, "r")))
 	{
 #if !defined(__EMX__) && !defined(WINNT) && !defined(GUI)
@@ -1434,7 +1434,7 @@ FILE *t;
 		if (save_ipc != -1 && (s = get_socket(save_ipc)))
 		{
 			char buf[500];
-			snprintf(buf, sizeof buf, s->server, s->port);
+			sprintf(buf, s->server, s->port);
 			unlink(buf);
 		}
 #endif
@@ -1649,7 +1649,7 @@ int main(int argc, char *argv[], char *envp[])
 
 #ifdef CLOAKED
 	initsetproctitle(argc, argv, envp);
-	snprintf(proctitlestr, sizeof proctitlestr, CLOAKED);
+	sprintf(proctitlestr, CLOAKED);
 	setproctitle("%s", proctitlestr);
 #endif
 

@@ -535,12 +535,12 @@ int	kick_on_flood = 1;
 	if (!ignoretime)
 		return 0;
 	uh = clear_server_flags(userhost);
-	snprintf(tmp, sizeof tmp, "*!*%s", uh);
+	sprintf(tmp, "*!*%s", uh);
 	old_window_display = window_display;
 	window_display = 0;
 	ignore_nickname(tmp, ignore_type(type, strlen(type)), 0);
 	window_display = old_window_display;
-	snprintf(tmp, sizeof tmp, "%d ^IGNORE *!*%s NONE", ignoretime, uh);
+	sprintf(tmp, "%d ^IGNORE *!*%s NONE", ignoretime, uh);
 	timercmd("TIMER", tmp, NULL, NULL);
 	bitchsay("Auto-ignoring %s for %d minutes [\002%s\002 flood]", nick, ignoretime/60, type);
 	return 1;

@@ -203,7 +203,7 @@ static  int	i = 0;
 				if (i == 4)
 					i = 0;
 			}
-			snprintf(ret_str, sizeof ret_str, "%c", this[i]);
+			sprintf(ret_str, "%c", this[i]);
 
 			return ret_str;
 #else
@@ -216,7 +216,7 @@ static  int	i = 0;
 					reset_display_target();
 					if (i == 4)
 						i = 0;
-					snprintf(ret_str, sizeof ret_str, "%c", this[i++]);
+					sprintf(ret_str, "%c", this[i++]);
 				case 1:
 					if (!*ret_str)
 						return NULL;
@@ -246,7 +246,7 @@ static  int	i = 0;
 			}
 
 			old_count = count;
-			snprintf(ret_str, sizeof ret_str, "%d", old_count);
+			sprintf(ret_str, "%d", old_count);
 			return ret_str;
 #else
 			FILE *mail;
@@ -277,7 +277,7 @@ static  int	i = 0;
 					}
 	
 					old_count = count;
-					snprintf(ret_str, sizeof ret_str, "%d", old_count);
+					sprintf(ret_str, "%d", old_count);
 				}
 				case 1:
 					if (*ret_str)

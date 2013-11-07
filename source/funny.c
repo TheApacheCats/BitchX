@@ -110,7 +110,7 @@ void funny_print_widelist(void)
 	*buffer1 = '\0';
 	for (i = 1; i < wl_elements; i++)
 	{
-		snprintf(buffer2, sizeof buffer2, "%s(%d) ", wide_list[i]->channel,
+		sprintf(buffer2, "%s(%d) ", wide_list[i]->channel,
 				wide_list[i]->users);
 		ptr = strchr(buffer1, '\0');
 		if (strlen(buffer1) + strlen(buffer2) > current_term->TI_cols - 5)
@@ -149,11 +149,11 @@ void funny_list(char *from, char **ArgList)
 	if (last_width != get_int_var(CHANNEL_NAME_WIDTH_VAR))
 	{
 		if ((last_width = get_int_var(CHANNEL_NAME_WIDTH_VAR)) != 0)
-			snprintf(format, sizeof format, "%%s %%-%u.%us %%-5s %%s", /*thing_ansi,*/
+			snprintf(format, 25, "%%s %%-%u.%us %%-5s %%s", /*thing_ansi,*/
 				(unsigned char) last_width,
 				(unsigned char) last_width);
 		else
-			snprintf(format, sizeof format, "%%s %%s %%-5s %%s"/*, thing_ansi*/);
+			snprintf(format, 25, "%%s %%s %%-5s %%s"/*, thing_ansi*/);
 	}
 	channel = ArgList[0];
 	user_cnt = ArgList[1];
@@ -333,7 +333,7 @@ int user_count = 0;
 	if (last_width != get_int_var(CHANNEL_NAME_WIDTH_VAR))
 	{
 		if ((last_width = get_int_var(CHANNEL_NAME_WIDTH_VAR)) != 0)
-			snprintf(format, sizeof format, "%%s: %%-%u.%us %%s",
+			sprintf(format, "%%s: %%-%u.%us %%s",
 				(unsigned char) last_width,
 				(unsigned char) last_width);
 		else

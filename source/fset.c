@@ -808,9 +808,9 @@ int save_formats(void)
 	FsetNumber *tmp;
 
 #if defined(__EMX__) || defined(WINNT)
-	snprintf(thefile, sizeof thefile, "%s/%s.fmt", get_string_var(CTOOLZ_DIR_VAR), version);
+	sprintf(thefile, "%s/%s.fmt", get_string_var(CTOOLZ_DIR_VAR), version);
 #else
-	snprintf(thefile, sizeof thefile, "%s/%s.formats", get_string_var(CTOOLZ_DIR_VAR), version);
+	sprintf(thefile, "%s/%s.formats", get_string_var(CTOOLZ_DIR_VAR), version);
 #endif
 	p = expand_twiddle(thefile);
 	outfile = fopen(p, "w");

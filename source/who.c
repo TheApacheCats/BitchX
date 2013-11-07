@@ -357,7 +357,7 @@ void BX_whobase(char *args, void (*line) (WhoEntry *, char *, char **), void (*e
 		char buffer[BIG_BUFFER_SIZE+1];
 		*buffer = 0;
 		va_start(arg, format);
-		vsnprintf(buffer, sizeof buffer, format, arg);
+		vsnprintf(buffer, BIG_BUFFER_SIZE, format, arg);
 		va_end(arg);
 		new_w->who_buff = m_strdup(buffer);
 	}
@@ -473,7 +473,7 @@ do
 		char buffer[1024];
 
 		channel = "Channel";
-		snprintf(buffer, sizeof buffer, "%s %s %s %s %s %s %s", channel,
+		snprintf(buffer, 1024, "%s %s %s %s %s %s %s", channel,
 				nick, stat, user, host, server, name);
 		set_display_target(channel, LOG_CRAP);
 		if (new_w->who_stuff)
@@ -518,7 +518,7 @@ do
 	{
 		char buffer[1024];
 
-		snprintf(buffer, sizeof buffer, "%s %s %s %s %s %s %s", channel,
+		snprintf(buffer, 1023, "%s %s %s %s %s %s %s", channel,
 				nick, stat, user, host, server, name);
 
 		set_display_target(channel, LOG_CRAP);
@@ -564,7 +564,7 @@ void who_end (char *from, char **ArgList)
 			new_w->end(new_w, from, ArgList);
 		else
 		{
-			snprintf(buffer, sizeof buffer, "%s %s %s", from, ArgList[0], ArgList[1]);
+			snprintf(buffer, 1024, "%s %s %s", from, ArgList[0], ArgList[1]);
 			if (new_w->who_end)
 			    parse_line(NULL, new_w->who_end, buffer, 0, 0, 1);
 

@@ -235,7 +235,7 @@ void BX_delete_window(Window *window)
 	if (window->name)
 		strlcpy(buffer, window->name, sizeof buffer);
 	else
-		snprintf(buffer, sizeof buffer, "%u", window->refnum);
+		sprintf(buffer, "%u", window->refnum);
 
 	/*
 	 * If this window is the "previous" window, then we make the current

@@ -287,7 +287,7 @@ static	void	show_timer (char *command)
 		time_left = BX_time_diff(current, tmp->time);
 		if (time_left < 0)
 			time_left = 0;
-		snprintf(buf, sizeof buf, "%0.3f", time_left);
+		sprintf(buf, "%0.3f", time_left);
 		put_it("%s", convert_output_format(fget_string_var(FORMAT_TIMER_FSET), "%s %s %d %s %s", tmp->ref, buf, tmp->events, tmp->callback? "(internal callback)" : (tmp->command? tmp->command : ""), tmp->whom ? tmp->whom : empty_string ));
 	}
 }
@@ -467,7 +467,7 @@ TimerList *tmp;
 		time_left = BX_time_diff(current, tmp->time);
 		if (time_left < 0)
 			time_left = 0.0;
-		snprintf(buf, sizeof buf, "%0.3f", time_left);
+		sprintf(buf, "%0.3f", time_left);
 		malloc_sprintf(&out, "%s %d %d %d %d %s %s %s", tmp->ref, tmp->server, tmp->window, tmp->interval, tmp->events, buf, tmp->callback? "(internal callback)" : (tmp->command? tmp->command : ""), tmp->whom ? tmp->whom : empty_string );
 		return ref;
 	}
