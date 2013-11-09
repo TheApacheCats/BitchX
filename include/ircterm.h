@@ -10,8 +10,8 @@
  * @(#)$Id$
  */
 
-#ifndef _TERM_H_
-# define _TERM_H_
+#ifndef IRCTERM_H_
+# define IRCTERM_H_
 
 #ifdef HAVE_NCURSES_H
 # include <ncurses.h>
@@ -746,4 +746,4 @@ int	tputs (const unsigned char *, int, int (*)(int));
 #endif
 #endif
 
-#endif /* _TERM_H_ */
+#endif /* IRCTERM_H_ */
