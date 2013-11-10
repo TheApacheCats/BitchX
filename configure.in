@@ -619,10 +619,12 @@ if test -z "$EMXOS2" -a -z "$MINGWIN32"; then
         AC_SEARCH_LIBS([tgetent], [termcap termlib curses], [],
           AC_MSG_ERROR([Cannot find terminfo or termcap - try installing the ncurses-dev / ncurses-devel package.]))])])
   AC_CHECK_FUNCS([tparm])
-  AC_CHECK_HEADERS([ncurses.h curses.h])
+  AC_CHECK_HEADERS([ncurses.h ncurses/ncurses.h curses.h], [break])
   AC_CHECK_HEADERS([ncurses/termcap.h termcap.h ncurses/term.h term.h], [], [], 
     [[#if defined(HAVE_NCURSES_H)
       #include <ncurses.h>
+      #elif defined(HAVE_NCURSES_NCURSES_H)
+      #include <ncurses/ncurses.h>
       #elif defined(HAVE_CURSES_H)
       #include <curses.h>
       #endif
