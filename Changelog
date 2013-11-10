@@ -1,5 +1,10 @@
 [Changes 1.2c01]
 
+* Rewrite termcap/terminfo detection logic in configure and include term.h
+  in term.c for the system definition of tparm().  This fixes a crash on
+  NetBSD x86-64 (reported by jeezy), and should also ensure that terminfo
+  is used in preference to termcap on NetBSD. (caf)
+
 * Fix output when built against termcap. (caf)
 
 * Fix STATUS_NOTIFY so that it appears in the right window. (caf)
