@@ -81,6 +81,11 @@ extern	int		already_detached;
 #define Tgetflag(x) 	tgetflag(x.tname)
 #endif
 
+/* Some systems declare tparm() with 9 fixed 'long' arguments */
+#define tparm1(str, a1) tparm(str, a1, 0, 0, 0, 0, 0, 0, 0, 0)
+#define tparm2(str, a1, a2) tparm(str, a1, a2, 0, 0, 0, 0, 0, 0, 0)
+#define tparm4(str, a1, a2, a3, a4) tparm(str, a1, a2, a3, a4, 0, 0, 0, 0, 0)
+
 extern  char    *getenv();
 
 /*
@@ -703,7 +708,7 @@ void term_reset (void)
 	tcsetattr(tty_des, TCSADRAIN, &oldb);
 
 	if (current_term->TI_csr)
-		tputs_x((char *)tparm(current_term->TI_csr, 0, current_term->TI_lines - 1));
+		tputs_x(tparm2(current_term->TI_csr, 0, current_term->TI_lines - 1));
 	term_gotoxy(0, current_term->TI_lines - 1);
 #if use_alt_screen
 	if (current_term->TI_rmcup)
@@ -1164,9 +1169,9 @@ int term_init (char *term)
 		if (i >= 8)
 			strcpy(cbuf, current_term->TI_sgrstrs[TERM_SGR_BOLD_ON-1]);
 		if (current_term->TI_setaf) 
-			strcat(cbuf, (char *)tparm(current_term->TI_setaf, i & 0x07, 0));
+			strcat(cbuf, tparm2(current_term->TI_setaf, i & 0x07, 0));
 		else if (current_term->TI_setf)
-			strcat(cbuf, (char *)tparm(current_term->TI_setf, i & 0x07, 0));
+			strcat(cbuf, tparm2(current_term->TI_setf, i & 0x07, 0));
 		else if (i >= 8)
 			sprintf(cbuf, "\033[1;%dm", (i & 0x07) + 30);
 		else
@@ -1184,9 +1189,9 @@ int term_init (char *term)
 			strcpy(cbuf, current_term->TI_sgrstrs[TERM_SGR_BLINK_ON - 1]);
 
 		if (current_term->TI_setab)
-			strcat (cbuf, tparm(current_term->TI_setab, i & 0x07, 0));
+			strcat(cbuf, tparm2(current_term->TI_setab, i & 0x07, 0));
 		else if (current_term->TI_setb)
-			strcat (cbuf, tparm(current_term->TI_setb, i & 0x07, 0));
+			strcat(cbuf, tparm2(current_term->TI_setb, i & 0x07, 0));
 		else if (i >= 8)
 			sprintf(cbuf, "\033[1;%dm", (i & 0x07) + 40);
 		else
@@ -1348,11 +1353,11 @@ void term_gotoxy (int col, int row)
 #else
 	
 	if (current_term->TI_cup)
-		tputs_x((char *)tparm(current_term->TI_cup, row, col));
+		tputs_x(tparm2(current_term->TI_cup, row, col));
 	else
 	{
-		tputs_x((char *)tparm(current_term->TI_hpa, col));
-		tputs_x((char *)tparm(current_term->TI_vpa, row));
+		tputs_x(tparm1(current_term->TI_hpa, col));
+		tputs_x(tparm1(current_term->TI_vpa, row));
 	}
 #endif
 }
@@ -1386,20 +1391,20 @@ void term_clrscr (void)
 	/* We can also clear by deleteing lines ... */
 	else if (current_term->TI_dl)
 	{
-		tputs_x((char *)tparm(current_term->TI_dl, current_term->TI_lines));
+		tputs_x(tparm1(current_term->TI_dl, current_term->TI_lines));
 		return;
 	}
 	/* ... in this case one line at a time */
 	else if (current_term->TI_dl1)
 	{
 		for (i = 0; i < current_term->TI_lines; i++)
-			tputs_x (current_term->TI_dl1);
+			tputs_x(current_term->TI_dl1);
 		return;
 	}
 	/* As a last resort we can insert lines ... */
 	else if (current_term->TI_il)
 	{
-		tputs_x ((char *)tparm(current_term->TI_il, current_term->TI_lines));
+		tputs_x(tparm1(current_term->TI_il, current_term->TI_lines));
 		term_gotoxy (0, 0);
 		return;
 	}
@@ -1407,7 +1412,7 @@ void term_clrscr (void)
 	else if (current_term->TI_il1)
 	{
 		for (i = 0; i < current_term->TI_lines; i++)
-			tputs_x (current_term->TI_il1);
+			tputs_x(current_term->TI_il1);
 		term_gotoxy (0, 0);
 	}
 #endif
@@ -1422,15 +1427,15 @@ void term_left (int num)
 	gui_left(num);
 #else
 	if (current_term->TI_cub)
-		tputs_x ((char *)tparm(current_term->TI_cub, num));
+		tputs_x(tparm1(current_term->TI_cub, num));
 	else if (current_term->TI_mrcup)
-		tputs_x ((char *)tparm(current_term->TI_mrcup, -num, 0));
+		tputs_x(tparm2(current_term->TI_mrcup, -num, 0));
 	else if (current_term->TI_cub1)
 		while (num--)
 			tputs_x(current_term->TI_cub1);
 	else if (current_term->TI_kbs)
 		while (num--)
-			tputs_x (current_term->TI_kbs);
+			tputs_x(current_term->TI_kbs);
 #endif
 }
 
@@ -1443,9 +1448,9 @@ void term_right (int num)
 	gui_right(num);
 #else
 	if (current_term->TI_cuf)
-		tputs_x ((char *)tparm(current_term->TI_cuf, num));
+		tputs_x(tparm1(current_term->TI_cuf, num));
 	else if (current_term->TI_mrcup)
-		tputs_x ((char *)tparm(current_term->TI_mrcup, num, 0));
+		tputs_x(tparm2(current_term->TI_mrcup, num, 0));
 	else if (current_term->TI_cuf1)
 		while (num--)
 			tputs_x(current_term->TI_cuf1);
@@ -1462,7 +1467,7 @@ void term_delete (int num)
 		tputs_x(current_term->TI_smdc);
 
 	if (current_term->TI_dch)
-		tputs_x ((char *)tparm (current_term->TI_dch, num));
+		tputs_x(tparm1(current_term->TI_dch, num));
 	else if (current_term->TI_dch1)
 		while (num--)
 			tputs_x (current_term->TI_dch1);
@@ -1481,7 +1486,7 @@ void term_insert (unsigned char c)
 	else if (current_term->TI_ich1)
 		tputs_x (current_term->TI_ich1);
 	else if (current_term->TI_ich)
-		tputs_x ((char *)tparm(current_term->TI_ich, 1));
+		tputs_x(tparm1(current_term->TI_ich, 1));
 
 	term_putchar (c);
 
@@ -1496,7 +1501,7 @@ void term_insert (unsigned char c)
 void term_repeat (unsigned char c, int rep)
 {
 	if (current_term->TI_rep)
-		tputs_x((char *)tparm (current_term->TI_rep, (int)c, rep));
+		tputs_x(tparm2(current_term->TI_rep, (int)c, rep));
 	else
 		while (rep--)
 			putchar_x (c);
@@ -1571,8 +1576,8 @@ void term_scroll (int top, int bot, int n)
 		 * region was the full screen.  That test *always* fails,
 		 * because we never scroll the bottom line of the screen.
 		 */
-		strcpy(start, (char *)tparm(current_term->TI_csr, top, bot));
-		strcpy(final, (char *)tparm(current_term->TI_csr, 0, current_term->TI_lines-1));
+		strcpy(start, tparm2(current_term->TI_csr, top, bot));
+		strcpy(final, tparm2(current_term->TI_csr, 0, current_term->TI_lines-1));
 
 		if (n > 0)
 		{
@@ -1581,7 +1586,7 @@ void term_scroll (int top, int bot, int n)
 			if (current_term->TI_indn)
 			{
 				oneshot = 1;
-				strcpy(thing, (char *)tparm(current_term->TI_indn, rn, rn));
+				strcpy(thing, tparm2(current_term->TI_indn, rn, rn));
 			}
 			else
 				strcpy(thing, current_term->TI_ind);
@@ -1593,17 +1598,17 @@ void term_scroll (int top, int bot, int n)
 			if (current_term->TI_rin)
 			{
 				oneshot = 1;
-				strcpy (thing, (char *)tparm(current_term->TI_rin, rn, rn));
+				strcpy(thing, tparm2(current_term->TI_rin, rn, rn));
 			}
 			else
-				strcpy (thing, current_term->TI_ri);
+				strcpy(thing, current_term->TI_ri);
 		}
 	}
 
 	else if (current_term->TI_wind && (current_term->TI_ri || current_term->TI_rin) && (current_term->TI_ind || current_term->TI_indn))
 	{
-		strcpy(start, (char *)tparm(current_term->TI_wind, top, bot, 0, current_term->TI_cols-1));
-		strcpy(final, (char *)tparm(current_term->TI_wind, 0, current_term->TI_lines-1, 0, current_term->TI_cols-1));
+		strcpy(start, tparm4(current_term->TI_wind, top, bot, 0, current_term->TI_cols-1));
+		strcpy(final, tparm4(current_term->TI_wind, 0, current_term->TI_lines-1, 0, current_term->TI_cols-1));
 
 		if (n > 0)
 		{
@@ -1612,10 +1617,10 @@ void term_scroll (int top, int bot, int n)
 			if (current_term->TI_indn)
 			{
 				oneshot = 1;
-				strcpy (thing, (char *)tparm(current_term->TI_indn, rn, rn));
+				strcpy(thing, tparm2(current_term->TI_indn, rn, rn));
 			}
 			else
-				strcpy (thing, current_term->TI_ind);
+				strcpy(thing, current_term->TI_ind);
 		}
 		else
 		{
@@ -1624,7 +1629,7 @@ void term_scroll (int top, int bot, int n)
 			if (current_term->TI_rin)
 			{
 				oneshot = 1;
-				strcpy (thing,(char *)tparm(current_term->TI_rin, rn, rn));
+				strcpy(thing, tparm2(current_term->TI_rin, rn, rn));
 			}
 			else
 				strcpy (thing, current_term->TI_ri);
@@ -1641,7 +1646,7 @@ void term_scroll (int top, int bot, int n)
 			if (current_term->TI_dl)
 			{
 				oneshot = 1;
-				strcpy (thing, (char *)tparm(current_term->TI_dl, rn, rn));
+				strcpy(thing, tparm2(current_term->TI_dl, rn, rn));
 			}
 			else
 				strcpy (thing, current_term->TI_dl1);
@@ -1649,7 +1654,7 @@ void term_scroll (int top, int bot, int n)
 			if (current_term->TI_il)
 			{
 				oneshot = 1;
-				strcpy(final, (char *)tparm(current_term->TI_il, rn, rn));
+				strcpy(final, tparm2(current_term->TI_il, rn, rn));
 			}
 			else
 				strcpy(final, current_term->TI_il1);
@@ -1661,7 +1666,7 @@ void term_scroll (int top, int bot, int n)
 			if (current_term->TI_il)
 			{
 				oneshot = 1;
-				strcpy (thing, (char *)tparm(current_term->TI_il, rn, rn));
+				strcpy(thing, tparm2(current_term->TI_il, rn, rn));
 			}
 			else
 				strcpy (thing, current_term->TI_il1);
@@ -1669,7 +1674,7 @@ void term_scroll (int top, int bot, int n)
 			if (current_term->TI_dl)
 			{
 				oneshot = 1;
-				strcpy(final, (char *)tparm(current_term->TI_dl, rn, rn));
+				strcpy(final, tparm2(current_term->TI_dl, rn, rn));
 			}
 			else
 				strcpy(final, current_term->TI_dl1);
@@ -1761,7 +1766,7 @@ char *term_getsgr (int opt, int fore, int back)
 			break;
 		case TERM_SGR_GCHAR:
 			if (current_term->TI_dispc)
-				ret = (char *)tparm(current_term->TI_dispc, fore);
+				ret = tparm1(current_term->TI_dispc, fore);
 			break;
 		default:
 			ircpanic ("Unknown option '%d' to term_getsgr", opt);
