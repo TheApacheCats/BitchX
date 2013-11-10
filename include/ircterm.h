@@ -13,23 +13,18 @@
 #ifndef IRCTERM_H_
 # define IRCTERM_H_
 
-#ifdef HAVE_NCURSES_H
-# include <ncurses.h>
-# ifdef HAVE_NCURSES_TERMCAP_H
-#  include <ncurses/termcap.h>
-# elif defined(HAVE_TERMCAP_H)
-#  ifndef __CYGWIN__
-#     include <termcap.h>
-#  endif
-# endif
-#else
-# ifdef HAVE_CURSES_H
-#  include <curses.h>
-# endif
-# ifdef HAVE_TERMCAP_H
-#  include <termcap.h>
-# endif
+#if defined(HAVE_NCURSES_H)
+#include <ncurses.h>
+#elif defined(HAVE_CURSES_H)
+#include <curses.h>
 #endif
+
+#if defined(HAVE_NCURSES_TERMCAP_H)
+#include <ncurses/termcap.h>
+#elif defined(HAVE_TERMCAP_H)
+#include <termcap.h>
+#endif
+
 #ifdef __EMX__
 #include <termcap.h>
 #endif

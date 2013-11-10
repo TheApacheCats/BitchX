@@ -54,6 +54,12 @@ DWORD gdwPlatform;
 
 #include <sys/ioctl.h>
 
+#if defined(HAVE_NCURSES_TERM_H)
+#include <ncurses/term.h>
+#elif defined(HAVE_TERM_H)
+#include <term.h>
+#endif
+
 static	int		tty_des;		/* descriptor for the tty */
 
 static	struct	termios	oldb, newb;
@@ -66,18 +72,10 @@ extern	int		already_detached;
 
 /* Systems cant seem to agree where to put these... */
 #ifdef HAVE_TERMINFO
-extern	int		setupterm();
-extern	char		*tigetstr();
-extern	int		tigetnum();
-extern	int		tigetflag();
 #define Tgetstr(x, y) 	((void)&(y), tigetstr((x).iname))
 #define Tgetnum(x) 	tigetnum(x.iname);
 #define Tgetflag(x) 	tigetflag(x.iname);
 #else
-extern	int		tgetent();
-extern	char		*tgetstr();
-extern	int		tgetnum();
-extern	int		tgetflag();
 #define Tgetstr(x, y) 	tgetstr(x.tname, &y)
 #define Tgetnum(x) 	tgetnum(x.tname)
 #define Tgetflag(x) 	tgetflag(x.tname)
@@ -1258,9 +1256,9 @@ void tty_dup(int tty)
 	dup2(tty, tty_des);
 }
 
-void reset_lines(int lines)
+void reset_lines(int nlines)
 {
-	li = lines;
+	li = nlines;
 }
 
 void reset_cols(int cols)

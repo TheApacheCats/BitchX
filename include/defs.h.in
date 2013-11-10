@@ -159,6 +159,9 @@
 /* Define to 1 if you have the <ncurses/termcap.h> header file. */
 #undef HAVE_NCURSES_TERMCAP_H
 
+/* Define to 1 if you have the <ncurses/term.h> header file. */
+#undef HAVE_NCURSES_TERM_H
+
 /* Define to 1 if you have the <ndir.h> header file. */
 #undef HAVE_NDIR_H
 
@@ -297,11 +300,11 @@
 /* Define to 1 if you have the <termios.h> header file. */
 #undef HAVE_TERMIOS_H
 
-/* Define this if you have the tparm function in an included lib. */
-#undef HAVE_TPARM
+/* Define to 1 if you have the <term.h> header file. */
+#undef HAVE_TERM_H
 
-/* Define this if you have the tputs function in an included lib. */
-#undef HAVE_TPUTS
+/* Define to 1 if you have the `tparm' function. */
+#undef HAVE_TPARM
 
 /* Define to 1 if you have the `uname' function. */
 #undef HAVE_UNAME
@@ -395,12 +398,6 @@
 
 /* Define to 1 if you can safely include both <sys/time.h> and <time.h>. */
 #undef TIME_WITH_SYS_TIME
-
-/* Define this if tparm is declared in termcap.h. */
-#undef TPARM_DECLARED
-
-/* Define this if tputs is declared in termcap.h. */
-#undef TPUTS_DECLARED
 
 /* Define your maildir here. */
 #undef UNIX_MAIL
