@@ -147,7 +147,7 @@ int i;
 		{
 			DCC_int *n;
 			n = (DCC_int *)s->info;
-			sprintf(buff, "%d %s", n->dccnum, s->server);
+			snprintf(buff, sizeof buff, "%d %s", n->dccnum, s->server);
 			Tcl_AppendElement(irp, buff);
 			count++;
 		}
@@ -176,7 +176,7 @@ int count = 0;
 		if ((s->flags & DCC_TYPES) == DCC_CHAT)
 		{
 			n = (DCC_int *) s->info;
-			sprintf(buff, "%d %s", n->dccnum, s->server);
+			snprintf(buff, sizeof buff, "%d %s", n->dccnum, s->server);
 			Tcl_AppendElement(irp, buff);
 			count++;
 		}
@@ -1143,7 +1143,7 @@ int tcl_unixtime STDVAR
 
 	
 	BADARGS(1,1,"");
-	sprintf(s,"%lu", now);
+	snprintf(s, sizeof s, "%lu", now);
 	Tcl_AppendResult(irp,s,NULL);
 	return TCL_OK;
 }
@@ -1570,7 +1570,7 @@ char *x; char s[80];
 	if (argv[2][0]!='#') 
 	{
 		x = tcl_add_timer(&tcl_Pending_timers, atol(argv[1])*60, argv[2], 0L);
-		sprintf(s,"timer%s",x); 
+		snprintf(s, sizeof s, "timer%s", x); 
 		Tcl_AppendResult(irp,s,NULL);
 	}
 	return TCL_OK;
@@ -1589,7 +1589,7 @@ char s[80];
 		return TCL_ERROR;
 	}
  	x = rand() % (strtoul(argv[1], NULL, 10));
-	sprintf(s,"%lu",x);
+	snprintf(s, sizeof s, "%lu", x);
 	Tcl_AppendResult(irp,s,NULL);
 	return TCL_OK;
 }
@@ -1607,7 +1607,7 @@ char s[80];
 	if (argv[2][0]!='#') 
 	{
 		x=tcl_add_timer(&tcl_Pending_utimers, atol(argv[1]), argv[2], 0L);
-		sprintf(s,"timer%s",x); 
+		snprintf(s, sizeof s, "timer%s", x); 
 		Tcl_AppendResult(irp,s,NULL);
 	}
 	return TCL_OK;
@@ -1840,7 +1840,7 @@ UserList *n;
 	
 	if ((n = lookup_userlevelc("*", uhost, channel, NULL)))
 		atr=n->flags;
-	snprintf(args, BIG_BUFFER_SIZE, "%s %s!%s", channel, nick, uhost);
+	snprintf(args, sizeof args, "%s %s!%s", channel, nick, uhost);
 	Tcl_SetVar(tcl_interp,"_n",nick,TCL_GLOBAL_ONLY);
 	Tcl_SetVar(tcl_interp,"_uh",uhost,TCL_GLOBAL_ONLY);
 	Tcl_SetVar(tcl_interp,"_h",n?n->nick:hand,TCL_GLOBAL_ONLY);
@@ -1856,7 +1856,7 @@ char args[BIG_BUFFER_SIZE+1];
 UserList *n;
 int x;
 
-	snprintf(args,BIG_BUFFER_SIZE, "%s %s!%s",chname,nick,uhost);
+	snprintf(args, sizeof args, "%s %s!%s", chname, nick, uhost);
 	if ((n = lookup_userlevelc("*",uhost, chname, NULL)))
 		atr = n->flags;
 	Tcl_SetVar(tcl_interp,"_n",nick,TCL_GLOBAL_ONLY);
@@ -1875,7 +1875,7 @@ UserList *n;
 	
 	if ((n = lookup_userlevelc("*",uhost, chname, NULL)))
 		atr = n->flags;
-	snprintf(args,BIG_BUFFER_SIZE, "%s %s!%s",chname,nick,uhost);
+	snprintf(args, sizeof args, "%s %s!%s", chname, nick, uhost);
 	Tcl_SetVar(tcl_interp,"_n",nick,TCL_GLOBAL_ONLY);
 	Tcl_SetVar(tcl_interp,"_uh",uhost,TCL_GLOBAL_ONLY);
 	Tcl_SetVar(tcl_interp,"_h",n?n->nick:hand,TCL_GLOBAL_ONLY);
@@ -1891,7 +1891,7 @@ int atr = 0;
 char args[BIG_BUFFER_SIZE+1];
 UserList *n;
 
-	snprintf(args,BIG_BUFFER_SIZE, "%s %s",chname,topic);
+	snprintf(args, sizeof args, "%s %s", chname, topic);
 	if ((n = lookup_userlevelc("*",uhost, chname, NULL)))
 		atr = n->flags;
 	Tcl_SetVar(tcl_interp,"_n",nick,TCL_GLOBAL_ONLY);
@@ -1911,7 +1911,7 @@ UserList *n;
 	
 	if ((n = lookup_userlevelc("*",uhost, chname, NULL)))
 		atr = n->flags;
-	snprintf(args, BIG_BUFFER_SIZE, "%s %s",chname,newnick);
+	snprintf(args, sizeof args, "%s %s", chname, newnick);
 	Tcl_SetVar(tcl_interp,"_n",nick,TCL_GLOBAL_ONLY);
 	Tcl_SetVar(tcl_interp,"_uh",uhost,TCL_GLOBAL_ONLY);
 	Tcl_SetVar(tcl_interp,"_h",n?n->nick:hand,TCL_GLOBAL_ONLY);
@@ -1929,7 +1929,7 @@ UserList *n;
 	
 	if ((n = lookup_userlevelc("*",uhost, chname, NULL)))
 		atr = n->flags;
-	sprintf(args,"%s %s",chname,dest);
+	snprintf(args, sizeof args, "%s %s", chname, dest);
 	Tcl_SetVar(tcl_interp,"_n",nick,TCL_GLOBAL_ONLY);
 	Tcl_SetVar(tcl_interp,"_uh",uhost,TCL_GLOBAL_ONLY);
 	Tcl_SetVar(tcl_interp,"_h",n?n->nick:hand,TCL_GLOBAL_ONLY);
@@ -1992,7 +1992,7 @@ char args[BIG_BUFFER_SIZE+1];
 UserList *n;
 
 	n = lookup_userlevelc("*",uhost, chname, NULL);
-	snprintf(args,BIG_BUFFER_SIZE, "%s %s",chname,mode);
+	snprintf(args, sizeof args, "%s %s", chname, mode);
 	Tcl_SetVar(tcl_interp,"_n",nick,TCL_GLOBAL_ONLY);
 	Tcl_SetVar(tcl_interp,"_uh",uhost,TCL_GLOBAL_ONLY);
 	Tcl_SetVar(tcl_interp,"_h",n?n->nick:hand,TCL_GLOBAL_ONLY);
@@ -2060,7 +2060,7 @@ UserList *n;
 	
 	if ((n = lookup_userlevelc("*",uhost, chname, NULL)))
 		atr = n->flags;
-	snprintf(args,BIG_BUFFER_SIZE, "%s %s!%s",chname,nick,uhost);
+	snprintf(args, sizeof args, "%s %s!%s", chname, nick, uhost);
 	Tcl_SetVar(tcl_interp,"_n",nick,TCL_GLOBAL_ONLY);
 	Tcl_SetVar(tcl_interp,"_uh",uhost,TCL_GLOBAL_ONLY);
 	Tcl_SetVar(tcl_interp,"_h",n?n->nick:hand,TCL_GLOBAL_ONLY);
@@ -2078,7 +2078,7 @@ UserList *n;
 	
 	if ((n = lookup_userlevelc("*",uhost, chname, NULL)))
 		atr = n->flags;
-	sprintf(args,"%s %s!%s",chname,nick,uhost);
+	snprintf(args, sizeof args, "%s %s!%s", chname, nick, uhost);
 	Tcl_SetVar(tcl_interp,"_n",nick,TCL_GLOBAL_ONLY);
 	Tcl_SetVar(tcl_interp,"_uh",uhost,TCL_GLOBAL_ONLY);
 	Tcl_SetVar(tcl_interp,"_h",n?n->nick:hand,TCL_GLOBAL_ONLY);
@@ -2094,7 +2094,7 @@ int idx; char *text;
   char s[10]; int x,atr;
 
 	
-	atr=get_attr_handle(dcc[idx].nick); sprintf(s,"%d",dcc[idx].sock);
+	atr=get_attr_handle(dcc[idx].nick); snprintf(s, sizeof s, "%d", dcc[idx].sock);
 	Tcl_SetVar(tcl_interp,"_n",s,TCL_GLOBAL_ONLY);
 	Tcl_SetVar(tcl_interp,"_a",text,TCL_GLOBAL_ONLY);
 	x=check_tcl_bind(&H_filt,text,atr," $_n $_a",
