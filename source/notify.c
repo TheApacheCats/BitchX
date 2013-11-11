@@ -418,7 +418,7 @@ void notify_userhost_dispatch (UserhostItem *stuff, char *nick, char *text)
 {
 	char userhost[BIG_BUFFER_SIZE + 1];
 
-	snprintf(userhost, BIG_BUFFER_SIZE, "%s@%s", stuff->user, stuff->host);
+	snprintf(userhost, sizeof userhost, "%s@%s", stuff->user, stuff->host);
 	notify_userhost_reply(stuff->nick, userhost);
 }
 
