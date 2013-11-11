@@ -237,13 +237,14 @@ WhowasList *tmp;
 /* Used to rehash whowas listings for new shitlist entries */
 void sync_whowas_addshit(ShitList *added)
 {
-WhowasList *tmp;
-char user[BIG_BUFFER_SIZE];
+	WhowasList *tmp;
+	char user[BIG_BUFFER_SIZE];
+
 	for (tmp = next_userhost(&whowas_userlist_list, NULL); tmp; tmp = next_userhost(&whowas_userlist_list, tmp))
 	{
 		if (check_channel_match(added->channels, tmp->channel)) 
 		{
-			sprintf(user, "%s!%s", tmp->nicklist->nick, tmp->nicklist->host);
+			snprintf(user, sizeof user, "%s!%s", tmp->nicklist->nick, tmp->nicklist->host);
 			if (wild_match(added->filter, user))
 				tmp->nicklist->shitlist = added;
 		}
@@ -252,7 +253,7 @@ char user[BIG_BUFFER_SIZE];
 	{
 		if (check_channel_match(added->channels, tmp->channel))
 		{
-			sprintf(user, "%s!%s", tmp->nicklist->nick, tmp->nicklist->host);
+			snprintf(user, sizeof user, "%s!%s", tmp->nicklist->nick, tmp->nicklist->host);
 			if (wild_match(added->filter, user))
 				tmp->nicklist->shitlist = added;
 		}
