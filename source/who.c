@@ -357,7 +357,7 @@ void BX_whobase(char *args, void (*line) (WhoEntry *, char *, char **), void (*e
 		char buffer[BIG_BUFFER_SIZE+1];
 		*buffer = 0;
 		va_start(arg, format);
-		vsnprintf(buffer, BIG_BUFFER_SIZE, format, arg);
+		vsnprintf(buffer, sizeof buffer, format, arg);
 		va_end(arg);
 		new_w->who_buff = m_strdup(buffer);
 	}
@@ -473,7 +473,7 @@ do
 		char buffer[1024];
 
 		channel = "Channel";
-		snprintf(buffer, 1024, "%s %s %s %s %s %s %s", channel,
+		snprintf(buffer, sizeof buffer, "%s %s %s %s %s %s %s", channel,
 				nick, stat, user, host, server, name);
 		set_display_target(channel, LOG_CRAP);
 		if (new_w->who_stuff)
@@ -518,7 +518,7 @@ do
 	{
 		char buffer[1024];
 
-		snprintf(buffer, 1023, "%s %s %s %s %s %s %s", channel,
+		snprintf(buffer, sizeof buffer, "%s %s %s %s %s %s %s", channel,
 				nick, stat, user, host, server, name);
 
 		set_display_target(channel, LOG_CRAP);
@@ -548,10 +548,10 @@ while (new_w->piggyback && (new_w = new_w->next));
 void who_end (char *from, char **ArgList)
 {
 	WhoEntry 	*new_w = who_queue_top(from_server);
-	char 		buffer[1025];
+	char 		buffer[1024];
 
-	if (who_whine)
-		who_whine = 0;
+	who_whine = 0;
+
 	if (!new_w)
 		return;	
 
@@ -561,19 +561,19 @@ void who_end (char *from, char **ArgList)
 		 * Defer to another function, if neccesary.
 		 */
 		if (new_w->end)
+		{
 			new_w->end(new_w, from, ArgList);
+		}
 		else
 		{
-			snprintf(buffer, 1024, "%s %s %s", from, ArgList[0], ArgList[1]);
+			snprintf(buffer, sizeof buffer, "%s %s %s", from, ArgList[0], ArgList[1]);
+
 			if (new_w->who_end)
 			    parse_line(NULL, new_w->who_end, buffer, 0, 0, 1);
-
-			else if (get_int_var(SHOW_END_OF_MSGS_VAR))
-			    if (do_hook(current_numeric, "%s", buffer))
+			else if (get_int_var(SHOW_END_OF_MSGS_VAR) && do_hook(current_numeric, "%s", buffer))
 				put_it("%s %s", numeric_banner(), buffer);
 		}
-	} 
-	while (new_w->piggyback && (new_w = new_w->next));
+	} while (new_w->piggyback && (new_w = new_w->next));
 
 	who_queue_pop();
 }
