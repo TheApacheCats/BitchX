@@ -147,7 +147,7 @@ void	BX_close_server (int cs_index, char *message)
 			if (x_debug & DEBUG_OUTBOUND)
 				yell("Closing server %d because [%s]",
 					   cs_index, message ? message : empty_string);
-			snprintf(buffer, MAX_PROTOCOL_SIZE + 1, "QUIT :%s", message);
+			snprintf(buffer, sizeof buffer, "QUIT :%s", message);
 			strlcat(buffer, "\r\n", IRCD_BUFFER_SIZE + 1);
 #ifdef HAVE_SSL
 			if (get_server_ssl(cs_index))
@@ -3432,7 +3432,7 @@ void show_server_map (void)
 			strlcpy(tmp1, convert_output_format("%K[%G$0%K]", "%d", tmp->hopcount), sizeof tmp1);
 		else
 			*tmp1 = 0;
-		snprintf(tmp2, BIG_BUFFER_SIZE, "$G %%W$[-%d]1%%c $0 %s", tmp->hopcount*3, tmp1);
+		snprintf(tmp2, sizeof tmp2, "$G %%W$[-%d]1%%c $0 %s", tmp->hopcount*3, tmp1);
 		put_it("%s", convert_output_format(tmp2, "%s %s", tmp->name, prevdist!=tmp->hopcount?ascii:empty_string));
 		prevdist = tmp->hopcount;
 		new_free(&tmp->name);
