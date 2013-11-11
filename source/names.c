@@ -88,7 +88,7 @@ char *	check_channel_type (char *channel)
 	if (*channel != '!' || strlen(channel) < 6)
 		return channel;
 
-	sprintf(new_channel_format, "[%.6s] %s", channel, channel + 6);
+	snprintf(new_channel_format, sizeof new_channel_format, "[%.6s] %s", channel, channel + 6);
 	return new_channel_format;
 }
 
