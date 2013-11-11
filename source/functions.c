@@ -820,14 +820,14 @@ int i = 0;
 char str[80];
 	while (built_in_functions[i].func)
 	{
-		sprintf(str, "_%s", built_in_functions[i].name);
+		snprintf(str, sizeof str, "_%s", built_in_functions[i].name);
 		Tcl_CreateCommand(tcl_interp, lower(str), func1?func1:built_in_functions[i].func, NULL, NULL);
 		i++;
 	}
 	i = 0;
 	while (built_in[i].func)
 	{
-		sprintf(str, "_%c", built_in[i].name);
+		snprintf(str, sizeof str, "_%c", built_in[i].name);
 		Tcl_CreateCommand(tcl_interp, str, func2?func2:built_in[i].func, NULL, NULL);
 		i++;
 	}
@@ -3814,10 +3814,10 @@ BUILT_IN_FUNCTION(function_truncate, words)
 		float foo;
 		int end;
 
-		sprintf(format, "%%.%de", -num-1);
-		sprintf(buffer, format, value);
+		snprintf(format, sizeof format, "%%.%de", -num-1);
+		snprintf(buffer, sizeof buffer, format, value);
 		foo = atof(buffer);
-		sprintf(buffer, "%f", foo);
+		snprintf(buffer, sizeof buffer, "%f", foo);
 		end = strlen(buffer) - 1;
 		if (end == 0)
 			RETURN_EMPTY;
@@ -3829,8 +3829,8 @@ BUILT_IN_FUNCTION(function_truncate, words)
 	}
 	else if (num > 0)
 	{
-		sprintf(format, "%%10.%dlf", num);
-		sprintf(buffer, format, value);
+		snprintf(format, sizeof format, "%%10.%dlf", num);
+		snprintf(buffer, sizeof buffer, format, value);
 	}
 	else
 		RETURN_EMPTY;
@@ -5988,11 +5988,11 @@ BUILT_IN_FUNCTION(function_mask, args)
 	}
 
 #define USER (user == star ? empty_string : user)
-#define MASK1(x, y) snprintf(stuff, BIG_BUFFER_SIZE, x, y); break;
-#define MASK2(x, y, z) snprintf(stuff, BIG_BUFFER_SIZE, x, y, z); break;
-#define MASK3(x, y, z, a) snprintf(stuff, BIG_BUFFER_SIZE, x, y, z, a); break;
-#define MASK4(x, y, z, a, b) snprintf(stuff, BIG_BUFFER_SIZE, x, y, z, a, b); break;
-#define MASK5(x, y, z, a, b, c) snprintf(stuff, BIG_BUFFER_SIZE, x, y, z, a, b, c); break;
+#define MASK1(x, y) snprintf(stuff, sizeof stuff, x, y); break;
+#define MASK2(x, y, z) snprintf(stuff, sizeof stuff, x, y, z); break;
+#define MASK3(x, y, z, a) snprintf(stuff, sizeof stuff, x, y, z, a); break;
+#define MASK4(x, y, z, a, b) snprintf(stuff, sizeof stuff, x, y, z, a, b); break;
+#define MASK5(x, y, z, a, b, c) snprintf(stuff, sizeof stuff, x, y, z, a, b, c); break;
 
 	if (ip == 0) 
 	switch (which)
@@ -6765,11 +6765,11 @@ BUILT_IN_FUNCTION(function_screensize, input)
 char retbuffer[50];
 
 	if (!my_stricmp(input, "cx"))
-		sprintf(retbuffer, "%d", gui_screen_width());
+		snprintf(retbuffer, sizeof retbuffer, "%d", gui_screen_width());
 	else if (!my_stricmp(input, "cy"))
-		sprintf(retbuffer, "%d", gui_screen_height());
+		snprintf(retbuffer, sizeof retbuffer, "%d", gui_screen_height());
 	else
-		sprintf(retbuffer, "%d %d", gui_screen_width(), gui_screen_height());
+		snprintf(retbuffer, sizeof retbuffer, "%d %d", gui_screen_width(), gui_screen_height());
 
 	RETURN_STR(retbuffer);
 }
@@ -7328,7 +7328,7 @@ BUILT_IN_FUNCTION(function_stat, input)
 	if (stat(filename, &sb) < 0)
 		RETURN_EMPTY;
 
-	snprintf(retval, BIG_BUFFER_SIZE,
+	snprintf(retval, sizeof retval,
 		"%d %d %o %d %d %d %d %lu %lu %lu %ld %ld %ld",
 		(int)	sb.st_dev,		/* device number */
 		(int)	sb.st_ino,		/* Inode number */
