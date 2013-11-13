@@ -147,8 +147,8 @@ void	BX_close_server (int cs_index, char *message)
 			if (x_debug & DEBUG_OUTBOUND)
 				yell("Closing server %d because [%s]",
 					   cs_index, message ? message : empty_string);
-			snprintf(buffer, sizeof buffer, "QUIT :%s", message);
-			strlcat(buffer, "\r\n", IRCD_BUFFER_SIZE + 1);
+			snprintf(buffer, MAX_PROTOCOL_SIZE + 1, "QUIT :%s", message);
+			strlcat(buffer, "\r\n", sizeof buffer);
 #ifdef HAVE_SSL
 			if (get_server_ssl(cs_index))
 			{
