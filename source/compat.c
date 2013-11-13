@@ -2148,7 +2148,6 @@ retval:
 
 #ifdef CLOAKED
 
-char proctitlestr[140];
 char **Argv = NULL;             /* pointer to argument vector */
 char *LastArgv = NULL;          /* end of argv */
 

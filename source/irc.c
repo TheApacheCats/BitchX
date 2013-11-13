@@ -648,7 +648,6 @@ int old_strip_ansi = strip_ansi_in_echo;
  *   The -s flag is hard to use without an argument unless youre careful.
  */
 #ifdef CLOAKED
-extern char proctitlestr[140];
 extern char **Argv;
 extern char *LastArgv;
 #endif
@@ -1649,8 +1648,7 @@ int main(int argc, char *argv[], char *envp[])
 
 #ifdef CLOAKED
 	initsetproctitle(argc, argv, envp);
-	snprintf(proctitlestr, sizeof proctitlestr, CLOAKED);
-	setproctitle("%s", proctitlestr);
+	setproctitle("%s", CLOAKED);
 #endif
 
 	/* We move from run level 0 to run level 1

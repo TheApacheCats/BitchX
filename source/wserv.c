@@ -34,7 +34,6 @@ void 	my_exit(int);
 void 	ignore (int value);
 
 #ifdef CLOAKED
-extern char proctitlestr[140];
 extern char **Argv;
 extern char *LastArgv;
 #endif

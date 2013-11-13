@@ -73,7 +73,6 @@ static int displays = 0;
 #define SOCKMODE (S_IWRITE | S_IREAD | (displays ? S_IEXEC : 0))
 
 #ifdef CLOAKED
-extern char proctitlestr[140];
 extern char **Argv;             /* pointer to argument vector */
 extern char *LastArgv;          /* end of argv */
 #endif
