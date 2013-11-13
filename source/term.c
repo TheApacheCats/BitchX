@@ -1832,18 +1832,23 @@ void	set_meta_8bit (Window *w, char *u, int value)
 		meta_mode = (current_term->TI_km == 0 ? 0 : 1);
 }
 
-char *	control_mangle (unsigned char *text)
+/* control_mangle()
+ *
+ * Convert control characters in a string into printable sequences. */
+static char *control_mangle(char *text)
 {
-static 	u_char	retval[256];
-	int 	pos = 0;
+	static char retval[256];
+	int pos;
 	
-	*retval = 0;
 	if (!text)
-		return retval;
-		
-	for (; *text && (pos < 254); text++, pos++)
 	{
-		if (*text < 32) 
+		*retval = 0;
+		return retval;
+	}
+		
+	for (pos = 0; *text && (pos < 254); text++, pos++)
+	{
+		if (*text >= 0 && *text < 32) 
 		{
 			retval[pos++] = '^';
 			retval[pos] = *text + 64;
@@ -1861,12 +1866,16 @@ static 	u_char	retval[256];
 	return retval;
 }
 
-char *	get_term_capability (char *name, int querytype, int mangle)
+/* get_term_capability()
+ *
+ * Returns a named terminal capability of the current terminal as a string.
+ */
+char *get_term_capability(char *name, int querytype, int mangle)
 {
-static	char		retval[128];
-	const char *	compare = empty_string;
-	int 		x;
-	cap2info *	t;
+	static char retval[256];
+	const char *compare = empty_string;
+	int x;
+	cap2info *t;
 
 	for (x = 0; x < numcaps; x++)
 	{
@@ -1880,23 +1889,26 @@ static	char		retval[128];
 
 		if (!strcmp(name, compare))
 		{
+			char *control_str;
+			if (!t->ptr)
+				return NULL;
 
 			switch (t->type)
 			{
 			case CAP_TYPE_BOOL:
 			case CAP_TYPE_INT:
-			if (!(int *)t->ptr)
-				return NULL;
-			strcpy(retval, ltoa(* (int *)(t->ptr)));
-			return retval;
+				strlcpy(retval, ltoa(*(int *)(t->ptr)), sizeof retval);
+				return retval;
+
 			case CAP_TYPE_STR:
-			if (!(char **)t->ptr || !*(char **)t->ptr)
-				return NULL;
-			strcpy(retval, mangle ? 
-					control_mangle(*(char **)t->ptr) :
-					(*(char **)t->ptr));
-			return retval;
-		}
+				control_str = *(char **)t->ptr;
+				if (!control_str)
+					return NULL;
+				strlcpy(retval, 
+					mangle ? control_mangle(control_str) : control_str, 
+					sizeof retval);
+				return retval;
+			}
 		}
 	}
 	return NULL;
