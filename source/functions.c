@@ -3854,7 +3854,7 @@ BUILT_IN_FUNCTION(function_truncate, words)
 
 BUILT_IN_FUNCTION(function_tdiff2, input)
 {
-	time_t ltime;
+	long ltime;
 	long days, hours, minutes, seconds;
 	char days_str[30], hours_str[6], minutes_str[6], seconds_str[6];
 	char result_str[45];
@@ -4280,32 +4280,20 @@ BUILT_IN_FUNCTION(function_pass, words)
 
 BUILT_IN_FUNCTION(function_uptime, input)
 {
-	time_t  ltime;
-	time_t  days,hours,minutes,seconds;
-	struct  timeval         tp;
-	static time_t timestart = 0;
-	time_t timediff;
-	char buffer[BIG_BUFFER_SIZE+1];
+	long ltime = now - start_time;
+	long days, hours, minutes, seconds;
+	char result[45];
 
-	*buffer = '\0';
-
-	get_time(&tp);
-	if (timestart == 0)  
-	{
-		timestart = tp.tv_sec;
-		timediff = 0;
-	} else
-		timediff = tp.tv_sec - timestart;
-
-	ltime = timediff;
 	seconds = ltime % 60;
-	ltime = (ltime - seconds) / 60;
-	minutes = ltime%60;
-	ltime = (ltime - minutes) / 60;
+	ltime /= 60;
+	minutes = ltime % 60;
+	ltime /= 60;
 	hours = ltime % 24;
-	days = (ltime - hours) / 24;
-	sprintf(buffer, "%ldd %ldh %ldm %lds", days, hours, minutes, seconds);
-	RETURN_STR(buffer);
+	days = ltime / 24;
+
+	snprintf(result, sizeof result, "%ldd %ldh %ldm %lds", 
+		days, hours, minutes, seconds);
+	RETURN_STR(result);
 }
 
 BUILT_IN_FUNCTION(function_cluster, input)
