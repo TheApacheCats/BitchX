@@ -664,9 +664,11 @@ BUILT_IN_COMMAND(sping)
 #endif
 			if (!my_stricmp(sname, get_server_name(from_server)) || !my_stricmp(sname, get_server_itsname(from_server)))
 #ifdef HAVE_GETTIMEOFDAY
-				send_to_server("PING LAG%ld.%ld :%s", tmp->in_sping.tv_sec, tmp->in_sping.tv_usec, sname);
+				send_to_server("PING LAG%ld.%ld :%s", 
+					(long)tmp->in_sping.tv_sec, (long)tmp->in_sping.tv_usec, 
+					sname);
 #else
-				send_to_server("PING LAG%ld :%s", now, sname);
+				send_to_server("PING LAG%ld :%s", (long)now, sname);
 #endif
 			else
 				send_to_server("PING %s :%s", 
@@ -2738,11 +2740,9 @@ ChannelList *chan = NULL;
 
 BUILT_IN_COMMAND(send_kline)
 {
-	char 	*dur,
-		*target = NULL,
-		*t;
-	time_t	t_time = DEFAULT_TKLINE_TIME;
-	int	tkline = 0;
+	char *dur, *target = NULL, *t;
+	long t_time = DEFAULT_TKLINE_TIME;
+	int tkline = 0;
 
 	if (*command == 'U')
 	{
@@ -2766,7 +2766,7 @@ BUILT_IN_COMMAND(send_kline)
 			command++, tkline++;
 		if (dur && is_number(dur))
 		{
-			int l;
+			long l;
 			if ((l = my_atol(dur)))
 				t_time = l;
 			target = next_arg(args, &args);
@@ -2786,7 +2786,7 @@ BUILT_IN_COMMAND(send_kline)
 	{
 		if (!t || !*t) break;
 		if (tkline)
-			send_to_server("%s %u %s :%s", command, t_time, t, args);
+			send_to_server("%s %ld %s :%s", command, t_time, t, args);
 		else
 			send_to_server("%s %s :%s", command, t, args);
 	}
