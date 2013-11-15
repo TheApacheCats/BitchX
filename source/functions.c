@@ -1252,7 +1252,7 @@ static	char	*alias_server_version  (void)
 #define GET_INT_ARG(x, y) {RETURN_IF_EMPTY(y); x = atol(safe_new_next_arg(y, &y));}
 #define GET_FLOAT_ARG(x, y) {RETURN_IF_EMPTY(y); x = atof(safe_new_next_arg(y, &y));}
 #define GET_STR_ARG(x, y) {RETURN_IF_EMPTY(y); x = new_next_arg(y, &y);RETURN_IF_EMPTY(x);}
-#define RETURN_STR(x) return m_strdup(x ? x : EMPTY)
+#define RETURN_STR(x) return m_strdup((x) ? (x) : EMPTY)
 #define RETURN_MSTR(x) return ((x) ? (x) : EMPTY_STRING);
 #define RETURN_INT(x) return m_strdup(ltoa(x))
 
@@ -3854,48 +3854,44 @@ BUILT_IN_FUNCTION(function_truncate, words)
 
 BUILT_IN_FUNCTION(function_tdiff2, input)
 {
-	time_t	ltime;
-	time_t	days,
-		hours,
-		minutes,
-		seconds;
-	char	tmp[80];
-	char	*tstr;
+	time_t ltime;
+	long days, hours, minutes, seconds;
+	char days_str[30], hours_str[6], minutes_str[6], seconds_str[6];
+	char result_str[45];
 
 	GET_INT_ARG(ltime, input);
 
 	seconds = ltime % 60;
-	ltime = (ltime - seconds) / 60;
-	minutes = ltime%60;
-	ltime = (ltime - minutes) / 60;
+	ltime /= 60;
+	minutes = ltime % 60;
+	ltime /= 60;
 	hours = ltime % 24;
-	days = (ltime - hours) / 24;
-	tstr = tmp;
+	days = ltime / 24;
 
 	if (days)
-	{
-		sprintf(tstr, "%ldd ", days);
-		tstr += strlen(tstr);
-	}
-	if (hours)
-	{
-		sprintf(tstr, "%ldh ", hours);
-		tstr += strlen(tstr);
-	}
-	if (minutes)
-	{
-		sprintf(tstr, "%ldm ", minutes);
-		tstr += strlen(tstr);
-	}
-	if (seconds || (!days && !hours && !minutes))
-	{
-		sprintf(tstr, "%lds", seconds);
-		tstr += strlen(tstr);
-	}
+		snprintf(days_str, sizeof days_str, " %ldd", days);
 	else
-		*--tstr = 0;	/* chop off that space! */
+		days_str[0] = 0;
 
-	RETURN_STR(tmp);
+	if (hours)
+		snprintf(hours_str, sizeof hours_str, " %ldh", hours);
+	else
+		hours_str[0] = 0;
+
+	if (minutes)
+		snprintf(minutes_str, sizeof minutes_str, " %ldm", minutes);
+	else
+		minutes_str[0] = 0;
+
+	if (seconds || (!days && !hours && !minutes))
+		snprintf(seconds_str, sizeof seconds_str, " %lds", seconds);
+	else
+		seconds_str[0] = 0;
+
+	snprintf(result_str, sizeof result_str, "%s%s%s%s", 
+		days_str, hours_str, minutes_str, seconds_str);
+
+	RETURN_STR(result_str + 1);
 }
 
 
