@@ -113,11 +113,11 @@ AC_INCLUDES_DEFAULT
 
 AC_CHECK_SIZEOF(unsigned int, 4)
 if test x"$ac_cv_sizeof_unsigned_int" = x"4"; then
-  AC_DEFINE(UNSIGNED_INT32, 1, Define this if an unsigned long is 32 bits.)
+  AC_DEFINE(UNSIGNED_INT32, 1, Define this if an unsigned int is 32 bits.)
 else
   AC_CHECK_SIZEOF(unsigned long, 4)
   if test x"$ac_cv_sizeof_unsigned_long" = x"4"; then
-    AC_DEFINE(UNSIGNED_LONG32, 1, Define this if an unsigned int is 32 bits.)
+    AC_DEFINE(UNSIGNED_LONG32, 1, Define this if an unsigned long is 32 bits.)
   else
     AC_DEFINE(UNKNOWN_32INT, 1, Define this if you are unsure what is 32 bits.)
   fi
