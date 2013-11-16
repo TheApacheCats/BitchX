@@ -454,24 +454,26 @@ static	TimerList *get_timer (char *ref)
 
 char *function_timer(char *n, char *args)
 {
-char *ref;
-char *out = NULL;
-TimerList *tmp;
-	ref = next_arg(args, &args);
-	if (ref && *ref && (tmp = get_timer(ref)))
-	{
-		double time_left;
-		struct timeval current;
-		char buf[40];
-		get_time(&current);
-		time_left = BX_time_diff(current, tmp->time);
-		if (time_left < 0)
-			time_left = 0.0;
-		snprintf(buf, sizeof buf, "%0.3f", time_left);
-		malloc_sprintf(&out, "%s %d %d %d %d %s %s %s", tmp->ref, tmp->server, tmp->window, tmp->interval, tmp->events, buf, tmp->callback? "(internal callback)" : (tmp->command? tmp->command : ""), tmp->whom ? tmp->whom : empty_string );
-		return ref;
-	}
-	return m_strdup(empty_string);
+	char *ref = next_arg(args, &args);
+	TimerList *t = NULL;
+	double time_left;
+	struct timeval current;
+
+	if (ref && *ref)
+		t = get_timer(ref);
+
+	if (!t)
+		return m_strdup(empty_string);
+
+	get_time(&current);
+	time_left = BX_time_diff(current, t->time);
+	if (time_left < 0)
+		time_left = 0.0;
+
+	return m_sprintf("%s %d %d %ld %d %0.3f %s%s", t->ref, t->server,
+		t->window, (long)t->interval, t->events, time_left, 
+		t->callback ? "(internal callback) " : t->command,
+		t->whom ? t->whom : "");
 }
 
 /*
