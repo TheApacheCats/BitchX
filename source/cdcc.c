@@ -356,7 +356,10 @@ static int r_info(char *args, char *rest)
 			if (matchmcommand(q, ptr->num))
 				break;
 		if (ptr)
-			queue_send_to_server(from_server, "NOTICE %s :%d file%s %d gets %ld size %2.4f minspeed %ld time added",args, ptr->numfiles, plural(ptr->numfiles), ptr->gets, ptr->size, ptr->minspeed, ptr->timeadded); 
+			queue_send_to_server(from_server, 
+				"NOTICE %s :%d file%s %d gets %ld size %2.4f minspeed %ld time added",
+				args, ptr->numfiles, plural(ptr->numfiles), ptr->gets, 
+				ptr->size, ptr->minspeed, (long)ptr->timeadded); 
 		else
 			queue_send_to_server(from_server, "NOTICE %s :Invalid info request", args);
 	}
