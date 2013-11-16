@@ -1095,7 +1095,7 @@ static	char	*alias_invite 		(void) { return m_strdup((invite_channel) ? invite_c
 static	char	*alias_oper 		(void) { return m_strdup(get_server_operator(from_server) ?  get_string_var(STATUS_OPER_VAR) : empty_string); }
 static	char	*alias_version 		(void) { return m_strdup(internal_version); }
 static  char    *alias_online 		(void) { return m_sprintf("%ld",(long)start_time); }
-static  char    *alias_idle 		(void) { return m_sprintf("%ld",now-idle_time); }
+static  char    *alias_idle 		(void) { return m_sprintf("%ld",(long)(now - idle_time)); }
 static  char    *alias_show_userhost 	(void) { return m_strdup(get_server_userhost(from_server)); }
 static	char	*alias_current_numeric	(void) { return m_sprintf("%03d", -current_numeric); }
 static	char	*alias_hookname		(void) { return m_sprintf("%s", *hook_name?hook_name:empty_string); }
@@ -1104,7 +1104,7 @@ static	char	*alias_uptime		(void) { return m_sprintf("%s", convert_time(now-star
 static	char	*alias_bitchx		(void) { return m_strdup("[BX]"); }
 extern char *return_this_alias (void);
 static	char	*alias_thisaliasname	(void) { return m_strdup(return_this_alias()); }
-static	char	*alias_serverlag	(void) { return m_sprintf("%ld", get_server_lag(from_server)); }
+static	char	*alias_serverlag	(void) { return m_sprintf("%d", get_server_lag(from_server)); }
 static	char	*alias_currentwindow	(void) { return m_sprintf("%d", current_window ? current_window->refnum : 0); }
 static	char	*alias_serverlistsize	(void) { return m_sprintf("%d", server_list_size()); }
 
@@ -1148,10 +1148,10 @@ static	char	*alias_server 		(void)
 
 static	char	*alias_awaytime		(void) 
 { 
-	return m_sprintf("%lu", parsing_server_index != -1 ? 
-					get_server_awaytime(parsing_server_index):
+	return m_sprintf("%ld", parsing_server_index != -1 ? 
+					(long)get_server_awaytime(parsing_server_index):
 					get_window_server(0) != -1 ? 
-					get_server_awaytime(get_window_server(0)):
+					(long)get_server_awaytime(get_window_server(0)):
 					0); 
 }
 
@@ -3515,7 +3515,7 @@ BUILT_IN_FUNCTION(function_serverpass, input)
 	if (servnum < 0 || servnum > server_list_size())
 		RETURN_EMPTY;
 
-	return m_sprintf("%d", get_server_pass(servnum));	
+	return m_strdup(get_server_pass(servnum));	
 }
 
 BUILT_IN_FUNCTION(function_open, words)
@@ -4386,7 +4386,7 @@ register UserList *tmp;
 	if (!uh || !*uh || !channel || !*channel)
 		RETURN_EMPTY;
 	if ((tmp = find_bestmatch("*", uh, channel, NULL)))
-		return m_sprintf("%d %s %s %s", tmp->flags, tmp->host, tmp->channels, tmp->password?tmp->password:empty_string);
+		return m_sprintf("%lu %s %s %s", tmp->flags, tmp->host, tmp->channels, tmp->password?tmp->password:empty_string);
 #endif
 	RETURN_EMPTY;
 }
@@ -4820,7 +4820,7 @@ register ShitList *Shit;
 	else
 		channel = "*";
 	if ((User = lookup_userlevelc("*", uhost, channel, NULL)))
-		return m_sprintf("USER %d %s %s", User->flags, User->host, User->channels);
+		return m_sprintf("USER %lu %s %s", User->flags, User->host, User->channels);
 	if ((Shit = nickinshit(nick, uhost)) && check_channel_match(Shit->channels, channel))
 		return m_sprintf("SHIT %s %d %s", Shit->filter, Shit->level, Shit->channels);
 #endif
