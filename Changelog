@@ -1,5 +1,7 @@
 [Changes 1.2c01]
 
+* Fix the /TKB (timed kickban) command. (caf)
+
 * Rewrite termcap/terminfo detection logic in configure and include term.h
   in term.c for the system definition of tparm().  This fixes a crash on
   NetBSD x86-64 (reported by jeezy), and should also ensure that terminfo

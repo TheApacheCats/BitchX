@@ -1021,16 +1021,16 @@ BUILT_IN_COMMAND(kickban)
 		reset_display_target();
 		return;
 	}
+
 	if (command && (!my_stricmp(command, "TBK") || !my_stricmp(command, "TKB")))
 	{
 		char *string_time;
 		time = get_cset_int_var(chan->csets, BANTIME_CSET);
 		if ((string_time = next_arg(args, &args)))
 			time = atoi(string_time);
-		malloc_sprintf(&rest, "Timed kickban for %s", convert_time(time));
 		rest = args;
-		if (rest && !*rest)
-			rest = NULL;
+		if (!rest || !*rest)
+			rest = m_sprintf("Timed kickban for %s", convert_time(time));
 	}
 	else
 	{
