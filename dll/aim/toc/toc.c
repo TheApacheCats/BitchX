@@ -338,8 +338,8 @@ int toc_callback(int fd)
 	if (!strcasecmp(c,"UPDATE_BUDDY")) {
 		char *uc, *t;
 		int logged, evil, idle, type = 0;
-                time_t signon;
-                time_t time_idle;
+		long signon;
+		time_t time_idle;
 
 		numargs = 7;
 		args = (char **) malloc(sizeof(char *)*numargs);

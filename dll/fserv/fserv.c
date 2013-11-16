@@ -1049,7 +1049,7 @@ char *fserv_savname = NULL;
 	if (statistics.files_served)
 	{
 		fprintf(fp, "%s%s %lu\n", bogus, "_totalserved", statistics.files_served);
-		fprintf(fp, "%s%s %lu\n", bogus, "_totalstart", statistics.starttime);
+		fprintf(fp, "%s%s %ld\n", bogus, "_totalstart", (long)statistics.starttime);
 		fprintf(fp, "%s%s %lu\n", bogus, "_totalsizeserved", statistics.filesize_served);
 	}
 	fclose(fp);

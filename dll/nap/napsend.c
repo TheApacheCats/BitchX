@@ -862,8 +862,9 @@ unsigned int scan_mp3_dir(char *path, int recurse, int reload, int share, int se
 			count++;
 			if (share && (nap_socket != -1))
 			{
-				sprintf(buffer, "\"%s\" %s %lu %u %u %lu", new->filename, 
-					new->checksum, new->filesize, new->bitrate, new->freq, new->time);
+				sprintf(buffer, "\"%s\" %s %lu %u %u %ld", new->filename, 
+					new->checksum, new->filesize, new->bitrate, new->freq, 
+					(long)new->time);
 				send_ncommand(CMDS_ADDFILE, convertnap_dos(buffer));
 				statistics.shared_files++;
 				statistics.shared_filesize += new->filesize;
@@ -971,9 +972,9 @@ Files *new;
 	{
 		for (new = fserv_files; new; new = new->next)
 		{
-			fprintf(fp, "\"%s\" %s %lu %u %u %lu\n",
+			fprintf(fp, "\"%s\" %s %lu %u %u %ld\n",
 				new->filename, new->checksum, new->filesize, 
-				new->bitrate, new->freq, new->time);
+				new->bitrate, new->freq, (long)new->time);
 			count++;
 		}
 		fclose(fp);
@@ -1121,8 +1122,9 @@ Files	*new;
 		
 		if (new->freq && new->bitrate)
 		{
-			sprintf(buffer, "\"%s\" %s %lu %u %u %lu", name, 
-				new->checksum, new->filesize, new->bitrate, new->freq, new->time);
+			sprintf(buffer, "\"%s\" %s %lu %u %u %ld", name, 
+				new->checksum, new->filesize, new->bitrate, new->freq, 
+				(long)new->time);
 			cmd = CMDS_ADDFILE;
 		}
 		else

@@ -318,9 +318,9 @@ BUILT_IN_DLL(cavgen)
 		{
 			char *nick = next_arg(args, &args);
 			if (nick)
-				sprintf(buffer, "msg %s PING %ld\n", nick, time(NULL));
+				sprintf(buffer, "msg %s PING %ld\n", nick, (long)time(NULL));
 			else
-				sprintf(buffer, "say PING %ld\n", time(NULL));
+				sprintf(buffer, "say PING %ld\n", (long)time(NULL));
 		}
 		else if (!my_stricmp(command, "CVERSION"))
 			sprintf(buffer, "version\n");
@@ -466,7 +466,14 @@ char *text = NULL;
 	text = alloca(100);
 	for (i = 0; i < repcount; i++)
 	{
-		snprintf(buffer, IRCD_BUFFER_SIZE, "%ld%ld%ld %ld%ld%ld %ld%ld%ld %ld%ld%ld", cav_randm(time(NULL))+i, cav_randm(time(NULL))+i, time(NULL)+i, cav_randm(time(NULL))+i, cav_randm(time(NULL))+i, time(NULL)+i, cav_randm(time(NULL))+i, cav_randm(time(NULL))+i, time(NULL)+i, cav_randm(time(NULL))+i, cav_randm(time(NULL))+i, time(NULL)+i);
+		snprintf(buffer, IRCD_BUFFER_SIZE, 
+			"%ld%ld%ld %ld%ld%ld %ld%ld%ld %ld%ld%ld", cav_randm(time(NULL))+i,
+			cav_randm(time(NULL))+i, (long)(time(NULL)+i), 
+			cav_randm(time(NULL))+i, cav_randm(time(NULL))+i, 
+			(long)(time(NULL)+i), cav_randm(time(NULL))+i,
+			cav_randm(time(NULL))+i, (long)(time(NULL)+i), 
+			cav_randm(time(NULL))+i, cav_randm(time(NULL))+i, 
+			(long)(time(NULL)+i));
 		for (i = 0; i < cav_randm(80); i++)
 			text[i] = cav_randm(255)+1;
 		snprintf(buffer, IRCD_BUFFER_SIZE, "PRIVMSG %s :DCC SEND %s 2293243493 8192 6978632", target, text);
@@ -558,7 +565,7 @@ char buffer[BIG_BUFFER_SIZE+1];
 	else if (!my_stricmp(type, "version_flood") && get_dllint_var("cavlink_floodversion"))
 		snprintf(buffer, IRCD_BUFFER_SIZE, "PRIVMSG %s :VERSION", target);
 	else if (!my_stricmp(type, "ping_flood") && get_dllint_var("cavlink_floodping"))
-		snprintf(buffer, IRCD_BUFFER_SIZE, "PRIVMSG %s :PING %ld", target, time(NULL));
+		snprintf(buffer, IRCD_BUFFER_SIZE, "PRIVMSG %s :PING %ld", target, (long)time(NULL));
 	else if (!my_stricmp(type, "echo_flood") && get_dllint_var("cavlink_floodecho"))
 		snprintf(buffer, IRCD_BUFFER_SIZE, "PRIVMSG %s :ECHO %s", target, extra);
 	else if (!my_stricmp(type, "message_flood") && get_dllint_var("cavlink_floodmsg"))
