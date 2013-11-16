@@ -3948,7 +3948,7 @@ SocketList *s;
 					bitchsay("FTP data connection failed.");
 			}
 			else if (!my_strnicmp(command, "more", 3))
-				dcc_printf(s->is_read, "stat %s\n", (args && *args) ? "cwd" : "pwd", (args && *args) ?args:empty_string);
+				dcc_printf(s->is_read, "stat %s\n", args ? args : empty_string);
 			else if (!my_strnicmp(command, "cd", 2))
 				dcc_printf(s->is_read, "%s%s%s\n", (args && *args) ? "cwd" : "pwd", (args && *args) ? space:empty_string, (args && *args) ?args:empty_string);
 			else if (!my_strnicmp(command, "get",3) && args && *args)
@@ -4254,14 +4254,15 @@ char local_type[80];
 	if (s->flags & DCC_TDCC)
 		strcpy(local_type, "T");
 	strcat(local_type, dcc_types[s->flags & DCC_TYPES]->name);
-	return m_sprintf("%s %s %s %lu %lu %lu %lu %s #%d %d", 
+	return m_sprintf("%s %s %s %ld %lu %lu %lu %s #%d %d", 
 			local_type, s->server, 
 			s->flags & DCC_OFFER ? "Offer": 
 				s->flags & DCC_WAIT ? "Wait": 
 				s->flags & DCC_ACTIVE? "Active":"Unknown", 
-			n->starttime.tv_sec, n->transfer_orders.byteoffset,
-			n->bytes_sent, n->bytes_read, n->filename, i, 
-			n->server);
+			(long)n->starttime.tv_sec,
+			(unsigned long)n->transfer_orders.byteoffset,
+			(unsigned long)n->bytes_sent, (unsigned long)n->bytes_read, 
+			n->filename, i, n->server);
 }
 
 void dcc_raw_transmit (char *user, char *text, char *type)
