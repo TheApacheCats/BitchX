@@ -29,14 +29,13 @@ CVS_REVISION(keys_c)
 #define MAIN_SOURCE
 #include "modval.h"
 
-#define KEY(meta, ch) (*keys[meta])[ch]
+#define KEY(meta, ch) (*keys[meta])[(unsigned char)(ch)]
 
-typedef unsigned char uc;
-static 	void 	new_key 	(int, unsigned, int, int, char *);
-static 	void	snew_key 	(int meta, unsigned chr, char *what);
-static	uc *	display_key 	(uc c);
-static	int 	lookup_function (const uc *name, int *lf_index);
-static int	parse_key (const uc *sequence, uc *term);
+static void new_key(int, unsigned char, int, int, char *);
+static void	snew_key(int meta, unsigned chr, char *what);
+static char *display_key(char c);
+static int lookup_function(const char *name, int *lf_index);
+static int parse_key(const char *sequence, char *term);
 
 #ifdef GUI
 char *mouse_actions[] =
@@ -434,12 +433,12 @@ static void	snew_key (int meta, unsigned chr, char *what)
 #endif
 }
 
-static	void	snew_key_from_str (uc *string, char *what)
+static void snew_key_from_str(const char *string, char *what)
 {
 	int	i;
 	int	meta;
 	int	old_display;
-	uc	chr;
+	char chr;
 
 	old_display = window_display;
 	window_display = 0;
@@ -454,7 +453,7 @@ static	void	snew_key_from_str (uc *string, char *what)
 }
 
 
-static void 	new_key (int meta, unsigned chr, int type, int change, char *stuff)
+static void new_key(int meta, unsigned char chr, int type, int change, char *stuff)
 {
 	/*
 	 * Create a map first time we bind into it.  We have to do this
@@ -494,7 +493,7 @@ static void 	new_key (int meta, unsigned chr, int type, int change, char *stuff)
  * function will display to the screen the status of that bindings in a 
  * human-readable way.
  */
-static void 	show_binding (int meta, uc c)
+static void show_binding(int meta, unsigned char c)
 {
 	char	meta_str[8];
 
@@ -597,7 +596,7 @@ void 	save_bindings (FILE *fp, int do_all)
  * a "meta" character.
  *	The value of 'func' will be NULL but you should not depend on that.
  */
-int	get_binding (int meta, uc c, KeyBinding *func, char **name)
+int get_binding(int meta, unsigned char c, KeyBinding *func, char **name)
 {
 	*func = NULL;
 	*name = NULL;
@@ -741,10 +740,10 @@ BUILT_IN_COMMAND(rbindcmd)
 
 
 /* * * * * * * * * * * * * * BIND  * * * * * * * * * * * * * */
-static int	grok_meta (const uc *ptr, const uc **end)
+static int grok_meta(const char *ptr, char **end)
 {
-	int		meta = -1;
-	const uc *	str;
+	int meta = -1;
+	const char *str;
 
 	/*
 	 * Well, if it is going to be anywhere, META has to be out front,
@@ -753,7 +752,7 @@ static int	grok_meta (const uc *ptr, const uc **end)
 	if (!my_strnicmp(ptr, "META", 4))
 	{
 		str = ptr = ptr + 4;
-		while (isdigit(*ptr))
+		while (isdigit((unsigned char)*ptr))
 			ptr++;
 		if (*ptr == '_' && !my_strnicmp(ptr, "_CHARACTER", 10))
 			ptr = ptr + 10;
@@ -762,7 +761,8 @@ static int	grok_meta (const uc *ptr, const uc **end)
 		meta = atol(str);
 	}
 
-	*end = ptr;
+	if (end)
+		*end = (char *)ptr;
 	return meta;
 }
 
@@ -772,13 +772,14 @@ static int	grok_meta (const uc *ptr, const uc **end)
  * work with, including the redux of ^X into X-64.
  * You can then work with the sequence after processing.
  */
-void	copy_redux (const uc *orig, uc *result)
+void copy_redux(const char *orig, char *result)
 {
-	const  uc	*ptr;
-	*result = 0;
+	const char *ptr;
 	
 	for (ptr = orig; ptr && *ptr; ptr++, result++)
 	{
+		int c;
+
 		if (*ptr != '^')
 		{
 			*result = *ptr;
@@ -786,25 +787,27 @@ void	copy_redux (const uc *orig, uc *result)
 		}
 
 		ptr++;
-		switch (toupper(*ptr))
+		c = toupper((unsigned char)*ptr);
+		switch (c)
 		{
 			case 0:			/* ^<nul> is ^ */
-				*result = '^';
-				return;
+				*result++ = '^';
+				goto out;
 			case '?':		/* ^? is DEL */
 				*result = 0177;
 				break;
 			default:
-				if (toupper(*ptr) < 64)
+				if (c < 64 || c > 127)
 				{
 					say("Illegal key sequence: ^%c", *ptr);
-					*result = 0;
-					return;
+					goto out;
 				}
-				*result = toupper(*ptr) - 64;
+				*result = c - 64;
 				break;
 		}
 	}
+
+out:
 	*result = 0;
 	return;
 }
@@ -813,7 +816,7 @@ void	copy_redux (const uc *orig, uc *result)
  * find_meta_map: Finds a meta map that does not already contain a 
  * binding to the specified character.
  */
-int	find_meta_map	(uc key)
+int	find_meta_map(char key)
 {
 	int	curr = MAX_META;
 
@@ -870,14 +873,13 @@ int	find_meta_map	(uc key)
  *	/BIND ^[[11~	BIND-ACTION	(Force us to make suer ^[[11 is bound
  *					 to a meta map before returning.)
  */
-static int	parse_key (const uc *sequence, uc *term)
+static int parse_key(const char *sequence, char *term)
 {
-	uc	*copy;
-	uc	*end;
+	char *copy, *end;
 	int	return_meta = 0;
 	int	meta;
-	uc	last_character;
-	uc	terminal_character;
+	char last_character;
+	char terminal_character;
 	int	last;
 	int	somethingN;
 #ifdef GUI
@@ -908,7 +910,7 @@ static int	parse_key (const uc *sequence, uc *term)
 	/*
 	 * Remove any leading META description
 	 */
-	if ((meta = grok_meta(copy, (const uc **)&copy)) == -1)
+	if ((meta = grok_meta(copy, &copy)) == -1)
 		meta = 0;
 
 	if (x_debug & DEBUG_AUTOKEY)
@@ -1070,11 +1072,11 @@ static int	parse_key (const uc *sequence, uc *term)
  */
 BUILT_IN_COMMAND(bindcmd)
 {
-	uc	*key,
-		*function;
-	uc	*newkey;
+	char *key;
+	char *function;
+	char *newkey;
 	int	meta;
-	uc	dakey;
+	char dakey;
 	int	bi_index;
 	int	cnt,
 		i;
@@ -1179,12 +1181,11 @@ BUILT_IN_COMMAND(bindcmd)
  * set to the first item that matches the 'name'.  For all other return
  * values, "lf_index" will have the value -1.
  */
-static int 	lookup_function (const uc *orig_name, int *lf_index)
+static int lookup_function(const char *orig_name, int *lf_index)
 {
-	int	len,
-		cnt,
-		i;
-	uc	*name, *breakage;
+	size_t len;
+	int cnt, i;
+	char *name;
 
 	if (!orig_name)
 	{
@@ -1192,7 +1193,7 @@ static int 	lookup_function (const uc *orig_name, int *lf_index)
 		return 1;
 	}
 
-	breakage = name = LOCAL_COPY(orig_name);
+	name = LOCAL_COPY(orig_name);
 	upper(name);
 	len = strlen(name);
 
@@ -1201,16 +1202,13 @@ static int 	lookup_function (const uc *orig_name, int *lf_index)
 	/* Handle "META" descriptions especially. */
 	if (!strncmp(name, "META", 4))
 	{
-		const uc *	endp;
-		int		meta;
+		int meta = grok_meta(name, NULL);
 
-		if ((meta = grok_meta(name, &endp)) < 0)
+		if (meta < 0)
 			return meta;
-		else
-		{
-			*lf_index = -meta;
-			return 1;
-		}
+
+		*lf_index = -meta;
+		return 1;
 	}
 
 	for (cnt = 0, i = 0; i < NUMBER_OF_FUNCTIONS; i++)
@@ -1239,12 +1237,12 @@ static int 	lookup_function (const uc *orig_name, int *lf_index)
  * sequence by having a prepended caret ('^').  Other characters will be
  * left alone.  The return value belongs to the function -- dont mangle it.
  */
-static uc *	display_key (uc c)
+static char *display_key(char c)
 {
-	static	uc key[3];
+	static char key[3];
 
-	key[2] = (char) 0;
-	if (c < 32)
+	key[2] = 0;
+	if (c >= 0 && c < 32)
 	{
 		key[0] = '^';
 		key[1] = c + 64;
@@ -1257,9 +1255,9 @@ static uc *	display_key (uc c)
 	else
 	{
 		key[0] = c;
-		key[1] = (char) 0;
+		key[1] = 0;
 	}
-	return (key);
+	return key;
 }
 
 char *convert_to_keystr(char *key)

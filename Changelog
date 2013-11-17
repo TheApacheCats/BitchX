@@ -1,5 +1,7 @@
 [Changes 1.2c01]
 
+* Fix key bindings that terminate with ^. (caf)
+
 * Fix the $timer() scripting function. (caf)
 
 * Fix the /TKB (timed kickban) command. (caf)
