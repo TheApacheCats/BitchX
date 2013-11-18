@@ -91,20 +91,35 @@ static	void	put_color		(int, int);
 
 const	u_char	*BX_skip_ctl_c_seq		(const u_char *start, int *lhs, int *rhs, int proper);
 
+static void delchar(char **text, int cnum)
+{
+	int i;
 
-unsigned char *BX_skip_incoming_mirc(unsigned char *text)
+	for (i = 0; i < strlen(*text) - 1; i++)
+		if (i >= cnum) text[0][i] = text[0][i+1];
+
+	text[0][i] = 0;
+}
+
+char *BX_skip_incoming_mirc(char *text)
 {
 	int i, x;
-	for (i=0;i<strlen(text);i++) {
-		if ((int)text[i] != 3) continue;
-		else {
+
+	for (i = 0; i < strlen(text); i++) {
+		if (text[i] == 3)
+		{
 			x = 0;
-			while (((isdigit(text[i])) || ((int)text[i] == 3))) {
-				while((int)text[i] == 3) delchar(&text, i);
-				while((isdigit(text[i])) && (x<2)) {
+			while (isdigit((unsigned char)text[i]) || text[i] == 3)
+			{
+				while (text[i] == 3)
 					delchar(&text, i);
-					if (isdigit(text[i])) {
-						delchar(&text, i); x += 2;
+				while (isdigit((unsigned char)text[i]) && x < 2)
+				{
+					delchar(&text, i);
+					if (isdigit((unsigned char)text[i]))
+					{
+						delchar(&text, i);
+						x += 2;
 					} else x += 1;
 				}
 				if (text[i] != ',') break;
@@ -116,30 +131,20 @@ unsigned char *BX_skip_incoming_mirc(unsigned char *text)
 	return text;
 }
 
-void delchar(unsigned char **text, int cnum)
-{
-	int i;
-	for (i=0;i<strlen(*text)-1;i++)
-		if (i >= cnum) text[0][i] = text[0][i+1];
-
-	text[0][i] = 0;
-}
-
-
 /*
  * add_to_screen: This adds the given null terminated buffer to the screen.
  * That is, it determines which window the information should go to, which
  * lastlog the information should be added to, which log the information
  * should be sent to, etc 
  */
-void BX_add_to_screen(unsigned char *buffer)
+void BX_add_to_screen(char *buffer)
 {
-char *out = NULL;
-	if (!get_int_var(MIRCS_VAR))
-		buffer = skip_incoming_mirc(buffer);
+	char *out;
 
-	
-	out = buffer;		
+	if (!get_int_var(MIRCS_VAR))
+		out = skip_incoming_mirc(buffer);
+	else
+		out = buffer;
 
 	if (in_window_command)
 	{

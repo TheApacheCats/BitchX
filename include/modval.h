@@ -251,7 +251,6 @@ extern Function_ptr *global;
 #define put_it (*(void (*)(const char *, ...))global[PUT_IT])
 #define bitchsay (*(void (*)(const char *, ...))global[BITCHSAY])
 #define yell (*(void (*)(const char *, ...))global[YELL])
-#define add_to_screen (*(void (*)(unsigned char *))global[ADD_TO_SCREEN])
 #define add_to_log (*(void (*)(FILE *, time_t, const char *, int ))global[ADD_TO_LOG])
 
 #define bsd_glob (*(int (*)(const char *, int, int (*)(const char *, int), glob_t *))global[BSD_GLOB])
@@ -278,8 +277,8 @@ extern Function_ptr *global;
 /* screen.c */
 #define prepare_display (*(unsigned char **(*)(const unsigned char *, int , int *, int ))global[PREPARE_DISPLAY])
 #define add_to_window (*(void (*)(Window *, const unsigned char *))global[ADD_TO_WINDOW])
-#define skip_incoming_mirc (*(unsigned char *(*)(unsigned char *))global[SKIP_INCOMING_MIRC])
-#define add_to_screen (*(void (*)(unsigned char *))global[ADD_TO_SCREEN])
+#define skip_incoming_mirc (*(char *(*)(char *))global[SKIP_INCOMING_MIRC])
+#define add_to_screen (*(void (*)(char *))global[ADD_TO_SCREEN])
 #define split_up_line (*(unsigned char **(*)(const unsigned char *, int ))global[SPLIT_UP_LINE])
 #define output_line (*(int (*)(const unsigned char *))global[OUTPUT_LINE])
 #define output_with_count (*(int (*)(const unsigned char *, int , int ))global[OUTPUT_WITH_COUNT])

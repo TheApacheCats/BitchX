@@ -48,7 +48,7 @@ RETSIGTYPE	sig_refresh_screen (int);
 	ShrinkInfo	resize_display (Window *);
 	void	redraw_window (Window *, int);
 	void	redraw_all_windows (void);
-	void	BX_add_to_screen (unsigned char *);
+	void	BX_add_to_screen (char *);
 	void	do_screens (fd_set *);
 	unsigned	char	**BX_split_up_line(const unsigned char *, int);
 	void	BX_xterm_settitle(void);
@@ -65,8 +65,7 @@ Screen  * BX_create_new_screen(void);
 const	u_char *BX_skip_ctl_c_seq		(const u_char *, int *, int *, int);
 	u_char **BX_prepare_display	(const u_char *, int, int *, int);
 	int	BX_output_with_count	(const unsigned char *, int, int);
-unsigned char	*BX_skip_incoming_mirc	(unsigned char *);
-void delchar(unsigned char **text, int cnum);
+char	*BX_skip_incoming_mirc	(char *);
 
 /* Dont do any word-wrapping, just truncate each line at its place. */
 #define PREPARE_NOWRAP	0x01
