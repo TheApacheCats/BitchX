@@ -1782,11 +1782,9 @@ char **	glob_assign_alias (char *name, int *howmany)
 char **	pmatch_cmd_alias (char *name, int *howmany)
 {
 	int	cnt;
-	int 	len;
 	char 	**matches = NULL;
 	int 	matches_size = 5;
 
-	len = strlen(name);
 	*howmany = 0;
 	RESIZE(matches, char *, matches_size);
 
@@ -1818,11 +1816,9 @@ char **	pmatch_cmd_alias (char *name, int *howmany)
 char **	pmatch_assign_alias (char *name, int *howmany)
 {
 	int    	cnt;
-	int     len;
 	char    **matches = NULL;
 	int     matches_size = 5;
 
-	len = strlen(name);
 	*howmany = 0;
 	RESIZE(matches, char *, matches_size);
 
@@ -2387,19 +2383,16 @@ void	do_stack_alias (int type, char *args, int which)
 	AliasStack	*aptr, **aptrptr;
 	Alias		*alptr;
 	int		cnt;
-	int 		my_which = 0;
 	
 	if (which == STACK_DO_ALIAS)
 	{
 		name = "ALIAS";
 		aptrptr = &alias_stack;
-		my_which = COMMAND_ALIAS;
 	}
 	else
 	{
 		name = "ASSIGN";
 		aptrptr = &assign_stack;
-		my_which = VAR_ALIAS;
 	}
 
 	if (!*aptrptr && (type == STACK_POP || type == STACK_LIST))
