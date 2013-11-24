@@ -434,7 +434,7 @@ BUILT_IN_COMMAND(lastlog)
 		}
 	}
 
-	if (!(fp = fopen(filename, file_open_type)))
+	if (filename && !(fp = fopen(filename, file_open_type)))
 	{
 		bitchsay("cannot open file %s", filename);
 		return;
