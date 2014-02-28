@@ -477,14 +477,12 @@ char buffer[IRCD_BUFFER_SIZE+1];
 int tell_who(int idx, char *arg)
 {
 SocketList *s;
-DCC_int *n;
 int i;
 int found = 0;
 	for (i = 0; i < get_max_fd()+1; i++)
 	{
 		if (!check_dcc_socket(i)) continue;
 		s = get_socket(i);
-		n = get_socketinfo(i);
 		if ((s->flags & DCC_TYPES) == DCC_CHAT && (s->flags & DCC_BOTCHAT))
 		{
 			if (!found++)
@@ -499,7 +497,6 @@ int found = 0;
 	{
 		if (!check_dcc_socket(i)) continue;
 		s = get_socket(i);
-		n = get_socketinfo(i);
 		if ((s->flags & DCC_TYPES) == DCC_BOTMODE)
 		{
 			if (!found++)
