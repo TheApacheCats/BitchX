@@ -591,8 +591,8 @@ SocketList *s, *s1 = NULL;
 
 int tand_priv (int idx, char *args)
 {
-char *to, *from, *p, *i_dx;
-	from = next_arg(args, &args);
+char *to, *p, *i_dx;
+	next_arg(args, &args);
 	to = next_arg(args, &args);
 	p = strchr(to, '@');
 	if (p && !my_stricmp(p+1, get_server_nickname(from_server)))
