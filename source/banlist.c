@@ -369,11 +369,10 @@ void userhost_ban(UserhostItem *stuff, char *nick1, char *args)
 	ChannelList *c = NULL;
 	NickList *n = NULL;
 	WhowasList *whowas = NULL;
-	char *channel, *temp, *nick, *user, *host, *b = "+b", *ob = "-o+b", *str = NULL;
+	char *channel, *nick, *user, *host, *b = "+b", *ob = "-o+b", *str = NULL;
 	int fuck, set_ignore, on_chan = 0;
 	
 	channel = next_arg(args, &args);
-	temp = next_arg(args, &args);
 
 	fuck = !my_stricmp("FUCK", args);
 	set_ignore = !my_stricmp("BKI", args);
@@ -590,7 +589,7 @@ BUILT_IN_COMMAND(massop)
 	ChannelList *chan;
 	NickList *nicks;
 	char *to, *rest, *spec = NULL;
-	int all = 0, count = 0, massvoice = 0, maxmodes = get_int_var(NUM_OPMODES_VAR), server;
+	int count = 0, massvoice = 0, maxmodes = get_int_var(NUM_OPMODES_VAR), server;
 	char buffer[BIG_BUFFER_SIZE + 1];
 	
 	if (command)
@@ -615,8 +614,6 @@ BUILT_IN_COMMAND(massop)
 	}
 	else
 		rest = args;
-	if (rest && !my_stricmp(rest, "-all"))
-		all = 1;
 
 	for (nicks = next_nicklist(chan, NULL); nicks; nicks = next_nicklist(chan, nicks))
 	{
