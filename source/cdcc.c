@@ -400,12 +400,9 @@ static int do_local_send(char *command, char *args, char *rest)
 	pack *ptr = NULL;
 	char *temp = NULL, *file = NULL, *dccinfo = NULL, *q = NULL, *p;
 	int maxdcc, maxqueue;
-	int tdcc = 0;
 	int queued_files =  0;
 	int count = 0;
 				
-	if (*command == 'T')
-		tdcc = 1;	
 	if (!args || !*args)
 		return 0;
 
