@@ -588,7 +588,7 @@ BUILT_IN_COMMAND(massop)
 {
 	ChannelList *chan;
 	NickList *nicks;
-	char *to, *rest, *spec = NULL;
+	char *to, *spec = NULL;
 	int count = 0, massvoice = 0, maxmodes = get_int_var(NUM_OPMODES_VAR), server;
 	char buffer[BIG_BUFFER_SIZE + 1];
 	
@@ -608,12 +608,7 @@ BUILT_IN_COMMAND(massop)
 	if (!spec && !(spec = next_arg(args, &args)))
 		spec = "*!*@*";
 	if (*spec == '-')
-	{
-		rest = spec;
 		spec = "*!*@*";
-	}
-	else
-		rest = args;
 
 	for (nicks = next_nicklist(chan, NULL); nicks; nicks = next_nicklist(chan, nicks))
 	{
