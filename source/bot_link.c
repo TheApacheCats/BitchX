@@ -566,7 +566,6 @@ SocketList *s;
 
 int send_whom(int idx, char *arg)
 {
-int found = 0;
 int i;
 int j;
 SocketList *s, *s1 = NULL;
@@ -585,7 +584,6 @@ SocketList *s, *s1 = NULL;
 		{
 			dcc_printf(s->is_read, "whom %d:%s@%s %s %d\n",
 				idx, s1->server, get_server_nickname(from_server), arg, 0);
-			found = 1;
 		}
 	}
 	return 0;
