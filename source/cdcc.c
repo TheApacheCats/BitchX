@@ -656,7 +656,6 @@ static int r_list(char *from, char *args)
 	char bytes_out[30];
 	char bytes_in[30];
 	char speed_out[30];
-	char *type_msg;
 	int once = 0;
 
 	sprintf(mrate_out, "%1.3g", dcc_max_rate_out);
@@ -664,8 +663,6 @@ static int r_list(char *from, char *args)
 	sprintf(bytes_out, "%1.3g", dcc_bytes_out);
 	sprintf(bytes_in, "%1.3g", dcc_bytes_in);
 	sprintf(speed_out, "%1.3g", cdcc_minspeed);
-
-	type_msg = (do_notice_list)? "NOTICE":"PRIVMSG";
 
 	for (ptr = offerlist; ptr; ptr = ptr->next) 
 	{
