@@ -116,11 +116,9 @@ int i;
 
 	for (i = 0; i < get_max_fd()+1; i++)
 	{
-		DCC_int *n;
 		if (!check_dcc_socket(i) || (idx == i)) continue;
 		s = get_socket(i);
 		if (!(s->flags & DCC_ACTIVE)) continue;
-		n = get_socketinfo(i);
 		
 		if (idx != i && (s->flags & DCC_BOTCHAT))
 			send(i, putbuf, strlen(putbuf), 0);
