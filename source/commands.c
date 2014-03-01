@@ -2634,13 +2634,11 @@ extern int run_level, do_ignore_ajoin;
 BUILT_IN_COMMAND(e_channel)
 {
 	char	*chan;
-	int	len;
 	char	*buffer=NULL;
 	
 	set_display_target(NULL, LOG_CURRENT);
 	if ((chan = next_arg(args, &args)) != NULL)
 	{
-		len = strlen(chan);
 		if (!my_strnicmp(chan, "-i", 2))
 		{
 			if (invite_channel)
