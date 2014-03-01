@@ -3207,7 +3207,6 @@ int silent = 0;
  */
 BUILT_IN_COMMAND(away)
 {
-	int	len;
 	char	*arg = NULL;
 	int	flag = AWAY_ONE;
 	int	i,
@@ -3238,7 +3237,6 @@ BUILT_IN_COMMAND(away)
 				*arg++ = '\0';
 			else
 				arg = empty_string;
-			len = strlen(args);
 			if (!my_strnicmp(args+1, "A", 1)) /* all */
 			{
 				flag = AWAY_ALL;
