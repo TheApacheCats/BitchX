@@ -2666,7 +2666,7 @@ BUILT_IN_FUNCTION(function_channelnicks, word)
 		NickList *list = NULL;
 		if (word && *word)
 			GET_INT_ARG(sort_type, word);
-		list = sorted_nicklist(chan, NICKSORT_NORMAL);
+		list = sorted_nicklist(chan, sort_type);
 		for (tmp = list; tmp; tmp = tmp->next)
 			m_s3cat(&nicks, ",", tmp->nick);
 		clear_sorted_nicklist(&list);
