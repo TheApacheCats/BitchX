@@ -706,11 +706,9 @@ BUILT_IN_KEYBINDING(input_end_of_line)
 BUILT_IN_KEYBINDING(input_delete_to_previous_space)
 {
 	int	old_pos;
-	char	c;
 
 	cursor_to_input();
 	old_pos = THIS_POS;
-	c = THIS_CHAR;
 
 	while (!my_isspace(THIS_CHAR) && THIS_POS >= MIN_POS)
 		THIS_POS--;
