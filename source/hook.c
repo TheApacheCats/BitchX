@@ -1756,9 +1756,9 @@ static void add_numeric_list (NumericList *item)
 
 static NumericList *find_numeric_list (int numeric)
 {
-	NumericList *tmp, *last = NULL;
+	NumericList *tmp;
 
-	for (tmp = numeric_list; tmp; last = tmp, tmp = tmp->next)
+	for (tmp = numeric_list; tmp; tmp = tmp->next)
 	{
 		if (tmp->numeric == numeric)
 			return tmp;
