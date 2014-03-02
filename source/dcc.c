@@ -3810,7 +3810,6 @@ int i = 0;
 
 void open_ftpget(SocketList *s, char *args)
 {
-SocketList *sock;
 DCC_int *new;
 struct sockaddr_in data_addr = { 0 };
 socklen_t len = sizeof(struct sockaddr_in);
@@ -3863,7 +3862,6 @@ char *filename = NULL;
 		filename = args;
 
 	add_socketread(s1, 0,  DCC_FTPGET|DCC_ACTIVE, s->server, read_ftp_file, NULL);
-	sock = get_socket(s1);
 	new = new_malloc(sizeof(DCC_int));
 	{
 		char *t, *expand;
