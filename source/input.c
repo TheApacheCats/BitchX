@@ -2203,8 +2203,7 @@ char *booya = NULL;
 char *path = NULL;
 char *path2, *freeme;
 glob_t globbers;
-int numglobs = 0, i;
-int globtype = GLOB_MARK;
+int globtype = GLOB_MARK, i;
 
 #if defined(__EMX__) || defined(WINNT)
 	if (possible && *possible)
@@ -2424,7 +2423,7 @@ int globtype = GLOB_MARK;
 	if (!path2)
 		path2 = path;
 	memset(&globbers, 0, sizeof(glob_t));
-	numglobs = glob(path2, globtype, NULL, &globbers);
+	glob(path2, globtype, NULL, &globbers);
 	for (i = 0; i < globbers.gl_pathc; i++)
 	{
 		if (strchr(globbers.gl_pathv[i], ' '))
