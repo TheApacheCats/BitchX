@@ -944,7 +944,6 @@ static BuiltInFunctions new;
 
 char **get_builtins(char *name, int *cnt)
 {
-char *last_match = NULL;
 int matches_size = 5;
 int i = 0;
 int len;
@@ -962,7 +961,6 @@ BuiltInDllFunctions *dll = NULL;
 		{
 			matches[*cnt] = NULL;
 			malloc_strcpy(&(matches[*cnt]), built_in_functions[i].name);
-			last_match = matches[*cnt];
 			if (++(*cnt) == matches_size)
 			{
 				matches_size += 5;
