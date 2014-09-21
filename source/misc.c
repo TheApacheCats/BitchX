@@ -255,7 +255,7 @@ int check_serverlag(void)
 		if (is_server_connected(i) && now != get_server_lagtime(i))
 		{
 			set_server_lagtime(i, now);
-			my_send_to_server(i, "PING %lu %s", get_server_lagtime(i), get_server_itsname(i));
+			my_send_to_server(i, "PING %s %s", get_server_nickname(i), get_server_itsname(i));
 			in_server_ping++;
 			set_server_lag(i, -1);
 		}
