@@ -1,5 +1,7 @@
 [Changes 1.2c01]
 
+* /MV (massvoice) shouldn't send +v for already-voiced users. (caf)
+
 * Fix lag check on recent 32 bit OpenBSD / NetBSD (reported by DJ). (caf)
 
 * Fix key bindings that terminate with ^. (caf)

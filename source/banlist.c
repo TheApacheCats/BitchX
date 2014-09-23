@@ -615,7 +615,7 @@ BUILT_IN_COMMAND(massop)
 		sprintf(buffer, "%s!%s", nicks->nick, nicks->host);
 		if ((my_stricmp(nicks->nick, get_server_nickname(from_server)) && wild_match(spec, buffer)))
 		{
-			if ((massvoice && !nick_isvoice(nicks) && !nick_isop(nicks)) || !nick_isop(nicks))
+			if (!(nick_isop(nicks) || (massvoice && nick_isvoice(nicks))))
 			{
 				add_mode(chan, massvoice?"v":"o", 1, nicks->nick, NULL, maxmodes);
 				count++;
