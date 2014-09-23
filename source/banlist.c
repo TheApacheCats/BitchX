@@ -1073,7 +1073,7 @@ BUILT_IN_COMMAND(kickban)
 		}
 	}
 	if (!count && !isme(spec))
-		userhostbase(spec, userhost_ban, 1, "%s %s %s", chan->channel, spec, command ? (!strcmp(command, "FUCK") ? "FUCK": set_ignore ? "BKI":empty_string):empty_string);
+		userhostbase(spec, userhost_ban, 1, "%s %s", chan->channel, command ? (!strcmp(command, "FUCK") ? "FUCK": set_ignore ? "BKI":empty_string):empty_string);
 	reset_display_target();
 }
 
@@ -1116,7 +1116,7 @@ BUILT_IN_COMMAND(ban)
 		if (strchr(spec, '!') && strchr(spec, '@'))
 			send_to_server("MODE %s +b %s", chan->channel, spec);
 		else
-			userhostbase(spec, userhost_ban, 1, "%s %s", chan->channel, spec);
+			userhostbase(spec, userhost_ban, 1, "%s", chan->channel);
 	}
 }
 

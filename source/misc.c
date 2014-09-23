@@ -1343,7 +1343,7 @@ char *new_str;
 			send_to_server("KILL %s :%s", to, new_str);
 			break;
 		case KBOOT:
-			userhostbase(to, userhost_ban, 1, "%s %s %s", get_current_channel_by_refnum(0), to, empty_string);
+			userhostbase(to, userhost_ban, 1, "%s", get_current_channel_by_refnum(0));
 		case KICK:
 			send_to_server("KICK %s %s :%s", get_current_channel_by_refnum(0), to, new_str);
 			break;
