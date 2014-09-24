@@ -572,20 +572,17 @@ SocketList *s;
 
 int send_whom(int idx, char *arg)
 {
-int i;
-int j;
-SocketList *s, *s1 = NULL;
+	int i;
+	SocketList *s, *s1;
+
 	tell_whom(idx, NULL);
+
+	s1 = get_socket(idx);
+
 	for (i = 0; i < get_max_fd()+1; i++)
 	{
 		if (!check_dcc_socket(i)) continue;
-		if (idx == i) { s1 = get_socketinfo(i); break; }
-	}
-	if (!s1) return 0;
-	for (j = 0; j < get_max_fd()+1; j++)
-	{
-		if (!check_dcc_socket(j)) continue;
-		s = get_socketinfo(j);
+		s = get_socket(i);
 		if ((s->flags & DCC_TYPES) == DCC_BOTMODE)
 		{
 			dcc_printf(s->is_read, "whom %d:%s@%s %s %d\n",
