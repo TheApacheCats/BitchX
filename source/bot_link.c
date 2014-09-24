@@ -106,23 +106,29 @@ int i;
 
 void chanout_but(int idx, char *format, ...)
 {
-va_list args;
-char putbuf[BIG_BUFFER_SIZE+1];
-SocketList *s;
-int i;
+	va_list args;
+	char putbuf[BIG_BUFFER_SIZE+1];
+	SocketList *s;
+	int i;
+
 	va_start(args, format);
 	vsnprintf(putbuf, BIG_BUFFER_SIZE, format, args);
 	va_end(args);
 
 	for (i = 0; i < get_max_fd()+1; i++)
 	{
-		if (!check_dcc_socket(i) || (idx == i)) continue;
+		if (!check_dcc_socket(i))
+			continue;
+
 		s = get_socket(i);
-		if (!(s->flags & DCC_ACTIVE)) continue;
-		
-		if (idx != i && (s->flags & DCC_BOTCHAT))
+		if (!(s->flags & DCC_ACTIVE))
+			continue;
+		if (!(s->flags & DCC_BOTCHAT))
+			continue;
+			
+		if (idx != i)
 			send(i, putbuf, strlen(putbuf), 0);
-		else if (idx == i && (s->flags & DCC_ECHO))
+		else if (s->flags & DCC_ECHO)
 			send(i, putbuf, strlen(putbuf), 0);
 	}
 }
