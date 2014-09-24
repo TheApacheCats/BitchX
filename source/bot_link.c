@@ -921,7 +921,8 @@ int old_server = from_server;
 
 int cmd_echo(int idx, char *par)
 {
-SocketList *s;
+	SocketList *s;
+
 	if ((idx == -1) || !check_dcc_socket(idx))
 		return TCL_ERROR;
 
@@ -931,10 +932,11 @@ SocketList *s;
 		if (!my_stricmp(par, "off"))
 			s->flags &= ~DCC_ECHO;
 		else
-			s->flags &= DCC_ECHO;
+			s->flags |= DCC_ECHO;
 	} 
 	else
-		s->flags &= (s->flags & DCC_ECHO) ? ~DCC_ECHO : DCC_ECHO;		
+		s->flags ^= DCC_ECHO;
+
 	dcc_printf(idx, " echo is now %s\n", on_off((s->flags & DCC_ECHO)));
 	return TCL_OK;
 }
