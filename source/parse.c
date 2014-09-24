@@ -1950,6 +1950,17 @@ void parse_server(char *orig_line)
 	/* XXXX - i dont think 'from' can be null here.  */
 	if (!(comm = (*ArgList++)) || !from || !*ArgList)
 		return;		/* Serious protocol violation -- ByeBye  */
+
+	/* Check for egregiously bad nicknames */
+#define islegal(c) (((c) >= 'A' && (c) <= '}') || \
+	((c) >= '0' && (c) <= '9') || (c) == '-' || (c & 0x80))
+
+	if (*from && !strchr(from, '.') && !islegal(*from))
+	{
+		rfc1459_odd(from, comm, ArgList);
+		return;
+	}
+
 #ifdef WANT_TCL
 	if (check_tcl_raw(copy, comm))
 		return;
