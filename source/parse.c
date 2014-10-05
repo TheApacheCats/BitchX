@@ -1952,7 +1952,7 @@ void parse_server(char *orig_line)
 		return;		/* Serious protocol violation -- ByeBye  */
 
 	/* Check for egregiously bad nicknames */
-#define islegal(c) (((c) >= 'A' && (c) <= '}') || \
+#define islegal(c) (((c) >= 'A' && (c) <= '~') || \
 	((c) >= '0' && (c) <= '9') || (c) == '-' || (c & 0x80))
 
 	if (*from && !strchr(from, '.') && !islegal(*from))
