@@ -322,6 +322,7 @@
 #define DEFAULT_FORMAT_WHOIS_SERVICE_FSET "%K| %Ws%nervice  : $0 - $1-"
 #define DEFAULT_FORMAT_WHOIS_HELP_FSET    "%K| %Wh%nelp     : $0 - $1-"
 #define DEFAULT_FORMAT_WHOIS_REGISTER_FSET "%K| %Wr%negister : $0 - $1-"
+#define DEFAULT_FORMAT_WHOIS_LOGGEDIN_FSET "%K: %Wl%noggedin : $0 $2- %W$1%n"
 
 #define DEFAULT_FORMAT_WIDELIST_FSET "$1-"
 #define DEFAULT_FORMAT_WINDOW_SET_FSET "$0-"
@@ -746,6 +747,7 @@
 #define DEFAULT_FORMAT_WHOIS_SERVICE_FSET ansi?"%K| %Ws%nervice  : $0 - $1-":"| service  : $0 - $1-"
 #define DEFAULT_FORMAT_WHOIS_HELP_FSET ansi?"%K| %Wh%nelp     : $0 - $1-":"| help     : $0 - $1-"
 #define DEFAULT_FORMAT_WHOIS_REGISTER_FSET ansi?"%K| %Wr%negister : $0 - $1-":"| register : $0 - $1-"
+#define DEFAULT_FORMAT_WHOIS_LOGGEDIN_FSET ansi?"%K: %Wl%noggedin : $0 $2- %W$1%n":": loggedin : $0 $2- $1"
 #else
 #define DEFAULT_FORMAT_WHOIS_AWAY_FSET ansi?"%K| %Wa%nway     : $0 - $1-":"| away     : $0 - $1-"
 #define DEFAULT_FORMAT_WHOIS_BOT_FSET ansi?"%g| %Wb%not      : A:$0 P:$1 [$2] $3-":"| bot      : A:$0 P:$1 [$2] $3-"
@@ -770,6 +772,7 @@
 #define DEFAULT_FORMAT_WHOIS_SERVICE_FSET ansi?"%K| %Ws%nervice  : $0 - $1-":"| service  : $0 - $1-"
 #define DEFAULT_FORMAT_WHOIS_HELP_FSET ansi?"%K| %Wh%nelp     : $0 - $1-":"| help     : $0 - $1-"
 #define DEFAULT_FORMAT_WHOIS_REGISTER_FSET ansi?"%K| %Wr%negister : $0 - $1-":"| register : $0 - $1-"
+#define DEFAULT_FORMAT_WHOIS_LOGGEDIN_FSET ansi?"%K: %Wl%noggedin : $0 $2- %W$1%n":": loggedin : $0 $2- $1"
 #endif
 
 #define DEFAULT_FORMAT_WIDELIST_FSET "$1-"

@@ -913,6 +913,12 @@ void numbered_command(char *from, int comm, char **ArgList)
 		funny_mode(from, ArgList);
 		break;
 	}
+	case 330:		/* #define RPL_WHOISLOGGEDIN    330 (hybrid, ratbox, ircu) */
+	{
+		if (do_hook(current_numeric, "%s %s %s %s", from, ArgList[0], ArgList[1], ArgList[2]))
+			put_it("%s", convert_output_format(fget_string_var(FORMAT_WHOIS_LOGGEDIN_FSET),"%s %s %s", ArgList[0], ArgList[1], ArgList[2]));
+		break;
+	}
 
 	case 338:		/* #define RPL_WHOISACTUALLY    338 (hybrid, ratbox, bahamut) */
 	case 378:		/* #define RPL_WHOISHOST        378 (unreal, freenode) */
