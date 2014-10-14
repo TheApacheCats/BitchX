@@ -1301,7 +1301,8 @@ static  char	my_buffer[MY_BUFFER/2+1];
 
 static	char	*status_topic (Window *window)
 {
-static  char	my_buffer[MY_BUFFER+41];
+	static char my_buffer[IRCD_BUFFER_SIZE];
+
 	if (window && window->current_channel && window->wset->topic_format)
 	{
 		ChannelList *chan;
@@ -1315,11 +1316,11 @@ static  char	my_buffer[MY_BUFFER+41];
 					double_quote(t, "()[]$\"", t2);
 				else
 					strcpy(t2, t);
-				snprintf(my_buffer, MY_BUFFER, window->wset->topic_format, stripansicodes(t2));
+				snprintf(my_buffer, sizeof my_buffer, window->wset->topic_format, stripansicodes(t2));
 			}
 			else
 				strlcpy(my_buffer, "No Topic", sizeof my_buffer);
-			return(my_buffer);
+			return my_buffer;
 		}
 	}
 	RETURN_EMPTY;

@@ -1,5 +1,7 @@
 [Changes 1.2c01]
 
+* Allow %- status format to handle max-length topics (reported by oxy). (caf)
+
 * Add /FSET WOHIS_LOGGEDIN for services login info on hybrid, ratbox and
   ircu. (caf)
 
