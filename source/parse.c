@@ -1955,7 +1955,7 @@ void parse_server(char *orig_line)
 #define islegal(c) (((c) >= 'A' && (c) <= '~') || \
 	((c) >= '0' && (c) <= '9') || (c) == '-' || (c & 0x80))
 
-	if (*from && !strchr(from, '.') && !islegal(*from))
+	if (*from && (!islegal(*from) || strchr(from, ',')))
 	{
 		rfc1459_odd(from, comm, ArgList);
 		return;
