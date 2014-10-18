@@ -1,5 +1,8 @@
 [Changes 1.2c01]
 
+* Use correct (MODECHAN and MODEUSER) display level for channel and user
+  modes. (caf)
+
 * Allow %- status format to handle max-length topics (reported by oxy). (caf)
 
 * Add /FSET WOHIS_LOGGEDIN for services login info on hybrid, ratbox and

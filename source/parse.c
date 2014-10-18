@@ -1506,7 +1506,6 @@ static	void p_mode(char *from, char **ArgList)
 
 	flag = check_ignore(from, FromUserHost, target, (smode?IGNORE_SMODES : IGNORE_MODES) | IGNORE_CRAP, NULL);
 
-	set_display_target(target, LOG_CRAP);
 	if (target && line)
 	{
 		strcpy(buffer, line);
@@ -1514,6 +1513,8 @@ static	void p_mode(char *from, char **ArgList)
 			strip_modes(from, target, line);
 		if (is_channel(target))
 		{
+			set_display_target(target, LOG_MODE_CHAN);
+
 #ifdef COMPRESS_MODES
 			if (chan2)
 				chan = (ChannelList *)find_in_list((List **)&chan2, target, 0);
@@ -1547,6 +1548,8 @@ static	void p_mode(char *from, char **ArgList)
 		}
 		else
 		{
+			set_display_target(target, LOG_MODE_USER);
+
 			if (flag != IGNORED && do_hook(MODE_LIST, "%s %s %s", from, target, line))
 			{
 				/* User mode changes where from != target don't occur on 
