@@ -1200,19 +1200,15 @@ void log_channel(CSetArray *var, CSetList *cs)
 
 void set_msglog_channel_level(CSetArray *var, CSetList *cs)
 {
-	ChannelList *chan;
-	if ((chan = lookup_channel(cs->channel, from_server, 0)))
-	{
-		chan->log_level = parse_lastlog_level(cs->log_level, 1);
-		set_cset_str_var(cs, CHANNEL_LOG_LEVEL_CSET, bits_to_lastlog_level(chan->log_level));
-	}
+	cs->channel_log_level = parse_lastlog_level(cs->log_level, 1);
+	set_cset_str_var(cs, CHANNEL_LOG_LEVEL_CSET, bits_to_lastlog_level(cs->channel_log_level));
 }
 
 void do_logchannel(unsigned long level, ChannelList *chan, char *format, ...)
 {
 	if (!chan || !get_cset_int_var(chan->csets, CHANNEL_LOG_CSET))
 		return;
-	if ((chan->log_level & level) && format)
+	if ((chan->csets->channel_log_level & level) && format)
 	{
 		char s[BIG_BUFFER_SIZE+1];
 		va_list args;

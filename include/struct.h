@@ -946,11 +946,9 @@ typedef	struct	channel_stru
 	char	*chanpass;		/* if TS4 then this has the channel pass */
 	char	connected;		/* true if this channel is actually connected */
 
-	
 	HashEntry	NickListTable[NICKLIST_HASHSIZE];
 
 	chan_flags	flags;
-
 
 	time_t	max_idle;		/* max idle time for this channel */
 	int	tog_limit;
@@ -958,7 +956,6 @@ typedef	struct	channel_stru
 	int	do_scan;		/* flag for checking auto stuff */
 	struct timeval	channel_create;		/* time for channel creation */
 	struct timeval	join_time;		/* time of last join */
-
 
 	int	stats_ops;		/* total ops I have seen in channel */
 	int	stats_dops;		/* total dops I have seen in channel */
@@ -988,19 +985,15 @@ typedef	struct	channel_stru
 		
 	CSetList *csets;		/* All Channel sets */
 
-	
-	
 	int	msglog_on;
 	FILE	*msglog_fp;
 	char	*logfile;
-	unsigned long log_level;
 		
 	int	totalnicks;		/* total number of users in channel */
 	int	maxnicks;		/* max number of users I have seen */
 	time_t	maxnickstime;		/* time of max users */
 
 	int	totalbans;		/* total numbers of bans on channel */
-
 
 	BanList	*bans;			/* pointer to list of bans on channel */
 	BanList	*exemptbans;		/* pointer to list of bans on channel */
