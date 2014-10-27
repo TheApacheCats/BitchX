@@ -157,7 +157,7 @@ BUILT_IN_COMMAND(ifcmd)
 				current_line = NULL;
 		}
 
-		if (current_line)
+		if (current_line && *current_line)
 			parse_line(NULL, current_line, subargs, 0, 0, 1);
 
 		break;
