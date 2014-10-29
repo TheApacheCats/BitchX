@@ -1845,7 +1845,7 @@ int in_join_list(char *chan, int server)
 	return 0;
 }
 
-void show_channel_sync(struct joinlist *tmp, char *chan)
+void channel_sync(struct joinlist *tmp, char *chan)
 {
 struct timeval tv;
 	get_time(&tv);
@@ -1881,8 +1881,7 @@ int got_info(char *chan, int server, int type)
 
 			if ((tmp->gotinfo |= type) == what_info)
 			{
-				if (prepare_command(&tmp->server, chan, PC_SILENT))
-					show_channel_sync(tmp, chan);
+				channel_sync(tmp, chan);
 				remove_from_join_list(chan, tmp->server);
 				return 1;
 			}
