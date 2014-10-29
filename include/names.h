@@ -20,11 +20,13 @@
 #define	CHAN_NOUNLINK	1
 #define CHAN_UNLINK	2
 
+/* for got_mode */
 #define	GOTNAMES	0x01
 #define	GOTMODE		0x02
 #define GOTBANS		0x04
 #define GOTWHO		0x08
 #define	GOTEXEMPT	0x10
+#define GOTNEW		0x20	/* Indicates newly-created channel */
 
 /* Channel mode flags */
 #define MODE_ANONYMOUS	(1U << 0)	/* av2.9 */

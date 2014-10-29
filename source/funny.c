@@ -320,13 +320,9 @@ int user_count = 0;
 			print_funny_names(line);
 		} 
 		if ((user_count == 1) && (*line == '@'))
-		{
-			ChannelList *chan;
-			if ((chan = lookup_channel(channel, from_server, CHAN_NOUNLINK)))
-				if ((ptr = get_cset_str_var(chan->csets, CHANMODE_CSET)))
-					my_send_to_server(from_server, "MODE %s %s", channel, ptr);
-		}
-		got_info(channel, from_server, GOTNAMES);
+			got_info(channel, from_server, GOTNAMES | GOTNEW);
+		else
+			got_info(channel, from_server, GOTNAMES);
 		reset_display_target();
 		return;
 	}

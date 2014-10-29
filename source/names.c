@@ -1845,21 +1845,33 @@ int in_join_list(char *chan, int server)
 	return 0;
 }
 
-void channel_sync(struct joinlist *tmp, char *chan)
+void channel_sync(struct joinlist *tmp, char *channel)
 {
-struct timeval tv;
+	struct timeval tv;
+
+	if (tmp->gotinfo & GOTNEW)
+	{
+		/* A channel that we just created.  */
+		ChannelList *chan;
+		char *chanmode;
+
+		if ((chan = lookup_channel(channel, tmp->server, CHAN_NOUNLINK)))
+			if ((chanmode = get_cset_str_var(chan->csets, CHANMODE_CSET)))
+				my_send_to_server(tmp->server, "MODE %s :%s", channel, chanmode);
+	}
+
 	get_time(&tv);
-	set_display_target(chan, LOG_CRAP);
-	if (do_hook(CHANNEL_SYNCH_LIST, "%s %1.3f", chan, BX_time_diff(tmp->tv,tv)))
-		bitchsay("Join to %s was synched in %1.3f secs!!", chan, BX_time_diff(tmp->tv,tv));
+	set_display_target(channel, LOG_CRAP);
+	if (do_hook(CHANNEL_SYNCH_LIST, "%s %1.3f", channel, BX_time_diff(tmp->tv,tv)))
+		bitchsay("Join to %s was synched in %1.3f secs!!", channel, BX_time_diff(tmp->tv,tv));
 #ifdef WANT_USERLIST
-	delay_check_auto(chan);
+	delay_check_auto(channel);
 #endif
 	update_all_status(current_window, NULL, 0);
 	reset_display_target();
 	xterm_settitle();
 #ifdef GUI
-	gui_update_nicklist(chan);
+	gui_update_nicklist(channel);
 #endif
 }
 
@@ -1872,14 +1884,15 @@ int got_info(char *chan, int server, int type)
 	for (tmp = join_list; tmp; tmp = tmp->next)
 		if (!my_stricmp(tmp->chan, chan) && tmp->server == server)
 		{
-			int what_info = (GOTNAMES | GOTMODE | GOTBANS | GOTWHO);
-			int ver;
+			int required = (GOTNAMES | GOTMODE | GOTBANS | GOTWHO);
+			int ver = get_server_version(server);
 
-			ver = get_server_version(server);
 			if ((ver == Server2_8ts4) || (ver == Server2_10))
-				what_info |= GOTEXEMPT;
+				required |= GOTEXEMPT;
 
-			if ((tmp->gotinfo |= type) == what_info)
+			tmp->gotinfo |= type;
+
+			if ((tmp->gotinfo & required) == required)
 			{
 				channel_sync(tmp, chan);
 				remove_from_join_list(chan, tmp->server);
