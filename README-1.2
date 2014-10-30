@@ -42,19 +42,38 @@ to the total number of nicks in the channel, and $4 to the mask given to
 
 /SCAN now supports a new sort flag "-stat", which sorts the output by
 channel status (chanops, then halfops, then voices, then the riff-raff).
+This functionality was previously provided by the "scan" plugin, so this
+plugin has been removed. If you want this to be the default, just set this
+alias (the double-slash is necessary):
 
-/HOP and /DEHOP
+/ALIAS SCAN { //SCAN -STAT }
+
+NEW FORMATS
+-----------
+
+In addition to the new NAMES_* formats mentioned above, these new /FSET
+formats have been added:
+
+CHANNEL_URL
+USERMODE_OTHER
+WHOIS_CALLERID
+WHOIS_SECURE
+WHOIS_LOGGEDIN
+
+HALF-OP SUPPORT
 ---------------
 
 New commands /HOP and /DEHOP have been added, to give and remove halfop
 status (on servers that support it).
 
-PLUGINS
--------
+The scripting function $ishalfop(<nick> <channel) has been added (compatible
+with EPIC), and support for halfops has been added to $channel().
 
-The "scan" plugin has been removed - its functionality is now built-in,
-accessed by /scan -stat (see above). If you want this to be the default, 
-just set this alias (the double-slash is REQUIRED):
+The default status bar now shows your halfop status against your nick.
 
-/ALIAS SCAN { //SCAN -STAT }
+MULTISERVER
+-----------
 
+The "last nick sent to" and "last nick received from" are now tracked
+per-server, so $. $, $B and the "." and "," message targets are all
+per-server.
