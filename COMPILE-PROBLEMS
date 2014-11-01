@@ -1,7 +1,10 @@
-Under UNIX SV we need to change include/irc.h and remove 
- #include <arpa/inet.h> from the file. This causes a couple of new 
-warnings in dcc.c to appear, but everything works as advertised.
+BitchX requires either the terminfo or termcap terminal-handling library.
+This is commonly provided by the ncurses library, so if you get the error:
 
-HPUX seems to have some header files problems.
-in particular. #include <sys/types.h> can't be included before #include
-<time.h> or #include <sys/time.h>
+Cannot find terminfo or termcap - try installing the ncurses-dev / ncurses-devel package.
+
+..then you should try to find the ncurses development package for your OS.
+Some examples of what this package may be called:
+
+Debian, Ubuntu:	libncurses5-dev
+Fedora, CentOS, OpenSuSE: ncurses-devel
