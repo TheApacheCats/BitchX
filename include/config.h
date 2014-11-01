@@ -35,71 +35,69 @@
  * on any servers you add into this list. also the very last server should not 
  * have a continuation char.
  *
- * List last updated: 15-Aug-2009 (caf).
+ * List last updated: 01-Nov-2014 (caf).
  */
-#define DEFAULT_SERVER  "[efnet] "\
+#define DEFAULT_SERVER  "[efnet US] "\
 				"irc.eversible.com "\
 				"irc.choopa.net "\
-				"irc.easynews.com "\
-				"irc.blessed.net "\
 				"irc.servercentral.net "\
 				"irc.umich.edu "\
-				"irc.he.net "\
 				"irc.mzima.net "\
 				"irc.paraphysics.net "\
-				"irc.shoutcast.com "\
-				"irc.vel.net "\
-				"irc.wh.verio.net "\
-			"[xsirc] "\
-				"irc.BitchX.org "\
-				"ircd.ircii.org "\
-				"irc.gibbed.net "\
+				"irc.colosolutions.net "\
+				"irc2.choopa.net "\
+			"[efnet CA] "\
+				"irc.teksavvy.ca "\
+				"irc.arcti.ca "\
+				"irc.shaw.ca "\
+			"[efnet EU] "\
+				"irc.inet.tele.dk "\
+				"irc.efnet.fr "\
+				"irc.du.se "\
+				"irc.homelien.no "\
+				"irc.efnet.pl "\
+				"irc.swepipe.se "\
+				"irc.underworld.no "\
+				"efnet.portlane.se "\
 			"[ircnet US] "\
 				"ircnet.eversible.com "\
-				"ircnet.choopa.net "\
-				"us.ircnet.org "\
+				"ircnet.blacklotus.net "\
+				"irc.ca.ircnet.net "\
 			"[ircnet EU] "\
 				"irc.dotsrc.org "\
-				"uk.ircnet.org "\
-				"irc.xs4all.nl "\
 				"irc.belwue.de "\
+				"irc.atw-inter.net "\
+				"irc.snt.utwente.nl "\
 				"ircnet.nerim.fr "\
-				"irc.eutelia.it "\
+				"irc1.tiscali.it "\
+				"irc.portlane.se "\
 				"krakow.irc.pl "\
-				"ircnet.netvision.net.il "\
+				"irc.fast.net.il "\
+				"irc.cs.hut.fi "\
+				"atw.irc.hu "\
 			"[dalnet] "\
 				"irc.dal.net "\
 			"[Undernet US] "\
-				"Dallas.TX.US.Undernet.org "\
-				"mesa.az.us.undernet.org "\
-				"newyork.ny.us.undernet.org "\
-				"SantaAna.CA.US.Undernet.org "\
-				"Tampa.FL.US.Undernet.org "\
-			"[Undernet CA] "\
-				"Vancouver.BC.CA.Undernet.org "\
+				"Chicago.IL.US.Undernet.org "\
+				"Denver.CO.US.Undernet.Org "\
+				"Mesa.AZ.US.Undernet.Org "\
 			"[Undernet EU] "\
-				"Diemen.NL.EU.Undernet.Org "\
-				"Helsinki.FI.EU.Undernet.org "\
-				"trondheim.no.eu.undernet.org "\
-				"graz.at.Eu.UnderNet.org "\
-				"Elsene.Be.Eu.undernet.org "\
-				"bucharest.ro.eu.undernet.org "\
-				"Ede.NL.EU.UnderNet.Org "\
-				"oslo.no.eu.undernet.org "\
-				"Zagreb.Hr.EU.UnderNet.org "\
-				"Lelystad.NL.EU.UnderNet.Org "\
+				"Bucharest.RO.EU.Undernet.Org "\
+				"Budapest.HU.EU.UnderNet.org "\
 			"[Anynet] "\
-				"irc.bluecherry.net "\
 				"irc.irule.net "\
+				"irc.plugh.us "\
+				"irc.ninjaneering.net "\
 			"[AfterNet] "\
 				"irc.afternet.org "\
 			"[oftc] "\
 				"irc.oftc.net "\
 			"[SlashNET] "\
-				"pinky.slashnet.org "\
-				"blago.slashnet.org "\
+				"abstract.slashnet.org "\
+				"bees.slashnet.org "\
+				"concrete.slashnet.org "\
 				"moo.slashnet.org "\
-				"coruscant.slashnet.org "
+				"spaniels.slashnet.org "
 #endif
 
 /*
