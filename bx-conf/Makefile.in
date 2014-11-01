@@ -158,13 +158,15 @@ PROGRAM = $(topdir)/bxconfigure
 
 OBJS = ds_cell.o file_cpy.o
 
+BXCONF_LIBS = -lcurses
+
 .c.o:
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $<
 
 all: $(PROGRAM)
 
 $(PROGRAM): $(OBJS)
-	$(CC) -o $(PROGRAM) $(OBJS) $(LIBS)
+	$(CC) -o $(PROGRAM) $(OBJS) $(BXCONF_LIBS)
 
 clean:
 	$(RM) $(OBJS) $(PROGRAM) *~
