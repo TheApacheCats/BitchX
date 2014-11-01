@@ -32,7 +32,7 @@ INSTALL_IRC = @INSTALL_IRC@
 IRCLIB = @IRCLIB@
 
 CC = @CC@
-DEFS = @INCLUDES@
+CPPFLAGS = @CPPFLAGS@ @INCLUDES@ @DEFS@
 LIBS = @LIBS@
 
 # Tcl library.
@@ -160,7 +160,7 @@ Makefile: Makefile.in
 	  && ./config.status
 
 encrypt.o: $(srcdir)/encrypt.c
-	$(CC) $(DEFS) $(SHLIB_CFLAGS) $(CFLAGS) -c $(srcdir)/encrypt.c
+	$(CC) $(CPPFLAGS) $(SHLIB_CFLAGS) $(CFLAGS) -c $(srcdir)/encrypt.c
 
 encrypt$(SHLIB_SUFFIX): encrypt.o ../dllinit.o
 	$(SHLIB_LD) encrypt.o ../dllinit.o ${SHLIB_CFLAGS} -o encrypt$(SHLIB_SUFFIX)

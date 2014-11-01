@@ -32,7 +32,7 @@ INSTALL_IRC = @INSTALL_IRC@
 IRCLIB = @IRCLIB@
 
 CC = @CC@
-DEFS = @INCLUDES@
+CPPFLAGS = @CPPFLAGS@ @INCLUDES@ @DEFS@
 LIBS = @LIBS@
 
 # Tcl library.
@@ -151,7 +151,7 @@ MFLAGS = \
 
 ## Makefile starts here.
 
-AIMDEFS = $(DEFS) -I$(srcdir)/toc
+AIMDEFS = $(CPPFLAGS) -I$(srcdir)/toc
 
 PLUGIN_NAME = aim
 

@@ -32,7 +32,7 @@ INSTALL_IRC = @INSTALL_IRC@
 IRCLIB = @IRCLIB@
 
 CC = @CC@
-DEFS = @INCLUDES@
+CPPFLAGS = @CPPFLAGS@ @INCLUDES@ @DEFS@
 LIBS = @LIBS@
 
 # Tcl library.
@@ -160,7 +160,7 @@ Makefile: Makefile.in
 	  && ./config.status
 
 acro.o: $(srcdir)/acro.c
-	$(CC) $(DEFS) $(SHLIB_CFLAGS) $(CFLAGS) -c $(srcdir)/acro.c
+	$(CC) $(CPPFLAGS) $(SHLIB_CFLAGS) $(CFLAGS) -c $(srcdir)/acro.c
 
 acro$(SHLIB_SUFFIX): acro.o ../dllinit.o
 	$(SHLIB_LD) acro.o ../dllinit.o $(SHLIB_CFLAGS) -o acro$(SHLIB_SUFFIX)

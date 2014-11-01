@@ -34,7 +34,7 @@ INSTALL_IRC = @INSTALL_IRC@
 IRCLIB = @IRCLIB@
 
 CC = @CC@
-DEFS = @INCLUDES@
+CPPFLAGS = @CPPFLAGS@ @INCLUDES@ @DEFS@
 LIBS = @LIBS@
 
 # Tcl library.
@@ -162,7 +162,7 @@ Makefile: Makefile.in
 	  && ./config.status
 
 xmms.o: $(srcdir)/xmms.c
-	$(CC) $(DEFS) $(SHLIB_CFLAGS) $(CFLAGS) `xmms-config --cflags` -c $(srcdir)/xmms.c
+	$(CC) $(CPPFLAGS) $(SHLIB_CFLAGS) $(CFLAGS) `xmms-config --cflags` -c $(srcdir)/xmms.c
 
 xmms$(SHLIB_SUFFIX): xmms.o ../dllinit.o
 	$(SHLIB_LD) xmms.o ../dllinit.o $(SHLIB_CFLAGS) -o xmms$(SHLIB_SUFFIX) `xmms-config --libs`

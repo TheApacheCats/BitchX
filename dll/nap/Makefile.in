@@ -32,7 +32,7 @@ INSTALL_IRC = @INSTALL_IRC@
 IRCLIB = @IRCLIB@
 
 CC = @CC@
-DEFS = @INCLUDES@
+CPPFLAGS = @CPPFLAGS@ @INCLUDES@ @DEFS@
 LIBS = @LIBS@
 
 # Tcl library.
@@ -162,26 +162,26 @@ Makefile: Makefile.in
 	  && ./config.status
 
 compat.o: $(top_srcdir)/source/compat.c
-	$(CC) $(DEFS) $(SHLIB_CFLAGS) $(CFLAGS) \
+	$(CC) $(CPPFLAGS) $(SHLIB_CFLAGS) $(CFLAGS) \
 		-c $(top_srcdir)/source/compat.c
 
 nap.o: $(srcdir)/nap.c
-	$(CC) $(DEFS) $(SHLIB_CFLAGS) $(CFLAGS) -c $(srcdir)/nap.c
+	$(CC) $(CPPFLAGS) $(SHLIB_CFLAGS) $(CFLAGS) -c $(srcdir)/nap.c
 
 napsend.o: $(srcdir)/napsend.c
-	$(CC) $(DEFS) $(SHLIB_CFLAGS) $(CFLAGS) -c $(srcdir)/napsend.c
+	$(CC) $(CPPFLAGS) $(SHLIB_CFLAGS) $(CFLAGS) -c $(srcdir)/napsend.c
 
 nap_file.o: $(srcdir)/nap_file.c
-	$(CC) $(DEFS) $(SHLIB_CFLAGS) $(CFLAGS) -c $(srcdir)/nap_file.c
+	$(CC) $(CPPFLAGS) $(SHLIB_CFLAGS) $(CFLAGS) -c $(srcdir)/nap_file.c
 
 napfunc.o: $(srcdir)/napfunc.c
-	$(CC) $(DEFS) $(SHLIB_CFLAGS) $(CFLAGS) -c $(srcdir)/napfunc.c
+	$(CC) $(CPPFLAGS) $(SHLIB_CFLAGS) $(CFLAGS) -c $(srcdir)/napfunc.c
 
 napother.o: $(srcdir)/napother.c
-	$(CC) $(DEFS) $(SHLIB_CFLAGS) $(CFLAGS) -c $(srcdir)/napother.c
+	$(CC) $(CPPFLAGS) $(SHLIB_CFLAGS) $(CFLAGS) -c $(srcdir)/napother.c
 
 md5.o: $(srcdir)/md5.c $(srcdir)/md5.h
-	$(CC) $(DEFS) $(SHLIB_CFLAGS) $(CFLAGS) -c $(srcdir)/md5.c
+	$(CC) $(CPPFLAGS) $(SHLIB_CFLAGS) $(CFLAGS) -c $(srcdir)/md5.c
 
 nap$(SHLIB_SUFFIX): $(OBJS) 
 	$(SHLIB_LD) $(OBJS) $(SHLIB_CFLAGS) -o nap$(SHLIB_SUFFIX)

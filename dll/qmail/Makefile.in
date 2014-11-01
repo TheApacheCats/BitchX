@@ -32,7 +32,7 @@ INSTALL_IRC = @INSTALL_IRC@
 IRCLIB = @IRCLIB@
 
 CC = @CC@
-DEFS = @INCLUDES@
+CPPFLAGS = @CPPFLAGS@ @INCLUDES@ @DEFS@
 LIBS = @LIBS@
 
 # Tcl library.
@@ -160,7 +160,7 @@ Makefile: Makefile.in
 	  && ./config.status
 
 qmail.o: $(srcdir)/qmail.c
-	$(CC) $(DEFS) $(SHLIB_CFLAGS) $(CFLAGS) -c $(srcdir)/qmail.c
+	$(CC) $(CPPFLAGS) $(SHLIB_CFLAGS) $(CFLAGS) -c $(srcdir)/qmail.c
 
 qmail$(SHLIB_SUFFIX): qmail.o ../dllinit.o
 	$(SHLIB_LD) qmail.o ../dllinit.o $(SHLIB_CFLAGS) -o qmail$(SHLIB_SUFFIX)

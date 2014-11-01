@@ -32,7 +32,7 @@ INSTALL_IRC = @INSTALL_IRC@
 IRCLIB = @IRCLIB@
 
 CC = @CC@
-DEFS = @INCLUDES@
+CPPFLAGS = @CPPFLAGS@ @INCLUDES@ @DEFS@
 LIBS = @LIBS@
 
 # Tcl library.
@@ -160,7 +160,7 @@ Makefile: Makefile.in
 	  && ./config.status
 
 blowfish.o: $(srcdir)/blowfish.c
-	$(CC) $(DEFS) $(SHLIB_CFLAGS) $(CFLAGS) -c $(srcdir)/blowfish.c
+	$(CC) $(CPPFLAGS) $(SHLIB_CFLAGS) $(CFLAGS) -c $(srcdir)/blowfish.c
 
 blowfish$(SHLIB_SUFFIX): blowfish.o ../dllinit.o
 	$(SHLIB_LD) blowfish.o ../dllinit.o $(SHLIB_CFLAGS) -o blowfish$(SHLIB_SUFFIX) $(TCL_LIBS)

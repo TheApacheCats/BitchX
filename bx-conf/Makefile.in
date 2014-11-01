@@ -32,7 +32,7 @@ INSTALL_IRC = @INSTALL_IRC@
 IRCLIB = @IRCLIB@
 
 CC = @CC@
-DEFS = @INCLUDES@
+CPPFLAGS = @CPPFLAGS@ @INCLUDES@ @DEFS@
 LIBS = @LIBS@
 
 # Tcl library.
@@ -159,7 +159,7 @@ PROGRAM = $(topdir)/bxconfigure
 OBJS = ds_cell.o file_cpy.o
 
 .c.o:
-	$(CC) $(DEFS) $(CFLAGS) -c $<
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $<
 
 all: $(PROGRAM)
 

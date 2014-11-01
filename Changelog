@@ -1,5 +1,7 @@
 [Changes 1.2c01]
 
+* Pass through externally-provided CPPFLAGS (reported by cpet). (caf)
+
 * Don't set the mode on new channels until synched - this speeds up joining
   lots of channels at connect time if one of them is new, and reduces the
   chance of being flooded off the server. (caf)

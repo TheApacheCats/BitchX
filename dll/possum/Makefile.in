@@ -32,7 +32,7 @@ INSTALL_IRC = @INSTALL_IRC@
 IRCLIB = @IRCLIB@
 
 CC = @CC@
-DEFS = @INCLUDES@
+CPPFLAGS = @CPPFLAGS@ @INCLUDES@ @DEFS@
 LIBS = @LIBS@
 
 # Tcl library.
@@ -160,13 +160,13 @@ Makefile: Makefile.in
 	  && ./config.status
 
 possum.o: $(srcdir)/possum.c
-	$(CC) $(DEFS) $(SHLIB_CFLAGS) $(CFLAGS) -c $(srcdir)/possum.c
+	$(CC) $(CPPFLAGS) $(SHLIB_CFLAGS) $(CFLAGS) -c $(srcdir)/possum.c
 
 head.o: $(srcdir)/head.c
-	$(CC) $(DEFS) $(SHLIB_CFLAGS) $(CFLAGS) -c $(srcdir)/head.c
+	$(CC) $(CPPFLAGS) $(SHLIB_CFLAGS) $(CFLAGS) -c $(srcdir)/head.c
 
 llist.o: $(srcdir)/llist.c
-	$(CC) $(DEFS) $(SHLIB_CFLAGS) $(CFLAGS) -c $(srcdir)/llist.c
+	$(CC) $(CPPFLAGS) $(SHLIB_CFLAGS) $(CFLAGS) -c $(srcdir)/llist.c
 
 possum$(SHLIB_SUFFIX): possum.o head.o llist.o ../dllinit.o
 	$(SHLIB_LD) possum.o llist.o head.o ../dllinit.o $(SHLIB_CFLAGS) -o possum$(SHLIB_SUFFIX)
