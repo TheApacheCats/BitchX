@@ -544,9 +544,9 @@
 #define DEFAULT_FORMAT_LEAVE_FSET "$G $1 %K[%w$2%K]%n has left $3 %K[%W$4-%K]"
 
 #ifdef ONLY_STD_CHARS
-#define DEFAULT_FORMAT_LINKS_FSET "%K|%n$[24]0%K| |%n$[24]1%K| |%n$[3]2%K| |%n$[13]3%K|"
+#define DEFAULT_FORMAT_LINKS_FSET "%K|%n$[24]0%K| |%n$[24]1%K| |%n$[3]2%K| |%n$[13]3-%K|"
 #else
-#define DEFAULT_FORMAT_LINKS_FSET "%K³%n$[24]0%K³ ³%n$[24]1%K³ ³%n$[3]2%K³ ³%n$[13]3%K³"
+#define DEFAULT_FORMAT_LINKS_FSET "%K³%n$[24]0%K³ ³%n$[24]1%K³ ³%n$[3]2%K³ ³%n$[13]3-%K³"
 #endif
 
 #define DEFAULT_FORMAT_LIST_FSET "$[12]1 $[-5]2   $[40]3-"
