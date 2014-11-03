@@ -867,7 +867,7 @@ static	void p_pong(char *from, char **ArgList)
 			}
 		}
 		else
-			say("%s: PING received from %s %s", ArgList[0], from, ArgList[1]);
+			say("%s: PONG received from %s %s", ArgList[0], from, ArgList[1]);
 	}
 	return;
 }
