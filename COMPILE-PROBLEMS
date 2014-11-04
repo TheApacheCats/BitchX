@@ -8,3 +8,7 @@ Some examples of what this package may be called:
 
 Debian, Ubuntu:	libncurses5-dev
 Fedora, CentOS, OpenSuSE: ncurses-devel
+
+-----
+FreeBSD Clang causes BitchX to seg fault.  As a workaround, use gcc to
+compile the client.
