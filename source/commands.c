@@ -299,7 +299,7 @@ IrcCommand irc_command[] =
 #ifdef __EMXPM__
         { "CODEPAGE",	"CODEPAGE",	pmcodepage,		0,	"OS/2 - Changes the current VIO Codepage" },
 #endif
-	{ "CONNECT",	"CONNECT",	send_comm,		0,	"%Y<%nserver1%Y>%n %Y<%nport%Y>%n %R[%nserver2%R]%n\n%Y*%n Requires irc operator status" },
+	{ "CONNECT",	"CONNECT",	send_comm,		SERVERREQ,	"%Y<%nserver1%Y>%n %Y<%nport%Y>%n %R[%nserver2%R]%n\n%Y*%n Requires irc operator status" },
 	{ "CONTINUE",	NULL,		continuecmd,		0,	NULL },
 #ifndef BITCHX_LITE
 	{ "CSAY",	"Csay",		csay,			0,	"%Y<%ntext%Y>%n" },
@@ -533,7 +533,7 @@ IrcCommand irc_command[] =
 	{ "READLOG",	"ReadLog",	readlog,		0,	"- Displays current away log" },
 	{ "RECONNECT",	NULL,		reconnect_cmd,		0,	"- Reconnects you to current server" },
 	{ "REDIRECT",	NULL,		redirect,		0,	"%Y<%Cnick%G|%Bchannel%Y> <command>\n- Redirects <command> to %Y<%Cnick%G|%Bchannel%Y>" },
-	{ "REHASH",	"REHASH",	send_comm,		0,	"%Y*%n Requires irc operator status\n- Rehashs ircd.conf for new configuration" },
+	{ "REHASH",	"REHASH",	send_comm,		SERVERREQ,	"%Y*%n Requires irc operator status\n- Rehashs ircd.conf for new configuration" },
 	{ "REINIT",	NULL,		init_vars,		0,	"- Reinitializes internal variables" },
 	{ "REINITSTAT",	NULL,		init_window_vars,	0,	"- Reinitializes window variables" },
 
@@ -579,12 +579,12 @@ IrcCommand irc_command[] =
 	{ "REPEAT", 	NULL, 		repeatcmd,		0,	"%Y<%ntimes%Y>%n %Y<%ncommand%Y>%n\n- Repeats %Y<%ntimes%Y>%n %Y<%ncommand%Y>%n" },
 	{ "REQUEST",	NULL,		ctcp,			0,	"%Y<%Cnick%G|%Bchannel%Y>%n %Y<%nrequest%Y>%n\n- Sends CTCP %Y<%nrequest%Y>%n to %Y<%Cnick%G|%Bchannel%Y>%n" },
 	{ "RESET",	NULL,		reset,			0,	"- Fixes flashed terminals" },
-	{ "RESTART",	"RESTART",	send_comm,		0,	"%Y*%n Requires irc operator status\n- Restarts server" },
+	{ "RESTART",	"RESTART",	send_comm,		SERVERREQ,	"%Y*%n Requires irc operator status\n- Restarts server" },
 	{ "RETURN",	NULL,		returncmd,		0,	NULL },
 	{ "REVISIONS",	NULL,  	show_revisions,	0,	"- Shows CVS revisions of source files." },
 	/* nuxx requested this command */
 	{ "RMAP",	"MAP",		send_2comm,		0,	"- Sends out a /map command to the server%n" },
-	{ "RPING",	"RPING",	send_comm,		0,	NULL },
+	{ "RPING",	"RPING",	send_comm,		SERVERREQ,	NULL },
 	{ "SAVE",	"SaveAll",	savelists,		0,	"- Saves ~/.BitchX/BitchX.sav" },
 	{ "SAVEIRC",	NULL,		save_settings,		0,	"- Saves ~/.bitchxrc" },
 	{ "SAVELIST",	NULL, 		savelists,		0,	"- Saves ~/.BitchX/BitchX.sav" },
@@ -600,7 +600,7 @@ IrcCommand irc_command[] =
 	{ "SEND",	NULL,		do_send_text,		0,	NULL },
 	{ "SENDLINE",	empty_string,	sendlinecmd,		0,	NULL },
 	{ "SERVER",	NULL,		servercmd,		0,	"%Y<%nserver%Y>%n\n- Changes to %Y<%nserver%Y>%n" },
-	{ "SERVLIST",	"SERVLIST",	send_comm,		0,	"- Displays available services" },
+	{ "SERVLIST",	"SERVLIST",	send_comm,		SERVERREQ,	"- Displays available services" },
 	{ "SET",	NULL,		setcmd,			0,	"- Set Variables" },
 	{ "SETAR",	NULL,		set_autoreply,		0,	"%Y<%n-|d|pat1 pat2 ..%Y>%n\n- Adds or removes from your auto-response" },
 	{ "SETENV",	NULL,		setenvcmd,		0,	NULL },
@@ -613,7 +613,7 @@ IrcCommand irc_command[] =
 	{ "SHOWLOCK",	"ShowLock",	mode_lock,		0,	"- Show the mode lock on the channel" },
 	{ "SHOWSPLIT",	NULL,		linklook,		0,	"- Shows split servers" },
 	{ "SHOWWORDKICK",NULL,		show_word_kick,		0,	"- Shows the internal banned word list" },
-	{ "SILENCE",	"SILENCE",	send_comm,		0,	"%R[%n+nick|-nick%R]%n\n- Server-side ignore" },
+	{ "SILENCE",	"SILENCE",	send_comm,		SERVERREQ,	"%R[%n+nick|-nick%R]%n\n- Server-side ignore" },
 	{ "SLEEP",	NULL,		sleepcmd,		0,	scripting_command },
 	{ "SPAM",	NULL,		spam,			0,	NULL },
 	{ "SPING",	"Sping",	sping,			0,	"%Y<%nserver|.|-clear%Y>%n\n- Checks how lagged you are to %Y<%nserver%Y>%n" },
@@ -625,7 +625,7 @@ IrcCommand irc_command[] =
 #ifdef GUI
         { "SUBMENU",	NULL,		os2submenu,		0,      "GUI - Adds a submenu to a menu" },
 #endif
-	{ "SUMMON",	"SUMMON",	send_comm,		0,	"%Y<%nuser%Y> %R[%nserver%R [%nchannel%R]]%n\n- calls %Y<%nuser%Y>%n on %R[%nserver%R]%n to %R[%nchannel%R]%n" },
+	{ "SUMMON",	"SUMMON",	send_comm,		SERVERREQ,	"%Y<%nuser%Y> %R[%nserver%R [%nchannel%R]]%n\n- calls %Y<%nuser%Y>%n on %R[%nserver%R]%n to %R[%nchannel%R]%n" },
 	{ "SV",		"Sv",		show_version,		0,	"%R[%nnick|#channel%R]%n\nShow Client Version information" },
 	{ "SWALLOP",	"SWALLOPS",	e_wall,			0,	NULL },
 #ifdef WANT_OPERVIEW
@@ -637,7 +637,7 @@ IrcCommand irc_command[] =
 	{ "TBK",	"TBK",		kickban,		0,	"%Y<%Cnick%Y>%n %R[%ntime%R]%n\n- Deops, bans and kicks %Y<%Cnick%Y>%n for %R[%ntime%R]%n" },
 	{ "TCL",	NULL,		tcl_command,		0,	"<-version> <command>" },
 	{ "TIGNORE",	NULL,		tignore,		0,	NULL },
-	{ "TIME",	"TIME",		send_comm,		0,	"- Shows time and date of current server" },
+	{ "TIME",	"TIME",		send_comm,		SERVERREQ,	"- Shows time and date of current server" },
 	{ "TIMER",	"TIMER",	timercmd,		0,	NULL },
 	{ "TKB",	"TKB",		kickban,		0,	"%Y<%Cnick%Y>%n %R[%ntime%R]%n\n- Deops, kicks, and bans %Y<%Cnick%Y>%n for %R[%ntime%R]%n" },
 	{ "TKLINE",	"TKLINE",	send_kline,		0,	"%Y<%nuser%y@%nhost%Y> <%nreason%Y>%n\n%Y*%n Requires irc operator status\n- Adds a temporary K-line" },
@@ -690,7 +690,7 @@ IrcCommand irc_command[] =
 #ifdef WANT_USERLIST
 	{ "USERLIST",	NULL,		showuserlist,		0,	NULL },
 #endif
-	{ "USERS",	"USERS",	send_comm,		0,	"%R[%nserver%R]%n\n- Show users on %R[%nserver%R]%n (as finger @host)" },
+	{ "USERS",	"USERS",	send_comm,		SERVERREQ,	"%R[%nserver%R]%n\n- Show users on %R[%nserver%R]%n (as finger @host)" },
 #ifdef WANT_USERLIST
 	{ "USERSHOW",	"UserShow",	set_user_info,		0,	NULL },
 #endif
