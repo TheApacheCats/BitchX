@@ -654,7 +654,6 @@
 #endif
 
 #undef PARANOID		/* #define this if your paranoid about dcc hijacking */
-#undef WANT_CHAN_NICK_SERV	/* do we want to include some chan/nick/oper server commands */
 
 /* new epic stuff */
 #define OLD_STATUS_S_EXPANDO_BEHAVIOR

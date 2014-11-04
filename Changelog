@@ -1,5 +1,8 @@
 [Changes 1.2c01]
 
+* Remove WANT_CHAN_NICK_SERV define and include network services commands 
+  by default. (caf)
+
 * Pass through externally-provided CPPFLAGS (reported by cpet). (caf)
 
 * Don't set the mode on new channels until synched - this speeds up joining

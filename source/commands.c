@@ -272,9 +272,7 @@ IrcCommand irc_command[] =
 	{ "CDVOL",	NULL,		cd_volume,		0,	NULL },
 #endif
 	{ "CHANNEL",	"JOIN",		e_channel,		SERVERREQ,	"- Shows information on the channels, modes and server you are on" },
-#ifdef WANT_CHAN_NICK_SERV
-	{ "CHANSERV",	"CHANSERV",	send_comm,		SERVERREQ,	NULL },
-#endif
+	{ "CHANSERV",	"CHANSERV",	send_comm,		SERVERREQ,	"- Network services command" },
 	{ "CHANST",	NULL,		channel_stats,		SERVERREQ,	"%Y<%n-ALL%Y> %R[%Bchannel%R]%n\n- Shows statistics on current channel or %R[%Bchannel%R]%n" },
 	{ "CHAT",	"Chat",		chat,			SERVERREQ,	"%Y<%nNick%Y>%n\n- Attempts to dcc chat nick" },
 	{ "CHATOPS",	"CHATOPS",	e_wall,			SERVERREQ,	NULL },
@@ -389,10 +387,8 @@ IrcCommand irc_command[] =
 	{ "GONE",	"Gone",		away,			SERVERREQ,	"%R[%nreason%R]%n\n- Sets you away on server if %R[%nreason%R]%n else sets you back. Does not announce to your channels." },
 	{ "HASH",	"HASH",		send_comm,		SERVERREQ,	"Server command"},
 	{ "HELP",	NULL,		help,			0,	NULL },
-#ifdef WANT_CHAN_NICK_SERV
 	{ "HELPOP",	"HELPOP",	send_comm,		SERVERREQ,	NULL },
-	{ "HELPSERV",	"HELPSERV",	send_comm,		SERVERREQ,	NULL },
-#endif
+	{ "HELPSERV",	"HELPSERV",	send_comm,		SERVERREQ,	"- Network services command" },
 	{ "HISTORY",	NULL,		history,		0,	"- Shows recently typed commands" },
 	{ "HOOK",	NULL,		hookcmd,		0,	scripting_command },
 	{ "HOP",		"h",		doop,			SERVERREQ,	"%Y<%Cnick%Y>%n\n- Gives %Y<%Cnick%Y>%n +h" },
@@ -457,9 +453,7 @@ IrcCommand irc_command[] =
 	{ "MDOP",	NULL,		massdeop,		SERVERREQ,	"- Mass deops current channel" },
 	{ "MDVOICE",	"MDVoice",	massdeop,		SERVERREQ,	"- Mass de-voices current channel" },
 	{ "ME",		NULL,		me,			SERVERREQ,	"<action>\n- Sends an action to current channel" },
-#ifdef WANT_CHAN_NICK_SERV
-	{ "MEMOSERV",	"MEMOSERV",	send_comm,		SERVERREQ,	NULL },
-#endif
+	{ "MEMOSERV",	"MEMOSERV",	send_comm,		SERVERREQ,	"- Network services command" },
 #ifdef GUI
 	{ "MENU",	NULL,		os2menu,		0,	"GUI - Creates or removes a menu" },
 	{ "MENUITEM",	NULL,		os2menuitem,		0,	"GUI - Adds a menuitem to a menu" },
@@ -484,9 +478,7 @@ IrcCommand irc_command[] =
 	{ "NEWNICK",	NULL,		newnick,		0,	NULL },
 	{ "NEWUSER",	NULL,		newuser,		0,	NULL },
 	{ "NICK",	"NICK",		e_nick,			0,	"-Changes nick to specified nickname" },
-#ifdef WANT_CHAN_NICK_SERV
-	{ "NICKSERV",	"NICKSERV",	send_comm,		SERVERREQ,	NULL },
-#endif
+	{ "NICKSERV",	"NICKSERV",	send_comm,		SERVERREQ,	"- Network services command" },
 	{ "NOCHAT",	"NoChat",	chat,			0,	"%Y<%nnick%Y>%n\n- Kills chat reqest from %Y<%nnick%Y>" },
 	{ "NOPS",	"Nops",		users,			0,	"%R[%Bchannel%R]%n\n- Shows, in a full format, all the nicks without ops in %R[%Bchannel%R]%n or channel" },
 	{ "NOTE",	"NOTE",		send_comm,		SERVERREQ,	NULL },
@@ -501,9 +493,7 @@ IrcCommand irc_command[] =
 	{ "OOPS",	NULL,		do_oops,		SERVERREQ,	"%Y<%Cnick%Y>%n\n- Sends a oops message to last recipient of a message and sends the correct message to %Y<%Cnick%Y>%n" },
 	{ "OP",		"o",		doop,			SERVERREQ,	"%Y<%Cnick%Y>%n\n- Gives %Y<%Cnick%Y>%n +o" },
 	{ "OPER",	"OPER",		oper,			SERVERREQ,	"%Y*%n Requires irc operator status\n%Y<%Cnick%Y>%n %R[%npassword%R]%n" },
-#ifdef WANT_CHAN_NICK_SERV
-	{ "OPERSERV",	"OPERSERV",	send_comm,		SERVERREQ,	NULL },
-#endif
+	{ "OPERSERV",	"OPERSERV",	send_comm,		SERVERREQ,	"- Network services command" },
 	{ "OPERWALL",	"OPERWALL",	e_wall,			0,	NULL },
 	{ "ORIGNICK",	"OrigNick",	orig_nick,		0,	"%Y<%Cnick%Y>%n\n- Attempts to regain a nick that someone else has taken from you." },
 	{ "OSTAT",	NULL, 		serv_stat,		0,	"-Displays some internal statistics gathered about the server" },
@@ -623,10 +613,7 @@ IrcCommand irc_command[] =
 	{ "SHOWLOCK",	"ShowLock",	mode_lock,		0,	"- Show the mode lock on the channel" },
 	{ "SHOWSPLIT",	NULL,		linklook,		0,	"- Shows split servers" },
 	{ "SHOWWORDKICK",NULL,		show_word_kick,		0,	"- Shows the internal banned word list" },
-
-#ifdef WANT_CHAN_NICK_SERV
-	{ "SILENCE",	"SILENCE",	send_comm,		0,	NULL },
-#endif
+	{ "SILENCE",	"SILENCE",	send_comm,		0,	"%R[%n+nick|-nick%R]%n\n- Server-side ignore" },
 	{ "SLEEP",	NULL,		sleepcmd,		0,	scripting_command },
 	{ "SPAM",	NULL,		spam,			0,	NULL },
 	{ "SPING",	"Sping",	sping,			0,	"%Y<%nserver|.|-clear%Y>%n\n- Checks how lagged you are to %Y<%nserver%Y>%n" },
