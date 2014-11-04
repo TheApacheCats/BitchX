@@ -204,10 +204,6 @@ BUILT_IN_COMMAND(os2submenu);
 BUILT_IN_COMMAND(pmcodepage);
 #endif
 
-#ifdef WANT_CHAN_NICK_SERV
-BUILT_IN_COMMAND(e_server);
-#endif
-
 #ifdef ALLOW_DETACH
 BUILT_IN_COMMAND(detachcmd);
 #endif
@@ -277,7 +273,7 @@ IrcCommand irc_command[] =
 #endif
 	{ "CHANNEL",	"JOIN",		e_channel,		SERVERREQ,	"- Shows information on the channels, modes and server you are on" },
 #ifdef WANT_CHAN_NICK_SERV
-	{ "CHANSERV",	"CHANSERV",	send_comm,		0,	NULL },
+	{ "CHANSERV",	"CHANSERV",	send_comm,		SERVERREQ,	NULL },
 #endif
 	{ "CHANST",	NULL,		channel_stats,		SERVERREQ,	"%Y<%n-ALL%Y> %R[%Bchannel%R]%n\n- Shows statistics on current channel or %R[%Bchannel%R]%n" },
 	{ "CHAT",	"Chat",		chat,			SERVERREQ,	"%Y<%nNick%Y>%n\n- Attempts to dcc chat nick" },
@@ -413,9 +409,6 @@ IrcCommand irc_command[] =
 	{ "INPUT",	"Input",	inputcmd,		0,	scripting_command  },
 	{ "INPUT_CHAR", "Input_Char",	inputcmd,		0,	scripting_command },
 	{ "INVITE",	"INVITE",	do_invite,		SERVERREQ,	"%Y<%Cnick%Y>%n %R[%Bchannel%R]%n\n- Invites %Y<%Cnick%Y>%n to current channel or %R[%Bchannel%R]%n" },
-#ifdef WANT_CHAN_NICK_SERV
-	{ "IRCIIHELP",	"IRCIIHELP",	send_comm,		SERVERREQ,	NULL },
-#endif
 	{ "IRCHOST",	"HOSTNAME",	e_hostname,		0,	"%Y<%nhostname%Y>%n\n- Shows list of possible hostnames with option to change it on virtual hosts"  },
 	{ "IRCNAME",	NULL,		realname_cmd,		0,	NULL },
 	{ "IRCUSER",	NULL,		set_username,		0,	"<username>\n- Changes your <username>" },
