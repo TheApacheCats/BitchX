@@ -194,22 +194,21 @@ void BX_put_it(const char *format, ...)
  */
 void say (const char *format, ...)
 {
-int len = 0;
 	if (window_display && format)
 	{
+		size_t len;
 		va_list args;
+
+		snprintf(putbuf, LARGE_BIG_BUFFER_SIZE, "%s ", thing_ansi ? thing_ansi : three_stars);
+		len = strlen(putbuf);
+
 		va_start (args, format);
-		if (thing_ansi)
-			len = strlen(thing_ansi);
-		else
-			len = 3;
-		vsnprintf(&(putbuf[len+1]), LARGE_BIG_BUFFER_SIZE, format, args);
+		vsnprintf(putbuf + len, LARGE_BIG_BUFFER_SIZE - len, format, args);
 		va_end(args);
-		strcpy(putbuf, thing_ansi?thing_ansi:three_stars);
-		putbuf[len] = ' ';
+
 		if (strip_ansi_in_echo) 
 		{
-			register char *ptr;
+			char *ptr;
 			for (ptr = putbuf + len; *ptr; ptr++)
 				if (*ptr < 31 && *ptr > 13)
 					if (*ptr != 15 && *ptr != 22)

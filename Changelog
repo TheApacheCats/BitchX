@@ -1,5 +1,7 @@
 [Changes 1.2c01]
 
+* Fix overflow in say() when handling a maximum-length client message. (caf)
+
 * Remove WANT_CHAN_NICK_SERV define and include network services commands 
   by default. (caf)
 
