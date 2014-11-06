@@ -78,13 +78,13 @@ extern char	thing_star[4];
 # endif /* HAVE_SYS_TIME_H */
 #endif /* TIME_WITH_SYS_TIME */
 
-#ifdef HAVE_SYS_FCNTL_H
-# include <sys/fcntl.h>
+#ifdef HAVE_FCNTL_H
+#include <fcntl.h>
 #else
-  #ifdef HAVE_FCNTL_H
-  #include <fcntl.h> 
-  #endif /* HAVE_FCNTL_H */
-#endif
+# ifdef HAVE_SYS_FCNTL_H
+#  include <sys/fcntl.h>
+# endif
+#endif /* HAVE_FCNTL_H */
 
 #include <stdarg.h>
 #include <unistd.h>

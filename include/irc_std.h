@@ -62,11 +62,11 @@
 /*
  * Deal with brokenness in <fcntl.h> and <sys/fcntl.h>
  */
-#ifdef HAVE_SYS_FCNTL_H
-# include <sys/fcntl.h>
+#ifdef HAVE_FCNTL_H
+# include <fcntl.h>
 #else
-# ifdef HAVE_FCNTL_H
-#  include <fcntl.h>
+# ifdef HAVE_SYS_FCNTL_H
+#  include <sys/fcntl.h>
 # endif
 #endif
 

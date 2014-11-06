@@ -1,5 +1,7 @@
 [Changes 1.2c01]
 
+* Prefer <fcntl.h> over <sys/fcntl.h> (reported by ncopa). (caf)
+
 * Fix overflow in say() when handling a maximum-length client message. (caf)
 
 * Remove WANT_CHAN_NICK_SERV define and include network services commands 
