@@ -103,7 +103,12 @@ extern  char    *getenv();
 typedef struct cap2info
 {
 	const char *	longname;
-	const char *	iname;
+/* ncurses can optionally declare tigetstr(), tigetnum() and tigetflags() with
+ * a const char * argument. */
+#ifdef NCURSES_CONST
+NCURSES_CONST
+#endif
+	char *	iname;
 	const char *	tname;
 	int 		type;
 	void *		ptr;
