@@ -10,5 +10,7 @@ Debian, Ubuntu:	libncurses5-dev
 Fedora, CentOS, OpenSuSE: ncurses-devel
 
 -----
-FreeBSD Clang causes BitchX to seg fault.  As a workaround, use gcc to
-compile the client.
+
+There have been reports that FreeBSD Clang causes BitchX to seg fault.  As a
+workaround, use gcc to compile the client by setting the CC environment
+variable before running configure.
