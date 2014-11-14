@@ -63,7 +63,7 @@ CVS_REVISION(irc_c)
 #endif
 
 #ifndef VERSION
-	const char irc_version[] = "BitchX-1.2c01-svn";
+	const char irc_version[] = "BitchX-1.2.1";
 #else
 	const char irc_version[] = VERSION;
 #endif
@@ -73,7 +73,7 @@ CVS_REVISION(irc_c)
  * mm = minor version
  * pp = patchlevel (00 = development, 01 = release)
  */
-const unsigned long bitchx_numver = 120100;
+const unsigned long bitchx_numver = 120101;
 
 /*
  * INTERNAL_VERSION is the number that the special alias $V returns.
@@ -82,7 +82,7 @@ const unsigned long bitchx_numver = 120100;
  * Its format is actually YYYYMMDD, for the _release_ date of the
  * client..
  */
-const char internal_version[] = "20040326";
+const char internal_version[] = "20141114";
 
 int	irc_port = IRC_PORT,			/* port of ircd */
 	strip_ansi_in_echo,
