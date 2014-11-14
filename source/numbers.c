@@ -45,6 +45,8 @@ CVS_REVISION(numbers_c)
 #define MAIN_SOURCE
 #include "modval.h"
 
+#include <math.h>
+
 static	void	channel_topic		(char *, char **, int);
 static	void	not_valid_channel	(char *, char **);
 static	void	cannot_join_channel	(char *, char **);
@@ -386,15 +388,9 @@ static	void cannot_join_channel(char *from, char **ArgList)
  * Implements an integer division of a / b, where 1.5 rounds up to 2 and 
  * 1.49 rounds down to 1. Returns zero if divisor is zero.
  */
-static int divide_rounded(int a, int b)
+static long divide_rounded(double a, double b)
 {
-	if (a < 0)
-	{
-		a = -a;
-		b = -b;
-	}
-
-	return b ? (a + abs(b / 2)) / b : 0;
+	return b != 0.0 ? (long)round(a / b) : 0;
 }
 
 int handle_server_stats(char *from, char **ArgList, int comm)
@@ -449,19 +445,19 @@ static	int 	norm = 0,
 			if (total_users)
 			{
 				put_it("%s", convert_output_format("$G %K[%nlocal users on irc%K(%n\002$0\002%K)]%n $1%%", 
-					"%d %d", local_users, divide_rounded(local_users * 100, total_users)));
+					"%d %d", local_users, divide_rounded(local_users * 100.0, total_users)));
 				put_it("%s", convert_output_format("$G %K[%nglobal users on irc%K(%n\002$0\002%K)]%n $1%%",
-					"%d %d", norm, divide_rounded(norm * 100, total_users)));
+					"%d %d", norm, divide_rounded(norm * 100.0, total_users)));
 				if (services_flag)
 				{
 					put_it("%s", convert_output_format("$G %K[%ninvisible users on irc%K(%n\002$0\002%K)]%n $1%%",
-						 "%d %d", invisible, divide_rounded(invisible * 100, total_users)));
+						 "%d %d", invisible, divide_rounded(invisible * 100.0, total_users)));
 				}
 				else
 					put_it("%s", convert_output_format("$G %K[%nservices on irc%K(%n\002$0\002%K)]%n", 
 						"%d", services));
 				put_it("%s", convert_output_format("$G %K[%nircops on irc%K(%n\002$0\002%K)]%n $1%%", 
-					"%d %d", ircops, divide_rounded(ircops * 100, total_users)));
+					"%d %d", ircops, divide_rounded(ircops * 100.0, total_users)));
 			}
 			put_it("%s", convert_output_format("$G %K[%ntotal users on irc%K(%n\002$0\002%K)]%n", 
 				"%d", total_users));
