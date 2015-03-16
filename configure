@@ -15850,7 +15850,7 @@ _ACEOF
 
 
 
-                                                                                                                                                                                                                                                                                                  ac_config_files="$ac_config_files Makefile bx-conf/Makefile doc/BitchX.bat doc/Makefile dll/Makefile dll/abot/Makefile dll/acro/Makefile dll/aim/Makefile dll/aim/toc/Makefile dll/amp/Makefile dll/arcfour/Makefile dll/autocycle/Makefile dll/blowfish/Makefile dll/cavlink/Makefile dll/cdrom/Makefile dll/encrypt/Makefile dll/europa/Makefile dll/fserv/Makefile dll/hint/Makefile dll/identd/Makefile dll/nap/Makefile dll/nicklist/Makefile dll/pkga/Makefile dll/possum/Makefile dll/qbx/Makefile dll/qmail/Makefile dll/wavplay/Makefile dll/xmms/Makefile source/Makefile"
+                                                                                                                                                                                                                                                                                        ac_config_files="$ac_config_files Makefile bx-conf/Makefile doc/BitchX.bat dll/Makefile dll/abot/Makefile dll/acro/Makefile dll/aim/Makefile dll/aim/toc/Makefile dll/amp/Makefile dll/arcfour/Makefile dll/autocycle/Makefile dll/blowfish/Makefile dll/cavlink/Makefile dll/cdrom/Makefile dll/encrypt/Makefile dll/europa/Makefile dll/fserv/Makefile dll/hint/Makefile dll/identd/Makefile dll/nap/Makefile dll/nicklist/Makefile dll/pkga/Makefile dll/possum/Makefile dll/qbx/Makefile dll/qmail/Makefile dll/wavplay/Makefile dll/xmms/Makefile source/Makefile"
 
           ac_config_commands="$ac_config_commands default"
 
@@ -16392,7 +16392,6 @@ do
   "Makefile" ) CONFIG_FILES="$CONFIG_FILES Makefile" ;;
   "bx-conf/Makefile" ) CONFIG_FILES="$CONFIG_FILES bx-conf/Makefile" ;;
   "doc/BitchX.bat" ) CONFIG_FILES="$CONFIG_FILES doc/BitchX.bat" ;;
-  "doc/Makefile" ) CONFIG_FILES="$CONFIG_FILES doc/Makefile" ;;
   "dll/Makefile" ) CONFIG_FILES="$CONFIG_FILES dll/Makefile" ;;
   "dll/abot/Makefile" ) CONFIG_FILES="$CONFIG_FILES dll/abot/Makefile" ;;
   "dll/acro/Makefile" ) CONFIG_FILES="$CONFIG_FILES dll/acro/Makefile" ;;

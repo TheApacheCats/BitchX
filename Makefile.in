@@ -333,8 +333,6 @@ distclean: clean
 	-$(RM) script/.#* macros/.#* translation/.#*
 	-$(RM) doc/*~ doc/BitchX.bat *.spec
 	-$(RM) Makefile
-	-$(CP) $(top_srcdir)/doc/Makefile $(top_srcdir)/Makefile
-	-$(CP) $(top_srcdir)/doc/Makefile Makefile
 
 export: distclean
 	$(top_srcdir)/autogen.sh || :

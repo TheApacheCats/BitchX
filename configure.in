@@ -1080,7 +1080,6 @@ AC_CONFIG_FILES([
 Makefile
 bx-conf/Makefile
 doc/BitchX.bat
-doc/Makefile
 dll/Makefile
 dll/abot/Makefile
 dll/acro/Makefile
