@@ -3,21 +3,17 @@ dnl Copyright (c) 1999-2001 David Walluck
 dnl All rights reserved.
 
 AC_PREREQ(2.59)
-AC_REVISION($Revision$)
 AC_INIT
 AC_CONFIG_SRCDIR([$srcdir/source/irc.c])
 topdir="`pwd`"
 AC_SUBST(topdir)
 AC_CONFIG_HEADERS(include/defs.h)
 
-dnl Get the version number from source/irc.c.
-dnl Maybe it's better to set the VERSION in here instead.
-VERSION=`sed -n -e 's/";$//' -e '/	const char irc_version.. = "/s///p' -e '/const char irc_version/q' < $srcdir/source/irc.c 2>/dev/null`
-if test x"$VERSION" = x""; then
-  VERSION="BitchX-1.0"
-fi
 _VERSION_="BitchX"
-VERSION_NUMBER="`echo "$VERSION" | sed 's/BitchX-//'`"
+RELEASE_TAG="bitchx-1.2.1"
+RELEASE="1.2.1"
+VERSION_NUMBER="$RELEASE`"$srcdir/gitversion.sh" "$RELEASE_TAG" "$srcdir"`"
+VERSION="$_VERSION_-$VERSION_NUMBER"
 AC_DEFINE_UNQUOTED(VERSION_NUMBER, "$VERSION_NUMBER", Define BitchX version number here.)
 AC_SUBST(VERSION_NUMBER)
 echo Welcome to the "$VERSION" configuration
@@ -1115,7 +1111,7 @@ AC_CONFIG_COMMANDS([default],[[ echo timestamp > stamp-h
 AC_OUTPUT
 
 echo
-echo BitchX \(c\) 1996-2012 Colten Edwards et al
+echo BitchX \(c\) 1996-2015 Colten Edwards et al
 echo ----------------------------------------------------------
 echo
 echo The configuration script has finished. You should look through

@@ -62,11 +62,7 @@ CVS_REVISION(irc_c)
 #include <signame.h>
 #endif
 
-#ifndef VERSION
-	const char irc_version[] = "BitchX-1.2.1";
-#else
-	const char irc_version[] = VERSION;
-#endif
+const char irc_version[] = VERSION;
 
 /* Format of bitchx_numver: MMmmpp
  * MM = major version (eg 10 = 1.0)
