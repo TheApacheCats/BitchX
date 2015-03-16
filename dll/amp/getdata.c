@@ -261,7 +261,7 @@ int j,k;
 				for (k=0;k<6;k++) 
 				{
 					scalefac_l[0][ch][sfb]=getbits(slen[1]);
-					i+=slen[j];
+					i+=slen[1];
 					if (ch) is_max[sfb]=(1<<slen[1])-1;
 					sfb++;
 				}

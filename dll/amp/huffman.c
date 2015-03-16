@@ -12,6 +12,8 @@
 #define HUFFMAN
 #include "huffman.h"
 
+#include <unistd.h>
+
 static inline unsigned int viewbits(int n)
 {
 unsigned int pos,ret_value;

@@ -11,6 +11,8 @@
 #define POSITION
 #include "position.h"
 
+#include <string.h>
+
 /* Returns the number of frames actually skipped, -1 on error.
  *
  * Values in header are not changed if retval!=nframes.
