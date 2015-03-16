@@ -323,7 +323,7 @@ distclean: clean
 	-@(if test -f source/Makefile; then cd source; $(MAKE) distclean; fi)
 	-@(if test -f dll/Makefile; then cd dll; $(MAKE) distclean; fi)
 	-@(if test -f bx-conf/Makefile; then cd bx-conf; $(MAKE) distclean; fi)
-	-$(RM) config.status
+	-$(RM) config.status configure.lineno
 	-$(RM) config.cache config.log stamp-h stamp-h[0-9]*
 	-$(RM) include/defs.h include/sig.inc
 	-$(RM) *~ *.rej core *.orig .#*
