@@ -50,11 +50,7 @@ typedef struct _queued_send
 typedef struct _sping_ {
 	struct _sping_ *next;
 	char *sname;
-#ifdef HAVE_GETTIMEOFDAY
 	struct timeval in_sping;
-#else
-	time_t in_sping;
-#endif
 } Sping;
 
 
@@ -337,15 +333,6 @@ ChannelList	*BX_get_server_channels		(int);
 #endif
     int is_server_valid(char *name, int server);
 
-#if 0
-#ifdef HAVE_GETTIMEOFDAY
-struct	timeval	get_server_sping		(int);
-	void	set_server_sping		(int, struct timeval);
-#else
-	time_t	get_server_sping		(int);
-	void	set_server_sping		(int, time_t);
-#endif
-#endif
 	Sping	*get_server_sping		(int, char *);
 	void	clear_server_sping		(int, char *);
 	void	set_server_sping		(int, Sping *);

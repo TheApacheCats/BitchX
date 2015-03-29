@@ -655,21 +655,13 @@ BUILT_IN_COMMAND(sping)
 			}
 			tmp = new_malloc(sizeof(Sping));
 			tmp->sname = m_strdup(sname);
-#ifdef HAVE_GETTIMEOFDAY
-			gettimeofday(&tmp->in_sping, NULL);
+			get_time(&tmp->in_sping);
 			set_server_sping(from_server, tmp);
-#else
-			tmp->in_sping = now;
-			set_server_sping(from_server, tmp);
-#endif
+
 			if (!my_stricmp(sname, get_server_name(from_server)) || !my_stricmp(sname, get_server_itsname(from_server)))
-#ifdef HAVE_GETTIMEOFDAY
 				send_to_server("PING LAG%ld.%ld :%s", 
 					(long)tmp->in_sping.tv_sec, (long)tmp->in_sping.tv_usec, 
 					sname);
-#else
-				send_to_server("PING LAG%ld :%s", (long)now, sname);
-#endif
 			else
 				send_to_server("PING %s :%s", 
 					get_server_itsname(from_server) ? 
@@ -678,35 +670,6 @@ BUILT_IN_COMMAND(sping)
 		}
 		
 	}
-#if 0
-#ifdef HAVE_GETTIMEOFDAY
-	struct timeval in_sping = {0};
-#endif
-	if (!servern || !*servern)
-		if (!(servern = get_server_itsname(from_server)))
-			servern = get_server_name(from_server);
-	
-	if (servern && *servern && wild_match("*.*", servern))
-	{
-#ifdef HAVE_GETTIMEOFDAY
-			gettimeofday(&in_sping, NULL);
-			send_to_server("PING LAG%ld.%ld :%s", in_sping.tv_sec, in_sping.tv_usec, servern);
-#else
-			send_to_server("PING LAG%ld :%s", now, servern);
-#endif
-		}
-		else
-		{
-#ifdef HAVE_GETTIMEOFDAY
-			gettimeofday(&in_sping, NULL);
-			set_server_sping(from_server, in_sping);
-#else
-			set_server_sping(from_server, now);
-#endif
-			send_to_server("PING %s :%s", get_server_itsname(from_server), servern);
-		}
-	}
-#endif
 }
 
 BUILT_IN_COMMAND(tog_fprot)
