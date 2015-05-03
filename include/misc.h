@@ -80,7 +80,6 @@ extern LastMsg last_sent_ctcp[2];
 	void	BX_addtabkey (char *, char *, int);
 	void	clear_array (NickTab **, char *);
 	char	*BX_random_str (int, int);
-	int	check_serverlag (void);
 	void	check_auto_away (time_t);
 ChannelList *	BX_prepare_command (int *, char *, int);
 	int	rename_file (char *, char **);

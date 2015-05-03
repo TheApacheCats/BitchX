@@ -402,6 +402,28 @@ static void scan_nonblocking(void)
 }
 #endif
 
+int check_serverlag(void)
+{
+	int i;
+	struct timeval tv;
+
+	get_time(&tv);
+		
+	for (i = 0; i < server_list_size(); i++)
+	{
+		if (is_server_connected(i) && now != get_server_lagtime(i))
+		{
+			set_server_lagtime(i, now);
+			my_send_to_server(i, "PING LAG!%lu.%ld.%ld :%s", 
+					get_server_lag_cookie(i), 
+					(long)tv.tv_sec, (long)tv.tv_usec, get_server_itsname(i));
+			set_server_lag(i, -1);
+		}
+	}
+
+	return 0;
+}
+
 void	do_idle_server (void)
 {
 	int i;
@@ -2298,7 +2320,8 @@ void	register_server (int ssn_index, char *nick)
 	*server_list[ssn_index].umode = 0;
 	server_list[ssn_index].operator = 0;
 /*	set_umode(ssn_index); */
-        server_list[ssn_index].login_flags |= LOGGED_IN;
+	server_list[ssn_index].login_flags |= LOGGED_IN;
+	server_list[ssn_index].lag_cookie = random_number(0);
 	from_server = old_from_server;
 	check_host();
 }
@@ -2336,7 +2359,6 @@ void BX_set_server_lag (int gso_index, int secs)
 		server_list[gso_index].lag = secs;
 }
 
-
 time_t	get_server_lagtime (int gso_index)
 {
 	if ((gso_index < 0 || gso_index >= number_of_servers))
@@ -2350,6 +2372,12 @@ void set_server_lagtime (int gso_index, time_t secs)
 		server_list[gso_index].lag_time = secs;
 }
 
+unsigned long get_server_lag_cookie(int gso_index)
+{
+	if ((gso_index < 0 || gso_index >= number_of_servers))
+		return 0;
+	return server_list[gso_index].lag_cookie;
+}
 
 int 	BX_get_server_motd (int gsm_index)
 {

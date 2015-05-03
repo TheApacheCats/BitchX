@@ -646,8 +646,8 @@ BUILT_IN_COMMAND(sping)
 		while ((sname = next_arg(args, &args)))
 		{
 			if (*sname == '.')
-				if (!(sname = get_server_itsname(from_server)))
-					sname = get_server_name(from_server);
+				sname = get_server_itsname(from_server);
+
 			if (!wild_match("*.*", sname))
 			{
 				bitchsay("%s is not a server", sname);
@@ -658,17 +658,9 @@ BUILT_IN_COMMAND(sping)
 			get_time(&tmp->in_sping);
 			set_server_sping(from_server, tmp);
 
-			if (!my_stricmp(sname, get_server_name(from_server)) || !my_stricmp(sname, get_server_itsname(from_server)))
-				send_to_server("PING LAG%ld.%ld :%s", 
-					(long)tmp->in_sping.tv_sec, (long)tmp->in_sping.tv_usec, 
-					sname);
-			else
-				send_to_server("PING %s :%s", 
-					get_server_itsname(from_server) ? 
-					get_server_itsname(from_server) : 
-					get_server_name(from_server), sname);
+			send_to_server("PING %s :%s", 
+				sname, sname);
 		}
-		
 	}
 }
 

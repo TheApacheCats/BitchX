@@ -79,7 +79,6 @@ extern int newscrollerpos, lastscrollerpos, lastscrollerwindow;
 extern int user_count;
 extern int shit_count;
 extern int bot_count;
-extern int in_server_ping;
 
 int serv_action = 0;
 
@@ -243,25 +242,6 @@ BUILT_IN_COMMAND(extern_write)
 			break;
 	}
 	
-}
-
-
-int check_serverlag(void)
-{
-	int i;
-		
-	for (i = 0; i < server_list_size(); i++)
-	{
-		if (is_server_connected(i) && now != get_server_lagtime(i))
-		{
-			set_server_lagtime(i, now);
-			my_send_to_server(i, "PING %s %s", get_server_nickname(i), get_server_itsname(i));
-			in_server_ping++;
-			set_server_lag(i, -1);
-		}
-	}
-
-	return 0;
 }
 
 int timer_unban (void *args, char *sub)

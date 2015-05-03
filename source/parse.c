@@ -64,7 +64,6 @@ static	void	strip_modes (char *, char *, char *);
 
 	char *last_split_server = NULL;
 	char *last_split_from = NULL;
-	int in_server_ping = 0;
 
 /*
  * joined_nick: the nickname of the last person who joined the current
@@ -784,85 +783,92 @@ static	void p_quit(char *from, char **ArgList)
 #endif
 }
 
+static int sping_reply(char *from, char *sping_dest, int server)
+{
+	char buff[50];
+	struct timeval timenow;
+	Sping *tmp = get_server_sping(server, sping_dest);
+
+	if (!tmp)
+		return 0;
+
+	get_time(&timenow);
+	snprintf(buff, sizeof buff, "%2.4f", BX_time_diff(tmp->in_sping, timenow));
+
+	reset_display_target();
+	put_it("%s", convert_output_format("$G Server pong from %W$0%n $1 seconds", "%s %s", from, buff));
+	clear_server_sping(server, sping_dest);
+	return 1;
+}	
+
 static	void p_pong(char *from, char **ArgList)
 {
 	int is_server = 0;
-	int i;	
-
 	
-	if (!ArgList[0])
+	if (!ArgList[0] || !ArgList[1])
 		return;
+
 	is_server = wild_match("*.*", ArgList[0]);
-	if (in_server_ping && is_server)
+
+	if (check_ignore(from, FromUserHost, NULL, IGNORE_PONGS, NULL) == IGNORED)
+		return;
+
+	if (!is_server)
+		return;
+
+	if (!strncmp(ArgList[1], "LAG!", 4))
 	{
-		int old_from_server = from_server;
-		for (i = 0; i < server_list_size(); i++)
-		{
-			if ((!my_stricmp(ArgList[0], get_server_name(i)) || !my_stricmp(ArgList[0], get_server_itsname(i))) && is_server_open(i))
+		/* PONG for lag check */
+		char *p, *q;
+		unsigned long cookie;
+		struct timeval timenow, timethen;
+		int old_lag, new_lag;
+
+		p = strchr(ArgList[1], '.');
+		if (p)
+		{			
+			*p++ = 0;
+			cookie = strtoul(ArgList[1] + 4, NULL, 10);
+
+			if (cookie == get_server_lag_cookie(from_server))
 			{
-				int old_lag = get_server_lag(i);
-				from_server = i;
-				set_server_lag(i, now - get_server_lagtime(i));
-				in_server_ping--;
-				if (old_lag != get_server_lag(i))
-					status_update(1);
-				from_server = old_from_server;
-				return;
-			}
-		}
-		from_server = old_from_server;
-	}
-	if (check_ignore(from, FromUserHost, NULL, IGNORE_PONGS, NULL) != IGNORED)
-	{
-		if (!is_server)
-			return;
-		reset_display_target();
-		if (!ArgList[1])
-			say("%s: PONG received from %s", ArgList[0], from);
-		else if (!strncmp(ArgList[1], "LAG", 3))
-		{
-			char *p = empty_string;
-			char buff[50];
-			struct timeval timenow = {0};
-			struct timeval timethen;
-			if ((p = strchr(ArgList[1], '.')))
-			{
-				*p++ = 0;
-				timethen.tv_usec = my_atol(p);
-			} else
-				timethen.tv_usec = 0;
-			timethen.tv_sec = my_atol(ArgList[1]+3);
-			get_time(&timenow);
-			sprintf(buff, "%2.4f", BX_time_diff(timethen, timenow));
-			put_it("%s", convert_output_format("$G Server pong from %W$0%n $1 seconds", "%s %s", ArgList[0], buff));
-			clear_server_sping(from_server, ArgList[0]);
-		}
-		else if (!my_stricmp(ArgList[1], get_server_nickname(from_server)))
-		{
-			char buff[50];
-			Sping *tmp;
-			if ((tmp = get_server_sping(from_server, ArgList[0])))
-			{
-				struct timeval timenow = {0};
-				get_time(&timenow);
-				sprintf(buff, "%2.4f", BX_time_diff(tmp->in_sping, timenow));
-				put_it("%s", convert_output_format("$G Server pong from %W$0%n $1 seconds", "%s %s", ArgList[0], buff));
-				clear_server_sping(from_server, ArgList[0]);
-				if (is_server_connected(from_server))
+				q = strchr(p, '.');
+				if (q)
 				{
-					int old_lag = get_server_lag(from_server);
-					set_server_lag(from_server, now - get_server_lagtime(from_server));
-					if (old_lag != get_server_lag(from_server))
-						status_update(1);
+					*q++ = 0;
+					timethen.tv_usec = my_atol(q);
+				} else
+					timethen.tv_usec = 0;
+
+				timethen.tv_sec = my_atol(p);
+				get_time(&timenow);
+
+				old_lag = get_server_lag(from_server);
+				new_lag = (int)(BX_time_diff(timethen, timenow) + 0.5);
+				if (old_lag != new_lag)
+				{
+					set_server_lag(from_server, new_lag);
+					status_update(1);
 				}
 			}
 		}
-		else
-			say("%s: PONG received from %s %s", ArgList[0], from, ArgList[1]);
 	}
-	return;
+	else if (!my_stricmp(ArgList[1], get_server_nickname(from_server)))
+	{
+		/* PONG from remote server */
+		sping_reply(ArgList[0], ArgList[0], from_server);	
+	}
+	else if (wild_match("*.*", ArgList[1]))
+	{
+		/* PONG from local server, possibly on behalf of remote server */
+		sping_reply(ArgList[0], ArgList[1], from_server);
+	}
+	else
+	{
+		reset_display_target();
+		say("%s: PONG received from %s %s", ArgList[0], from, ArgList[1]);
+	}
 }
-		
 
 static	void p_error(char *from, char **ArgList)
 {
