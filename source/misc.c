@@ -4371,55 +4371,6 @@ int	count = 0,
 
 }
 
-int caps_fucknut (register unsigned char *crap)
-{
-	int total = 0, allcaps = 0;
-/* removed from ComStud client */
-	while (*crap)
-	{
-		if (isalpha(*crap))
-		{
-			total++;
-			if (isupper(*crap))
-				allcaps++;
-		}
-		crap++;
-	}
-	if (total > 12)
-	{
-		if ( ((unsigned int)(((float) allcaps / (float) total) * 100) >= 75))
-			return (1);
-	}
-	return (0);
-}
-
-int char_fucknut (register unsigned char *crap, char looking, int max)
-{
-	int total = strlen(crap), allchar = 0;
-
-	while (*crap)
-	{
-		if ((*crap == looking))
-		{
-			crap++;
-			while(*crap && *crap != looking)
-			{
-				allchar++;
-				crap++;
-			}
-		}
-		if (*crap)
-			crap++;
-	}
-	if (total > 12)
-	{
-		if ( ((unsigned int)(((float) allchar / (float) total) * 100)) >= 75)
-			return (1);
-	}
-	return (0);
-}
-
-
 static char *make_timestamp(int do_timestamp, char *timestr)
 {
 static char time_str[61];

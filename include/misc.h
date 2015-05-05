@@ -96,7 +96,6 @@ ChannelList *	BX_prepare_command (int *, char *, int);
 	void	log_toggle (int, ChannelList *);
 
 	char	*cluster (char *);
-	int	caps_fucknut (register unsigned char *);
 
 	void    do_reconnect (char *);
 
@@ -121,7 +120,6 @@ ChannelList *	BX_prepare_command (int *, char *, int);
 	void		check_server_connect (int);
 	const char	*country(const char *);
 	int		do_newuser (char *, char *, char *);
-	int		char_fucknut (register unsigned char *, char, int);
 	BanList		*ban_is_on_channel(register char *, register ChannelList *);
 	BanList		*eban_is_on_channel(register char *, register ChannelList *);
 	void		check_orig_nick(char *);

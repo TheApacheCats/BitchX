@@ -172,6 +172,54 @@ found_auto:
 	return 1;
 }
 
+static int caps_fucknut (const char *crap)
+{
+	int total = 0, allcaps = 0;
+/* removed from ComStud client */
+	while (*crap)
+	{
+		if (isalpha((unsigned char)*crap))
+		{
+			total++;
+			if (isupper((unsigned char)*crap))
+				allcaps++;
+		}
+		crap++;
+	}
+	if (total > 12)
+	{
+		if ( ((unsigned int)(((float) allcaps / (float) total) * 100) >= 75))
+			return (1);
+	}
+	return (0);
+}
+
+static int char_fucknut (const char *crap, char looking, int max)
+{
+	int total = strlen(crap), allchar = 0;
+
+	while (*crap)
+	{
+		if ((*crap == looking))
+		{
+			crap++;
+			while(*crap && *crap != looking)
+			{
+				allchar++;
+				crap++;
+			}
+		}
+		if (*crap)
+			crap++;
+	}
+	if (total > 12)
+	{
+		if ( ((unsigned int)(((float) allchar / (float) total) * 100)) >= 75)
+			return (1);
+	}
+	return (0);
+}
+
 int annoy_kicks(int list_type, char *to, char *from, char *ptr, NickList *nick)
 {
 int kick_em = 0;
