@@ -172,7 +172,8 @@ found_auto:
 	return 1;
 }
 
-static int caps_fucknut (const char *crap)
+/* Check for more than 75% ALLCAPS */
+static int annoy_caps(const char *crap)
 {
 	int total = 0, allcaps = 0;
 /* removed from ComStud client */
@@ -186,44 +187,36 @@ static int caps_fucknut (const char *crap)
 		}
 		crap++;
 	}
-	if (total > 12)
-	{
-		if ( ((unsigned int)(((float) allcaps / (float) total) * 100) >= 75))
-			return (1);
-	}
-	return (0);
+	return total > 12 && (double)allcaps / total >= 0.75;
 }
 
-static int char_fucknut (const char *crap, char looking, int max)
+/* Check for more than 75% of printable chars highlighted */
+static int annoy_hl(const char *crap, char hl_tog)
 {
-	int total = strlen(crap), allchar = 0;
+	int total = 0, all_hl = 0, in_highlight = 0;
 
 	while (*crap)
 	{
-		if ((*crap == looking))
+		if (*crap == hl_tog)
+			in_highlight = !in_highlight;
+
+		if (isgraph((unsigned char)*crap))
 		{
-			crap++;
-			while(*crap && *crap != looking)
-			{
-				allchar++;
-				crap++;
-			}
+			total++;
+			if (in_highlight)
+				all_hl++;
 		}
-		if (*crap)
-			crap++;
+
+		crap++;
 	}
-	if (total > 12)
-	{
-		if ( ((unsigned int)(((float) allchar / (float) total) * 100)) >= 75)
-			return (1);
-	}
-	return (0);
+	return total > 12 && (double)all_hl / total >= 0.75;
 }
 
 int annoy_kicks(int list_type, char *to, char *from, char *ptr, NickList *nick)
 {
-int kick_em = 0;
-ChannelList *chan;
+	int kick_em = 0;
+	ChannelList *chan;
+
 	if (nick && (nick->userlist && nick->userlist->flags))
 		return 0;
 	if (!check_channel_match(get_string_var(PROTECT_CHANNELS_VAR), to) || !are_you_opped(to))
@@ -233,17 +226,19 @@ ChannelList *chan;
 	if (get_cset_int_var(chan->csets, ANNOY_KICK_CSET) && !nick_isop(nick))
 	{	
 		char *buffer = NULL;
-		if (char_fucknut(ptr, '\002', 12))
-			malloc_sprintf(&buffer, "KICK %s %s :%s",to, from, "autokick for \002bold\002");
-		else if (char_fucknut(ptr, '\007', 1))
+		if (annoy_hl(ptr, BOLD_TOG))
+			malloc_sprintf(&buffer, "KICK %s %s :%s", to, from, "autokick for " BOLD_TOG_STR "bold" BOLD_TOG_STR);
+		else if (strchr(ptr, '\007'))
 			malloc_sprintf(&buffer, "KICK %s %s :%s", to, from, "autokick for beeping");
-		else if (char_fucknut(ptr, '\003', 12))
-			malloc_sprintf(&buffer, "KICK %s %s :%s", to, from, "autokick for \037mirc color\037");
-		else if (char_fucknut(ptr, '\037', 0))
-			malloc_sprintf(&buffer, "KICK %s %s :%s", to, from, "autokick for \037underline\037");
-		else if (char_fucknut(ptr, '\026', 12))
-			malloc_sprintf(&buffer, "KICK %s %s :%s", to, from, "autokick for \026inverse\026");
-		else if (caps_fucknut(ptr))
+		else if (annoy_hl(ptr, '\003'))
+			malloc_sprintf(&buffer, "KICK %s %s :%s", to, from, "autokick for " UND_TOG_STR "mirc color" UND_TOG_STR);
+		else if (annoy_hl(ptr, UND_TOG))
+			malloc_sprintf(&buffer, "KICK %s %s :%s", to, from, "autokick for " UND_TOG_STR "underline" UND_TOG_STR);
+		else if (annoy_hl(ptr, REV_TOG))
+			malloc_sprintf(&buffer, "KICK %s %s :%s", to, from, "autokick for " REV_TOG_STR "inverse" REV_TOG_STR);
+		else if (annoy_hl(ptr, BLINK_TOG))
+			malloc_sprintf(&buffer, "KICK %s %s :%s", to, from, "autokick for " BLINK_TOG_STR "flashing" BLINK_TOG_STR);
+		else if (annoy_caps(ptr))
 			malloc_sprintf(&buffer, "KICK %s %s :%s", to, from, "autokick for CAPS LOCK");
 		else if (strstr(ptr, "0000027fed"))
 		{
