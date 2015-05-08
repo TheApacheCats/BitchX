@@ -1160,8 +1160,6 @@ static	void p_channel(char *from, char **ArgList)
 
 			if (!its_me && chan && chan->have_op)
 			{
-				char lame_chars[] = "\x01\x02\x03\x04\x05\x06\x07\x08\x0b\x0c\x0d\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a";
-				register char *p;
 				if (get_cset_int_var(chan->csets, LAMELIST_CSET))
 				{
 					if (lame_list && find_in_list((List **)&lame_list, from, 0))
@@ -1174,16 +1172,13 @@ static	void p_channel(char *from, char **ArgList)
 				}
 				if (get_cset_int_var(chan->csets, LAMEIDENT_CSET))
 				{
-					for (p = FromUserHost; *p; p++)
+					/* This may be obsolete, I don't know of any servers that allow this */
+					static const char lame_chars[] = 
+						"\x01\x02\x03\x04\x05\x06\x07\x08\x0b\x0c\x0d\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a";
+					if (strpbrk(FromUserHost, lame_chars))
 					{
-						char *user, *host;
-						if (!strchr(lame_chars, *p))
-							continue;
-						user = LOCAL_COPY(FromUserHost);
-						host = strchr(FromUserHost, '@');
-						host++;
+						char *host = strchr(FromUserHost, '@') + 1;
 						send_to_server("MODE %s +b *!*@%s\r\nKICK %s %s :\002Lame Ident detected\002", chan->channel, cluster(host), chan->channel, from);
-						break;
 					}
 				}
 			}
