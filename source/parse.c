@@ -1464,11 +1464,9 @@ int found = 0;
 
 static void check_bitch_mode(char *from, char *uh, char *channel, char *line, ChannelList *chan)
 {
-NickList *nick;
-char *new_mode = NULL;
-char *n = NULL;
-time_t right_now;
-
+	NickList *nick;
+	char *new_mode = NULL;
+	char *n = NULL;
 	
 	if (!from || !chan || (chan && (!get_cset_int_var(chan->csets, BITCH_CSET) || !chan->have_op)))
 		return;
@@ -1485,7 +1483,6 @@ time_t right_now;
 		char type_mode = '%' , *this_nick, *list_nicks;
 		int found = 0;
 		list_nicks = LOCAL_COPY(n);
-		right_now = now;
 		for (p = new_mode; *p; p++)
 		{
 			switch(*p)
@@ -1931,7 +1928,6 @@ void parse_server(char *orig_line)
 #ifdef WANT_DLL
 	RawDll	*raw = NULL;
 #endif
-	protocol_command *retval;
 	int	loc;
 	int	cnt;
 
@@ -2028,8 +2024,7 @@ void parse_server(char *orig_line)
 		numbered_command(from, numeric, ArgList);
 	else
 	{
-		retval = (protocol_command *)find_fixed_array_item(
-			(void *)rfc1459, sizeof(protocol_command), 
+		find_fixed_array_item((void *)rfc1459, sizeof(protocol_command), 
 			num_protocol_cmds + 1, comm, &cnt, &loc);
 
 		if (cnt < 0 && rfc1459[loc].inbound_handler)
