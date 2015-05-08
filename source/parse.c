@@ -493,12 +493,8 @@ static	void p_privmsg(char *from, char **Args)
 		*to,
 		*high;
 
-	static int com_do_log, com_lines = 0;
-
 	ChannelList *channel = NULL;
 	NickList *tmpnick = NULL;
-	
-
 	
 	if (!from)
 		return;
@@ -605,7 +601,6 @@ static	void p_privmsg(char *from, char **Args)
 	update_stats(PUBLICLIST, tmpnick, channel, 0);
 
 	level = set_lastlog_msg_level(log_type);
-	com_do_log = 0;
 	if (flood_type == PUBLIC_FLOOD)
 	{
 		int blah = 0;
@@ -632,8 +627,6 @@ static	void p_privmsg(char *from, char **Args)
 			if (check_auto_reply(ptr))
 			{
 				addtabkey(from, "msg", 1);
-				com_do_log = 1;
-				com_lines = 0;
 				ar_true = 1;
 				added_to_tab = 1;
 			}
