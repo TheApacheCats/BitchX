@@ -991,7 +991,6 @@ static	void p_authenticate(char *from, char **ArgList)
 void add_user_who (WhoEntry *w, char *from, char **ArgList)
 {
 	char *userhost;
-	ChannelList *chan;
 	int op = 0, voice = 0;
 
 	/* Obviously this is safe. */
@@ -999,7 +998,7 @@ void add_user_who (WhoEntry *w, char *from, char **ArgList)
 	sprintf(userhost, "%s@%s", ArgList[1], ArgList[2]);
 	voice = (strchr(ArgList[5], '+') != NULL);
 	op = (strchr(ArgList[5], '@') != NULL);
-	chan = add_to_channel(ArgList[0], ArgList[4], from_server, op, voice, userhost, ArgList[3], ArgList[5], 0, ArgList[6] ? my_atol(ArgList[6]) : 0);
+	add_to_channel(ArgList[0], ArgList[4], from_server, op, voice, userhost, ArgList[3], ArgList[5], 0, ArgList[6] ? my_atol(ArgList[6]) : 0);
 #ifdef WANT_NSLOOKUP
 	if (get_int_var(AUTO_NSLOOKUP_VAR))
 		do_nslookup(ArgList[2], ArgList[4], ArgList[1], ArgList[0], from_server, auto_nslookup, NULL);

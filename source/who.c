@@ -399,7 +399,6 @@ void whoreply (char *from, char **ArgList)
 		*nick,
 		*stat,
 		*name;
-	ChannelList *chan = NULL;
 	char buf_data[BIG_BUFFER_SIZE+1];
 	WhoEntry *new_w = who_queue_top(from_server);
 
@@ -522,7 +521,7 @@ do
 				nick, stat, user, host, server, name);
 
 		set_display_target(channel, LOG_CRAP);
-		chan = add_to_channel(channel, nick, from_server, opped, voice, buf_data, server, stat, 0, my_atol(name));
+		add_to_channel(channel, nick, from_server, opped, voice, buf_data, server, stat, 0, my_atol(name));
 		if (new_w->who_stuff)
 			parse_line(NULL, new_w->who_stuff, buffer, 0, 0, 1);
 		else if (!in_join_list(channel, from_server) && do_hook(WHO_LIST, "%s", buffer))
