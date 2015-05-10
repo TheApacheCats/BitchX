@@ -1366,10 +1366,8 @@ static	void p_nick(char *from, char **ArgList)
 {
 	int	one_prints = 0,
 		its_me = 0;
-ChannelList	*chan;
+	ChannelList	*chan;
 	char	*line;
-
-
 	
 	line = ArgList[0];
 	if (!my_stricmp(from, get_server_nickname(from_server)))
@@ -1378,7 +1376,7 @@ ChannelList	*chan;
   		its_me = 1;
 		nick_command_is_pending(from_server, 0);
 	}
-	if (!check_ignore(from, FromUserHost, NULL, IGNORE_NICKS, NULL))
+	if (check_ignore(from, FromUserHost, NULL, IGNORE_NICKS, NULL) == IGNORED)
 		goto do_nick_rename;
 	for (chan = get_server_channels(from_server); chan; chan = chan->next)
 	{
