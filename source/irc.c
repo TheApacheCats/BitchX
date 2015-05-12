@@ -1271,7 +1271,7 @@ void BX_io (const char *what)
 	else
 		real_timeout = clock_timeout;
 
-	if(server_timeout && (server_timeout == -1 || server_timeout < real_timeout))
+	if (server_timeout >= 0 && server_timeout < real_timeout)
 		real_timeout = server_timeout;
 
 	time_ptr = &my_timer;
@@ -1288,7 +1288,7 @@ void BX_io (const char *what)
 	switch ((rc = new_select(&rd, &wd, time_ptr)))
 	{
 		case 0:
-			if(server_timeout)
+			if (server_timeout >= 0)
 				do_idle_server();
 			break;
 		case -1:

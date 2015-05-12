@@ -230,7 +230,7 @@ void close_unattached_servers(void)
 long	set_server_bits (fd_set *rd, fd_set *wr)
 {
 	int	i;
-	long timeout = 0;
+	long timeout = -1;
 
 	for (i = 0; i < number_of_servers; i++)
 	{
@@ -240,8 +240,6 @@ long	set_server_bits (fd_set *rd, fd_set *wr)
 			 * return in milliseconds.
 			 */
 			timeout = get_int_var(CONNECT_DELAY_VAR)*1000;
-			if(!timeout)
-				timeout = -1;
 		}
 
 		if (server_list[i].read > -1)
