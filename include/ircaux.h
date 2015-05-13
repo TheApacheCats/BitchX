@@ -84,6 +84,8 @@ int	lw_strcmp 		(comp_func *, char *, char *);
 int	open_to 		(char *, int, off_t);
 struct timeval BX_get_time 	(struct timeval *);
 double 	BX_time_diff 		(struct timeval, struct timeval);
+double time_since(const struct timeval *tv_from);
+double time_until(const struct timeval *tv_to);
 char *	BX_plural 			(int);
 int	BX_time_to_next_minute 	(void);
 char *	BX_remove_trailing_spaces 	(char *);

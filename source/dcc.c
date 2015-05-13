@@ -1617,7 +1617,7 @@ char		lame_type[30];
 		strcpy(lame_type, "T");	
 	strcat(lame_type, dcc_types[type]->name);
 
-	xtime = BX_time_diff(n->starttime, get_time(NULL));
+	xtime = time_since(&n->starttime);
 	xfer = (double)(n->bytes_sent ? n->bytes_sent : n->bytes_read);
 
 	if (xfer == 0.0)
@@ -2884,7 +2884,7 @@ DCC_int *n;
 		return;
 	dcc_bytes_in += n->bytes_read;
 	dcc_bytes_out += n->bytes_sent;
-	xtime = BX_time_diff(n->starttime, get_time(NULL));
+	xtime = time_since(&n->starttime);
 
 	if (xtime <= 0)
 		xtime = 1;

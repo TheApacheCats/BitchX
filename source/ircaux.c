@@ -1746,6 +1746,24 @@ double BX_time_diff (struct timeval one, struct timeval two)
 	return (double)td.tv_sec + ((double)td.tv_usec / 1000000.0);
 }
 
+/* Calculate time elapsed since a time in the past. */
+double time_since(const struct timeval *tv_from)
+{
+    struct timeval tv_now;
+
+	get_time(&tv_now);
+	return BX_time_diff(*tv_from, tv_now);
+}
+
+/* Calculate time from now until a time in the future. */
+double time_until(const struct timeval *tv_to)
+{
+	struct timeval tv_now;
+
+	get_time(&tv_now);
+	return BX_time_diff(tv_now, *tv_to);
+}
+
 int BX_time_to_next_minute (void)
 {
 	time_t now = time(NULL);

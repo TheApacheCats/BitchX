@@ -5531,7 +5531,7 @@ struct timeval start;
 	 * with the arguments.
 	 */
 	add_timer(0, empty_string, milliseconds, 1, (int (*)(void *, char *))comment, NULL, NULL, get_current_winref(), "pause");
-	while (BX_time_diff(get_time(NULL), start) > 0)
+	while (time_until(&start) > 0)
 		io("e_pause");
 }
 
