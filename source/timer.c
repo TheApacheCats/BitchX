@@ -457,7 +457,6 @@ char *function_timer(char *n, char *args)
 	char *ref = next_arg(args, &args);
 	TimerList *t = NULL;
 	double time_left;
-	struct timeval current;
 
 	if (ref && *ref)
 		t = get_timer(ref);
@@ -465,8 +464,7 @@ char *function_timer(char *n, char *args)
 	if (!t)
 		return m_strdup(empty_string);
 
-	get_time(&current);
-	time_left = BX_time_diff(current, t->time);
+	time_left = time_until(&t->time);
 	if (time_left < 0)
 		time_left = 0.0;
 
@@ -597,9 +595,6 @@ static char *schedule_timer (TimerList *ntimer)
 	return ntimer->ref;
 }
 
-static	struct timeval current;
-
-
 /*
  * TimerTimeout:  Called from irc_io to help create the timeout
  * part of the call to select.
@@ -614,12 +609,11 @@ time_t TimerTimeout (void)
 		;
 	else
 		t = MAGIC_TIMEOUT;
-	get_time(&current);
 	if (!PendingTimers)
 		timeout_in = tclTimerTimeout(MAGIC_TIMEOUT);
 	else
 	{
-		timeout_in = (time_t)(BX_time_diff(current, PendingTimers->time) * 1000);
+		timeout_in = (time_t)(time_until(&PendingTimers->time) * 1000);
 		timeout_in = (time_t)(tclTimerTimeout((timeout_in < 0) ? 0 : timeout_in));
 	}
 	

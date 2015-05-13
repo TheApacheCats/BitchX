@@ -822,14 +822,12 @@ static	void p_quit(char *from, char **ArgList)
 static int sping_reply(char *from, char *sping_dest, int server)
 {
 	char buff[50];
-	struct timeval timenow;
 	Sping *tmp = get_server_sping(server, sping_dest);
 
 	if (!tmp)
 		return 0;
 
-	get_time(&timenow);
-	snprintf(buff, sizeof buff, "%2.4f", BX_time_diff(tmp->in_sping, timenow));
+	snprintf(buff, sizeof buff, "%2.4f", time_since(&tmp->in_sping));
 
 	reset_display_target();
 	put_it("%s", convert_output_format("$G Server pong from %W$0%n $1 seconds", "%s %s", from, buff));

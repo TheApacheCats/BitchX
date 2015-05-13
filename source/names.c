@@ -1847,7 +1847,7 @@ int in_join_list(char *chan, int server)
 
 void channel_sync(struct joinlist *tmp, char *channel)
 {
-	struct timeval tv;
+	double synch_time = time_since(&tmp->tv);
 
 	if (tmp->gotinfo & GOTNEW)
 	{
@@ -1860,10 +1860,9 @@ void channel_sync(struct joinlist *tmp, char *channel)
 				my_send_to_server(tmp->server, "MODE %s :%s", channel, chanmode);
 	}
 
-	get_time(&tv);
 	set_display_target(channel, LOG_CRAP);
-	if (do_hook(CHANNEL_SYNCH_LIST, "%s %1.3f", channel, BX_time_diff(tmp->tv,tv)))
-		bitchsay("Join to %s was synched in %1.3f secs!!", channel, BX_time_diff(tmp->tv,tv));
+	if (do_hook(CHANNEL_SYNCH_LIST, "%s %1.3f", channel, synch_time))
+		bitchsay("Join to %s was synched in %1.3f secs!!", channel, synch_time);
 #ifdef WANT_USERLIST
 	delay_check_auto(channel);
 #endif
