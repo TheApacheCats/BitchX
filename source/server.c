@@ -387,8 +387,7 @@ static void scan_nonblocking(void)
 		if (((server_list[i].read > -1) ||
 		     (server_list[i].write > -1)) &&
 		    !(server_list[i].login_flags & LOGGED_IN) &&
-		    (time(NULL) - server_list[i].connect_time >
-		     connect_timeout)) {
+		    time_since(&server_list[i].connect_time) > connect_timeout) {
 			if (server_list[i].read > -1)
 				new_close(server_list[i].read);
 			if (server_list[i].write > -1)
@@ -439,7 +438,7 @@ void	do_idle_server (void)
 		{
 			int connect_delay = get_int_var(CONNECT_DELAY_VAR);
 
-			if(!connect_delay || (time(NULL) - server_list[i].connect_time) > connect_delay)
+			if (time_since(&server_list[i].connect_time) > connect_delay)
 			{
 				int servernum = i;
 
@@ -479,7 +478,7 @@ static	time_t	last_timeout = 0;
 		{
 			int connect_delay = get_int_var(CONNECT_DELAY_VAR);
 
-			if(!connect_delay || (time(NULL) - server_list[i].connect_time) > connect_delay)
+			if (time_since(&server_list[i].connect_time) > connect_delay)
 			{
 				int servernum = i;
 
@@ -1417,7 +1416,7 @@ int 	BX_connect_to_server_by_refnum (int refnum, int c_server)
 		if (conn)
 			return -1;
 
-		server_list[refnum].connect_time = time(NULL);
+		get_time(&server_list[refnum].connect_time);
 #ifdef NON_BLOCKING_CONNECTS
 		server_list[refnum].connect_wait = 1;
 		server_list[refnum].c_server = c_server;
@@ -3331,7 +3330,7 @@ void set_server_reconnect(int s, int val)
 	{
 		server_list[s].reconnect = val;
 		if(val)
-			server_list[s].connect_time = time(NULL);
+			get_time(&server_list[s].connect_time);
 	}
 }
 

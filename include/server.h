@@ -155,7 +155,7 @@ typedef	struct
 	int from_server;
 #endif
 	char *orignick;
-	time_t connect_time;
+	struct timeval connect_time;
 #if defined(HAVE_SSL) && !defined(IN_MODULE)   
 	SSL_CTX* ctx;
 	int enable_ssl;
