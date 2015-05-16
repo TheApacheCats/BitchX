@@ -11,6 +11,7 @@ CVS_REVISION(fset_c)
 #include "misc.h"
 #include "list.h"
 #include "vars.h"
+#include "tcl_bx.h"
 #define MAIN_SOURCE
 #include "modval.h"
 

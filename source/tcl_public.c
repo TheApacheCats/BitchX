@@ -1435,7 +1435,7 @@ struct timeval now1;
 			{
 				for (i=0; i<argc; i++) 
 					Tcl_DStringAppendElement(&ds,argv[i]);
-				free(argv);
+				ckfree((char *)argv);
 				code=Tcl_Eval(tcl_interp,Tcl_DStringValue(&ds));
 				/* code=Tcl_Eval(tcl_interp,mark->cmd); */
 				Tcl_DStringFree(&ds);

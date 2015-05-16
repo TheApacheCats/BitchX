@@ -26,7 +26,7 @@ void tcl_load (char *, char *, char *, char *);
 
 #ifdef WANT_TCL
 
-
+#define USE_NON_CONST
 #include <tcl.h>
 extern Tcl_Interp *tcl_interp;
 void check_tcl_tand (char *, char *, char *);

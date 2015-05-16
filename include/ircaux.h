@@ -16,10 +16,6 @@
 #include "irc.h"
 #include "irc_std.h"
 #include <stdio.h>
-#ifdef WANT_TCL
-#undef USE_TCLALLOC
-#include <tcl.h>
-#endif
 
 typedef int comp_len_func (char *, char *, int);
 typedef int comp_func (char *, char *);
