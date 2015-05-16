@@ -620,5 +620,5 @@ time_t TimerTimeout (void)
 	if (t < timeout_in)
 		timeout_in = t * 1000;
 		
-	return (timeout_in < 0) ? 0 : timeout_in + 100;
+	return (timeout_in < 0) ? 0 : timeout_in;
 }
