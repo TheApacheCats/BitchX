@@ -176,7 +176,7 @@ extern	void ExecuteTimers (void)
 	get_time(&now1);
 	
         parsingtimer = 1;
-	while (PendingTimers && BX_time_diff(now1, PendingTimers->time) < 0)
+	while (PendingTimers && time_cmp(&now1, &PendingTimers->time) >= 0)
 	{
 		int old_refnum = current_window->refnum;
 
@@ -587,7 +587,7 @@ static char *schedule_timer (TimerList *ntimer)
 	/* we've created it, now put it in order */
 	for (slot = &PendingTimers; *slot; slot = &(*slot)->next)
 	{
-		if (BX_time_diff((*slot)->time, ntimer->time) < 0)
+		if (time_cmp(&(*slot)->time, &ntimer->time) > 0)
 			break;
 	}
 	ntimer->next = *slot;

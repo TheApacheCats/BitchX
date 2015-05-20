@@ -82,6 +82,7 @@ struct timeval BX_get_time 	(struct timeval *);
 double 	BX_time_diff 		(struct timeval, struct timeval);
 double time_since(const struct timeval *tv_from);
 double time_until(const struct timeval *tv_to);
+int time_cmp(const struct timeval *a, const struct timeval *b);
 char *	BX_plural 			(int);
 int	BX_time_to_next_minute 	(void);
 char *	BX_remove_trailing_spaces 	(char *);

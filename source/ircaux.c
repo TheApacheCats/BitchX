@@ -1764,6 +1764,15 @@ double time_until(const struct timeval *tv_to)
 	return BX_time_diff(tv_now, *tv_to);
 }
 
+/* Compare two timevals - returns 1, 0 or -1 if a is >, = or < b */
+int time_cmp(const struct timeval *a, const struct timeval *b)
+{
+	if (a->tv_sec == b->tv_sec)
+		return (a->tv_usec > b->tv_usec) - (a->tv_usec < b->tv_usec);
+	else
+		return (a->tv_sec > b->tv_sec) - (a->tv_sec < b->tv_sec);
+}
+
 int BX_time_to_next_minute (void)
 {
 	time_t now = time(NULL);
