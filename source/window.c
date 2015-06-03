@@ -147,14 +147,20 @@ Window	*BX_new_window(Screen *screen)
 	new->status_split = 1;	
 	new->scratch_line = -1;
 
-#ifdef DEFAULT_DOUBLE_STATUS
-	new->double_status = DEFAULT_DOUBLE_STATUS;
-#else
- 	if (new->refnum == 1)
-  		new->double_status = 1;
-  	else
+	switch (get_int_var(DOUBLE_STATUS_LINE_VAR))
+	{
+	case 0:
   		new->double_status = 0;
-#endif
+		break;
+	case 1:
+	 	if (new->refnum == 1)
+  			new->double_status = 1;
+		else
+  			new->double_status = 0;
+		break;
+	default:
+		new->double_status = 1;
+	}
 
 #ifdef DEFAULT_STATUS_LINES
 	new->status_lines = DEFAULT_STATUS_LINES;
