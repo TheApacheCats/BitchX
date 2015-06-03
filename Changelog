@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Wire up /set DOUBLE_STATUS_LINE (reported by presi). (caf)
+
 * Fix ignoring of nick changes. (caf)
 
 [Changes 1.2.1]
