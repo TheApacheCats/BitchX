@@ -3,6 +3,7 @@
 BitchX is known to compile on the following systems (maybe others as well):
     * FreeBSD 2.x and above
     * NetBSD 3 and above
+    * OpenBSD 2 and above
     * SunOS 4.1.4, 5.x and above
     * Linux (All)
     * IRIX 5, 6
