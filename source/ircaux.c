@@ -768,9 +768,9 @@ int	BX_my_strnicmp (const char *str1, const char *str2, size_t n)
 }
 
 /* my_strnstr: case insensitive version of strstr */
-int	BX_my_strnstr (register const unsigned char *str1, register const unsigned char *str2, register size_t n)
+int	BX_my_strnstr (const char *str1, const char *str2, size_t n)
 {
-	char *p = (char *)str1;
+	const char *p = str1;
 	if (!p) return 0;
 	for (; *p; p++)
 		if (!strncasecmp(p, str2, strlen(str2)))

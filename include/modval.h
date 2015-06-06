@@ -130,7 +130,7 @@ extern Function_ptr *global;
 #define my_stricmp (*(int (*)(const char *, const char *))global[MY_STRICMP])
 #define my_strnicmp (*(int (*)(const char *, const char *, size_t))global[MY_STRNICMP])
 
-#define my_strnstr (*(int (*)(const unsigned char *, const unsigned char *, size_t))global[MY_STRNSTR])
+#define my_strnstr (*(int (*)(const char *, const char *, size_t))global[MY_STRNSTR])
 #define chop (*(char * (*)(char *, int))global[CHOP])
 #define strmcpy (*(char * (*)(char *, const char *, int))global[STRMCPY])
 #define strmcat (*(char * (*)(char *, const char *, int))global[STRMCAT])

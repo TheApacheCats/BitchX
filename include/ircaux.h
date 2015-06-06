@@ -62,7 +62,7 @@ int	BX_my_stricmp 	(const char *, const char *);
 int	BX_my_strnicmp	(const char *, const char *, size_t);
 #endif
 
-int	BX_my_strnstr 		(const unsigned char *, const unsigned char *, size_t);
+int	BX_my_strnstr 		(const char *, const char *, size_t);
 int	BX_scanstr 		(char *, char *);
 void	really_free 		(int);
 char *	BX_chop 			(char *, int);
