@@ -227,7 +227,7 @@ extern	SGroup	*server_group_list;
 	void	BX_server_is_connected (int, int);
 	int	BX_parse_server_index (char *);
 	void	BX_parse_server_info (char *, char **, char **, char **, char **);
-	long	set_server_bits (fd_set *, fd_set *);
+	void set_server_bits (fd_set *rd, fd_set *wr, struct timeval *wake_time);
 	void	BX_set_server_itsname (int, char *);
 	void	BX_set_server_version (int, int);
 	char	*BX_get_possible_umodes(int);

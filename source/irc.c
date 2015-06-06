@@ -1196,13 +1196,10 @@ extern void set_screens (fd_set *, fd_set *);
 void BX_io (const char *what)
 {
 	static int level = 0;
-	long clock_timeout = 0, 
-		timer_timeout = 0,
-		server_timeout = 0,
-		real_timeout = 0; 
-	static struct timeval my_now,
+	long clock_timeout = 0;
+	struct timeval my_now,
 		my_timer,
-		*time_ptr = &my_timer;
+		timeout;
 	int hold_over, rc;
 	fd_set rd, wd;
 	static int old_level = 0;
@@ -1211,9 +1208,6 @@ void BX_io (const char *what)
 
 	level++;
 
-	get_time(&my_now);
-	now = my_now.tv_sec;
-	
 	if (x_debug & DEBUG_WAITS)
 	{
 		if (level != old_level)
@@ -1237,6 +1231,9 @@ void BX_io (const char *what)
 
 	caller[level] = what;
 
+	get_time(&my_now);
+	now = my_now.tv_sec;
+
 	/* CHECK FOR CPU SAVER MODE */
 	if (!cpu_saver && get_int_var(CPU_SAVER_AFTER_VAR))
 		if (now - idle_time > get_int_var(CPU_SAVER_AFTER_VAR) * 60)
@@ -1250,7 +1247,6 @@ void BX_io (const char *what)
 #ifndef GUI
 	set_screens(&rd, &wd);
 #endif
-	server_timeout = set_server_bits(&rd, &wd);
 	set_process_bits(&rd);
 	set_socket_read(&rd, &wd);
 	set_nslookupfd(&rd);
@@ -1258,38 +1254,40 @@ void BX_io (const char *what)
 	gui_setfd(&rd);
 #endif
 
-	clock_timeout = (60 - (my_now.tv_sec % 60)) * 1000;
+	clock_timeout = 60 - (my_now.tv_sec % 60);
 	if (cpu_saver && get_int_var(CPU_SAVER_EVERY_VAR))
-		clock_timeout += (get_int_var(CPU_SAVER_EVERY_VAR) - 1) * 60000;
+		clock_timeout += (get_int_var(CPU_SAVER_EVERY_VAR) - 1) * 60;
 
-	timer_timeout = TimerTimeout();
+	my_timer.tv_sec = my_now.tv_sec + clock_timeout;
+	my_timer.tv_usec = 0;
 
-	if ((hold_over = unhold_windows()))
-		real_timeout = 0;
-	else if (timer_timeout <= clock_timeout)
-		real_timeout = timer_timeout;
-	else
-		real_timeout = clock_timeout;
+	set_server_bits(&rd, &wd, &my_timer);
 
-	if (server_timeout >= 0 && server_timeout < real_timeout)
-		real_timeout = server_timeout;
+	tclTimerTimeout(&my_timer);
 
-	time_ptr = &my_timer;
+	TimerTimeout(&my_timer);
 
-	if (real_timeout == -1)
-		time_ptr = NULL;
+	if ((hold_over = unhold_windows()) || time_cmp(&my_timer, &my_now) < 0)
+	{
+		timeout.tv_sec = 0;
+		timeout.tv_usec = 0;
+	}
 	else
 	{
-		time_ptr->tv_sec = real_timeout / 1000;
-		time_ptr->tv_usec = ((real_timeout % 1000) * 1000);
+		timeout.tv_sec = my_timer.tv_sec - my_now.tv_sec;
+		timeout.tv_usec = my_timer.tv_usec - my_now.tv_usec;
+		if (timeout.tv_usec < 0)
+		{
+			timeout.tv_sec--;
+			timeout.tv_usec += 1000000;
+		}
 	}
 	
 	/* GO AHEAD AND WAIT FOR SOME DATA TO COME IN */
-	switch ((rc = new_select(&rd, &wd, time_ptr)))
+	switch ((rc = new_select(&rd, &wd, &timeout)))
 	{
 		case 0:
-			if (server_timeout >= 0)
-				do_idle_server();
+			do_idle_server();
 			break;
 		case -1:
 		{
@@ -1309,7 +1307,8 @@ void BX_io (const char *what)
 		default:
 		{
 			cntl_c_hit = 0;
-			now = time(NULL);
+			get_time(&my_now);
+			now = my_now.tv_sec;
 			make_window_current(NULL);
 			do_server(&rd, &wd);
 			do_processes(&rd);
@@ -1327,7 +1326,8 @@ void BX_io (const char *what)
 		} 
 	}
 
-	now = time(NULL);
+	get_time(&my_now);
+	now = my_now.tv_sec;
 	ExecuteTimers();
 #ifdef WANT_TCL
 	check_utimers();

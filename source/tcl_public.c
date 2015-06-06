@@ -1480,46 +1480,24 @@ long time_left;
 	}
 }
 
-static struct timeval current;
-
-time_t tclTimerTimeout(time_t timeout)
+void tclTimerTimeout(struct timeval *wake_time)
 {
-	register TimerList	*stack = NULL;
-	long			this_timeout = 0;
+	TimerList *stack = NULL;
 
-	if (timeout == 0)
-		return 0;
-	get_time(&current);
-	if ((stack = tcl_Pending_timers))
-	{
-		/* this is in minutes */
-		for (; stack; stack = stack->next)
-			if ((this_timeout = (BX_time_diff(current, stack->time)) * 1000) < timeout)
-				timeout = this_timeout;
-	}
-	if ((stack = tcl_Pending_utimers))
-	{
-		/* this is in seconds */
-		for (; stack; stack = stack->next)
-			if ((this_timeout = (BX_time_diff(current, stack->time)) * 1000) < timeout)
-				timeout = this_timeout;
-	}
-#if defined(WINNT) || defined(__EMX__)
-	return (timeout == MAGIC_TIMEOUT) ? MAGIC_TIMEOUT : timeout;
-#else
-	return timeout;
-#endif
+	/* this is in minutes */
+	for (stack = tcl_Pending_timers; stack; stack = stack->next)
+		if (time_cmp(wake_time, &stack->time) > 0)
+			*wake_time = stack->time;
+	/* this is in seconds */
+	for (stack = tcl_Pending_utimers; stack; stack = stack->next)
+		if (time_cmp(wake_time, &stack->time) > 0)
+			*wake_time = stack->time;
 }
 
 #else /* WANT_TCL */
 
-time_t tclTimerTimeout(time_t timeout)
+void tclTimerTimeout(struct timeval *wake_time)
 {
-#if defined(WINNT) || defined(__EMX__)
-	return (timeout == MAGIC_TIMEOUT) ? MAGIC_TIMEOUT : timeout;
-#else
-	return timeout < MAGIC_TIMEOUT ? timeout : MAGIC_TIMEOUT;
-#endif
 }
 
 int check_tcl_dcc(char *cmd, char *nick, char *host, int idx)

@@ -19,6 +19,7 @@ typedef struct {
 
 extern cmd_t C_msg[];
 extern cmd_t C_dcc[];
+void tclTimerTimeout(struct timeval *wake_time);
 int check_tcl_dcc (char *, char *, char *, int);
 
 void tcl_command (char *, char *, char *, char *);

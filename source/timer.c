@@ -600,25 +600,8 @@ static char *schedule_timer (TimerList *ntimer)
  * part of the call to select.
  */
 
-time_t TimerTimeout (void)
+void TimerTimeout(struct timeval *wake_time)
 {
-	time_t	timeout_in;
-	time_t t = MAGIC_TIMEOUT;
-	
-	if (is_server_queue() && (t = get_int_var(QUEUE_SENDS_VAR)))
-		;
-	else
-		t = MAGIC_TIMEOUT;
-	if (!PendingTimers)
-		timeout_in = tclTimerTimeout(MAGIC_TIMEOUT);
-	else
-	{
-		timeout_in = (time_t)(time_until(&PendingTimers->time) * 1000);
-		timeout_in = (time_t)(tclTimerTimeout((timeout_in < 0) ? 0 : timeout_in));
-	}
-	
-	if (t < timeout_in)
-		timeout_in = t * 1000;
-		
-	return (timeout_in < 0) ? 0 : timeout_in;
+	if (PendingTimers && time_cmp(wake_time, &PendingTimers->time) > 0)
+		*wake_time = PendingTimers->time;
 }

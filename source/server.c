@@ -227,19 +227,19 @@ void close_unattached_servers(void)
  * set_server_bits: Sets the proper bits in the fd_set structure according to
  * which servers in the server list have currently active read descriptors.  
  */
-long	set_server_bits (fd_set *rd, fd_set *wr)
+void set_server_bits (fd_set *rd, fd_set *wr, struct timeval *wake_time)
 {
 	int	i;
-	long timeout = -1;
 
 	for (i = 0; i < number_of_servers; i++)
 	{
 		if (server_list[i].reconnect > 0)
 		{
-			/* CONNECT_DELAY is in seconds but we must
-			 * return in milliseconds.
-			 */
-			timeout = get_int_var(CONNECT_DELAY_VAR)*1000;
+			struct timeval connect_wake_time = server_list[i].connect_time;
+			connect_wake_time.tv_sec += get_int_var(CONNECT_DELAY_VAR);
+
+			if (time_cmp(wake_time, &connect_wake_time) > 0)
+				*wake_time = connect_wake_time;
 		}
 
 		if (server_list[i].read > -1)
@@ -250,9 +250,20 @@ long	set_server_bits (fd_set *rd, fd_set *wr)
 			FD_SET(server_list[i].write, wr);
 #endif
 	}
-	return timeout;
-}
 
+	/* Check for a QUEUE_SENDS wake_time */
+	if (serverqueue)
+	{
+		struct timeval queue_wake_time;
+
+		queue_wake_time.tv_sec = server_list[serverqueue->server].last_sent +
+			get_int_var(QUEUE_SENDS_VAR);
+		queue_wake_time.tv_usec = 0;
+
+		if (time_cmp(wake_time, &queue_wake_time) > 0)
+			*wake_time = queue_wake_time;
+	}
+}
 
 int timed_server (void *args, char *sub)
 {
