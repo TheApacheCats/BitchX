@@ -196,7 +196,6 @@ Configure compile_default[] = {
 { "Mode Compression",	"Code for performing mode compression on mass mode changes", "COMPRESS_MODES", ON, BOOL_TYPE, NULL},
 { "MAX # of urls in list", "Max Number of URLS to save in memory", "DEFAULT_MAX_URLS",   30, INT_TYPE, edit_dir },
 { "ChatNet Support", "Support chatnet\'s numeric 310", "WANT_CHATNET",			OFF,BOOL_TYPE, NULL},
-{ "Notify BitchX.com", "Notify BitchX.com of our version", "SHOULD_NOTIFY_BITCHX_COM",	ON, BOOL_TYPE, NULL},
 { "Want Userlist",		"", "WANT_USERLIST",		ON,  BOOL_TYPE, NULL },
 { NULL, NULL, NULL, 0, 0, NULL }
 };

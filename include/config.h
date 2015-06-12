@@ -649,10 +649,6 @@
 #undef WANT_CHATNET      /* define just for codelogic */
 #endif
 
-#if defined(_USE_LOCAL_CONFIG) && !defined(SHOULD_NOTIFY_BITCHX_COM)
-#undef WANT_NOTIFY_BITCHX_COM
-#endif
-
 #undef PARANOID		/* #define this if your paranoid about dcc hijacking */
 
 /* new epic stuff */
