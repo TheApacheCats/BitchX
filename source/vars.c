@@ -1006,7 +1006,7 @@ void do_stack_set(int type, char *args)
 		/* Dont need to unstub it, we're not actually using it. */
 		upper(copy);
 		find_fixed_array_item(irc_variable, sizeof(IrcVariable), NUMBER_OF_VARIABLES, copy, &cnt, (int *)&var_index);
-		if (cnt < 0)
+		if (cnt < 0 || cnt == 1)
 		{	
 			aptr = (AliasStack1 *)new_malloc(sizeof(AliasStack1));
 			aptr->next = aptrptr ? *aptrptr : NULL;
@@ -1053,8 +1053,7 @@ void do_stack_set(int type, char *args)
 	}
 	if (STACK_LIST == type)
 	{
-		AliasStack1 *prev = NULL;
-		for (aptr = *aptrptr; aptr; prev = aptr, aptr = aptr->next)
+		for (aptr = *aptrptr; aptr; aptr = aptr->next)
 		{
 			switch(aptr->set->type)
 			{
