@@ -335,8 +335,6 @@ char	*BX_update_clock(int flag)
 			}
 			check_channel_limits();
 		}
-		if (!((hideous - start_time) % 20))
-			check_serverlag();
 		from_server = ofs;
 		if (flag != RESET_TIME || new_minute)
 			return time_str;

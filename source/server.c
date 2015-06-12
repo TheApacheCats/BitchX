@@ -129,6 +129,7 @@ void	BX_close_server (int cs_index, char *message)
 	server_list[cs_index].server_change_pending = 0;
 	server_list[cs_index].operator = 0;
 	server_list[cs_index].connected = 0;
+	server_list[cs_index].lag = -1;
 	server_list[cs_index].buffer = NULL;
 	server_list[cs_index].link_look = 0;
 	server_list[cs_index].login_flags = 0;
@@ -240,6 +241,26 @@ void set_server_bits (fd_set *rd, fd_set *wr, struct timeval *wake_time)
 
 			if (time_cmp(wake_time, &connect_wake_time) > 0)
 				*wake_time = connect_wake_time;
+		}
+		if (is_server_connected(i))
+		{
+			/* Time to send another ping */
+			int lag_check_interval = get_int_var(LAG_CHECK_INTERVAL_VAR);
+			struct timeval lag_wake_time = server_list[i].lag_sent;
+			lag_wake_time.tv_sec += lag_check_interval;
+
+			if (lag_check_interval > 0 && time_cmp(wake_time, &lag_wake_time) > 0)
+				*wake_time = lag_wake_time;
+
+			if (server_list[i].lag != -1)
+			{
+				/* Time that previous lag value becomes stale */
+				lag_wake_time = server_list[i].lag_recv;
+				lag_wake_time.tv_sec += lag_check_interval + 1;
+
+				if (time_cmp(wake_time, &lag_wake_time) > 0)
+					*wake_time = lag_wake_time;
+			}
 		}
 
 		if (server_list[i].read > -1)
@@ -410,28 +431,6 @@ static void scan_nonblocking(void)
 }
 #endif
 
-int check_serverlag(void)
-{
-	int i;
-	struct timeval tv;
-
-	get_time(&tv);
-		
-	for (i = 0; i < server_list_size(); i++)
-	{
-		if (is_server_connected(i) && now != get_server_lagtime(i))
-		{
-			set_server_lagtime(i, now);
-			my_send_to_server(i, "PING LAG!%lu.%ld.%ld :%s", 
-					get_server_lag_cookie(i), 
-					(long)tv.tv_sec, (long)tv.tv_usec, get_server_itsname(i));
-			set_server_lag(i, -1);
-		}
-	}
-
-	return 0;
-}
-
 void	do_idle_server (void)
 {
 	int i;
@@ -445,7 +444,7 @@ void	do_idle_server (void)
 	for (i = 0; i < number_of_servers && i > -1; i++)
 	{
 		/* We were told to reconnect, to avoid recursion. */
-		if(get_server_reconnect(i) > 0)
+		if (get_server_reconnect(i) > 0)
 		{
 			int connect_delay = get_int_var(CONNECT_DELAY_VAR);
 
@@ -455,6 +454,29 @@ void	do_idle_server (void)
 
 				set_server_reconnect(i, 0);
 				reconnect_server(&servernum, &times, &last_timeout);
+			}
+		}
+
+		if (is_server_connected(i))
+		{
+			int lag_check_interval = get_int_var(LAG_CHECK_INTERVAL_VAR);
+
+			if (lag_check_interval > 0 && 
+				time_since(&server_list[i].lag_sent) > lag_check_interval)
+			{
+				get_time(&server_list[i].lag_sent);
+				my_send_to_server(i, "PING LAG!%lu.%ld.%ld :%s", 
+					server_list[i].lag_cookie, 
+					(long)server_list[i].lag_sent.tv_sec, 
+					(long)server_list[i].lag_sent.tv_usec, 
+					get_server_itsname(i));
+			}
+			if (server_list[i].lag != -1 && 
+				time_since(&server_list[i].lag_recv) > lag_check_interval + 1)
+			{
+				/* Lag reply overdue */
+				set_server_lag(i, -1);
+				update_all_status(current_window, NULL, 0);
 			}
 		}
 	}
@@ -475,29 +497,13 @@ void	do_server (fd_set *rd, fd_set *wr)
 	char	buffer[BIG_BUFFER_SIZE + 1];
 	int	des,
 		i;
-	static	int	times = 1;
 static	time_t	last_timeout = 0;
 
-#ifdef NON_BLOCKING_CONNECTS
-	scan_nonblocking();
-#endif
+	/* Process server timeouts */
+	do_idle_server();
 
 	for (i = 0; i < number_of_servers; i++)
 	{
-		/* We were told to reconnect, to avoid recursion. */
-		if(get_server_reconnect(i) > 0)
-		{
-			int connect_delay = get_int_var(CONNECT_DELAY_VAR);
-
-			if (time_since(&server_list[i].connect_time) > connect_delay)
-			{
-				int servernum = i;
-
-				set_server_reconnect(i, 0);
-				reconnect_server(&servernum, &times, &last_timeout);
-			}
-		}
-
 #ifdef NON_BLOCKING_CONNECTS
 		if (((des = server_list[i].write) > -1) && FD_ISSET(des, wr) && !(server_list[i].login_flags & LOGGED_IN))
 		{
@@ -637,6 +643,25 @@ static	time_t	last_timeout = 0;
 	if (primary_server == -1 || !is_server_open(primary_server))
 		window_check_servers(-1);
 }
+
+/* server_lag_reply()
+ *
+ * Called when a reply to a lag check ping has been recieved.
+ */
+void server_lag_reply(int s, unsigned long cookie, struct timeval lag_recv, struct timeval lag_sent)
+{
+	if (cookie == server_list[s].lag_cookie)
+	{
+		int new_lag = (int)(BX_time_diff(lag_sent, lag_recv) + 0.5);
+
+		server_list[s].lag_recv = lag_recv;
+		if (server_list[s].lag != new_lag)
+		{
+			server_list[s].lag = new_lag;
+			update_all_status(current_window, NULL, 0);
+		}
+	}
+}	
 
 /*
  * find_in_server_list: given a server name, this tries to match it against
@@ -2367,26 +2392,6 @@ void BX_set_server_lag (int gso_index, int secs)
 		server_list[gso_index].lag = secs;
 }
 
-time_t	get_server_lagtime (int gso_index)
-{
-	if ((gso_index < 0 || gso_index >= number_of_servers))
-		return 0;
-	return(server_list[gso_index].lag_time);
-}
-
-void set_server_lagtime (int gso_index, time_t secs)
-{
-	if ((gso_index != -1 && gso_index < number_of_servers))
-		server_list[gso_index].lag_time = secs;
-}
-
-unsigned long get_server_lag_cookie(int gso_index)
-{
-	if ((gso_index < 0 || gso_index >= number_of_servers))
-		return 0;
-	return server_list[gso_index].lag_cookie;
-}
-
 int 	BX_get_server_motd (int gsm_index)
 {
 	if (gsm_index != -1 && gsm_index < number_of_servers)
@@ -2401,7 +2406,10 @@ void 	BX_server_is_connected (int sic_index, int value)
 
 	server_list[sic_index].connected = value;
 	if (value)
+	{
 		server_list[sic_index].eof = 0;
+		get_time(&server_list[sic_index].lag_sent);
+	}
 }
 
 void	set_server_version_string (int servnum, const char *ver)

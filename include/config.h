@@ -561,7 +561,7 @@
 #define DEFAULT_XTERM "rxvt"
 #define DEFAULT_XTERM_OPTIONS "-bg black -fg white"
 #define DEFAULT_DCC_DLDIR "~"
-
+#define DEFAULT_LAG_CHECK_INTERVAL 30	/* Time between lag check pings, in seconds */
 #define DEFAULT_PAD_CHAR ' '
 #define DEFAULT_USERMODE "+iw"  /* change this to the default usermode */
 #define DEFAULT_OPERMODE "swfck"

@@ -856,35 +856,25 @@ static	void p_pong(char *from, char **ArgList)
 		char *p, *q;
 		unsigned long cookie;
 		struct timeval timenow, timethen;
-		int old_lag, new_lag;
 
+		get_time(&timenow);
 		p = strchr(ArgList[1], '.');
 		if (p)
 		{			
 			*p++ = 0;
 			cookie = strtoul(ArgList[1] + 4, NULL, 10);
 
-			if (cookie == get_server_lag_cookie(from_server))
+			q = strchr(p, '.');
+			if (q)
 			{
-				q = strchr(p, '.');
-				if (q)
-				{
-					*q++ = 0;
-					timethen.tv_usec = my_atol(q);
-				} else
-					timethen.tv_usec = 0;
+				*q++ = 0;
+				timethen.tv_usec = my_atol(q);
+			} else
+				timethen.tv_usec = 0;
 
-				timethen.tv_sec = my_atol(p);
-				get_time(&timenow);
+			timethen.tv_sec = my_atol(p);
 
-				old_lag = get_server_lag(from_server);
-				new_lag = (int)(BX_time_diff(timethen, timenow) + 0.5);
-				if (old_lag != new_lag)
-				{
-					set_server_lag(from_server, new_lag);
-					status_update(1);
-				}
-			}
+			server_lag_reply(from_server, cookie, timenow, timethen);
 		}
 	}
 	else if (!my_stricmp(ArgList[1], get_server_nickname(from_server)))

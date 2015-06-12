@@ -1,5 +1,8 @@
 [Changes 1.2.2]
 
+* Rework the lag check to make it simpler and more reliable.  This adds
+  a /set LAG_CHECK_INTERVAL to control the frequency of lag checks. (caf)
+
 * Wire up /set DOUBLE_STATUS_LINE (reported by presi). (caf)
 
 * Fix ignoring of nick changes. (caf)

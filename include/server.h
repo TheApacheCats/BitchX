@@ -94,7 +94,8 @@ typedef	struct
 	int	sent;			/* set if something has been sent,
 					 * used for redirect */
 	int	lag;			/* indication of lag from server CDE*/
-	time_t	lag_time;		/* time ping sent to server CDE */
+	struct timeval lag_sent;	/* time lag ping sent to server CDE */
+	struct timeval lag_recv;	/* time last lag ping reply was recieved */
 	unsigned long lag_cookie;	/* cookie to identify our lag check pings */
 	time_t	last_msg;		/* last mesg recieved from the server CDE */
 
@@ -237,9 +238,7 @@ extern	SGroup	*server_group_list;
 	
 	int	BX_get_server_lag (int);
 	void	BX_set_server_lag (int, int);
-	time_t	get_server_lagtime (int);
-	void	set_server_lagtime (int, time_t);
-	unsigned long get_server_lag_cookie(int gso_index);
+	void server_lag_reply(int s, unsigned long cookie, struct timeval lag_recv, struct timeval lag_sent);
 	
 	char	*BX_set_server_password (int, char *);
 	void	BX_set_server_nickname (int, char *);
@@ -365,7 +364,6 @@ ChannelList	*BX_get_server_channels		(int);
 	void reconnect_server(int *, int *, time_t *);
 	int finalize_server_connect(int, int, int);
 	int next_server(int);
-	int	check_serverlag (void);
 	void	do_idle_server (void);
 
 /* XXXXX ick, gross, bad.  XXXXX */
