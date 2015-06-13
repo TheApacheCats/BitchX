@@ -361,7 +361,6 @@ ChannelList	*BX_get_server_channels		(int);
 	void	set_who_queue_top		(int, WhoEntry *);
 	WhoEntry *who_queue_top			(int);
 
-	void reconnect_server(int *, int *, time_t *);
 	int finalize_server_connect(int, int, int);
 	int next_server(int);
 	void	do_idle_server (void);

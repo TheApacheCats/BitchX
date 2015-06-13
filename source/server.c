@@ -376,30 +376,22 @@ int advance_server(int i)
 	return server;
 }
 
-void reconnect_server(int *servernum, int *times, time_t *last_timeout)
+static void reconnect_server(int servernum)
 {
-	int orig;
+	if (servernum < 0)
+		servernum = 0;
 
-	if(*servernum < 0)
-		*servernum = 0;
+	server_list[servernum].reconnecting = 1;
+	close_server(servernum, empty_string);
 
-	orig = *servernum;
+	servernum = advance_server(servernum);
 
-	server_list[*servernum].reconnecting = 1;
-	close_server(*servernum, empty_string);
-	*last_timeout = 0;
-
-	(*servernum) = advance_server(*servernum);
-
-	if(*servernum < 0)
+	if (servernum < 0)
 		return;
 
-	if(*servernum != orig)
-		*times = 1;
-
-	set_server_reconnect(*servernum, 0);
-	window_check_servers(*servernum);
-	try_connect(*servernum, server_list[*servernum].old_server);
+	set_server_reconnect(servernum, 0);
+	window_check_servers(servernum);
+	try_connect(servernum, server_list[servernum].old_server);
 }
 
 /* Check for a nonblocking connection that has been around
@@ -434,8 +426,6 @@ static void scan_nonblocking(void)
 void	do_idle_server (void)
 {
 	int i;
-	static	int	times = 1;
-	static	time_t	last_timeout = 0;
 
 #ifdef NON_BLOCKING_CONNECTS
 	scan_nonblocking();
@@ -450,10 +440,8 @@ void	do_idle_server (void)
 
 			if (time_since(&server_list[i].connect_time) > connect_delay)
 			{
-				int servernum = i;
-
 				set_server_reconnect(i, 0);
-				reconnect_server(&servernum, &times, &last_timeout);
+				reconnect_server(i);
 			}
 		}
 
