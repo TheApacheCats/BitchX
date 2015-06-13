@@ -214,11 +214,21 @@ int BX_dgets (char *str, int des, int buffer, int buffersize, void *ssl_fd)
 		 * use that as a cheap way to check for #1.  If #1 is false,
 		 * then #2 must have been true, and if nbytes is 0, then 
 		 * that indicates an EOF condition.
+		 *
+		 * The "EOF" condition might actually be a socket error, so check
+		 * for that and return it to the caller.
 		 */
 		else if (!nbytes && ioe->write_pos == 0)
 		{
+			int so_error;
+			socklen_t len = sizeof so_error;
+
 			*str = 0;
-			dgets_errno = -1;
+			if (getsockopt(des, SOL_SOCKET, SO_ERROR, &so_error, &len) == 0 && 
+				so_error != 0)
+				dgets_errno = so_error;
+			else
+				dgets_errno = -1;
 			return -1;
 		}
 
