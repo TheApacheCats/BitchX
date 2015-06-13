@@ -485,7 +485,6 @@ void	do_server (fd_set *rd, fd_set *wr)
 	char	buffer[BIG_BUFFER_SIZE + 1];
 	int	des,
 		i;
-static	time_t	last_timeout = 0;
 
 	/* Process server timeouts */
 	do_idle_server();
@@ -603,7 +602,6 @@ static	time_t	last_timeout = 0;
 					}
 				default:
 				{
-					last_timeout = 0;
 					parsing_server_index = i;
 					server_list[i].last_msg = now;
 					parse_server(buffer);
@@ -614,17 +612,6 @@ static	time_t	last_timeout = 0;
 				}
 			}
 			from_server = primary_server;
-		}
-		if (server_list[i].read != -1 && (errno == ENETUNREACH || errno == EHOSTUNREACH))
-		{
-			if (last_timeout == 0)
-				last_timeout = now;
-			else if (now - last_timeout > 600)
-			{
-				close_server(i, empty_string);
-				server_list[i].reconnecting = 1;
-				get_connected(i, -1);
-			}
 		}
 	}
 
