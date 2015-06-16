@@ -2853,7 +2853,7 @@ BUILT_IN_FUNCTION(function_nohighlight, input)
 			case BOLD_TOG:
 			case BLINK_TOG:
 			case ALL_OFF:
-			case '\003':
+			case COLOR_CHAR:
 			case '\033':
 			{
 				*ptr++ = REV_TOG;

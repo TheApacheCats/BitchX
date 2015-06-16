@@ -333,7 +333,7 @@ BUILT_IN_COMMAND(lastlog)
 					continue;
 				}
 				else
-					match = "\007";
+					match = BELL_CHAR_STR;
 			}
 			else if (!my_strnicmp(arg, "CLEAR", len))
 			{

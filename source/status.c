@@ -515,7 +515,7 @@ int		in_rhs = 0,
 		 * Skip over color attributes if we're not
 		 * doing color.
 		 */
-		else if (*ptr == '\003')
+		else if (*ptr == COLOR_CHAR)
 		{
 			const u_char *end = skip_ctl_c_seq(ptr, NULL, NULL, 0);
 			while (ptr < end)
@@ -783,7 +783,7 @@ void make_status(Window *win)
 			 * Skip over color attributes if we're not
 			 * doing color.
 			 */
-			else if (*ptr == '\003')
+			else if (*ptr == COLOR_CHAR)
 			{
 				const u_char *end = skip_ctl_c_seq(ptr, NULL, NULL, 0);
 				while (ptr < end)

@@ -246,7 +246,7 @@ void BX_add_to_window(Window *window, const unsigned char *str)
 			 * This is for archon -- he wanted a way to have 
 			 * a hidden window always beep, even if BEEP is off.
 			 */
-			if (window->beep_always && strchr(str, '\007'))
+			if (window->beep_always && strchr(str, BELL_CHAR))
 			{
 				Window *old_target_window = target_window;
 				target_window = current_window;
@@ -456,7 +456,7 @@ const 	u_char	*ptr = NULL;
 	{
 		switch (*ptr)
 		{
-			case '\007':      /* bell */
+			case BELL_CHAR:      /* bell */
 			{
 				beep_cnt++;
 				if ((beep_max == -1) || (beep_cnt > beep_max))
@@ -522,14 +522,14 @@ const 	u_char	*ptr = NULL;
 				word_break = pos;
 				break; /* case '\n' */
 			}
-			case '\003':
+			case COLOR_CHAR:
 			{
 				int lhs = 0, rhs = 0;
 				const u_char *end = skip_ctl_c_seq(ptr, &lhs, &rhs, 0);
 				while (ptr < end)
 					buffer[pos++] = *ptr++;
 				ptr = end - 1;
-				break; /* case '\003' */
+				break; /* case COLOR_CHAR */
 			}
 			case ROM_CHAR:
 			{
@@ -1116,7 +1116,7 @@ const 	u_char 	*ptr = str;
 			}
 			break;
 		}
-		case '\007':
+		case BELL_CHAR:
 		{
 			beep++;
 			break;
@@ -1150,7 +1150,7 @@ const 	u_char 	*ptr = str;
 			out++;
 			break;
 		}
-		case '\003':
+		case COLOR_CHAR:
 		{
 			/*
 			 * By the time we get here, we know we need to 
@@ -2059,7 +2059,7 @@ const 	u_char 	*after = start;
 	/*
 	 * If we're passed a non ^C code, dont do anything.
 	 */
-	if (*after != '\003')
+	if (*after != COLOR_CHAR)
 		return after;
                                                   
 	/*

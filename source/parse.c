@@ -228,9 +228,9 @@ int annoy_kicks(int list_type, char *to, char *from, char *ptr, NickList *nick)
 		char *buffer = NULL;
 		if (annoy_hl(ptr, BOLD_TOG))
 			malloc_sprintf(&buffer, "KICK %s %s :%s", to, from, "autokick for " BOLD_TOG_STR "bold" BOLD_TOG_STR);
-		else if (strchr(ptr, '\007'))
+		else if (strchr(ptr, BELL_CHAR))
 			malloc_sprintf(&buffer, "KICK %s %s :%s", to, from, "autokick for beeping");
-		else if (annoy_hl(ptr, '\003'))
+		else if (annoy_hl(ptr, COLOR_CHAR))
 			malloc_sprintf(&buffer, "KICK %s %s :%s", to, from, "autokick for " UND_TOG_STR "mirc color" UND_TOG_STR);
 		else if (annoy_hl(ptr, UND_TOG))
 			malloc_sprintf(&buffer, "KICK %s %s :%s", to, from, "autokick for " UND_TOG_STR "underline" UND_TOG_STR);

@@ -111,22 +111,26 @@ extern char	thing_star[4];
 #include "newio.h"
 
 /* these define what characters do, inverse, underline, bold and all off */
-#define REV_TOG		'\026'		/* ^V */
-#define REV_TOG_STR	"\026"
-#define UND_TOG		'\037'		/* ^_ */
-#define UND_TOG_STR	"\037"
-#define BOLD_TOG	'\002'		/* ^B */
+#define REV_TOG			'\026'	/* ^V */
+#define REV_TOG_STR		"\026"
+#define UND_TOG			'\037'	/* ^_ */
+#define UND_TOG_STR		"\037"
+#define BOLD_TOG		'\002'	/* ^B */
 #define BOLD_TOG_STR	"\002"
-#define ALL_OFF		'\017'		/* ^O */
-#define ALL_OFF_STR	"\017"
-#define BLINK_TOG	'\006'		/* ^F (think flash) */
+#define ALL_OFF			'\017'	/* ^O */
+#define ALL_OFF_STR		"\017"
+#define BLINK_TOG		'\006'	/* ^F (think flash) */
 #define BLINK_TOG_STR	"\006"
-#define ROM_CHAR        '\022'          /* ^R */
-#define ROM_CHAR_STR    "\022"
-#define ALT_TOG		'\005'		/* ^E (think Extended) */
-#define ALT_TOG_STR	"\005"
-#define ND_SPACE	'\023'		/* ^S */
+#define ROM_CHAR		'\022'	/* ^R */
+#define ROM_CHAR_STR	"\022"
+#define ALT_TOG			'\005'	/* ^E (think Extended) */
+#define ALT_TOG_STR		"\005"
+#define ND_SPACE		'\023'	/* ^S */
 #define ND_SPACE_STR	"\023"
+#define COLOR_CHAR		'\003'	/* ^C */
+#define COLOR_CHAR_STR	"\003"
+#define BELL_CHAR		'\007'	/* ^G */
+#define BELL_CHAR_STR	"\007"
 
 #define IRCD_BUFFER_SIZE	512
 #define BIG_BUFFER_SIZE		(4 * IRCD_BUFFER_SIZE)
