@@ -698,54 +698,6 @@ void numbered_command(char *from, int comm, char **ArgList)
 			put_it("%s", convert_output_format(fget_string_var(FORMAT_WHOIS_SERVICE_FSET),"%s %s", ArgList[0], " is a Services Administrator"));
 		break;
 	}
-#ifdef WANT_CHATNET
-	case 310: /* RPL_WHOISUSER_OPER [or something] 310 on chatnet .. fixed. =] */
-	{
-		PasteArgs(ArgList, 7);
-		reset_display_target();
-		if(do_hook(current_numeric, "%s %s %s %s %s %s %s", ArgList[0],
-				ArgList[1], ArgList[2], ArgList[3], ArgList[4], ArgList[5], ArgList[6])) {
-			char *host = NULL;
-			char *p;
-			char *ident = NULL;
-			char *userhost = NULL;
-#ifdef WANT_USERLIST
-			UserList *tmp = NULL;
-			ShitList *tmp1 = NULL;
-#endif
-			/* routine for getting ident and host 
-			 * by-tor really wrote this little routine, 
-			 * something else he did for me, thanks =] 
-			 */               
-                        if ((p = (char *)strchr(ArgList[2], '@'))) {
-                                        *p++ = '\0';
-					ident = LOCAL_COPY(ArgList[2]);
-                                        for(;*p == ' ';)
-                                                p++;
-                                        host = p;
-                                        if ((p = (char *)strchr(p, '\n')))
-                                                *p = '\0';
-                                        p = host;
-					host = LOCAL_COPY(p);
-			}
-
-			put_it("%s", convert_output_format(fget_string_var(FORMAT_WHOIS_HEADER_FSET), NULL));
-			put_it("%s", convert_output_format(fget_string_var(FORMAT_WHOIS_NICK_FSET),"%s %s %s %s", ArgList[0], ident, host, country(host)));
-			put_it("%s", convert_output_format(fget_string_var(FORMAT_WHOIS_NAME_FSET),"%s %s", ArgList[4], ArgList[5]));			
-			malloc_sprintf(&userhost, "%s@%s", ident, host);
-#ifdef WANT_USERLIST
-			if((tmp=lookup_userlevelc("*", userhost, "*", NULL)))
- 				put_it("%s", convert_output_format(fget_string_var(FORMAT_WHOIS_FRIEND_FSET), "%s %s", convert_flags_to_str(tmp->flags), tmp->host));
-			if((tmp1=nickinshit(ArgList[0], userhost)))
-				put_it("%s", convert_output_format(fget_string_var(FORMAT_WHOIS_SHIT_FSET),"%d %s %s %s", tmp1->level, tmp1->channels, tmp1->filter, tmp1->reason));
-			if(tmp||tmp1)
-				put_it("%s", convert_output_format(fget_string_var(FORMAT_WHOIS_CHANNELS_FSET), "%s %s", tmp?"Allowed:":"Not-Allowed:", tmp?tmp->channels:tmp1->channels));
-#endif
-			new_free(&userhost);
-		}
-		break;													
-	}
-#else
 	case 310: /* WHOIS_HELPFUL */
 	{
 		if (do_hook(current_numeric, "%s %s %s", from, ArgList[0], ArgList[1])) 
@@ -753,7 +705,6 @@ void numbered_command(char *from, int comm, char **ArgList)
 		break;
 		/* the 4 above are dalnet numerics */
 	}
-#endif
 	case 311:		/* #define RPL_WHOISUSER        311 */
 	{
 		char *host = ArgList[2];

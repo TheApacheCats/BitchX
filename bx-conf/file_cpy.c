@@ -195,7 +195,6 @@ Configure compile_default[] = {
 { "Mirc resume support"," Support Mirc\'s Broken resume","MIRC_BROKEN_DCC_RESUME",	ON, BOOL_TYPE, NULL},
 { "Mode Compression",	"Code for performing mode compression on mass mode changes", "COMPRESS_MODES", ON, BOOL_TYPE, NULL},
 { "MAX # of urls in list", "Max Number of URLS to save in memory", "DEFAULT_MAX_URLS",   30, INT_TYPE, edit_dir },
-{ "ChatNet Support", "Support chatnet\'s numeric 310", "WANT_CHATNET",			OFF,BOOL_TYPE, NULL},
 { "Want Userlist",		"", "WANT_USERLIST",		ON,  BOOL_TYPE, NULL },
 { NULL, NULL, NULL, 0, 0, NULL }
 };

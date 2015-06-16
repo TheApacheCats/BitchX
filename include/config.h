@@ -645,10 +645,6 @@
 #define DEFAULT_IDENT_HACK ".noident"
 #endif
 
-#if !defined(WANT_CHATNET)
-#undef WANT_CHATNET      /* define just for codelogic */
-#endif
-
 #undef PARANOID		/* #define this if your paranoid about dcc hijacking */
 
 /* new epic stuff */
