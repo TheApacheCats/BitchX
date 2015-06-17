@@ -29,7 +29,7 @@
 #define curr_scr_win	current_screen->current_window
 
 	void	clear_window (Window *);
-	int	BX_output_line (const unsigned char *);
+	int	BX_output_line (const char *);
 	Window	*BX_create_additional_screen (void);
 	void	BX_scroll_window (Window *);
 	void	update_all_windows (void);
@@ -44,15 +44,14 @@
 RETSIGTYPE	sig_refresh_screen (int);
 	int	check_screen_redirect (char *);
 	void	BX_kill_screen (Screen *);
-	int	rite (Window *, const unsigned char *);
 	ShrinkInfo	resize_display (Window *);
 	void	redraw_window (Window *, int);
 	void	redraw_all_windows (void);
 	void	BX_add_to_screen (char *);
 	void	do_screens (fd_set *);
-	unsigned	char	**BX_split_up_line(const unsigned char *, int);
+	char	**BX_split_up_line(const char *, int);
 	void	BX_xterm_settitle(void);
-	void	BX_add_to_window(Window *, const unsigned char *);
+	void	BX_add_to_window(Window *, const char *);
 	
 Screen  * BX_create_new_screen(void);
 
@@ -62,9 +61,9 @@ Screen  * BX_create_new_screen(void);
 			
 	u_char *BX_strip_ansi		(const u_char *);
 	char   *normalize_color		(int, int, int, int);
-const	u_char *BX_skip_ctl_c_seq		(const u_char *, int *, int *, int);
-	u_char **BX_prepare_display	(const u_char *, int, int *, int);
-	int	BX_output_with_count	(const unsigned char *, int, int);
+char *BX_skip_ctl_c_seq(const char *, int *, int *, int);
+char **BX_prepare_display(const char *, int, int *, int);
+int	BX_output_with_count(const char *, int, int);
 char	*BX_skip_incoming_mirc	(char *);
 
 /* Dont do any word-wrapping, just truncate each line at its place. */

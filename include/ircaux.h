@@ -126,7 +126,7 @@ char *	BX_strpcat			(char *, const char *, ...);
 char *  BX_strmpcat		(char *, size_t, const char *, ...);
 char *	chomp			(char *);
 size_t	BX_ccspan			(const char *, int);
-u_char *BX_strcpy_nocolorcodes	(u_char *, const u_char *);
+char *BX_strcpy_nocolorcodes(char *, const char *);
 unsigned long randm(unsigned long);
 unsigned long randt(unsigned long);
 unsigned long randd(unsigned long);

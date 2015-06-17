@@ -74,10 +74,9 @@ Screen	*screen_list = NULL;
  *					------- Which calls term_putchar().
  *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-	u_char	**BX_prepare_display	(const u_char *, int, int *, int);
-static	int	add_to_display_list	(Window *, const unsigned char *);
+static int add_to_display_list(Window *, const char *);
 	Display	*new_display_line	(Display *);
-	void	BX_add_to_window		(Window *, const unsigned char *);
+static int rite (Window *, const char *);
 
 static	char	display_standout	(int flag);
 static	char	display_bold		(int flag);
@@ -88,8 +87,6 @@ static	void	display_normal		(void);
 static	char	display_altcharset	(int flag);
 
 static	void	put_color		(int, int);
-
-const	u_char	*BX_skip_ctl_c_seq		(const u_char *start, int *lhs, int *rhs, int proper);
 
 static void delchar(char **text, int cnum)
 {
@@ -204,7 +201,7 @@ void BX_add_to_screen(char *buffer)
  * function just dumps it onto the screen. This is because the scrollback
  * functions need to be able to figure out how to split things up too.
  */
-void BX_add_to_window(Window *window, const unsigned char *str)
+void BX_add_to_window(Window *window, const char *str)
 {
 
 	if (window->server >= 0 && get_server_redirect(window->server))
@@ -213,7 +210,7 @@ void BX_add_to_window(Window *window, const unsigned char *str)
 				str, NULL, 0, 0);
 	if (do_hook(WINDOW_LIST, "%u %s", window->refnum, str))
 	{
-		unsigned char   **lines;
+		char **lines;
 		int	cols;
 		                                                
 		add_to_log(window->log_fp, 0, str, window->mangler);
@@ -284,7 +281,7 @@ void BX_add_to_window(Window *window, const unsigned char *str)
 }
 
 
-u_char **BX_split_up_line (const unsigned char *str, int max_cols)
+char **BX_split_up_line(const char *str, int max_cols)
 {
 	int nl = 0;
 	return prepare_display(str, max_cols, &nl, 0);
@@ -362,15 +359,15 @@ u_char **BX_split_up_line (const unsigned char *str, int max_cols)
  * PRINTED Characters not buffer positions :-)
  */
 #define SPLIT_EXTENT 40
-unsigned char **BX_prepare_display(const unsigned char *orig_str,
+char **BX_prepare_display(const char *orig_str,
                                 int max_cols,
                                 int *lused,
                                 int flags)
 {
 	int	gchar_mode;
-static 	int 	recursion = 0, 
+	static int recursion = 0, 
 		output_size = 0;
-	int 	pos = 0,            /* Current position in "buffer" */
+	int pos = 0,            /* Current position in "buffer" */
 		col = 0,            /* Current column in display    */
 		word_break = 0,     /* Last end of word             */
 		indent = 0,         /* Start of second word         */
@@ -386,9 +383,9 @@ static 	int 	recursion = 0,
 		do_indent,          /* Use indent or continued line? */
 		in_rev = 0,         /* Are we in reverse mode?      */
 		newline = 0;        /* Number of newlines           */
-static	u_char 	**output = NULL;
-const 	u_char	*ptr = NULL;
-	u_char 	buffer[BIG_BUFFER_SIZE + 1],
+	static char **output = NULL;
+	const char *ptr = NULL;
+	char buffer[BIG_BUFFER_SIZE + 1],
 		*cont_ptr = NULL,
 		*cont = empty_string,
 		c,
@@ -404,12 +401,12 @@ const 	u_char	*ptr = NULL;
 	tab_max = get_int_var(TAB_VAR) ? get_int_var(TAB_MAX_VAR) : -1;
 	nds_max = get_int_var(ND_SPACE_MAX_VAR);
 	do_indent = get_int_var(INDENT_VAR);
-	words = (char *)get_string_var(WORD_BREAK_VAR);
+	words = get_string_var(WORD_BREAK_VAR);
 
 	if (!words)
 		words = ", ";
-	if (!(cont_ptr = (char *)get_string_var(CONTINUED_LINE_VAR)))
-		cont_ptr = (char *)empty_string;
+	if (!(cont_ptr = get_string_var(CONTINUED_LINE_VAR)))
+		cont_ptr = empty_string;
 
 	buffer[0] = 0;
 
@@ -525,7 +522,7 @@ const 	u_char	*ptr = NULL;
 			case COLOR_CHAR:
 			{
 				int lhs = 0, rhs = 0;
-				const u_char *end = skip_ctl_c_seq(ptr, &lhs, &rhs, 0);
+				const char *end = skip_ctl_c_seq(ptr, &lhs, &rhs, 0);
 				while (ptr < end)
 					buffer[pos++] = *ptr++;
 				ptr = end - 1;
@@ -608,7 +605,7 @@ const 	u_char	*ptr = NULL;
 		 */
 		if ((col >= max_cols) || newline)
 		{
-			unsigned char *pos_copy;
+			char *pos_copy;
 			
 			if (!word_break || (flags & PREPARE_NOWRAP))
 				word_break = max_cols /*pos - 1*/;
@@ -655,7 +652,7 @@ const 	u_char	*ptr = NULL;
 
 			c = buffer[word_break];
 			buffer[word_break] = 0;
-			malloc_strcpy((char **)&(output[line++]), buffer);
+			malloc_strcpy(&(output[line++]), buffer);
 
 			buffer[word_break] = c;
 
@@ -693,7 +690,7 @@ const 	u_char	*ptr = NULL;
 	buffer[pos++] = ALL_OFF;
 	buffer[pos] = 0;
 	if (*buffer)
-		malloc_strcpy((char **)&(output[line++]),buffer);
+		malloc_strcpy(&(output[line++]),buffer);
 
 	recursion--;
 	new_free(&output[line]);
@@ -707,7 +704,7 @@ const 	u_char	*ptr = NULL;
  * This puts the given string into a scratch window.  It ALWAYS suppresses
  * any further action (by returning a FAIL, so rite() is not called).
  */
-static	int	add_to_scratch_window_display_list (Window *window, const unsigned char *str)
+static int add_to_scratch_window_display_list(Window *window, const char *str)
 {
 	Display *my_line, *my_line_prev;
 	int cnt;
@@ -805,7 +802,7 @@ static	int	add_to_scratch_window_display_list (Window *window, const unsigned ch
  * not to be displayed, then 0 is returned.  This function handles all
  * the hold_mode stuff.
  */
-static int 	add_to_display_list (Window *window, const unsigned char *str)
+static int add_to_display_list(Window *window, const char *str)
 {
 	if (window->scratch_line != -1)
 		return add_to_scratch_window_display_list(window, str);
@@ -886,7 +883,7 @@ static int 	add_to_display_list (Window *window, const unsigned char *str)
  * bold face will remain the same and the it won't interfere with anything
  * else (i.e. status line, input line). 
  */
-int rite(Window *window, const unsigned char *str)
+static int rite(Window *window, const char *str)
 {
 static  int     high = OFF;
 static  int     bold = OFF;
@@ -933,9 +930,9 @@ static	int	altc = OFF;
 /*
  * A temporary wrapper function for backwards compatibility.
  */
-int BX_output_line(const unsigned char *str)
+int BX_output_line(const char *str)
 {
-	output_with_count(str,1, 1);
+	output_with_count(str, 1, 1);
 	return 0;
 }
 
@@ -960,14 +957,14 @@ int BX_output_line(const unsigned char *str)
  * correct rendering of colors than to get just one more nanosecond of
  * display speed.
  */
-int BX_output_with_count(const unsigned char *str, int clreol, int output)
+int BX_output_with_count(const char *str, int clreol, int output)
 {
-const 	u_char 	*ptr = str;
-	int 	beep = 0, 
+	const char *ptr = str;
+	int beep = 0, 
 		out = 0;
-	int 	val1, 
+	int val1, 
 		val2;
-	char 	old_bold = 0, 
+	char old_bold = 0, 
 		old_rev = 0, 
 		old_blink = 0, 
 		old_undl = 0, 
@@ -2038,11 +2035,11 @@ void BX_add_wait_prompt(char *prompt, void (*func)(char *, char *), char *data, 
  * Se we have to actually slurp up only those digits that comprise a legal
  * ^C code.
  */
-const u_char *BX_skip_ctl_c_seq (const u_char *start, int *lhs, int *rhs, int proper)
+char *BX_skip_ctl_c_seq(const char *start, int *lhs, int *rhs, int proper)
 {
-const 	u_char 	*after = start;
-	u_char	c1, c2;
-	int *	val;
+	const char *after = start;
+	char c1, c2;
+	int *val;
 	int	lv1, rv1;
 
 	/*
@@ -2060,7 +2057,7 @@ const 	u_char 	*after = start;
 	 * If we're passed a non ^C code, dont do anything.
 	 */
 	if (*after != COLOR_CHAR)
-		return after;
+		return (char *)after;
                                                   
 	/*
 	 * This is a one-or-two-time-through loop.  We find the  maximum 
@@ -2076,7 +2073,7 @@ const 	u_char 	*after = start;
 		 */
 		after++;
 		if (*after == 0)
-			return after;
+			return (char *)after;
 
 		/*
 		 * Check for the very special case of a definite terminator.
@@ -2084,13 +2081,13 @@ const 	u_char 	*after = start;
 		 * this ends the code without starting a new one
 		 */
 		if (after[0] == '-' && after[1] == '1')
-			return after + 2;
+			return (char *)after + 2;
 
 		/*
 		 * Further checks against a lonely old naked ^C.
 		 */
-		if (!isdigit(after[0]) && after[0] != ',')
-			return after;
+		if (!isdigit((unsigned char)after[0]) && after[0] != ',')
+			return (char *)after;
 
 
 		/*
@@ -2191,7 +2188,7 @@ const 	u_char 	*after = start;
 		break;
 	}
 
-	return after;
+	return (char *)after;
 }
 
 /*

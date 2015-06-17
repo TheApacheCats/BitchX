@@ -448,9 +448,9 @@ static	char	*convert_format(Window *win, char *format, int k)
 
 void fix_status_buffer(Window *win, char *buffer, int in_status)
 {
-unsigned char	rhs_buffer[3*BIG_BUFFER_SIZE + 1];
-unsigned char	lhs_buffer[3*BIG_BUFFER_SIZE + 1];
-unsigned char	lhs_fillchar[6],
+	char rhs_buffer[3*BIG_BUFFER_SIZE + 1];
+	char lhs_buffer[3*BIG_BUFFER_SIZE + 1];
+	char lhs_fillchar[6],
 		rhs_fillchar[6],
 		*fillchar = lhs_fillchar,
 		*lhp = lhs_buffer,
@@ -458,7 +458,7 @@ unsigned char	lhs_fillchar[6],
 		*cp,
 		*start_rhs = 0,
 		*str = NULL, *ptr = NULL;
-int		in_rhs = 0,
+	int in_rhs = 0,
 		pr_lhs = 0,
 		pr_rhs = 0,
 		*prc = &pr_lhs;
@@ -517,7 +517,7 @@ int		in_rhs = 0,
 		 */
 		else if (*ptr == COLOR_CHAR)
 		{
-			const u_char *end = skip_ctl_c_seq(ptr, NULL, NULL, 0);
+			const char *end = skip_ctl_c_seq(ptr, NULL, NULL, 0);
 			while (ptr < end)
 				*cp++ = *ptr++;
 		}
@@ -572,7 +572,7 @@ char	*stat_convert_format(Window *win, char *form)
 {
 	int map, key, i, pos = 0;
 	char *ptr = form;
-	unsigned char buffer[2 * BIG_BUFFER_SIZE + 1];
+	char buffer[2 * BIG_BUFFER_SIZE + 1];
 
 	if (!form || !*form)
 		return m_strdup(empty_string);	
@@ -662,11 +662,11 @@ void BX_build_status(Window *win, char *format, int unused)
 
 void make_status(Window *win)
 {
-	u_char	buffer	    [BIG_BUFFER_SIZE + 1];
-	u_char	lhs_buffer  [BIG_BUFFER_SIZE + 1];
-	u_char	rhs_buffer  [BIG_BUFFER_SIZE + 1];
-	char	*func_value[MAX_FUNCTIONS+10] = {NULL};
-	u_char	*ptr;
+	char buffer[BIG_BUFFER_SIZE + 1];
+	char lhs_buffer[BIG_BUFFER_SIZE + 1];
+	char rhs_buffer[BIG_BUFFER_SIZE + 1];
+	char *func_value[MAX_FUNCTIONS+10] = {NULL};
+	char *ptr;
 	
 	int	len = 1,
 		status_line,
@@ -678,7 +678,7 @@ void make_status(Window *win)
 	 */
 	for (status_line = 0 ; status_line < 1+win->double_status + win->status_lines; status_line++)
 	{
-		u_char	lhs_fillchar[6],
+		char lhs_fillchar[6],
 			rhs_fillchar[6],
 			*fillchar = lhs_fillchar,
 			*lhp = lhs_buffer,
@@ -785,7 +785,7 @@ void make_status(Window *win)
 			 */
 			else if (*ptr == COLOR_CHAR)
 			{
-				const u_char *end = skip_ctl_c_seq(ptr, NULL, NULL, 0);
+				const char *end = skip_ctl_c_seq(ptr, NULL, NULL, 0);
 				while (ptr < end)
 					*cp++ = *ptr++;
 			}

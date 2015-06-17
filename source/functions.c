@@ -5757,7 +5757,7 @@ BUILT_IN_FUNCTION(function_count, input)
  */
 BUILT_IN_FUNCTION(function_leftpc, word)
 {
-	u_char  **prepared = NULL;
+	char **prepared;
 	int	lines = 1;
 	int	count;
 
@@ -5766,7 +5766,7 @@ BUILT_IN_FUNCTION(function_leftpc, word)
 		RETURN_EMPTY;
 
 	prepared = prepare_display(word, count, &lines, PREPARE_NOWRAP);
-	RETURN_STR((char *)prepared[0]);
+	RETURN_STR(prepared[0]);
 }
 /*
  * $uname()
@@ -6344,9 +6344,9 @@ BUILT_IN_FUNCTION(function_getflags, input)
 
 BUILT_IN_FUNCTION(function_numlines, input)
 {
-int count = 0;
-unsigned char **lines = NULL;
-char *s = NULL;
+	int count = 0;
+	char **lines = NULL;
+	char *s = NULL;
 	if (input && *input)
 	{
 		int cols;

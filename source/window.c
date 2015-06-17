@@ -3144,7 +3144,7 @@ static	Window *window_echo (Window *window, char **args, char *usage)
 	else
 		to_echo = *args, *args = NULL;
 
-	add_to_window(window, (const unsigned char *)to_echo);
+	add_to_window(window, to_echo);
 	return window;
 }
 

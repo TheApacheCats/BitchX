@@ -2829,13 +2829,13 @@ char *	BX_strmpcat (char *source, size_t siz, const char *format, ...)
 
 
 
-u_char	*BX_strcpy_nocolorcodes (u_char *dest, const u_char *source)
+char *BX_strcpy_nocolorcodes(char *dest, const char *source)
 {
-	u_char	*save = dest;
+	char *save = dest;
 
 	do
 	{
-		while (*source == 3)
+		while (*source == COLOR_CHAR)
 			source = skip_ctl_c_seq(source, NULL, NULL, 0);
 		*dest++ = *source;
 	}
@@ -2975,8 +2975,8 @@ size_t	BX_mangle_line	(char *incoming, int how, size_t how_much)
 	{
 		for (i = 0; incoming[i]; i++)
 		{
-			if (incoming[i] == 0x1b)
-				incoming[i] = 0x5b;
+			if (incoming[i] == '\x1b')
+				incoming[i] = '\x5b';
 		}
 	}
 
@@ -3002,13 +3002,13 @@ size_t	BX_mangle_line	(char *incoming, int how, size_t how_much)
 	{
 		switch (*s)
 		{
-			case 003:		/* color codes */
+			case COLOR_CHAR:	/* color codes */
 			{
-				int 		lhs = 0, 
-						rhs = 0;
-				char 		*end;
+				int lhs = 0, 
+					rhs = 0;
+				char *end;
 
-				end = (char *)skip_ctl_c_seq(s, &lhs, &rhs, 0);
+				end = skip_ctl_c_seq(s, &lhs, &rhs, 0);
 				if (!(stuff & STRIP_COLOR))
 				{
 					while (s < end)

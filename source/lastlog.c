@@ -579,16 +579,14 @@ int logmsg(unsigned long log_type, char *from, int flag, char *format, ...)
 	char *filename = NULL;
 	char *expand = NULL;
 	char *type = NULL;
-	unsigned char **lines = NULL;
+	char **lines = NULL;
 	char msglog_buffer[BIG_BUFFER_SIZE+1];			
-	
 	
 	if (!get_string_var(MSGLOGFILE_VAR) || !get_string_var(CTOOLZ_DIR_VAR))
 		return 0;
 
 	t = now;
 	timestr = update_clock(GET_TIME);
-
 
 	if (format)
 	{
@@ -597,7 +595,6 @@ int logmsg(unsigned long log_type, char *from, int flag, char *format, ...)
 		vsnprintf(msglog_buffer, BIG_BUFFER_SIZE, format, ap);
 		va_end(ap);
 	}
-
 
 	switch (flag)
 	{

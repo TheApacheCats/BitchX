@@ -697,7 +697,7 @@ typedef	struct	WindowStru
 
 	int	window_display;		/* should we display to this window */
 
-	void	(*output_func)	(struct WindowStru *, const unsigned char *);
+	void	(*output_func)	(struct WindowStru *, const char *);
 	void	(*status_output_func)	(struct WindowStru *);
 	
 	struct	ScreenStru	*screen;
