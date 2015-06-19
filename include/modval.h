@@ -296,7 +296,7 @@ extern Function_ptr *global;
 #define xterm_settitle (*(void (*)(void))global[XTERM_SETTITLE])
 #define add_wait_prompt (*(void (*)(char *, void (*)(char *, char *), char *, int , int ))global[ADD_WAIT_PROMPT])
 #define skip_ctl_c_seq (*(char *(*)(const char *, int *, int *, int ))global[SKIP_CTL_C_SEQ])
-#define strip_ansi (*(unsigned char *(*)(const unsigned char *))global[STRIP_ANSI])
+#define strip_ansi (*(char *(*)(const char *))global[STRIP_ANSI])
 #define create_new_screen ((Screen * (*)(void))global[CREATE_NEW_SCREEN])
 #define create_additional_screen ((Window * (*)(void))global[CREATE_ADDITIONAL_SCREEN])
 

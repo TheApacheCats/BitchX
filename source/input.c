@@ -243,7 +243,7 @@ extern void	BX_update_input (int update)
 				term_echo(last_input_screen->promptlist->echo);
 
 			ptr_free = ptr;
-			ptr = (char *)strip_ansi(ptr);
+			ptr = strip_ansi(ptr);
 			strcat(ptr, ALL_OFF_STR);	/* Yes, we can do this */
 			if (free_it)
 				new_free(&ptr_free);

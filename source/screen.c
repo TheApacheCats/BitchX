@@ -2192,95 +2192,6 @@ char *BX_skip_ctl_c_seq(const char *start, int *lhs, int *rhs, int proper)
 }
 
 /*
- * Used as a translation table when we cant display graphics characters
- * or we have been told to do translation.  A no-brainer, with little attempt
- * at being smart.
- * (JKJ: perhaps we should allow a user to /set this?)
- */
-static	u_char	gcxlate[256] = {
-  '*', '*', '*', '*', '*', '*', '*', '*',
-  '#', '*', '#', '*', '*', '*', '*', '*',
-  '>', '<', '|', '!', '|', '$', '_', '|',
-  '^', 'v', '>', '<', '*', '=', '^', 'v',
-  ' ', '!', '"', '#', '$', '%', '&', '\'',
-  '(', ')', '*', '+', ',', '_', '.', '/',
-  '0', '1', '2', '3', '4', '5', '6', '7',
-  '8', '9', ':', ';', '<', '=', '>', '?',
-  '@', 'A', 'B', 'C', 'D', 'E', 'F', 'G',
-  'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
-  'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W',
-  'Z', 'Y', 'X', '[', '\\', ']', '^', '_',
-  '`', 'a', 'b', 'c', 'd', 'e', 'f', 'g',
-  'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
-  'p', 'q', 'r', 's', 't', 'u', 'v', 'w',
-  'x', 'y', 'z', '{', '|', '}', '~', '?',
-  'C', 'u', 'e', 'a', 'a', 'a', 'a', 'c',
-  'e', 'e', 'e', 'i', 'i', 'i', 'A', 'A',
-  'e', 'e', 'e', 'o', 'o', 'o', 'u', 'u',
-  'y', 'O', 'U', 'C', '#', 'Y', 'P', 'f',
-  'a', 'i', 'o', 'u', 'n', 'N', '^', '^',
-  '?', '<', '>', '2', '4', '!', '<', '>',
-  '#', '#', '#', '|', '|', '|', '|', '+',
-  '+', '+', '+', '|', '+', '+', '+', '+',
-  '+', '+', '+', '+', '-', '+', '+', '+',
-  '+', '+', '+', '+', '+', '=', '+', '+',
-  '+', '+', '+', '+', '+', '+', '+', '+',
-  '+', '+', '+', '#', '-', '|', '|', '-',
-  'a', 'b', 'P', 'p', 'Z', 'o', 'u', 't',
-  '#', 'O', '0', 'O', '-', 'o', 'e', 'U',
-  '*', '+', '>', '<', '|', '|', '/', '=',
-  '*', '*', '*', '*', 'n', '2', '*', '*'
-};
-
-/*
- * State 0 is "normal, printable character"
- * State 1 is "nonprintable character"
- * State 2 is "Escape character" (033)
- * State 3 is "Color code" (003)
- * State 4 is "Special highlight character"
- * State 5 is "ROM character" (022)
- * State 6 is a character that should never be printed
- */
-static	u_char	ansi_state[256] = {
-/*	^@	^A	^B	^C	^D	^E	^F	^G */
-	6,	6,	4,	3,	6,	4,	4,	4,  /* 000 */
-/*	^H	^I	^J	^K	^D	^M	^N	^O */
-	6,	4,	4,	6,	0,	6,	6,	4,  /* 010 */
-/*	^P	^Q	^R	^S	^T	^U	^V	^W */
-	6,	6,	5,	4,	4,	6,	4,	6,  /* 020 */
-/*	^X	^Y	^Z	^[	^\	^]	^^	^_ */
-	6,	6,	6,	2,	6,	6,	6,	4,  /* 030 */
-	0,	0,	0,	0,	0,	0,	0,	0,  /* 040 */
-	0,	0,	0,	0,	0,	0,	0,	0,  /* 050 */
-	0,	0,	0,	0,	0,	0,	0,	0,  /* 060 */
-	0,	0,	0,	0,	0,	0,	0,	0,  /* 070 */
-	0,	0,	0,	0,	0,	0,	0,	0,  /* 100 */
-	0,	0,	0,	0,	0,	0,	0,	0,  /* 110 */
-	0,	0,	0,	0,	0,	0,	0,	0,  /* 120 */
-	0,	0,	0,	0,	0,	0,	0,	0,  /* 130 */
-	0,	0,	0,	0,	0,	0,	0,	0,  /* 140 */
-	0,	0,	0,	0,	0,	0,	0,	0,  /* 150 */
-	0,	0,	0,	0,	0,	0,	0,	0,  /* 160 */
-	0,	0,	0,	0,	0,	0,	0,	0,  /* 170 */
-	1,	1,	1,	1,	1,	1,	1,	1,  /* 200 */
-	1,	1,	1,	1,	1,	1,	1,	1,  /* 210 */
-	1,	1,	1,	1,	1,	1,	1,	1,  /* 220 */
-	1,	1,	1,	1,	1,	1,	1,	1,  /* 230 */
-	1,	1,	1,	1,	1,	1,	1,	1,  /* 240 */
-	1,	1,	1,	1,	1,	1,	1,	1,  /* 250 */
-	1,	1,	1,	1,	1,	1,	1,	1,  /* 260 */
-	1,	1,	1,	1,	1,	1,	1,	1,  /* 270 */
-	1,	1,	1,	1,	1,	1,	1,	1,  /* 300 */
-	1,	1,	1,	1,	1,	1,	1,	1,  /* 310 */
-	1,	1,	1,	1,	1,	1,	1,	1,  /* 320 */
-	1,	1,	1,	1,	1,	1,	1,	1,  /* 330 */
-	1,	1,	1,	1,	1,	1,	1,	1,  /* 340 */
-	1,	1,	1,	1,	1,	1,	1,	1,  /* 350 */
-	1,	1,	1,	1,	1,	1,	1,	1,  /* 360 */
-	1,	1,	1,	1,	1,	1,	1,	1   /* 370 */
-};
-
-/*
  * This started off as a general ansi parser, and it worked for stuff that
  * was going out to the display, but it couldnt deal properly with ansi codes,
  * and so when i tried to use it for the status bar, it just all fell to 
@@ -2295,56 +2206,140 @@ static	u_char	ansi_state[256] = {
  * These macros help keep 8 bit chars from sneaking into the output stream
  * where they might be stripped out.
  */
-#if 1
 #define this_char() (eightbit ? *str : (*str) & 0x7f)
 #define next_char() (eightbit ? *str++ : (*str++) & 0x7f)
 #define put_back() (str--)
-#else
-#define this_char() (*str)
-#define next_char() (*str++)
-#define put_back() (str--)
-#endif
 
-
-unsigned char *BX_strip_ansi (const unsigned char *str)
+char *BX_strip_ansi(const char *str)
 {
-	u_char	*output;
-	u_char	chr, chr1;
-	int 	pos, maxpos;
-	int 	args[10], nargs, i;
+	/*
+	 * Used as a translation table when we cant display graphics characters
+	 * or we have been told to do translation.  A no-brainer, with little attempt
+	 * at being smart.
+	 * (JKJ: perhaps we should allow a user to /set this?)
+	 */
+	const static char gcxlate[256] = {
+	  '*', '*', '*', '*', '*', '*', '*', '*',
+	  '#', '*', '#', '*', '*', '*', '*', '*',
+	  '>', '<', '|', '!', '|', '$', '_', '|',
+	  '^', 'v', '>', '<', '*', '=', '^', 'v',
+	  ' ', '!', '"', '#', '$', '%', '&', '\'',
+	  '(', ')', '*', '+', ',', '_', '.', '/',
+	  '0', '1', '2', '3', '4', '5', '6', '7',
+	  '8', '9', ':', ';', '<', '=', '>', '?',
+	  '@', 'A', 'B', 'C', 'D', 'E', 'F', 'G',
+	  'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
+	  'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W',
+	  'Z', 'Y', 'X', '[', '\\', ']', '^', '_',
+	  '`', 'a', 'b', 'c', 'd', 'e', 'f', 'g',
+	  'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
+	  'p', 'q', 'r', 's', 't', 'u', 'v', 'w',
+	  'x', 'y', 'z', '{', '|', '}', '~', '?',
+	  'C', 'u', 'e', 'a', 'a', 'a', 'a', 'c',
+	  'e', 'e', 'e', 'i', 'i', 'i', 'A', 'A',
+	  'e', 'e', 'e', 'o', 'o', 'o', 'u', 'u',
+	  'y', 'O', 'U', 'C', '#', 'Y', 'P', 'f',
+	  'a', 'i', 'o', 'u', 'n', 'N', '^', '^',
+	  '?', '<', '>', '2', '4', '!', '<', '>',
+	  '#', '#', '#', '|', '|', '|', '|', '+',
+	  '+', '+', '+', '|', '+', '+', '+', '+',
+	  '+', '+', '+', '+', '-', '+', '+', '+',
+	  '+', '+', '+', '+', '+', '=', '+', '+',
+	  '+', '+', '+', '+', '+', '+', '+', '+',
+	  '+', '+', '+', '#', '-', '|', '|', '-',
+	  'a', 'b', 'P', 'p', 'Z', 'o', 'u', 't',
+	  '#', 'O', '0', 'O', '-', 'o', 'e', 'U',
+	  '*', '+', '>', '<', '|', '|', '/', '=',
+	  '*', '*', '*', '*', 'n', '2', '*', '*'
+	};
+	
+	/*
+	 * State 0 is "normal, printable character"
+	 * State 1 is "nonprintable character"
+	 * State 2 is "Escape character" (033)
+	 * State 3 is "Color code" (003)
+	 * State 4 is "Special highlight character"
+	 * State 5 is "ROM character" (022)
+	 * State 6 is a character that should never be printed
+	 */
+	const static char ansi_state[256] = {
+	/*	^@	^A	^B	^C	^D	^E	^F	^G */
+		6,	6,	4,	3,	6,	4,	4,	4,  /* 000 */
+	/*	^H	^I	^J	^K	^D	^M	^N	^O */
+		6,	4,	4,	6,	0,	6,	6,	4,  /* 010 */
+	/*	^P	^Q	^R	^S	^T	^U	^V	^W */
+		6,	6,	5,	4,	4,	6,	4,	6,  /* 020 */
+	/*	^X	^Y	^Z	^[	^\	^]	^^	^_ */
+		6,	6,	6,	2,	6,	6,	6,	4,  /* 030 */
+		0,	0,	0,	0,	0,	0,	0,	0,  /* 040 */
+		0,	0,	0,	0,	0,	0,	0,	0,  /* 050 */
+		0,	0,	0,	0,	0,	0,	0,	0,  /* 060 */
+		0,	0,	0,	0,	0,	0,	0,	0,  /* 070 */
+		0,	0,	0,	0,	0,	0,	0,	0,  /* 100 */
+		0,	0,	0,	0,	0,	0,	0,	0,  /* 110 */
+		0,	0,	0,	0,	0,	0,	0,	0,  /* 120 */
+		0,	0,	0,	0,	0,	0,	0,	0,  /* 130 */
+		0,	0,	0,	0,	0,	0,	0,	0,  /* 140 */
+		0,	0,	0,	0,	0,	0,	0,	0,  /* 150 */
+		0,	0,	0,	0,	0,	0,	0,	0,  /* 160 */
+		0,	0,	0,	0,	0,	0,	0,	0,  /* 170 */
+		1,	1,	1,	1,	1,	1,	1,	1,  /* 200 */
+		1,	1,	1,	1,	1,	1,	1,	1,  /* 210 */
+		1,	1,	1,	1,	1,	1,	1,	1,  /* 220 */
+		1,	1,	1,	1,	1,	1,	1,	1,  /* 230 */
+		1,	1,	1,	1,	1,	1,	1,	1,  /* 240 */
+		1,	1,	1,	1,	1,	1,	1,	1,  /* 250 */
+		1,	1,	1,	1,	1,	1,	1,	1,  /* 260 */
+		1,	1,	1,	1,	1,	1,	1,	1,  /* 270 */
+		1,	1,	1,	1,	1,	1,	1,	1,  /* 300 */
+		1,	1,	1,	1,	1,	1,	1,	1,  /* 310 */
+		1,	1,	1,	1,	1,	1,	1,	1,  /* 320 */
+		1,	1,	1,	1,	1,	1,	1,	1,  /* 330 */
+		1,	1,	1,	1,	1,	1,	1,	1,  /* 340 */
+		1,	1,	1,	1,	1,	1,	1,	1,  /* 350 */
+		1,	1,	1,	1,	1,	1,	1,	1,  /* 360 */
+		1,	1,	1,	1,	1,	1,	1,	1   /* 370 */
+	};
+
+	char *output;
+	char chr;
+	int pos, maxpos;
+	int args[10], nargs, i;
 
 	int	bold = 0;
 	int	underline = 0;
 	int	reverse = 0;
 	int	blink = 0;
 	int	alt_mode = 0;
-	int     fg_color = 0;
-	int     bg_color = 1;
+	int fg_color = 0;
+	int bg_color = 1;
                 
-	int	ansi = get_int_var(DISPLAY_ANSI_VAR);
-	int	gcmode = get_int_var(DISPLAY_PC_CHARACTERS_VAR);
-	int 	n;
-	int	eightbit = term_eight_bit();
+	const int ansi = get_int_var(DISPLAY_ANSI_VAR);
+	const int gcmode = get_int_var(DISPLAY_PC_CHARACTERS_VAR);
+	const int eightbit = term_eight_bit();
+	int n;
 
 	/* 
 	 * The output string has a few extra chars on the end just 
 	 * in case you need to tack something else onto it.
 	 */
 	maxpos = strlen(str);
-	output = (u_char *)new_malloc(maxpos + 64);
+	output = new_malloc(maxpos + 64);
 	pos = 0;
 
 	while ((chr = next_char()))
 	{
-	    chr1 = *(str - 1);
-	    if (pos > maxpos)
-	    {
-		maxpos += 64; /* Extend 64 chars at a time */
-		RESIZE(output, unsigned char, maxpos + 64);
-	    }
+		/* chr1 is the same as chr, but without the top bit masked. */
+		const char chr1 = *(str - 1);
 
-	    switch (ansi_state[chr1])
-	    {
+		if (pos > maxpos)
+		{
+			maxpos += 64; /* Extend 64 chars at a time */
+			RESIZE(output, char, maxpos + 64);
+		}
+
+		switch (ansi_state[(unsigned char)chr1])
+		{
 		/*
 		 * State 0 is a normal, printable ascii character
 		 */
@@ -2364,14 +2359,14 @@ unsigned char *BX_strip_ansi (const unsigned char *str)
 			 * This is a very paranoid check to make sure that
 			 * the 8-bit escape code doesnt elude us.
 			 */
-			if (chr == 27 + 128)
+			if (chr == '\x9b')
 			{
 				output[pos++] = REV_TOG;
 				output[pos++] = '[';
 				output[pos++] = REV_TOG;
 				continue;
 			}
-			if (ansi_state[chr] == 6)
+			if (ansi_state[(unsigned char)chr] == 6)
 				my_gcmode = 1;
 			if (strip_ansi_never_xlate)
 				my_gcmode = 4;
@@ -2383,7 +2378,7 @@ unsigned char *BX_strip_ansi (const unsigned char *str)
 				 */
 				case 5:
 				{
-					output[pos++] = gcxlate[chr];
+					output[pos++] = gcxlate[(unsigned char)chr];
 					break;
 				}
 
@@ -2404,7 +2399,7 @@ unsigned char *BX_strip_ansi (const unsigned char *str)
 					if (termfeatures & TERM_CAN_GCHAR)
 						output[pos++] = chr;
 					else
-						output[pos++] = gcxlate[chr];
+						output[pos++] = gcxlate[(unsigned char)chr];
 					break;
 				}
 
@@ -2418,7 +2413,7 @@ unsigned char *BX_strip_ansi (const unsigned char *str)
 					else
 					{
 						output[pos++] = REV_TOG;
-						output[pos++] = gcxlate[chr];
+						output[pos++] = gcxlate[(unsigned char)chr];
 						output[pos++] = REV_TOG;
 					}
 					break;
@@ -2433,15 +2428,12 @@ unsigned char *BX_strip_ansi (const unsigned char *str)
 				 */
 				case 1:
 				{
-					if (termfeatures & TERM_CAN_GCHAR)
-						output[pos++] = chr;
-					else if ((chr & 0x80) && eightbit)
+					if ((termfeatures & TERM_CAN_GCHAR) || (chr & 0x80))
 						output[pos++] = chr;
 					else
 					{
 						output[pos++] = REV_TOG;
-						output[pos++] = 
-						(chr | 0x40) & 0x7f;
+						output[pos++] = chr | 0x40;
 						output[pos++] = REV_TOG;
 					}
 					break;
@@ -2599,7 +2591,7 @@ unsigned char *BX_strip_ansi (const unsigned char *str)
 				{
 					n = 0;
 					for (n = 0;
-					     isdigit(this_char());
+					     isdigit((unsigned char)this_char());
 					     next_char())
 					{
 					    n = n * 10 + (this_char() - '0');
@@ -2647,7 +2639,7 @@ unsigned char *BX_strip_ansi (const unsigned char *str)
 					    if (pos + args[0] > maxpos)
 					    {
 						maxpos += args[0]; 
-						RESIZE(output, u_char, maxpos + 64);
+						RESIZE(output, char, maxpos + 64);
 					    }
 					    while (args[0]-- > 0)
 						output[pos++] = ND_SPACE;
@@ -2760,7 +2752,7 @@ unsigned char *BX_strip_ansi (const unsigned char *str)
 					}
 					else if (args[i] >= 30 && args[i] <= 37)
 					{
-						output[pos++] = 003;
+						output[pos++] = COLOR_CHAR;
 						if (bold)
 							output[pos++] = '5';
 						else
@@ -2776,7 +2768,7 @@ unsigned char *BX_strip_ansi (const unsigned char *str)
 					}
 					else if (args[i] >= 40 && args[i] <= 47)
 					{
-						output[pos++] = 003;
+						output[pos++] = COLOR_CHAR;
 						output[pos++] = ',';
 						if (blink)
 							output[pos++] = '5';
@@ -2800,8 +2792,8 @@ unsigned char *BX_strip_ansi (const unsigned char *str)
 	         */
 		case 3:
 		{
-			const u_char 	*end;
-			int		lhs, rhs;
+			const char *end;
+			int lhs, rhs;
 
 			put_back();
 			end = skip_ctl_c_seq (str, &lhs, &rhs, 0);

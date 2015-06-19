@@ -59,12 +59,12 @@ Screen  * BX_create_new_screen(void);
 	void	refresh_window_screen(Window *);
 #endif
 			
-	u_char *BX_strip_ansi		(const u_char *);
-	char   *normalize_color		(int, int, int, int);
+char *BX_strip_ansi(const char *);
+char *normalize_color(int, int, int, int);
 char *BX_skip_ctl_c_seq(const char *, int *, int *, int);
 char **BX_prepare_display(const char *, int, int *, int);
 int	BX_output_with_count(const char *, int, int);
-char	*BX_skip_incoming_mirc	(char *);
+char *BX_skip_incoming_mirc(char *);
 
 /* Dont do any word-wrapping, just truncate each line at its place. */
 #define PREPARE_NOWRAP	0x01
