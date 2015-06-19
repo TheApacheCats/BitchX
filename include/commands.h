@@ -15,7 +15,6 @@ extern	char	*recv_nick;
 	void	eval_inputlist (char *, char *);
 	int	BX_parse_command (char *, int, char *);
 	void	BX_parse_line (const char *, char *, const char *, int, int, int);
-	void	edit_char (unsigned char);
 	void	execute_timer (void);
 	void	ison_now (char *, char *);
 	void	quote_char (char, char *);

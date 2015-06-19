@@ -22,6 +22,7 @@
 	void	input_move_cursor (int);
 	void	change_input_prompt (int);
 	void	BX_cursor_to_input (void);
+	void	edit_char(char);
 
 /* keybinding functions */
 	void 	backward_character 	(char, char *);

@@ -1332,7 +1332,7 @@ BUILT_IN_KEYBINDING(parse_text)
  * edit_char: handles each character for an input stream.  Not too difficult
  * to work out.
  */
-void	edit_char (u_char key)
+void edit_char(char key)
 {
 	void		(*func) (char, char *) = NULL;
 	char		*ptr = NULL;
@@ -1353,8 +1353,7 @@ void	edit_char (u_char key)
 	/* were we waiting for a keypress? */
 	if (last_input_screen->promptlist && last_input_screen->promptlist->type == WAIT_PROMPT_KEY)
 	{
-		unsigned char key_[2] = "\0";
-		key_[0] = key;
+		char key_[2] = { key, 0 };
 		oldprompt = last_input_screen->promptlist;
 		last_input_screen->promptlist = oldprompt->next;
 		(*oldprompt->func)(oldprompt->data, key_);
@@ -1394,7 +1393,7 @@ void	edit_char (u_char key)
                                                                                                                                                                 
 #ifdef TRANSLATE
 	if (translation)
-		extended_key = transFromClient[key];
+		extended_key = transFromClient[(unsigned char)key];
 	else
 #endif
 	extended_key = key;
@@ -2862,10 +2861,10 @@ BUILT_IN_COMMAND(type)
 			    }
 			    default:
 			    {
-				c = *(args++);
+				c = (unsigned char)*(args++);
 				if (islower(c))
 					c = toupper(c);
-				if (c < 64)
+				if (c < 64 || c > 95)
 				{
 					say("Invalid key sequence: ^%c", c);
 					return;
