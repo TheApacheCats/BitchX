@@ -3575,13 +3575,13 @@ int check_dcc_socket(int s)
 	return 0;
 }
 
-int BX_write_sockets(int s, unsigned char *str, int len, int nl)
+int BX_write_sockets(int s, char *str, int len, int nl)
 {
 	if (s < 1)
 		return -1;
 	if (nl)
 	{
-		unsigned char *buf;
+		char *buf;
 		buf = alloca(strlen(str)+4);
 		strcpy(buf, str);
 		strcat(buf, "\r\n");
@@ -3591,7 +3591,7 @@ int BX_write_sockets(int s, unsigned char *str, int len, int nl)
 	return write(s, str, len);
 }
 
-int BX_read_sockets(int s, unsigned char *str, int len)
+int BX_read_sockets(int s, char *str, int len)
 {
 	if (s < 1)
 		return -1;
