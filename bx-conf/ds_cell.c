@@ -302,9 +302,9 @@ int ls_dispatch (CELL * c)
 
     while (c -> termkey == 0/* && c->start*/) {
        hit = FALSE;
-       if (c->redraw && ((*c -> ListPaintProc) != NULL))
+       if (c->redraw && (c->ListPaintProc != NULL))
            (*c -> ListPaintProc) (c);
-       if (*c -> UpdateStatusProc != NULL)
+       if (c->UpdateStatusProc != NULL)
            (*c -> UpdateStatusProc) (c);
        if (c -> termkey == 0) {
            if ((*c -> OtherGetKeyProc) != NULL && c->other_getkey)

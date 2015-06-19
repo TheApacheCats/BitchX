@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Fix bxconfigure crashing on very wide terminals (reported by cpet). (caf)
+
 * Remove obsolete Chatnet 310 numeric support (WANT_CHATNET). (caf)
 
 * Rework the lag check to make it simpler and more reliable.  This adds

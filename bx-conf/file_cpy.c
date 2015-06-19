@@ -547,10 +547,9 @@ int clear_dlist (CELL *c)
 	 while (c->start != NULL ) {
 		ptr = c->start;
 		c->start = c->start->nextlistptr;
-		if (ptr->datainfo.option)
-			free(ptr->datainfo.option);
-		if (ptr->datainfo.help)
-			free(ptr->datainfo.help);
+		free(ptr->datainfo.option);
+		free(ptr->datainfo.help);
+		free(ptr->datainfo.save);
 		free(ptr);
 	 }
 	 c->end = NULL;
@@ -568,25 +567,22 @@ int List_Exit(CELL *c) {
  * etc.
  */
 int status_update(CELL *c) {
-char tmp[(200 + 1) * 2];
-int center;
+	char tmp[(200 + 1) * 2];
+	int center;
+
 	center = ((c->ecol - 2) / 2) - (strlen(c->filename) / 2);
-	memset(tmp, 0, sizeof(tmp));
-#if 0
-	memset(tmp, ' ', center);
-	strcat(tmp, c->filename);
-	mvwaddstr(c->window, c->srow - 2, c->scol , tmp);
-#else
-	memset(tmp, ' ', c->ecol - 2);
+	memset(tmp, ' ', sizeof tmp - 1);
+	if (c->ecol - 2 < sizeof tmp)
+		tmp[c->ecol - 2] = 0;
+	else
+		tmp[sizeof tmp - 1] = 0;
 	mvwaddstr (c->window, c->srow - 2 , c->scol, tmp);
 	wattron(c->window,A_REVERSE);
 	mvwaddstr (c->window, c->srow - 2 , center, c->filename);
 	wattroff(c->window,A_REVERSE);
-	
-#endif
 	if (c->current->datainfo.help)
 	{
-		sprintf(tmp, " %-75s ", c->current->datainfo.help);
+		snprintf(tmp, sizeof tmp, " %-75s ", c->current->datainfo.help);
 		mvwaddstr(c->window, c->max_rows - 3, c->scol, tmp);
 	}
 	else
@@ -656,7 +652,7 @@ int File_Entry(CELL *c) {
 char *fDisplay (dlistptr *ptr)
 {
 	static char p[100];
-	sprintf(p, " %-36s ", (*ptr)->datainfo.option);
+	snprintf(p, sizeof p, " %-36s ", (*ptr)->datainfo.option);
 	return p;
 }
 
@@ -669,8 +665,8 @@ int fredraw (CELL * c)
 	dlistptr p = c->list_start;	
 	int i = 0;
 	char buff[200];
-	if (c->ecol - c->scol)
-		sprintf(buff, "%*s",c->ecol - c->scol + 1, " ");
+	if (c->ecol >= c->scol)
+		snprintf(buff, sizeof buff, "%*s", c->ecol - c->scol + 1, " ");
 	while (i <= c->erow - c->srow && p != NULL) 
 	{
 		if (p == c->current) wattron(c->window,A_REVERSE);
@@ -692,9 +688,11 @@ char *cDisplay (dlistptr *ptr)
 {
 	static char p[100];
 	if ((*ptr)->datainfo.type == BOOL_TYPE)
-		sprintf(p, " %-28s %8s", (*ptr)->datainfo.option, (*ptr)->datainfo.integer? "On":"Off");
+		snprintf(p, sizeof p, " %-28s %8s", 
+			(*ptr)->datainfo.option, (*ptr)->datainfo.integer? "On":"Off");
 	else if ((*ptr)->datainfo.type == INT_TYPE)
-		sprintf(p, " %-28s %8d", (*ptr)->datainfo.option, (*ptr)->datainfo.integer);
+		snprintf(p, sizeof p, " %-28s %8d", 
+			(*ptr)->datainfo.option, (*ptr)->datainfo.integer);
 	return p;
 }
 
@@ -707,8 +705,8 @@ register int row = c->srow;
 dlistptr p = c->list_start;	
 int i = 0;
 char buff[200];
-	if (c->ecol - c->scol)
-		sprintf(buff, "%*s",c->ecol - c->scol + 1, " ");
+	if (c->ecol >= c->scol)
+		snprintf(buff, sizeof buff, "%*s",c->ecol - c->scol + 1, " ");
 
 	while (i <= c->erow - c->srow && p != NULL) 
 	{
@@ -1086,8 +1084,8 @@ char *eDisplay (dlistptr *ptr)
 {
 	static char p[100];
 	char str[40];
-	sprintf(str, "%d", (*ptr)->datainfo.integer);
-	sprintf(p, "%14s", str);
+	snprintf(str, sizeof str, "%d", (*ptr)->datainfo.integer);
+	snprintf(p, sizeof p, "%14s", str);
 	return p;
 }
 
@@ -1101,8 +1099,8 @@ dlistptr p = c->list_start;
 int i = 0;
 char buff[200];
 
-	if (c->ecol - c->scol)
-		sprintf(buff, "%*s",c->ecol - c->scol + 1, " ");
+	if (c->ecol >= c->scol)
+		snprintf(buff, sizeof buff, "%*s",c->ecol - c->scol + 1, " ");
 	
 	while (i <= c->erow - c->srow && p != NULL) 
 	{
@@ -1121,9 +1119,14 @@ char buff[200];
 }
 
 int Edit_Entry(CELL *c) {
-char tmp[180];
+	char tmp[200];
+	int n_spaces = c->ecol - 2 - c->scol - 4;
+
 	memset(tmp, ' ', sizeof(tmp)-1);
-	tmp[c->ecol - 2 - c->scol - 4] = 0;
+	if (n_spaces < sizeof tmp)
+		tmp[n_spaces] = 0;
+	else
+		tmp[sizeof tmp - 1] = 0;
 	mvwaddstr (c->window, c->srow - 1 , c->scol, tmp);
 	mvwaddstr (c->window, c->srow - 1, c->scol + 4, c->start->datainfo.option);
 	wrefresh(c->window);
@@ -1133,9 +1136,14 @@ char tmp[180];
 
 int edit_enter (CELL *c)
 {
-char tmp[180];
+	char tmp[200];
+	int n_spaces = c->ecol - 2 - c->scol - 4;
+
 	memset(tmp, ' ', sizeof(tmp)-1);
-	tmp[c->ecol - 2 - c->scol - 4] = 0;
+	if (n_spaces < sizeof tmp)
+		tmp[n_spaces] = 0;
+	else
+		tmp[sizeof tmp - 1] = 0;
 	if (c->current->datainfo.type == INT_TYPE)
 	{
 		c->redraw = TRUE;
@@ -1191,9 +1199,14 @@ int end = 0;
 
 int edit_exit(CELL *c)
 {
-char tmp[180];
+	char tmp[200];
+	int n_spaces = c->ecol - 2 - c->scol - 4;
+
 	memset(tmp, ' ', sizeof(tmp)-1);
-	tmp[c->ecol - 2 - c->scol - 4] = 0;
+	if (n_spaces < sizeof tmp)
+		tmp[n_spaces] = 0;
+	else
+		tmp[sizeof tmp - 1] = 0;
 	mvwaddstr (c->window, c->srow - 1 , c->scol, tmp);
 	mvwaddstr (c->window, c->srow , c->scol, tmp);
 	return TRUE;
