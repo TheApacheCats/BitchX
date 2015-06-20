@@ -2375,7 +2375,7 @@ long	ar_timeout(time_t now, char *info, int size, void (*func)(struct reslist *)
  * The return value is the number of messages successfully sent to 
  * nameservers or -1 if no successful sends.
  */
-static	int	ar_send_res_msg(char *msg, int len, int rcount)
+static	int	ar_send_res_msg(unsigned char *msg, int len, int rcount)
 {
 	register int	i;
 	int	sent = 0;
@@ -2461,7 +2461,7 @@ int	ar_delete(char *ptr, int size)
  */
 static	int	ar_query_name(char *name, int class, int type, struct reslist *rptr)
 {
-	static	char buf[MAXPACKET];
+	static unsigned char buf[MAXPACKET];
 	int	r,s;
 	HEADER	*hptr;
 
@@ -2639,9 +2639,10 @@ static	int	ar_resend_query(struct reslist *rptr)
  *
  * process an answer received from a nameserver.
  */
-static	int	ar_procanswer(struct reslist *rptr, HEADER *hptr, char *buf, char *eob)
+static int ar_procanswer(struct reslist *rptr, HEADER *hptr, unsigned char *buf, unsigned char *eob)
 {
-	char	*cp, **alias;
+	unsigned char *cp;
+	char **alias;
 	int	class, type, dlen, len, ans = 0, n;
 	unsigned int ttl, dr, *adr;
 	struct	hent	*hp;
@@ -2759,7 +2760,7 @@ static	int	ar_procanswer(struct reslist *rptr, HEADER *hptr, char *buf, char *eo
  */
 struct	hostent	*ar_answer(char *reip, int size, void (*func)(struct reslist *) )
 {
-	static	char	ar_rcvbuf[HFIXEDSZ + MAXPACKET];
+	static unsigned char ar_rcvbuf[HFIXEDSZ + MAXPACKET];
 	static	struct	hostent	ar_host;
 
 	HEADER	hptr;
