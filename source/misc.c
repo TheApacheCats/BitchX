@@ -3651,8 +3651,8 @@ extern int dgets_errno;
 
 void read_netfinger(int s)
 {
-char tmpstr[BIG_BUFFER_SIZE+1];
-register unsigned char *p = tmpstr;
+	char tmpstr[BIG_BUFFER_SIZE+1];
+	char *p = tmpstr;
 	*tmpstr = 0;
 	switch(dgets(tmpstr, s, 0, BIG_BUFFER_SIZE, NULL))
 	{
@@ -3673,13 +3673,13 @@ register unsigned char *p = tmpstr;
 			{
 				switch(*p)
 				{
-					case 0210:
-					case 0211:
-					case 0212:
-					case 0214:
-						*p -= 0200;
+					case '\210':
+					case '\211':
+					case '\212':
+					case '\214':
+						*p &= 0x7f;
 						break;
-					case 0x9b:
+					case '\x9b':
 					case '\t':
 						break;
 					case '\n':
@@ -3687,7 +3687,7 @@ register unsigned char *p = tmpstr;
 						*p = '\0';
 						break;
 					default:
-						if (!isprint(*p))
+						if (!isprint((unsigned char)*p))
 							*p = (*p & 0x7f) | 0x40;
 						break;
 				}
