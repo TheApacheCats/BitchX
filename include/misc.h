@@ -108,7 +108,9 @@ ChannelList *	BX_prepare_command (int *, char *, int);
 	int	isme (char *);
 
 	char 		*BX_convert_output_format (const char *, const char *, ...);
+#ifdef GUI
 	char 		*convert_output_format2 (const char *);
+#endif
 	void		add_last_type (LastMsg *, int, char *, char *, char *, char *);
 	int		check_last_type (LastMsg *, int, char *, char *);
 	int		matchmcommand (char *, int);

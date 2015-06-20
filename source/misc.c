@@ -4709,23 +4709,25 @@ char *BX_convert_output_format(const char *format, const char *str, ...)
 	return s;
 }
 
+#ifdef GUI
+/* This cut-down version of convert_output_format is used by the GUI menu functions. */
 #define RAW_BUFFER_SIZE (MAX_RECURSE * BIG_BUFFER_SIZE * 2)
 char *convert_output_format2(const char *str)
 {
-unsigned char buffer[RAW_BUFFER_SIZE+1];
-unsigned char buffer2[RAW_BUFFER_SIZE+1];
-register unsigned char *s;
-char *copy = NULL;
-char *tmpc = NULL;
-int arg_flags;
+	char buffer[RAW_BUFFER_SIZE+1];
+	char buffer2[RAW_BUFFER_SIZE+1];
+	char *s;
+	char *copy = NULL;
+	char *tmpc = NULL;
+	int arg_flags;
 
 	if (!str)
 		return m_strdup(empty_string);
 
 	memset(buffer, 0, BIG_BUFFER_SIZE);
-        strlcpy(buffer2, str, RAW_BUFFER_SIZE);
+	strlcpy(buffer2, str, RAW_BUFFER_SIZE);
 	copy = tmpc = buffer2;
-        s = buffer;
+	s = buffer;
 	while (*tmpc)
 	{
 		if (*tmpc == '$')
@@ -4741,7 +4743,7 @@ int arg_flags;
 #else
 				strlcat(s, new_str, RAW_BUFFER_SIZE);
 #endif
-                        s = s + (strlen(new_str));
+			s += strlen(new_str);
 			new_free(&new_str);
 			if (!tmpc) break;
 			continue;
@@ -4752,6 +4754,7 @@ int arg_flags;
 	*s = 0;
 	return m_strdup(buffer);
 }
+#endif /* GUI */
 
 void add_last_type (LastMsg *array, int size, char *from, char *uh, char *to, char *str)
 {
