@@ -364,7 +364,6 @@ char **BX_prepare_display(const char *orig_str,
                                 int *lused,
                                 int flags)
 {
-	int	gchar_mode;
 	static int recursion = 0, 
 		output_size = 0;
 	int pos = 0,            /* Current position in "buffer" */
@@ -396,7 +395,6 @@ char **BX_prepare_display(const char *orig_str,
 		ircpanic("prepare_display() called recursively");
 	recursion++;
 
-	gchar_mode = get_int_var(DISPLAY_PC_CHARACTERS_VAR);
 	beep_max = get_int_var(BEEP_VAR)? get_int_var(BEEP_MAX_VAR) : -1;
 	tab_max = get_int_var(TAB_VAR) ? get_int_var(TAB_MAX_VAR) : -1;
 	nds_max = get_int_var(ND_SPACE_MAX_VAR);
@@ -1548,7 +1546,7 @@ Screen	* BX_create_new_screen(void)
 extern	Window	*BX_create_additional_screen (void)
 {
         Window  *win;
-        Screen  *oldscreen, *new;
+        Screen  *new;
         char    *displayvar,
                 *termvar;
         int     screen_type = ST_NOTHING;
@@ -1603,7 +1601,6 @@ extern	Window	*BX_create_additional_screen (void)
 		return NULL;
 	}
 
-	oldscreen = current_window->screen;
 	new = create_new_screen();
 
 	switch ((child = fork()))
@@ -1750,10 +1747,8 @@ extern	Window	*BX_create_additional_screen (void)
 extern  Window  *BX_create_additional_screen (void)
 {
 	Window  *win;
-	Screen  *oldscreen,
-		*new;
+	Screen  *new;
 
-	oldscreen = current_window->screen;
 	new = create_new_screen();
 	win = new_window(new);
 	gui_new_window(new, win);
@@ -1840,7 +1835,6 @@ Screen *screen;
 void do_screens (fd_set *rd)
 {
 	Screen *screen;
-	unsigned char buffer[IO_BUFFER_SIZE + 1];
 
 	if (!use_input)
 		return;
@@ -1869,6 +1863,7 @@ void do_screens (fd_set *rd)
 
 			if (dumb_mode)
 			{
+				char buffer[IO_BUFFER_SIZE + 1];
 				if (dgets(buffer, screen->fdin, 0, IO_BUFFER_SIZE, NULL))
 				{
 					*(buffer + strlen(buffer) - 1) = '\0';
@@ -1886,7 +1881,7 @@ void do_screens (fd_set *rd)
 			else
 			{
 				int server;
-				unsigned char loc_buffer[BIG_BUFFER_SIZE + 1];
+				char loc_buffer[BIG_BUFFER_SIZE + 1];
 				int	n, i;
 
 				server = from_server;
@@ -1906,7 +1901,7 @@ void do_screens (fd_set *rd)
 					{
 #ifdef __EMXPM__
 						if (loc_buffer[i] == '\0')
-							loc_buffer[i] = '\e';
+							loc_buffer[i] = '\x1b';	/* ESC */
 #endif
 						if (!extended_handled)
 							edit_char(loc_buffer[i]);
