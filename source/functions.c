@@ -164,8 +164,8 @@ static	BuiltIns built_in[] =
 static		char	*function_channels 	(char *, char *);
 static		char	*function_connect 	(char *, char *);
 static		char	*function_curpos 	(char *, char *);
-		char	*function_decode 	(char *, unsigned char *);
-static		char	*function_encode 	(char *, unsigned char *);
+static		char	*function_decode 	(char *, char *);
+static		char	*function_encode 	(char *, char *);
 static		char	*function_index 	(char *, char *);
 static		char	*function_ischannel 	(char *, char *);
 static		char	*function_ischanop 	(char *, char *);
@@ -502,12 +502,12 @@ static BuiltInFunctions built_in_functions[] =
 	{ "CURPOS",		function_curpos 	},
 	{ "CURRCHANS",		function_currchans	},
 	{ "DCCITEM",		function_dccitem	},
-	{ "DECODE",	  (bf *)function_decode 	},
+	{ "DECODE",		function_decode 	},
 	{ "DELARRAY",           function_delarray 	},
 	{ "DELITEM",            function_delitem 	},
 	{ "DEUHC",		function_deuhc		},
 	{ "DIFF",               function_diff 		},
-	{ "ENCODE",	  (bf *)function_encode 	},
+	{ "ENCODE",		function_encode 	},
 	{ "EOF",		function_eof 		},
 	{ "EPIC",		function_epic		},
 	{ "FEXIST",             function_fexist 	},
@@ -1670,16 +1670,16 @@ BUILT_IN_FUNCTION(function_strip, input)
  * Note: $encode($decode(text)) returns text (most of the time)
  *       $decode($encode(text)) also returns text.
  */
-static char * function_encode (char *n, unsigned char * input)
+BUILT_IN_FUNCTION(function_encode, input)
 {
-	char	*result;
+	char *result;
 	int	i = 0;
 
-	result = (char *)new_malloc(strlen((char *)input) * 2 + 1);
+	result = new_malloc(strlen(input) * 2 + 1);
 	while (*input)
 	{
-		result[i++] = (*input >> 4) + 0x41;
-		result[i++] = (*input & 0x0f) + 0x41;
+		result[i++] = ((unsigned char)*input >> 4) + 'A';
+		result[i++] = ((unsigned char)*input & 0x0f) + 'A';
 		input++;
 	}
 	result[i] = '\0';
@@ -1702,23 +1702,23 @@ static char * function_encode (char *n, unsigned char * input)
  *       But it ignores non-ascii text, so use this as compression at your
  *	 own risk and peril.
  */
-char *function_decode(char *n, unsigned char * input)
+BUILT_IN_FUNCTION(function_decode, input)
 {
-	unsigned char	*result;
+	unsigned char *result;
 	int	i = 0;
 
-	result = (unsigned char *)new_malloc(strlen((char *)input) / 2 + 1);
+	result = new_malloc(strlen(input) / 2 + 1);
 
 	while (input[0] && input[1])
 	{
 		/* oops, this isnt quite right. */
-		result[i] = ((input[0] - 0x41) << 4) | (input[1] - 0x41);
+		result[i] = ((input[0] - 'A') << 4) | (input[1] - 'A');
 		input += 2;
 		i++;
 	}
 	result[i] = '\0';
 
-	return result;		/* DONT USE RETURN_STR HERE! */
+	return (char *)result;		/* DONT USE RETURN_STR HERE! */
 }
 
 
@@ -3411,11 +3411,11 @@ BUILT_IN_FUNCTION(function_split, word)
 BUILT_IN_FUNCTION(function_chr, word)
 {
 	char aboo[BIG_BUFFER_SIZE];
-	unsigned char *ack = aboo;
-	char *blah;
+	unsigned char *ack = (unsigned char *)aboo;
+	char *chr;
 
-	while ((blah = next_arg(word, &word)))
-		*ack++ = (unsigned char)atoi(blah);
+	while ((chr = next_arg(word, &word)))
+		*ack++ = (unsigned char)atoi(chr);
 
 	*ack = '\0';
 	RETURN_STR(aboo);
@@ -3424,15 +3424,15 @@ BUILT_IN_FUNCTION(function_chr, word)
 BUILT_IN_FUNCTION(function_ascii, word)
 {
 	char *aboo = NULL;
-	unsigned char *w = word;
+
 	if (!word || !*word)
 		RETURN_EMPTY;
 
-	aboo = m_strdup(ltoa((unsigned long) *w));
-	while (*++w)
-		m_3cat(&aboo, space, ltoa((unsigned long) *w));
+	aboo = m_strdup(ltoa((unsigned char)*word));
+	while (*++word)
+		m_3cat(&aboo, space, ltoa((unsigned char)*word));
 		
-	return (aboo);
+	return aboo;
 }
 
 BUILT_IN_FUNCTION(function_which, word)
@@ -3911,11 +3911,11 @@ BUILT_IN_FUNCTION(function_utime, input)
  */
 BUILT_IN_FUNCTION(function_stripansi, input)
 {
-	register unsigned char	*cp;
+	char *cp;
+
 	for (cp = input; *cp; cp++)
-		if (*cp < 31 && *cp > 13)
-			if (*cp != 15 && *cp !=22)
-				*cp = (*cp & 127) | 64;
+		if (*cp < 31 && *cp > 13 && *cp != 15 && *cp != 22)
+			*cp |= 64;
 	RETURN_STR(input);
 }
 
