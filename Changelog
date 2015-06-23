@@ -1,5 +1,8 @@
 [Changes 1.2.2]
 
+* Clean up the build by fixing up the (unsigned char *) / (char *) mismatches
+  that the compiler warns about. (caf)
+
 * Fix bxconfigure crashing on very wide terminals (reported by cpet). (caf)
 
 * Remove obsolete Chatnet 310 numeric support (WANT_CHATNET). (caf)
