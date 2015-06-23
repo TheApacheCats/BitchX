@@ -302,7 +302,7 @@ void userhost_unban(UserhostItem *stuff, char *nick1, char *args)
 	BanList *bans;
 	WhowasList *whowas;
 	NickList *n = NULL;
-	char *tmp, *channel, *ip_str, *host = NULL;
+	char *channel, *ip_str = NULL, *host = NULL;
 	int count = 0, old_server = from_server;
 	
 	if (!stuff || !stuff->nick || !nick1 || !strcmp(stuff->user, "<UNKNOWN>") || my_stricmp(stuff->nick, nick1))
@@ -322,10 +322,7 @@ void userhost_unban(UserhostItem *stuff, char *nick1, char *args)
 			return;
 	}
 	else
-	{
-		tmp = clear_server_flags(stuff->user);
-		malloc_sprintf(&host, "%s!%s@%s",stuff->nick, tmp, stuff->host); 
-	}
+		malloc_sprintf(&host, "%s!%s@%s",stuff->nick, stuff->user, stuff->host); 
 
 	channel = next_arg(args, &args);
 	if (args && *args)
@@ -341,12 +338,8 @@ void userhost_unban(UserhostItem *stuff, char *nick1, char *args)
 	if (!n)
 		n = find_nicklist_in_channellist(stuff->nick, chan, 0);
 	if (n && n->ip)
-	{
-		size_t len = strlen(n->nick)+strlen(n->host)+strlen(n->ip)+10;
-		ip_str = alloca(len); 
-		*ip_str = 0;
-		strmopencat(ip_str, len, stuff->nick, "!", stuff->user, "@", n->ip, NULL);
-	}
+		malloc_sprintf(&ip_str, "%s!%s@%s", stuff->nick, stuff->user, n->ip);
+
 	for (bans = chan->bans; bans; bans = bans->next)
 	{
 		if (!bans->sent_unban && (wild_match(bans->ban, host) || (ip_str && wild_match(bans->ban, ip_str))) )
@@ -361,6 +354,7 @@ void userhost_unban(UserhostItem *stuff, char *nick1, char *args)
 	if (!count)
 		bitchsay("No match for Unban of %s on %s", nick1, args);
 	new_free(&host);
+	new_free(&ip_str);
 	from_server = old_server;
 }
 

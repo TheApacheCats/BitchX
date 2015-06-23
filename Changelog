@@ -1,5 +1,8 @@
 [Changes 1.2.2]
 
+* Fix potential crash in /unban, and change it so that it correctly matches
+  the user@ portion of the hostmask.
+
 * Clean up the build by fixing up the (unsigned char *) / (char *) mismatches
   that the compiler warns about. (caf)
 
