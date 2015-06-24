@@ -870,7 +870,7 @@ BUILT_IN_COMMAND(dcc_stat_comm)
 
 void handle_dcc_chat(UserhostItem *stuff, char *nick, char *args)
 {
-	if (!stuff || !stuff->nick || !nick || !strcmp(stuff->user, "<UNKNOWN>") || !strcmp(stuff->host, "<UNKNOWN>"))
+	if (!stuff || !stuff->nick || !strcmp(stuff->user, "<UNKNOWN>") || !strcmp(stuff->host, "<UNKNOWN>"))
 	{
 		bitchsay("No such nick %s", nick);
 		return;

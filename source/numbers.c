@@ -490,9 +490,9 @@ static	int 	norm = 0,
 	return ret;
 }
 
-void whohas_nick (UserhostItem *stuff, char *nick, char *args)
+void whohas_nick(UserhostItem *stuff, char *nick, char *args)
 {
-	if (!stuff || !stuff->nick || !nick || !strcmp(stuff->user, "<UNKNOWN>"))
+	if (!stuff || !stuff->nick || !strcmp(stuff->user, "<UNKNOWN>"))
 		return;
 	put_it("%s", convert_output_format("$G Your nick %R[%n$0%R]%n is owned by %W$1@$2", "%s %s %s", nick, stuff->user, stuff->host));
 	return;

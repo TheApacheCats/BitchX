@@ -863,8 +863,9 @@ extern int use_nat_address;
 
 void get_nat_address(UserhostItem *stuff, char *nick, char *args)
 {
-char *h;
-	if (!stuff || !stuff->nick || !nick || !strcmp(stuff->user, "<UNKNOWN"))
+	char *h;
+
+	if (!stuff || !stuff->nick || !strcmp(stuff->user, "<UNKNOWN"))
 		return;
 	if (isdigit((unsigned char)*stuff->host))
 		h = stuff->host;

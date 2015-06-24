@@ -3078,17 +3078,16 @@ void userhost_nsl(UserhostItem *stuff, char *nick, char *args)
 {
 	char *nsl = NULL;
 
-	if (!stuff || !stuff->nick || !nick || !strcmp(stuff->user, "<UNKNOWN>") || my_stricmp(stuff->nick, nick))
+	if (!stuff || !stuff->nick || !strcmp(stuff->user, "<UNKNOWN>") || my_stricmp(stuff->nick, nick))
 	{
 		say("No information for %s", nick);
 		return;
 	}
-	if(args)
+	if (args)
 	{
-		nsl = LOCAL_COPY(args);
-		next_arg(nsl, &nsl);
+		next_arg(args, &nsl);
 	}
-	nsl = do_nslookup(stuff->host, stuff->nick, stuff->user, NULL, from_server, NULL, (nsl && *nsl) ? nsl : NULL);
+	do_nslookup(stuff->host, stuff->nick, stuff->user, NULL, from_server, NULL, (nsl && *nsl) ? nsl : NULL);
 }
 #endif
 
@@ -3738,7 +3737,8 @@ void start_finger (UserhostItem *stuff, char *nick, char *args)
 {
 	char *finger_userhost = NULL;
 	char *str;
-	if (!stuff || !stuff->nick || !nick || !strcmp(stuff->user, "<UNKNOWN>") || my_stricmp(stuff->nick, nick))
+
+	if (!stuff || !stuff->nick || !strcmp(stuff->user, "<UNKNOWN>") || my_stricmp(stuff->nick, nick))
 	{
 		say("No information for %s", nick);
 		return;
@@ -3819,16 +3819,15 @@ static int scan(char *remote_host, int low_port, int high_port, struct sockaddr_
 
 void userhost_scanport(UserhostItem *stuff, char *nick, char *args)
 {
-char	*t;
-int	low_port = 0,
-	high_port = 0;
-struct	sockaddr_foobar *host; /* gee, and what's this one for? */
+	char *t;
+	int	low_port = 0, high_port = 0;
+	struct sockaddr_foobar *host; /* gee, and what's this one for? */
 
-        if (!stuff || !stuff->nick || !nick || !strcmp(stuff->user, "<UNKNOWN>") || my_stricmp(stuff->nick, nick))
-        {
-        	bitchsay("No such nick [%s] found", nick);
-                return;
-        }
+	if (!stuff || !stuff->nick || !strcmp(stuff->user, "<UNKNOWN>") || my_stricmp(stuff->nick, nick))
+	{
+		bitchsay("No such nick [%s] found", nick);
+		return;
+	}
 	next_arg(args, &args);
 	t = next_arg(args, &args);
 	low_port = atol(t);
@@ -3892,9 +3891,9 @@ void userhost_ignore (UserhostItem *stuff, char *nick1, char *args)
 	WhowasList *whowas;
 
 	arg = next_arg(args, &args);
-	if (!stuff || !stuff->nick || !nick1 || !strcmp(stuff->user, "<UNKNOWN>") || my_stricmp(stuff->nick, nick1))
+	if (!stuff || !stuff->nick || !strcmp(stuff->user, "<UNKNOWN>") || my_stricmp(stuff->nick, nick1))
 	{
-                if ((whowas = check_whowas_nick_buffer(nick1, arg, 0)))
+		if ((whowas = check_whowas_nick_buffer(nick1, arg, 0)))
 		{
 			bitchsay("Using WhoWas info for %s of %s ", arg, nick1);
 			user = host; host = strchr(host, '@'); *host++ = 0;

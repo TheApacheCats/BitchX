@@ -305,21 +305,19 @@ void userhost_unban(UserhostItem *stuff, char *nick1, char *args)
 	char *channel, *ip_str = NULL, *host = NULL;
 	int count = 0, old_server = from_server;
 	
-	if (!stuff || !stuff->nick || !nick1 || !strcmp(stuff->user, "<UNKNOWN>") || my_stricmp(stuff->nick, nick1))
+	if (!stuff || !stuff->nick || !strcmp(stuff->user, "<UNKNOWN>") || my_stricmp(stuff->nick, nick1))
 	{
-		if (nick1 && (whowas = check_whowas_nick_buffer(nick1, args, 0)))
+		if ((whowas = check_whowas_nick_buffer(nick1, args, 0)))
 		{
 			malloc_sprintf(&host, "%s!%s", whowas->nicklist->nick, whowas->nicklist->host);
 			bitchsay("Using WhoWas info for unban of %s ", nick1);
 			n = whowas->nicklist;
 		}
-		else if (nick1)
+		else
 		{
 			bitchsay("No match for the unban of %s on %s", nick1, args);
 			return;
 		}
-		if (!nick1)
-			return;
 	}
 	else
 		malloc_sprintf(&host, "%s!%s@%s",stuff->nick, stuff->user, stuff->host); 
@@ -371,9 +369,9 @@ void userhost_ban(UserhostItem *stuff, char *nick1, char *args)
 	fuck = !my_stricmp("FUCK", args);
 	set_ignore = !my_stricmp("BKI", args);
 	
-	if (!stuff || !stuff->nick || !nick1 || !strcmp(stuff->user, "<UNKNOWN>") || my_stricmp(stuff->nick, nick1))
+	if (!stuff || !stuff->nick || !strcmp(stuff->user, "<UNKNOWN>") || my_stricmp(stuff->nick, nick1))
 	{
-		if (nick1 && channel && (whowas = check_whowas_nick_buffer(nick1, channel, 0)))
+		if (channel && (whowas = check_whowas_nick_buffer(nick1, channel, 0)))
 		{
 			nick = whowas->nicklist->nick;
 			user = m_strdup(clear_server_flags(whowas->nicklist->host));
@@ -382,7 +380,7 @@ void userhost_ban(UserhostItem *stuff, char *nick1, char *args)
 			bitchsay("Using WhoWas info for ban of %s ", nick1);
 			n = whowas->nicklist;
 		}
-		else if (nick1)
+		else 
 		{
 			bitchsay("No match for the %s of %s on %s", fuck ? "Fuck":"Ban", nick1, channel);
 			return;
@@ -406,7 +404,7 @@ void userhost_ban(UserhostItem *stuff, char *nick1, char *args)
 	c = lookup_channel(channel, from_server, 0);
 	if (c && !n)
 		n = find_nicklist_in_channellist(nick, c, 0);
-	send_to_server("MODE %s %s %s %s", channel, on_chan ? ob : b, on_chan?nick:empty_string, ban_it(nick, user, host, (n && n->ip)?n->ip:NULL));
+	send_to_server("MODE %s %s %s %s", channel, on_chan ? ob : b, on_chan?nick:empty_string, ban_it(nick, user, host, n ? n->ip : NULL));
 	if (fuck)
 	{
 		malloc_sprintf(&str, "%s!*%s@%s %s 3 Auto-Shit", nick, user, host, channel);

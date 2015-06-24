@@ -214,12 +214,11 @@ void prepare_addshit(UserhostItem *stuff, char *nick, char *args)
 	char listbuf[BIG_BUFFER_SIZE+1];
 	int thetype = 0, shit = 0;
 	
-
-        if (!stuff || !stuff->nick || !nick || !strcmp(stuff->user, "<UNKNOWN>") || my_stricmp(stuff->nick, nick))
-        {
-        	bitchsay("No such nick [%s] found", nick);
-                return;
-        }
+	if (!stuff || !stuff->nick || !strcmp(stuff->user, "<UNKNOWN>") || my_stricmp(stuff->nick, nick))
+	{
+		bitchsay("No such nick [%s] found", nick);
+		return;
+	}
 
 	thetype = my_atol(args);
 	next_arg(args, &args);
@@ -271,24 +270,23 @@ int count = 0;
 
 void prepare_adduser(UserhostItem *stuff, char *nick, char *args)
 {
-	int 	thetype = 0;
-unsigned long	flags = 0;
+	int thetype = 0;
+	unsigned long flags = 0;
 	int	ppp = 0;
 	UserList *uptr = NULL;
 			
-	char	*channels = NULL, 
+	char *channels = NULL, 
 		*passwd = NULL,
 		*p = NULL,
 		*uh,
 		*e_host,
 		*host;
 	
-	
-        if (!stuff || !stuff->nick || !nick || !strcmp(stuff->user, "<UNKNOWN>") || my_stricmp(stuff->nick, nick))
-        {
+	if (!stuff || !stuff->nick || !strcmp(stuff->user, "<UNKNOWN>") || my_stricmp(stuff->nick, nick))
+	{
 		bitchsay("No such nick [%s] found", nick);
 		return;
-        }
+	}
 
 	thetype = my_atol(args);
 	next_arg(args, &args);

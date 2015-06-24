@@ -241,7 +241,7 @@ int i;
 
 void userhost_clink(UserhostItem *stuff, char *nick, char *args)
 {
-	if (!stuff || !stuff->nick || !nick || !strcmp(stuff->user, "<UNKNOWN>") || my_stricmp(stuff->nick, nick))
+	if (!stuff || !stuff->nick || !strcmp(stuff->user, "<UNKNOWN>") || my_stricmp(stuff->nick, nick))
 	{
 		bitchsay("No information for %s found", nick);
 		return;
@@ -886,16 +886,15 @@ char buffer[IRCD_BUFFER_SIZE+1];
 
 void invite_dcc_chat(UserhostItem *stuff, char *nick, char *args)
 {
-char *id;
-int idx = -1;
-	id = next_arg(args, &args);
-	idx = atol(id);
-        if (!stuff || !stuff->nick || !nick || !strcmp(stuff->user, "<UNKNOWN>") || my_stricmp(stuff->nick, nick))
-        {
+	char *id = next_arg(args, &args);
+	int idx = atol(id);
+
+	if (!stuff || !stuff->nick || !strcmp(stuff->user, "<UNKNOWN>") || my_stricmp(stuff->nick, nick))
+	{
 		if (check_dcc_socket(idx))
-	                dcc_printf(idx, "No such for user %s\n", nick);
-                return;
-        }
+			dcc_printf(idx, "No such for user %s\n", nick);
+		return;
+	}
 	dcc_chat(NULL, nick);
 	send_to_server("NOTICE %s :You've been invited to a TwilightZone", nick);
 	send_to_server("NOTICE %s :Please type .chat in dcc chat to start", nick);
