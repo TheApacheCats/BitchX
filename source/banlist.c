@@ -981,7 +981,7 @@ BUILT_IN_COMMAND(kickban)
 	NickList *nicks;
 	char *to, *tspec, *tnick, *rest, *spec = NULL;
 	int count = 0, kick_first = 0, set_ignore = 0, server;
-	time_t time;
+	int time = -1;
 	
 	to = next_arg(args, &args);
 	if (to && !is_channel(to))
@@ -1008,10 +1008,11 @@ BUILT_IN_COMMAND(kickban)
 
 	if (command && (!my_stricmp(command, "TBK") || !my_stricmp(command, "TKB")))
 	{
-		char *string_time;
-		time = get_cset_int_var(chan->csets, BANTIME_CSET);
-		if ((string_time = next_arg(args, &args)))
+		char *string_time = next_arg(args, &args);
+		if (string_time)
 			time = atoi(string_time);
+		if (time < 0)
+			time = get_cset_int_var(chan->csets, BANTIME_CSET);
 		rest = args;
 		if (!rest || !*rest)
 			rest = m_sprintf("Timed kickban for %s", convert_time(time));
@@ -1050,8 +1051,10 @@ BUILT_IN_COMMAND(kickban)
 					chan->channel, nicks->nick, ban_it(nicks->nick, user, host, nicks->ip),
 					chan->channel, nicks->nick, rest ? rest : get_reason(nicks->nick, NULL));
 			count++;
-			if (command && (!my_stricmp(command, "TKB") || !my_stricmp(command, "TBK")))
-				add_timer(0, empty_string, time*1000, 1, timer_unban, m_sprintf("%d %s %s", from_server, chan->channel, ban_it(nicks->nick, user, host, nicks->ip)), NULL, -1, "timed-unban");
+			if (time >= 0)
+				add_timer(0, empty_string, time * 1000.0, 1, timer_unban, 
+					m_sprintf("%d %s %s", from_server, chan->channel, ban_it(nicks->nick, user, host, nicks->ip)),
+					NULL, -1, "timed-unban");
 			else if (command && !my_stricmp(command, "FUCK"))
 			{
 				char *temp = NULL;
