@@ -3045,21 +3045,19 @@ int dcc_exempt_save(FILE *fptr)
  */
 static	void 	output_reject_ctcp (UserhostItem *stuff, char *nick, char *args)
 {
-	char	*nickname_requested;
-	char	*nickname_recieved;
-	char	*type;
-	char	*description;
-	if (!stuff || !stuff->user || !strcmp(stuff->user, "<UNKNOWN>"))
-	{
+	char *nickname_recieved;
+	char *type;
+	char *description;
+
+	if (!strcmp(stuff->user, "<UNKNOWN>"))
 		return;
-	}
 	/*
 	 * XXX This is, of course, a monsterous hack.
 	 */
-	nickname_requested 	= next_arg(args, &args);
-	type 			= next_arg(args, &args);
-	description 		= next_arg(args, &args);
-	nickname_recieved 	= stuff->nick; 
+	next_arg(args, &args);
+	type = next_arg(args, &args);
+	description = next_arg(args, &args);
+	nickname_recieved = stuff->nick; 
 
 	if (nickname_recieved && *nickname_recieved)
 		send_ctcp(CTCP_NOTICE, nickname_recieved, CTCP_DCC,
