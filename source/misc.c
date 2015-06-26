@@ -1734,99 +1734,89 @@ void error_not_opped(const char *channel)
 	reset_display_target();
 }
 
-int freadln(FILE *stream, char *lin)
+/* Reads a single non-empty line from a file.  Ignores lines beginning with # */
+int freadln(FILE *stream, char *lin, size_t len)
 {
 	char *p;
 
 	do
-		p = fgets(lin, IRCD_BUFFER_SIZE/4, stream);
-	while (p && (*lin == '#'));
+		p = fgets(lin, len, stream);
+	while (p && (*lin == '#' || *lin == '\n'));
 
 	if (!p)
 		return 0;
+
 	chop(lin, 1);
-	if (!*lin)
-		return 0;
 	return 1;
 }
 
-char *randreason(char *filename)
+/* Open a file and read a random non-empty, non-comment line from it. */
+static char *fread_random(const char *filename, char *line, size_t len)
 {
-	int count, min, i;
-	FILE *bleah;
-	char *f = NULL;
-	static char buffer[IRCD_BUFFER_SIZE/4 + 1];
+	int count = 0;
+	int i = 0;
+	FILE *reason_file;
+	char *f = m_strdup(filename);
+	char buffer[2][IRCD_BUFFER_SIZE];
 
-	min = 1;
-	count = 0;
-
-	buffer[0] = '\0';
-	f = m_strdup(filename);
-	if (filename && (bleah = uzfopen(&f, get_string_var(LOAD_PATH_VAR), 0)))
+	/* This is an algorithm that lets us choose an evenly-distributed
+	 * random line with one pass through the file.  At line N, we replace
+	 * the previously chosen line with this line, with probability 1/N.
+	 */
+	if ((reason_file = uzfopen(&f, get_string_var(LOAD_PATH_VAR), 0)))
 	{
-		while (!feof(bleah))
-			if (freadln(bleah, buffer))
-				count++;
-		if (!count)
+		while (freadln(reason_file, buffer[i], sizeof buffer[i]))
 		{
-			strcpy(buffer, "No Reason");
-			new_free(&f);
-			return buffer;
+			count++;
+			if (getrandom(0, count - 1) == 0)
+				i = !i;
 		}
-		i = getrandom(1, count);
-		count = 0;
-		fclose(bleah);
-		bleah = uzfopen(&f, get_string_var(LOAD_PATH_VAR), 0);
-		while (!feof(bleah) && (count < i))
-			if (freadln(bleah, buffer))
-				count++;
-		fclose(bleah);
+		fclose(reason_file);
 	}
+
 	new_free(&f);
-	if (*buffer)
-		return buffer;
+
+	if (count > 0)
+	{
+		strlcpy(line, buffer[!i], len);
+		return line;
+	}
 	return NULL;
 }
 
+/* Read a random text format from a file, convert it and strip it.  A default
+   format is supplied if a format cannot be read from the file. 
+   arg0 and arg1 replace $0 and $1 in the format. */
+static char *random_text(const char *filename, const char *arg0,
+	const char *arg1, const char *default_format)
+{
+	char line[IRCD_BUFFER_SIZE];
+	const char *format = fread_random(filename, line, sizeof line);
+
+	if (!format)
+		format = default_format;
+
+	return stripansicodes(convert_output_format(format, "%s %s", arg0, arg1));
+}	
+
 char *get_reason(char *nick, char *file)
 {
-	char *temp;
-	char *filename = NULL;
-	if (file && *file)
-		malloc_strcpy(&filename, file);
-	else
-		malloc_sprintf(&filename, "%s", DEFAULT_BITCHX_KICK_FILE);
-	temp = randreason(filename);
-	new_free(&filename);
-	if ((!temp || !*temp) && get_string_var(DEFAULT_REASON_VAR))
-		temp = get_string_var(DEFAULT_REASON_VAR);
-	return (stripansicodes(convert_output_format(temp, "%s %s", nick? nick: "error", get_server_nickname(from_server) )));
+	char *filename = file;
+
+	if (!file || !*file)
+		filename = DEFAULT_BITCHX_KICK_FILE;
+
+	return random_text(filename, nick ? nick : "error", get_server_nickname(from_server), get_string_var(DEFAULT_REASON_VAR));
 }
 
 char *get_realname(char *nick)
 {
-	char *temp;
-	char *filename = NULL;
-
-	malloc_sprintf(&filename, "%s", DEFAULT_BITCHX_IRCNAME_FILE);
-	temp = randreason(filename);
-	new_free(&filename);
-	if ((!temp || !*temp))
-		temp = "Who cares?";
-	return (stripansicodes(convert_output_format(temp, "%s %s", nick? nick: "error", get_server_nickname(from_server) )));
+	return random_text(DEFAULT_BITCHX_IRCNAME_FILE, nick, nick, "Who cares?");
 }
 
 char *get_signoffreason(char *nick)
 {
-	char *temp;
-	char *filename = NULL;
-
-	malloc_sprintf(&filename, "%s", DEFAULT_BITCHX_QUIT_FILE);
-	temp = randreason(filename);
-	new_free(&filename);
-	if (!temp || !*temp)
-		temp = "$0 has no reason";
-	return (stripansicodes(convert_output_format(temp, "%s %s", nick? nick: "error", get_server_nickname(from_server))));
+	return random_text(DEFAULT_BITCHX_QUIT_FILE, nick, nick, "$0 has no reason");
 }
 
 #ifdef WANT_NSLOOKUP

@@ -4012,10 +4012,10 @@ FILE *f;
 	{
 		char *hst = NULL;
 		buffer = alloca(sb.st_size+1);
-		freadln(f, buffer);
+		freadln(f, buffer, sb.st_size + 1);
 		while(!feof(f))
 		{
-			if ((freadln(f, buffer)))
+			if ((freadln(f, buffer, sb.st_size + 1)))
 			{
 				if (*buffer == '#')
 					continue;

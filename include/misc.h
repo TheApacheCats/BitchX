@@ -130,8 +130,7 @@ ChannelList *	BX_prepare_command (int *, char *, int);
 	void		set_nslookupfd(fd_set *);
 	long		print_nslookup(fd_set *);
 	void		auto_nslookup();
-	int		freadln(FILE *, char *);
-
+int freadln(FILE *, char *, size_t);
 
 	void		BX_close_socketread(int);
 	int		BX_add_socketread(int, int, unsigned long, char *, void (*func_read)(int), void (*func_write)(int));
