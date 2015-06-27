@@ -3625,65 +3625,41 @@ BUILT_IN_COMMAND(send_2comm)
 
 BUILT_IN_COMMAND(send_kill)
 {
-	char	*reason = NULL;
-	char	*r_file;
-	char	*nick;
-	char	*arg = NULL, *save_arg = NULL;
-		
-#if 0
-	args = next_arg(args, &reason);
-	if (!args)
-		args = empty_string;
-#endif
-
-#if defined(WINNT)
-	r_file = m_sprintf("%s/BitchX.kil",get_string_var(CTOOLZ_DIR_VAR));
-#else
-	r_file = m_sprintf("%s/BitchX.kill",get_string_var(CTOOLZ_DIR_VAR));
-#endif
-
-	if ((reason = strchr(args, ' ')) != NULL)
-		*reason++ = '\0';
-	else
-		if ((reason = get_reason(args, r_file)))
-			reason = empty_string;
-	new_free(&r_file);
+	char *target;
 	
-	if (!strcmp(args, "*"))
+	target = next_arg(args, &args);	
+	
+	if (!strcmp(target, "*"))
 	{
-		ChannelList *chan = NULL;
+		ChannelList *chan = lookup_channel("*", from_server, 0);
 		NickList *n = NULL;
-		arg = get_current_channel_by_refnum(0);
-		if (!arg || !*arg)
-			return;     /* what-EVER */
-		else
+
+		if (!chan)
+			return;
+		for (n = next_nicklist(chan, NULL); n; n = next_nicklist(chan, n))
 		{
-			if (!(chan = lookup_channel(arg, from_server, 0)))
-				return;
-			arg = NULL;
-			for (n = next_nicklist(chan, NULL); n; n = next_nicklist(chan, n))
-			{
-				if (isme(n->nick)) continue;
-				m_s3cat(&arg, ",",  n->nick);
-			}
-			save_arg = arg;
+			if (isme(n->nick))
+				continue;
+
+			if (args && *args)
+				send_to_server("%s %s :%s", command, n->nick, args);
+			else
+				send_to_server("%s %s :%s", command, n->nick, 
+					get_kill_reason(n->nick, get_server_nickname(from_server)));
 		}
 	}
 	else
 	{
-		malloc_strcpy(&arg, args);
-		save_arg = arg;
+		const char *nick;
+		while ((nick = next_in_comma_list(target, &target)) && *nick)
+		{
+			if (args && *args)
+				send_to_server("%s %s :%s", command, nick, args);
+			else
+				send_to_server("%s %s :%s", command, nick, 
+					get_kill_reason(nick, get_server_nickname(from_server)));
+		}
 	}
-	while ((nick = next_in_comma_list(arg, &arg)))
-	{
-		if (!nick || !*nick)
-			break;
-		if (reason && *reason)
-			send_to_server("%s %s :%s", command, nick, reason);
-		else
-			send_to_server("%s %s", command, nick);
-	}
-	new_free(&save_arg);
 }
 
 /*

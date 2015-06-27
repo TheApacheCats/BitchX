@@ -1799,22 +1799,25 @@ static char *random_text(const char *filename, const char *arg0,
 	return stripansicodes(convert_output_format(format, "%s %s", arg0, arg1));
 }	
 
-char *get_reason(char *nick, char *file)
+char *get_reason(const char *nick, const char *file)
 {
-	char *filename = file;
-
 	if (!file || !*file)
-		filename = DEFAULT_BITCHX_KICK_FILE;
+		file = DEFAULT_BITCHX_KICK_FILE;
 
-	return random_text(filename, nick ? nick : "error", get_server_nickname(from_server), get_string_var(DEFAULT_REASON_VAR));
+	return random_text(file, nick ? nick : "error", get_server_nickname(from_server), get_string_var(DEFAULT_REASON_VAR));
 }
 
-char *get_realname(char *nick)
+char *get_kill_reason(const char *target, const char *nick)
+{
+    return random_text(DEFAULT_BITCHX_KILL_FILE, target, nick, get_string_var(DEFAULT_REASON_VAR));
+}
+
+char *get_realname(const char *nick)
 {
 	return random_text(DEFAULT_BITCHX_IRCNAME_FILE, nick, nick, "Who cares?");
 }
 
-char *get_signoffreason(char *nick)
+char *get_signoffreason(const char *nick)
 {
 	return random_text(DEFAULT_BITCHX_QUIT_FILE, nick, nick, "$0 has no reason");
 }
@@ -4231,8 +4234,8 @@ int	count = 0,
 				{
 					if (!isme(nicks->nick))
 						my_send_to_server(server, "KILL %s :%s (%i", nicks->nick,
-							       args && *args ? args : get_reason(nicks->nick, NULL),
-							       count + 1);
+							args && *args ? args : get_kill_reason(nicks->nick, 
+							get_server_nickname(from_server)), count + 1);
 					else
 						count--;
 					break;
@@ -4310,8 +4313,8 @@ int	count = 0,
 			if (!isme(nicks->nick))
 			{
 				my_send_to_server(server, "KILL %s :%s (%i", nicks->nick,
-					       args && *args ? args : get_reason(nicks->nick, NULL),
-					       count);
+					args && *args ? args : get_kill_reason(nicks->nick, 
+					get_server_nickname(from_server)), count);
 			}
 			else
 				count--;

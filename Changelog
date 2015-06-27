@@ -1,7 +1,10 @@
 [Changes 1.2.2]
 
+* Use BitchX.kill in all cases for random /KILL messages, and install a
+  copy of this file. (caf)
+
 * Fix potential crash in /unban, and change it so that it correctly matches
-  the user@ portion of the hostmask.
+  the user@ portion of the hostmask. (caf)
 
 * Clean up the build by fixing up the (unsigned char *) / (char *) mismatches
   that the compiler warns about. (caf)

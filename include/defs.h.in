@@ -17,10 +17,13 @@
 /* Default BitchX ircname file. */
 #undef DEFAULT_BITCHX_IRCNAME_FILE
 
-/* Default BitchX kick file. */
+/* Default BitchX kick reasons file. */
 #undef DEFAULT_BITCHX_KICK_FILE
 
-/* Default BitchX quit file. */
+/* Default BitchX kill reasons file. */
+#undef DEFAULT_BITCHX_KILL_FILE
+
+/* Default BitchX quit reasons file. */
 #undef DEFAULT_BITCHX_QUIT_FILE
 
 /* Default CToolZ directory. */

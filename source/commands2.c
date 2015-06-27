@@ -977,14 +977,14 @@ char *reason = NULL;
 
 void who_user_killend(WhoEntry *w, char *unused, char **unused1)
 {
-char *pattern, *match, *who_buff, *reason;
-int server = -1;
+	char *pattern, *match, *who_buff, *who_reason;
+	int server = -1;
 
 	if (w->who_buff)
 	{
 		who_buff = LOCAL_COPY(w->who_buff);
-		reason = strchr(who_buff, ':');
-		*reason++ = 0;
+		who_reason = strchr(who_buff, ':');
+		*who_reason++ = 0;
 		server = atol(next_arg(who_buff, &who_buff));
 		pattern = next_arg(who_buff, &who_buff);
 		match = next_arg(who_buff, &who_buff);
@@ -1008,6 +1008,9 @@ int server = -1;
 				m_s3cat(&buffer, ",", nick);
 				if (num >= get_int_var(NUM_KILLS_VAR))
 				{
+					const char *reason = who_reason;
+					if (!*reason)
+						reason = get_kill_reason(buffer, get_server_nickname(from_server));
 					bitchsay("Killing %s :%s[%d]", save_buffer, reason, count);
 					my_send_to_server(server, "KILL %s :%s(%d)", buffer, reason, count);
 					new_free(&buffer);
@@ -1016,6 +1019,9 @@ int server = -1;
 			}
 			if (buffer)
 			{
+				const char *reason = who_reason;
+				if (!*reason)
+					reason = get_kill_reason(buffer, get_server_nickname(from_server));
 				bitchsay("Killing %s %s[%d]", save_buffer, reason, count);
 				my_send_to_server(server, "KILL %s :%s(%d)", buffer, reason, count);
 			}
@@ -1034,19 +1040,19 @@ BUILT_IN_COMMAND(whokill)
 	char *reason = NULL;
 	char *nick_arg = NULL;
 
-        if (!args || !*args)
+	if (!args || !*args)
 		return;
 	if ((reason = strchr(args, ':')))
 		*reason++ = 0;	
 	else
-		reason = get_reason(empty_string, NULL);
+		reason = empty_string;
 		
 	while ((pattern = next_arg(args, &args))) 
 	{
 		malloc_sprintf(&nick_arg, "%s%s%s", *pattern != '*'?"*":empty_string, pattern, *(pattern+strlen(pattern)-1) != '*'?"*":empty_string);
 		if ((p = strchr(nick_arg, '@')))
 			p++;
-		whobase(p ? p : nick_arg, who_user_kill, who_user_killend, "%d %s :%s", from_server, nick_arg, (reason && *reason) ? reason : empty_string);
+		whobase(p ? p : nick_arg, who_user_kill, who_user_killend, "%d %s :%s", from_server, nick_arg, reason);
 		new_free(&nick_arg);
 	} 
 }
@@ -1056,8 +1062,7 @@ static char *treason = NULL;
 
 void trace_handlekill(int comm, char *nick)
 {
-static int count = 0;
-
+	static int count = 0;
 	
 	if (!nick || !*nick)
 	{
@@ -1077,7 +1082,8 @@ static int count = 0;
 		return;
 	bitchsay("Killing %s[%s] %d", nick, tnick_arg, ++count);
 	if (!treason)
-		malloc_strcpy(&treason, get_reason(nick, NULL));
+		malloc_strcpy(&treason, 
+			get_kill_reason(nick, get_server_nickname(from_server)));
 	send_to_server("KILL %s :%s (%d)", nick, treason, count);
 }
 

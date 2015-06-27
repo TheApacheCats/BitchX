@@ -92,6 +92,7 @@ DEFAULT_MSGLOGFILE = @DEFAULT_MSGLOGFILE@
 DEFAULT_BITCHX_HELP_FILE = @DEFAULT_BITCHX_HELP_FILE@
 DEFAULT_SCRIPT_HELP_FILE = @DEFAULT_SCRIPT_HELP_FILE@
 DEFAULT_BITCHX_KICK_FILE = @DEFAULT_BITCHX_KICK_FILE@
+DEFAULT_BITCHX_KILL_FILE = @DEFAULT_BITCHX_KILL_FILE@
 DEFAULT_BITCHX_QUIT_FILE = @DEFAULT_BITCHX_QUIT_FILE@
 DEFAULT_BITCHX_IRCNAME_FILE = @DEFAULT_BITCHX_IRCNAME_FILE@
 
@@ -238,6 +239,7 @@ installirc: installdirs $(_VERSION_)
 	$(INSTALL_DATA) $(top_srcdir)/BitchX.ircnames $(DESTDIR)$(IRCLIB)/$(DEFAULT_BITCHX_IRCNAME_FILE)
 	$(INSTALL_DATA) $(top_srcdir)/BitchX.quit $(DESTDIR)$(IRCLIB)/$(DEFAULT_BITCHX_QUIT_FILE)
 	$(INSTALL_DATA) $(top_srcdir)/BitchX.reasons $(DESTDIR)$(IRCLIB)/$(DEFAULT_BITCHX_KICK_FILE)
+	$(INSTALL_DATA) $(top_srcdir)/BitchX.kill $(DESTDIR)$(IRCLIB)/$(DEFAULT_BITCHX_KILL_FILE)
 	$(WINNT_INSTALL)
 
 install_local: all local_installdirs installdll_local
@@ -248,6 +250,7 @@ install_local: all local_installdirs installdll_local
 	$(INSTALL_DATA) $(top_srcdir)/BitchX.ircnames $(DEFAULT_CTOOLZ_DIR)/$(DEFAULT_BITCHX_IRCNAME_FILE)
 	$(INSTALL_DATA) $(top_srcdir)/BitchX.quit $(DEFAULT_CTOOLZ_DIR)/$(DEFAULT_BITCHX_QUIT_FILE)
 	$(INSTALL_DATA) $(top_srcdir)/BitchX.reasons $(DEFAULT_CTOOLZ_DIR)/$(DEFAULT_BITCHX_KICK_FILE)
+	$(INSTALL_DATA) $(top_srcdir)/BitchX.kill $(DEFAULT_CTOOLZ_DIR)/$(DEFAULT_BITCHX_KILL_FILE)
 
 wserv: .config.h $(srcdir)/source/wserv.c $(srcdir)/source/term.c $(srcdir)/Makefile
 	cd source \
