@@ -3669,25 +3669,22 @@ BUILT_IN_COMMAND(send_kill)
 
 BUILT_IN_COMMAND(send_kick)
 {
-	char	*kickee,
-		*comment,
-		*channel = NULL;
-ChannelList *chan;
-int server = from_server;
- 	
+	const char *kickee, *comment;
+	char *channel;
+	ChannelList *chan;
+	int server = from_server;
 	
-        if (!(channel = next_arg(args, &args)))
+	if (!(channel = next_arg(args, &args)))
 		return;
-        
-        if (!(kickee = next_arg(args, &args)))
+	
+	if (!(kickee = next_arg(args, &args)))
  		return;
 
-        comment = args?args:get_reason(kickee, NULL);
-
 	reset_display_target();
-	if (!(chan = prepare_command(&server, (channel && !strcmp(channel, "*"))?NULL:channel, NEED_OP)))
+	if (!(chan = prepare_command(&server, !strcmp(channel, "*") ? NULL : channel, NEED_OP)))
 		return;
 
+	comment = args ? args : get_kick_reason(kickee, get_server_nickname(server));
 	my_send_to_server(server, "%s %s %s :%s", command, chan->channel, kickee, comment);
 }
 

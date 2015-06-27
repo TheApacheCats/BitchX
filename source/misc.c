@@ -1786,7 +1786,8 @@ static char *fread_random(const char *filename, char *line, size_t len)
 
 /* Read a random text format from a file, convert it and strip it.  A default
    format is supplied if a format cannot be read from the file. 
-   arg0 and arg1 replace $0 and $1 in the format. */
+   arg0 and arg1 replace $0 and $1 in the format.
+ */
 static char *random_text(const char *filename, const char *arg0,
 	const char *arg1, const char *default_format)
 {
@@ -1799,24 +1800,40 @@ static char *random_text(const char *filename, const char *arg0,
 	return stripansicodes(convert_output_format(format, "%s %s", arg0, arg1));
 }	
 
-char *get_reason(const char *nick, const char *file)
+/* Get a random reason from a specific reason file, defaulting to the kick
+ * file if none passed.  Format it using target and nick to replace $0 and $1.
+ */
+char *get_reason(const char *target, const char *nick, const char *file)
 {
 	if (!file || !*file)
 		file = DEFAULT_BITCHX_KICK_FILE;
 
-	return random_text(file, nick ? nick : "error", get_server_nickname(from_server), get_string_var(DEFAULT_REASON_VAR));
+	return random_text(file, target, nick, get_string_var(DEFAULT_REASON_VAR));
 }
 
+/* Get a random kick reason.  Format it using target and nick to replace $0
+ * and $1.
+ */
+char *get_kick_reason(const char *target, const char *nick)
+{
+	return get_reason(target, nick, NULL);
+}
+
+/* Get a random kill reason.  Format it using target and nick to replace $0
+ * and $1.
+ */
 char *get_kill_reason(const char *target, const char *nick)
 {
     return random_text(DEFAULT_BITCHX_KILL_FILE, target, nick, get_string_var(DEFAULT_REASON_VAR));
 }
 
+/* Get a random ircname.  Format it using nick to replace $0 and $1. */
 char *get_realname(const char *nick)
 {
 	return random_text(DEFAULT_BITCHX_IRCNAME_FILE, nick, nick, "Who cares?");
 }
 
+/* Get a quit reason.  Format it using nick to replace $0 and $1. */
 char *get_signoffreason(const char *nick)
 {
 	return random_text(DEFAULT_BITCHX_QUIT_FILE, nick, nick, "$0 has no reason");

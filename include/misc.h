@@ -102,7 +102,8 @@ ChannelList *	BX_prepare_command (int *, char *, int);
 	int	are_you_opped (char *);
 	void	error_not_opped (const char *);
 
-char *get_reason(const char *nick, const char *file);
+char *get_reason(const char *target, const char *nick, const char *file);
+char *get_kick_reason(const char *target, const char *nick);
 char *get_kill_reason(const char *target, const char *nick);
 char *get_realname(const char *nick);
 char *get_signoffreason(const char *nick);

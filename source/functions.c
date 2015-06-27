@@ -5081,9 +5081,9 @@ char *blah;
 
 BUILT_IN_FUNCTION(function_getreason, word)
 {
-char *nick = NULL;
+	char *nick = NULL;
 	GET_STR_ARG(nick, word);
-	RETURN_STR(get_reason(nick, word));
+	RETURN_STR(get_reason(nick, get_server_nickname(from_server), word));
 }
 
 BUILT_IN_FUNCTION(function_chmod, words)

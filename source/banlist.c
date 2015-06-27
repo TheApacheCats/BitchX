@@ -443,13 +443,15 @@ BUILT_IN_COMMAND(multkick)
 	reason = strchr(temp, ':');
 	if (reason)
 		*reason++ = 0;
-	if (!reason || !*reason)
-		reason = get_reason(NULL, NULL);
 
 	while (temp && *temp)
 	{
+		const char *nick = next_arg(temp, &temp);
+		const char *this_reason = reason && *reason ? reason : 
+			get_kick_reason(nick, get_server_nickname(server));
+
 		my_send_to_server(server, "KICK %s %s :\002%s\002", chan->channel,
-			       next_arg(temp, &temp), reason);
+			nick, this_reason);
 	}
 }
 
@@ -729,7 +731,9 @@ BUILT_IN_COMMAND(mknu)
 		if (nicks->userlist || (nick_isop(nicks) && !kickops) || isme(nicks->nick))
 			continue;
 		count++;
-		send_to_server("KICK %s %s :(non-users) \002%s\002", chan->channel, nicks->nick, rest ? rest : get_reason(nicks->nick, NULL));
+		my_send_to_server(server, "KICK %s %s :(non-users) \002%s\002", 
+			chan->channel, nicks->nick, rest ? rest : 
+			get_kick_reason(nicks->nick, get_server_nickname(server)));
 	}
 	if (!count)
 		say("No matches for masskick of non-users on %s", chan->channel);
@@ -774,7 +778,7 @@ BUILT_IN_COMMAND(masskickban)
 	else
 		strcpy(tempbuf, spec);
 
-	send_to_server("MODE %s +b %s", chan->channel, tempbuf);
+	my_send_to_server(server, "MODE %s +b %s", chan->channel, tempbuf);
 	for (nicks = next_nicklist(chan, NULL); nicks; nicks = next_nicklist(chan, nicks))
 	{
 		*buffer = '\0';
@@ -783,7 +787,9 @@ BUILT_IN_COMMAND(masskickban)
 		   !isme(nicks->nick) && wild_match(tempbuf, buffer))
 		{
 			count++;
-			send_to_server("KICK %s %s :(%s) \002%s\002", chan->channel, nicks->nick, spec, rest ? rest : get_reason(nicks->nick, NULL));
+			my_send_to_server(server, "KICK %s %s :(%s) \002%s\002", chan->channel, 
+				nicks->nick, spec, rest ? rest : 
+				get_kick_reason(nicks->nick, get_server_nickname(server)));
 		}
 	}
 	if (!count)
@@ -968,10 +974,10 @@ BUILT_IN_COMMAND(dokick)
 	if (args && *args)
 		reason = args;
 	else
-		reason = get_reason(spec, NULL);
+		reason = get_kick_reason(spec, get_server_nickname(server));
 
 	set_display_target(chan->channel, LOG_KICK);
-	send_to_server("KICK %s %s :%s", chan->channel, spec, reason);
+	my_send_to_server(server, "KICK %s %s :%s", chan->channel, spec, reason);
 	reset_display_target();
 }
 
@@ -1043,13 +1049,13 @@ BUILT_IN_COMMAND(kickban)
 			host = strchr(user, '@');
 			*host++ = 0;
 			if (kick_first)
-				send_to_server("KICK %s %s :%s\r\nMODE %s +b %s", 
-					chan->channel, nicks->nick, rest ? rest : get_reason(nicks->nick, NULL),
+				my_send_to_server(server, "KICK %s %s :%s\r\nMODE %s +b %s", 
+					chan->channel, nicks->nick, rest ? rest : get_kick_reason(nicks->nick, get_server_nickname(server)),
 					chan->channel, ban_it(nicks->nick, user, host, nicks->ip));
 			else
-				send_to_server("MODE %s -o+b %s %s\r\nKICK %s %s :%s", 
+				my_send_to_server(server, "MODE %s -o+b %s %s\r\nKICK %s %s :%s", 
 					chan->channel, nicks->nick, ban_it(nicks->nick, user, host, nicks->ip),
-					chan->channel, nicks->nick, rest ? rest : get_reason(nicks->nick, NULL));
+					chan->channel, nicks->nick, rest ? rest : get_kick_reason(nicks->nick, get_server_nickname(server)));
 			count++;
 			if (time >= 0)
 				add_timer(0, empty_string, time * 1000.0, 1, timer_unban, 
