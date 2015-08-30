@@ -1323,7 +1323,6 @@ extern 	char *do_notice_ctcp (char *from, char *to, char *str)
 		*ctcp_argument;
 	int	i;
 	char	*ptr;
-	char	*tbuf = NULL;
 	int	allow_ctcp_reply = 1;
 
 #ifdef WANT_DLL
@@ -1341,9 +1340,7 @@ extern 	char *do_notice_ctcp (char *from, char *to, char *str)
 	if (!in_ctcp_flag)
 		in_ctcp_flag = -1;
 
-	tbuf = stripansi(str);
-	strlcpy(local_ctcp_buffer, tbuf, sizeof local_ctcp_buffer - 2);
-	new_free(&tbuf);
+	strlcpy(local_ctcp_buffer, stripansicodes(str), sizeof local_ctcp_buffer - 2);
 		
 	for (;;strlcat(local_ctcp_buffer, last, sizeof local_ctcp_buffer - 2))
 	{
