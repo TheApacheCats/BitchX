@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Don't mangle ANSI sequences in NOTICEs. (caf)
+
 * Use BitchX.kill in all cases for random /KILL messages, and install a
   copy of this file. (caf)
 

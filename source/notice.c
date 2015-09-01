@@ -678,8 +678,6 @@ void parse_notice(char *from, char **Args)
 
 	NickList *nick = NULL;	
 	ChannelList *tmpc = NULL;
-	char *newline = NULL;
-
 		
 	PasteArgs(Args, 1);
 	to = Args[0];
@@ -743,11 +741,11 @@ void parse_notice(char *from, char **Args)
 
 	
 	{
-		char *free_me = NULL;
 		char *s;
-		free_me = newline = stripansi(line);
 		if (wild_match("[*Wall*", line))
 		{
+			char *free_me = stripansi(line);
+			char *newline = free_me;
 			char *channel = NULL, *p, *q;
 			q = p = next_arg(newline, &newline);
 			if ((p = strchr(p, '/')))
@@ -777,18 +775,19 @@ void parse_notice(char *from, char **Args)
 			logmsg(LOG_WALL, from, 0, "%s", line);
 /*			addtabkey(from, "wall", 0);*/
 			new_free(&channel);
+			new_free(&free_me);
 		}
 		else
 		{
 			if (type == PUBLIC_NOTICE_LIST)
 			{
-				s = convert_output_format(fget_string_var(check_auto_reply(line)?FORMAT_PUBLIC_NOTICE_AR_FSET:FORMAT_PUBLIC_NOTICE_FSET), "%s %s %s %s %s", update_clock(GET_TIME), from, FromUserHost, to, newline);
+				s = convert_output_format(fget_string_var(check_auto_reply(line)?FORMAT_PUBLIC_NOTICE_AR_FSET:FORMAT_PUBLIC_NOTICE_FSET), "%s %s %s %s %s", update_clock(GET_TIME), from, FromUserHost, to, line);
 				if (do_hook(type, "%s %s %s", from, to, line))
 					put_it("%s", s);
 			}
 			else
 			{
-				s = convert_output_format(fget_string_var(FORMAT_NOTICE_FSET), "%s %s %s %s", update_clock(GET_TIME), from, FromUserHost, newline);
+				s = convert_output_format(fget_string_var(FORMAT_NOTICE_FSET), "%s %s %s %s", update_clock(GET_TIME), from, FromUserHost, line);
 				if (do_hook(type, "%s %s", from, line))
 					put_it("%s", s);
 
@@ -798,7 +797,6 @@ void parse_notice(char *from, char **Args)
 			logmsg(LOG_NOTICE, from, 0, "%s", line);
 			add_last_type(&last_notice[0], MAX_LAST_MSG, from, FromUserHost, to, line);
 		}
-		new_free(&free_me);
 	}
 
  notice_cleanup:
