@@ -4764,23 +4764,31 @@ char *convert_output_format2(const char *str)
 }
 #endif /* GUI */
 
-void add_last_type (LastMsg *array, int size, char *from, char *uh, char *to, char *str)
+void add_last_type(LastMsg *array, int size, const char *from, const char *uh, const char *to, const char *msg)
 {
-int i;
-	for (i = size - 1; i > 0; i--)
+	int i = size - 1;
+	LastMsg new_msg = array[i];	/* Re-use allocations from last entry */
+
+	malloc_strcpy(&new_msg.last_msg, msg);
+	malloc_strcpy(&new_msg.from, from);
+	malloc_strcpy(&new_msg.to, to);
+	malloc_strcpy(&new_msg.uh, uh);
+	malloc_strcpy(&new_msg.time, update_clock(GET_TIME));
+
+	for (; i > 0; i--)
 	{
-		
-		malloc_strcpy(&array[i].last_msg, array[i - 1].last_msg);
-		malloc_strcpy(&array[i].from, array[i - 1].from);
-		malloc_strcpy(&array[i].uh, array[i - 1].uh);
-		malloc_strcpy(&array[i].to, array[i - 1].to);
-		malloc_strcpy(&array[i].time, array[i - 1].time);
+		array[i].last_msg = array[i - 1].last_msg;
+		array[i].from = array[i - 1].from;
+		array[i].uh = array[i - 1].uh;
+		array[i].to = array[i - 1].to;
+		array[i].time = array[i - 1].time;
 	}
-	malloc_strcpy(&array->last_msg, str);
-	malloc_strcpy(&array->from, from);
-	malloc_strcpy(&array->to, to);
-	malloc_strcpy(&array->uh, uh);
-	malloc_strcpy(&array->time, update_clock(GET_TIME));
+
+	array[0].last_msg = new_msg.last_msg;
+	array[0].from = new_msg.from;
+	array[0].uh = new_msg.uh;
+	array[0].to = new_msg.to;
+	array[0].time = new_msg.time;
 }
 
 int check_last_type(LastMsg *array, int size, char *from, char *uh)

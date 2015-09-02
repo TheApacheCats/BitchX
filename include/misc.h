@@ -113,7 +113,7 @@ char *get_signoffreason(const char *nick);
 #ifdef GUI
 	char 		*convert_output_format2 (const char *);
 #endif
-	void		add_last_type (LastMsg *, int, char *, char *, char *, char *);
+void add_last_type(LastMsg *array, int size, const char *from, const char *uh, const char *to, const char *msg);
 	int		check_last_type (LastMsg *, int, char *, char *);
 	int		matchmcommand (char *, int);
 	char		*convert_time (time_t);
