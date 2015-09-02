@@ -56,25 +56,25 @@
 		LOG_PART | LOG_INVITE | LOG_JOIN | LOG_TOPIC | LOG_HELP | \
 		LOG_KILL | LOG_NOTIFY)
 
-# define LOG_DEFAULT	LOG_NONE
+#define LOG_DEFAULT LOG_NONE
 
-	void	set_lastlog_level (Window *, char *, int);
-unsigned long	BX_set_lastlog_msg_level (unsigned long);
-	void	set_lastlog_size (Window *, char *, int);
-	void	set_notify_level (Window *, char *, int);
-	void	set_msglog_level (Window *, char *, int);
-	void	set_new_server_lastlog_level(Window *, char *, int);
+void set_lastlog_level(Window *, char *, int);
+unsigned long BX_set_lastlog_msg_level(unsigned long);
+void set_lastlog_size(Window *, char *, int);
+void set_notify_level(Window *, char *, int);
+void set_msglog_level(Window *, char *, int);
+void set_new_server_lastlog_level(Window *, char *, int);
 	
-	BUILT_IN_COMMAND(lastlog);
+BUILT_IN_COMMAND(lastlog);
 
-	void	add_to_lastlog (Window *, const char *);
-	char	*bits_to_lastlog_level (unsigned long);
-unsigned long	real_lastlog_level (void);
-unsigned long	real_notify_level (void);
-unsigned long	parse_lastlog_level (char *, int);
-	int	islogged (Window *);
-extern	void	remove_from_lastlog (Window *);
-extern	int	grab_http (char *, char *, char *);
+void add_to_lastlog(Window *, const char *);
+char *bits_to_lastlog_level(unsigned long);
+unsigned long real_lastlog_level(void);
+unsigned long real_notify_level(void);
+unsigned long parse_lastlog_level(char *, int);
+int	islogged(Window *);
+extern void remove_from_lastlog(Window *);
+extern int grab_http(char *, char *, char *);
 
 BUILT_IN_FUNCTION(function_line);
 BUILT_IN_FUNCTION(function_lastlog);
@@ -82,10 +82,10 @@ BUILT_IN_FUNCTION(function_lastlog);
 extern unsigned long beep_on_level;
 extern unsigned long new_server_lastlog_level;
 
-	void	set_beep_on_msg(Window *, char *, int);
-	Lastlog *get_lastlog_current_head(Window *);
-	void	free_lastlog(Window *);
-	int	logmsg(unsigned long, char *, int, char *, ...);
-	void	reset_hold_mode(Window *);
+void set_beep_on_msg(Window *, char *, int);
+Lastlog *get_lastlog_current_head(Window *);
+void free_lastlog(Window *);
+int logmsg(unsigned long log_type, const char *from, int flag, const char *format, ...);
+void reset_hold_mode(Window *);
 		  				
 #endif /* __lastlog_h_ */

@@ -569,7 +569,7 @@ void set_notify_level(Window *win, char *str, int unused)
 	current_window->notify_level = notify_level;
 }
 
-int logmsg(unsigned long log_type, char *from, int flag, char *format, ...)
+int logmsg(unsigned long log_type, const char *from, int flag, const char *format, ...)
 {
 #ifdef PUBLIC_ACCESS
 	return 0;
