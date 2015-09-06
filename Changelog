@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Tighten up the handling of channel WALLs. (caf)
+
 * Don't mangle ANSI sequences in NOTICEs. (caf)
 
 * Use BitchX.kill in all cases for random /KILL messages, and install a

@@ -649,16 +649,15 @@ done1:
 	reset_display_target();
 }
 
-int check_ignore_notice(char *from, char *to, unsigned long type, char *line, char **high)
+static int check_ignore_notice(char *from, char *to, unsigned long type, char *line, char **high)
 {
-int flag;
-	switch ((flag = check_ignore(from, FromUserHost, to, type, line)))
+	int flag = check_ignore(from, FromUserHost, to, type, line);
+
+	switch (flag)
 	{
 		case IGNORED:
-		{
 			doing_notice = 0;
-			return flag;
-		}
+			break;
 		case HIGHLIGHTED:
 			*high = highlight_char;
 			break;
@@ -668,6 +667,60 @@ int flag;
 	return flag;
 }
 
+/* Check if a notice is a BitchX /WALL, and if so handle it as such. */
+static int check_chanwall_notice(const char *from, const char *line, int type)
+{
+	ChannelList *chan = NULL;
+	char *line_copy;
+	char *newline;
+	char *channel = NULL, *p;
+
+	if (!wild_match("[%Wall%/%] *", line))
+		return 0;
+
+	line_copy = m_strdup(line);
+	p = next_arg(line_copy, &newline);
+
+	if ((p = strchr(p, '/')))
+	{
+		p++;
+		if (*p == BOLD_TOG)
+			p++;
+
+		channel = p;
+
+		if ((p = strrchr(channel, ']'))) 
+		{
+			*p = 0;
+			if (p > channel && *(p-1) == BOLD_TOG)
+				*(p-1) = 0;
+		}
+	}
+
+	if (channel && *channel)
+		chan = lookup_channel(channel, from_server, CHAN_NOUNLINK);
+
+	if (!chan)
+	{
+		new_free(&line_copy);
+		return 0;
+	}
+
+	set_display_target(channel, LOG_WALL);
+	
+	if (do_hook(type, "%s %s", from, line))
+	{
+		char *s = convert_output_format(fget_string_var(FORMAT_BWALL_FSET), "%s %s %s %s %s", update_clock(GET_TIME), channel, from, FromUserHost, newline);
+		add_to_log(chan->msglog_fp, now, s, logfile_line_mangler);
+		put_it("%s", s);
+	}
+	add_last_type(&last_wall[0], 1, from, FromUserHost, NULL, line);
+	logmsg(LOG_WALL, from, 0, "%s", line);
+/*	addtabkey(from, "wall", 0);*/
+	new_free(&line_copy);
+	return 1;
+}
+
 void parse_notice(char *from, char **Args)
 {
 	int	type;
@@ -675,10 +728,9 @@ void parse_notice(char *from, char **Args)
 		*high = empty_string,
 		*target,
 		*line;
-
 	NickList *nick = NULL;	
 	ChannelList *tmpc = NULL;
-		
+	
 	PasteArgs(Args, 1);
 	to = Args[0];
 	line = Args[1];
@@ -695,8 +747,6 @@ void parse_notice(char *from, char **Args)
 		parse_server_notice(from, line);
 		return;
 	}
-
-
 	
 	if (is_channel(to))
 	{
@@ -739,64 +789,25 @@ void parse_notice(char *from, char **Args)
 		goto notice_cleanup;
 	}
 
-	
+	if (!check_chanwall_notice(from, line, type))
 	{
 		char *s;
-		if (wild_match("[*Wall*", line))
+		if (type == PUBLIC_NOTICE_LIST)
 		{
-			char *free_me = stripansi(line);
-			char *newline = free_me;
-			char *channel = NULL, *p, *q;
-			q = p = next_arg(newline, &newline);
-			if ((p = strchr(p, '/')))
-			{
-				p++;
-				if (*p && *p == '\002')
-					p++;
-				channel = m_strdup(p);
-				if ((p = strchr(channel, ']')))
-					*p++ = 0;
-				q = channel;
-				if (*q && q[strlen(q)-1] == '\002')
-					q[strlen(q)-1] = 0;
-			} 
-			if (channel && *channel)
-				set_display_target(channel, LOG_WALL);
-			else
-				set_display_target(target, LOG_WALL);
-			if (do_hook(type, "%s %s", from, line))
-			{
-				s = convert_output_format(fget_string_var(FORMAT_BWALL_FSET), "%s %s %s %s %s", update_clock(GET_TIME), q, from, FromUserHost, newline);
-				if (tmpc)
-					add_to_log(tmpc->msglog_fp, now, s, logfile_line_mangler);
+			s = convert_output_format(fget_string_var(check_auto_reply(line)?FORMAT_PUBLIC_NOTICE_AR_FSET:FORMAT_PUBLIC_NOTICE_FSET), "%s %s %s %s %s", update_clock(GET_TIME), from, FromUserHost, to, line);
+			if (do_hook(type, "%s %s %s", from, to, line))
 				put_it("%s", s);
-			}
-			add_last_type(&last_wall[0], 1, from, FromUserHost, NULL, line);
-			logmsg(LOG_WALL, from, 0, "%s", line);
-/*			addtabkey(from, "wall", 0);*/
-			new_free(&channel);
-			new_free(&free_me);
 		}
 		else
 		{
-			if (type == PUBLIC_NOTICE_LIST)
-			{
-				s = convert_output_format(fget_string_var(check_auto_reply(line)?FORMAT_PUBLIC_NOTICE_AR_FSET:FORMAT_PUBLIC_NOTICE_FSET), "%s %s %s %s %s", update_clock(GET_TIME), from, FromUserHost, to, line);
-				if (do_hook(type, "%s %s %s", from, to, line))
-					put_it("%s", s);
-			}
-			else
-			{
-				s = convert_output_format(fget_string_var(FORMAT_NOTICE_FSET), "%s %s %s %s", update_clock(GET_TIME), from, FromUserHost, line);
-				if (do_hook(type, "%s %s", from, line))
-					put_it("%s", s);
-
-			}
-			if (tmpc)
-				add_to_log(tmpc->msglog_fp, now, s, logfile_line_mangler);
-			logmsg(LOG_NOTICE, from, 0, "%s", line);
-			add_last_type(&last_notice[0], MAX_LAST_MSG, from, FromUserHost, to, line);
+			s = convert_output_format(fget_string_var(FORMAT_NOTICE_FSET), "%s %s %s %s", update_clock(GET_TIME), from, FromUserHost, line);
+			if (do_hook(type, "%s %s", from, line))
+				put_it("%s", s);
 		}
+		if (tmpc)
+			add_to_log(tmpc->msglog_fp, now, s, logfile_line_mangler);
+		logmsg(LOG_NOTICE, from, 0, "%s", line);
+		add_last_type(&last_notice[0], MAX_LAST_MSG, from, FromUserHost, to, line);
 	}
 
  notice_cleanup:
