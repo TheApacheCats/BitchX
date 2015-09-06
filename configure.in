@@ -1087,8 +1087,6 @@ doc/BitchX.bat
 dll/Makefile
 dll/abot/Makefile
 dll/acro/Makefile
-dll/aim/Makefile
-dll/aim/toc/Makefile
 dll/amp/Makefile
 dll/arcfour/Makefile
 dll/autocycle/Makefile

@@ -155,9 +155,9 @@ MFLAGS = \
 
 ## Makefile starts here.
 
-ALL_PLUGINS = abot acro aim amp arcfour autocycle blowfish cavlink cdrom encrypt europa fserv hint identd nap nicklist pkga possum qbx qmail wavplay xmms
+ALL_PLUGINS = abot acro amp arcfour autocycle blowfish cavlink cdrom encrypt europa fserv hint identd nap nicklist pkga possum qbx qmail wavplay xmms
 
-#PLUGINS = abot acro aim arcfour autocycle blowfish cavlink encrypt europa fserv hint identd nap pkga possum qbx qmail wavplay
+#PLUGINS = abot acro arcfour autocycle blowfish cavlink encrypt europa fserv hint identd nap pkga possum qbx qmail wavplay
 PLUGINS = @PLUGINS@
 
 .c.o:

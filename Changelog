@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Remove obsolete AIM plugin. (caf)
+
 * Tighten up the handling of channel WALLs. (caf)
 
 * Don't mangle ANSI sequences in NOTICEs. (caf)
