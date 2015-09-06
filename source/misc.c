@@ -1065,18 +1065,6 @@ char *mircansi(unsigned char *line)
 }
 #endif
 
-char *stripansi(const char *line)
-{
-	char *cp;
-	char *newline = m_strdup(line);        
-
-	for (cp = newline; *cp; cp++)
-		if (*cp < 31 && *cp > 13 && *cp != 15 && *cp != 22)
-			*cp = (*cp & 127) | 64;
-
-	return newline;
-}
-
 int check_split(char *nick, char *reason)
 {
 char *bogus = get_string_var(FAKE_SPLIT_PATS_VAR);
