@@ -61,7 +61,7 @@ static unsigned int typenum = 0;
 static char *init_box(char *ukey, arckey *key)
 {
 	MD5_CTX md5context;
-	char buf[256];
+	unsigned char buf[256];
 	int fd;
 
 	fd = open("/dev/urandom", O_RDONLY);
@@ -83,9 +83,10 @@ static char *init_box(char *ukey, arckey *key)
 	return ukey;
 }
 
-static inline void arcfourInit(arckey *arc, char *userkey, unsigned short len)
+static inline void arcfourInit(arckey *arc, void *userkey, unsigned short len)
 {
 	register arcword *S = arc->state, x = 0, y = 0, pos = 0, tmp;
+	unsigned char *userkey_byte = userkey;
 
 	/* Seed the S-box linearly, then mix in the key while stiring briskly */
 	arc->i = arc->j = 0;				 /* Initialize i and j to 0 */
@@ -93,7 +94,7 @@ static inline void arcfourInit(arckey *arc, char *userkey, unsigned short len)
 
 	/* Note: Some of these optimizations REQUIRE arcword to be 8-bit unsigned */
 	do {						 /* Spread user key into real key */
-		y += S[x] + userkey[pos];			 /* Keys, shaken, not stirred */
+		y += S[x] + userkey_byte[pos];			 /* Keys, shaken, not stirred */
 		tmp = S[x]; S[x] = S[y]; S[y] = tmp;  /* Swap S[i] and S[j] */
 		if (++pos >= len)	pos = 0;		 /* Repeat user key to fill array */
 	} while(++x);				 /* ++x is faster than x++ */
@@ -203,7 +204,7 @@ static int start_dcc_crypt (int s, int type, unsigned long d_addr, int d_port)
 		if ((len = dgets(buf, s, 1, BIG_BUFFER_SIZE, NULL)) > 0) {
 			if (!my_strnicmp("SecureDCC", buf, 9)) {
 				tmpbox->inbox = (arckey *)new_malloc(sizeof(arckey));
-       	arcfourInit(tmpbox->inbox, next_arg(buf, &buf), 16);
+			 	arcfourInit(tmpbox->inbox, next_arg(buf, NULL), 16);
 			}
 		}
 		return 0;

@@ -5,7 +5,7 @@ typedef struct {
 } arckey;
 
 /* Prototypes */
-static inline void arcfourInit(arckey *, char *, unsigned short);
+static inline void arcfourInit(arckey *, void *, unsigned short);
 static inline char *arcfourCrypt(arckey *, char *, int);
 static int send_dcc_encrypt (int, int, char *, int);
 static int get_dcc_encrypt (int, int, char *, int, int);
