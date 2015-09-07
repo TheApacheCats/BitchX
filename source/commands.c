@@ -1137,7 +1137,6 @@ BUILT_IN_COMMAND(reconnect_cmd)
 	/* close server will take care of the .reconnect variable */
 	set_server_reconnecting(from_server, 1);
 	close_server(from_server,(args && *args) ? args : "Reconnecting");
-	clean_server_queues(from_server);
 	window_check_servers(from_server);
 	servercmd(NULL, scommnd, empty_string, NULL);
 

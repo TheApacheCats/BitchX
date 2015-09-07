@@ -109,7 +109,7 @@ void	BX_close_server (int cs_index, char *message)
 
 	if (serv_close_func)
 		(*serv_close_func)(cs_index, server_list[cs_index].local_addr, server_list[cs_index].port);
-	clean_server_queues(from_server);
+	clean_server_queues(cs_index);
 
 	if (waiting_out > waiting_in)
 		waiting_out = waiting_in = 0;
@@ -329,11 +329,11 @@ int advance_server(int i)
 	 */
 
 	server_list[i].retries++;
-	if(server_list[i].retries >= get_int_var(MAX_SERVER_RECONNECT_VAR))
+	if (server_list[i].retries >= get_int_var(MAX_SERVER_RECONNECT_VAR))
 	{
 		server = next_server(i);
 
-		if(server != i)
+		if (server != i)
 		{
 			/* We have a new server to try, so lets
 			 * move the variables over from the last one
@@ -361,16 +361,15 @@ int advance_server(int i)
 		}
 	}
 
-	if(!get_int_var(AUTO_RECONNECT_VAR) && (server_list[server].req_server != server || server_list[server].retries > 1))
+	if (!get_int_var(AUTO_RECONNECT_VAR) && (server_list[server].req_server != server || server_list[server].retries > 1))
 	{
 		close_server(server, empty_string);
-		clean_server_queues(server);
 		from_server = -1;
-		if(do_hook(DISCONNECT_LIST,"No Connection"))
+		if (do_hook(DISCONNECT_LIST,"No Connection"))
 			put_it("%s", convert_output_format(fget_string_var(FORMAT_DISCONNECT_FSET), "%s %s", update_clock(GET_TIME), "No connection"));
 		return -1;
 	}
-	else if(server == server_list[i].req_server && server_list[server].retries > 1)
+	else if (server == server_list[i].req_server && server_list[server].retries > 1)
 		bitchsay("Servers exhausted. Restarting.");
 
 	return server;

@@ -1312,7 +1312,6 @@ static	void p_kill(char *from, char **ArgList)
 		set_server_reconnecting(from_server, 1);
 	    
 	close_server(from_server,empty_string);
-	clean_server_queues(from_server);
 	window_check_servers(from_server);
 	set_input_prompt(current_window, get_string_var(INPUT_PROMPT_VAR), 0);
 	if (serverkill)

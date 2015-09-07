@@ -1,5 +1,8 @@
 [Changes 1.2.2]
 
+* Ensure close_server() clears the internal command queues for the right
+  server. (caf)
+
 * Remove obsolete AIM plugin. (caf)
 
 * Tighten up the handling of channel WALLs. (caf)
