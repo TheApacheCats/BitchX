@@ -1917,7 +1917,7 @@ char *	parse_line_alias_special (char *name, char *what, char *args, int d1, int
 	window_display = old_window_display;
 
 	will_catch_return_exceptions++;
-	parse_line(NULL, what, args, d1, d2, 1);
+	parse_line(NULL, what, args, d1, d2, 0);
 	will_catch_return_exceptions--;
 	return_exception = 0;
 
