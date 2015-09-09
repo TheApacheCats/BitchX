@@ -101,7 +101,7 @@ static void blowfish_decipher (UWORD_32bits * xl, UWORD_32bits * xr)
 	*xr = Xl.word;
 }
 
-static void blowfish_init (UBYTE_08bits * key, short keybytes)
+static void blowfish_init (const char *key, short keybytes)
 {
 	int i, j, bx;
 	time_t lowest;
@@ -115,7 +115,7 @@ static void blowfish_init (UBYTE_08bits * key, short keybytes)
 		if (blowbox[i].P != NULL) 
 		{
 			if ((blowbox[i].keybytes == keybytes) &&
-				(strncmp((char *) (blowbox[i].key), (char *) key, keybytes) == 0)) 
+				(strncmp((char *) (blowbox[i].key), key, keybytes) == 0)) 
 			{
 				blowbox[i].lastuse = now;
 				bf_P = blowbox[i].P;
