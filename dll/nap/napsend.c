@@ -605,17 +605,14 @@ double compute_tpf(AUDIO_HEADER *fr)
 }
 
 
-long get_bitrate(int fdes, time_t *mp3_time, unsigned int *freq_rate, unsigned long *filesize, int *stereo, long *id3, int *mime_type)
+long get_bitrate(int fdes, time_t *mp3_time, int *freq_rate, unsigned long *filesize, int *stereo, long *id3, int *mime_type)
 {
-
-
 	AUDIO_HEADER header = {0};
 	unsigned long btr = 0;
 	struct stat	st;
-	unsigned long	head;
-
-unsigned char	buf[1025];
-unsigned char	tmp[5];
+	unsigned long head;
+	unsigned char buf[1025];
+	unsigned char tmp[5];
 			
 	if (freq_rate)
 		*freq_rate = 0;
@@ -627,15 +624,15 @@ unsigned char	tmp[5];
 	memset(tmp, 0, sizeof(tmp));
 	read(fdes, tmp, 4);
 
-	if (!strcmp(tmp, "PK\003\004")) /* zip magic */
+	if (!memcmp(tmp, "PK\003\004", 4)) /* zip magic */
 		return 0;
-	if (!strcmp(tmp, "PE") || !strcmp(tmp, "MZ")) /* windows Exe magic */
+	if (!memcmp(tmp, "PE", 2) || !memcmp(tmp, "MZ", 2)) /* windows Exe magic */
 		return 0;
-	if (!strcmp(tmp, "\037\235")) /* gzip/compress */
+	if (!memcmp(tmp, "\037\235", 2)) /* gzip/compress */
 		return 0;
-	if (!strcmp(tmp, "\037\213") || !strcmp(tmp, "\037\036") || !strcmp(tmp, "BZh")) /* gzip/compress/bzip2 */
+	if (!memcmp(tmp, "\037\213", 2) || !memcmp(tmp, "\037\036", 2) || !memcmp(tmp, "BZh", 3)) /* gzip/compress/bzip2 */
 		return 0;
-	if (!strcmp(tmp, "\177ELF")) /* elf binary */
+	if (!memcmp(tmp, "\177ELF", 4)) /* elf binary */
 		return 0;
 		
 	head = convert_to_header(tmp);
@@ -1522,20 +1519,16 @@ SocketList *s;
 
 void nap_firewall_start(int snum)
 {
-GetFile *gf;
-unsigned char buffer[NAP_BUFFER_SIZE+1];
-SocketList *s;
-	s = get_socket(snum);
+	GetFile *gf;
+	char buffer[NAP_BUFFER_SIZE+1];
+	SocketList *s = get_socket(snum);
+
 	if (!s || !(gf = (GetFile *)get_socketinfo(snum)))
 		return;
 	if ((read(snum, buffer, 4)) < 1)
 		return;
 	
-#if 0
-	sprintf(buffer, "%s \"%s\" %lu", gf->nick, gf->filename, gf->filesize);
-	write(snum, convertnap_dos(buffer), strlen(buffer));
-#endif
-	if (*buffer && !strcmp(buffer, "SEND"))
+	if (!memcmp(buffer, "SEND", 4))
 		s->func_read = napfirewall_pos;	
 	else
 		close_socketread(snum);
@@ -1543,15 +1536,15 @@ SocketList *s;
 
 void napfile_read(int snum)
 {
-GetFile *gf;
-unsigned char buffer[NAP_BUFFER_SIZE+1];
-int rc;
-SocketList *s;
-	s = get_socket(snum);
+	GetFile *gf;
+	char buffer[NAP_BUFFER_SIZE+1];
+	int rc;
+	SocketList *s = get_socket(snum);
+
 	if (!(gf = (GetFile *)get_socketinfo(snum)))
 	{
-		unsigned char buff[2*NAP_BUFFER_SIZE+1];
-		unsigned char fbuff[2*NAP_BUFFER_SIZE+1];
+		char buff[2*NAP_BUFFER_SIZE+1];
+		char fbuff[2*NAP_BUFFER_SIZE+1];
 		char *nick, *filename, *args;
 		
 		alarm(10);
@@ -1624,9 +1617,10 @@ SocketList *s;
 
 void naplink_handleconnect(int snum)
 {
-unsigned char buff[2*NAP_BUFFER_SIZE+1];
-SocketList *s;
-int rc;
+	char buff[2*NAP_BUFFER_SIZE+1];
+	SocketList *s;
+	int rc;
+
 	memset(buff, 0, sizeof(buff) - 1);
 	switch ((rc = recv(snum, buff, 4, MSG_PEEK)))
 	{

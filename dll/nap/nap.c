@@ -224,7 +224,7 @@ int connectbynumber(char *hostn, unsigned short *portnum, int service, int proto
 
 	if (service == SERVICE_SERVER)
 	{
-		int length;
+		socklen_t length;
 #ifdef IP_PORTRANGE
 		int ports;
 #endif
@@ -1593,17 +1593,14 @@ void print_file(FileStruct *f, int count)
 
 NAP_COMM(cmd_fileinfo)
 {
-char *nick;
-char *ip;
 int port;
 char *file;
-char *checksum;
 int speed;
-	nick = next_arg(args, &args);
-	ip = next_arg(args, &args);
+	next_arg(args, &args); /* nick, ignored */
+	next_arg(args, &args); /* ip, ignored */
 	port = my_atol(next_arg(args, &args));
 	file = new_next_arg(args, &args);
-	checksum = next_arg(args, &args);
+	next_arg(args, &args); /* checksum, ignored */
 	speed = my_atol(next_arg(args, &args));
 	nap_put("Number � Song � Speed");
 	nap_put("컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴");

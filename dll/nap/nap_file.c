@@ -739,7 +739,6 @@ gato242 3068149784 6699 "d:\mp3\Hackers_-_07_-_Orbital_-_Halcyon_&_On_&_On.mp3"
 */
 unsigned short port;
 int getfd = -1;
-int speed;
 char *nick, *file, *checksum, *ip, *dir = NULL;
 char *realfile = NULL;
 char indata[2*NAP_BUFFER_SIZE+1];
@@ -752,7 +751,7 @@ struct stat st;
 	port = my_atol(next_arg(args, &args));
 	file = new_next_arg(args, &args);
 	checksum = next_arg(args, &args);
-	speed = my_atol(args);
+	/* Last argument (speed) ignored */
 
 	if (!(gf = find_in_getfile(&getfile_struct, 1, nick, checksum, file, -1, NAP_DOWNLOAD)))
 	{

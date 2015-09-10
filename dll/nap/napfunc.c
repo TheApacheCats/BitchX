@@ -108,7 +108,7 @@ BUILT_IN_FUNCTION(func_connected)
 {
 	if (nap_socket > -1)
 	{
-		int len;
+		socklen_t len;
 		struct sockaddr_in name;
 		len = sizeof (name);
 		if (getpeername(nap_socket, (struct sockaddr *)&name, &len))
