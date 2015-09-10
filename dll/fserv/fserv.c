@@ -458,7 +458,7 @@ int gethdr(int file, AUDIO_HEADER *header)
 	return 0;
 }
 
-long get_bitrate(char *filename, time_t *mp3_time, unsigned int *freq_rate, int *id3, unsigned long *filesize, int *stereo)
+long get_bitrate(char *filename, time_t *mp3_time, int *freq_rate, int *id3, unsigned long *filesize, int *stereo)
 {
 	short t_bitrate[2][3][15] = {{
 	{0,32,48,56,64,80,96,112,128,144,160,176,192,224,256},
@@ -926,7 +926,7 @@ int search_proc(char *which, char *str, char **unused)
 	return 1;
 }
 
-void impress_me(void *args)
+int impress_me(void *args, char *sub)
 {
 	int		timer;
 	char		*ch = NULL;
@@ -994,6 +994,7 @@ void impress_me(void *args)
 	}
 	add_timer(0, empty_string, timer * 1000, 1, impress_me, NULL, NULL, -1, "fserv");
 	new_free(&ch);
+	return 0;
 }
 
 BUILT_IN_FUNCTION(func_convert_mp3time)
