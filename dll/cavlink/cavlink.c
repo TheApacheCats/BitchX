@@ -158,9 +158,9 @@ char buffer[BIG_BUFFER_SIZE];
 
 BUILT_IN_DLL(cattack)
 {
-char *tmp, *times = "6", *target = NULL, *q;
-char *comm = NULL;
-char *type[] = { "dcc_bomb", "version_flood", "ping_flood", "message_flood", "quote_flood", "cycle_flood", "nick_flood", "echo_flood", NULL};
+char *times = "6", *target = NULL, *q;
+const char *comm = NULL;
+static const char * const type[] = { "dcc_bomb", "version_flood", "ping_flood", "message_flood", "quote_flood", "cycle_flood", "nick_flood", "echo_flood", NULL};
 	if (!check_cavlink(cavhub, NULL, 1))
 		return;
 	if (!my_stricmp(command, "CATTACK"))
@@ -201,7 +201,7 @@ char *type[] = { "dcc_bomb", "version_flood", "ping_flood", "message_flood", "qu
 	{
 		if (!my_strnicmp(args, "-t", 2))
 		{
-			tmp = next_arg(args, &args);
+			next_arg(args, &args);
 			times = next_arg(args, &args);
 			if (times && !isdigit(*times))
 				times = "6";
@@ -218,7 +218,7 @@ char *type[] = { "dcc_bomb", "version_flood", "ping_flood", "message_flood", "qu
 	{
 		if (!my_strnicmp(args, "-t", 2))
 		{
-			tmp = next_arg(args, &args);
+			next_arg(args, &args);
 			times = next_arg(args, &args);
 			if (times && !isdigit(*times))
 				times = "6";
@@ -840,11 +840,10 @@ NickTab *tmp;
 
 int handle_msg (SocketList *Client, char **ArgList)
 {
-char *to, *nick, *host, *str;
-	to = *(ArgList+1);
-	nick = *(ArgList+2);
-	host = *(ArgList+3);
-	str = *(ArgList+4);
+char *nick, *host, *str;
+	nick = ArgList[2];
+	host = ArgList[3];
+	str = ArgList[4];
 	PasteArgs(ArgList, 4);
 	str = handle_ctcp(Client, nick, host, NULL, str);
 	if (!str || !*str)
@@ -861,7 +860,6 @@ static void cavlink_handler (int s)
 int output = 1;
 char *p = NULL;
 char *TrueArgs[MAXCAVPARA+1] = { NULL };
-int count = 0;
 char **ArgList;
 char *comm;
 char tmpstr[BIG_BUFFER_SIZE+1];
@@ -956,7 +954,7 @@ switch(dgets(tmpstr, s, 0, BIG_BUFFER_SIZE, NULL))
 		return;
 	}
 	ArgList = TrueArgs;
-	count = BreakArgs(tmp, NULL, ArgList, 1);
+	BreakArgs(tmp, NULL, ArgList, 1);
         if (!(comm = (*++ArgList)) || !*ArgList)
                         return;         /* Empty line from server - ByeBye */
 
