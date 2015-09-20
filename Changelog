@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Fix /KB so that it kicks-then-bans as intended (reported by profiler). (caf)
+
 * Fix $functioncall() scripting function (reported by |Rain|). (caf)
 
 * Ensure close_server() clears the internal command queues for the right

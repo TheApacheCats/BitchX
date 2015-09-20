@@ -248,7 +248,7 @@ IrcCommand irc_command[] =
 	{ "BHELP",	"BHELP",	chelp,			0,	"%Y<%nhelp%W|%nindex%W|%nother%Y>%n\n - BitchX help command" },
 #endif
 	{ "BIND",	NULL,		bindcmd,		0,	"- Command to bind a key to a function" },
-	{ "BK",		NULL,		kickban,		SERVERREQ,	"%Y<%Cnick%Y>%n %R[%nreason%R]%n\n- Deops, bans and kicks %Y<%Cnick%Y>%n for %R[%nreason%R]%n" },
+	{ "BK",		"BK",		kickban,		SERVERREQ,	"%Y<%Cnick%Y>%n %R[%nreason%R]%n\n- Deops, bans and kicks %Y<%Cnick%Y>%n for %R[%nreason%R]%n" },
 	{ "BKI",	"BKI",		kickban,		SERVERREQ,	"%Y<%Cnick%Y>%n %R[%nreason%R]%n\n- Deops, bans, kicks and ignores %Y<%Cnick%Y>%n for %R[%nreason%R]%n" },
 	{ "BLESS",	NULL,		blesscmd,		0,	scripting_command },
 	{ "BREAK",	NULL,		breakcmd,		0,	NULL },

@@ -1002,9 +1002,9 @@ BUILT_IN_COMMAND(kickban)
 	set_display_target(chan->channel, LOG_KICK);
 	if (command)
 	{
-		if (!strstr(command, "KB"))
+		if (strstr(command, "KB"))
 			kick_first = 1;
-		set_ignore = (command[strlen(command)-1] == 'I') ? 1 : 0;
+		set_ignore = (command[strlen(command)-1] == 'I');
 	}
 	if (!spec && !(spec = new_next_arg(args, &args)))
 	{
