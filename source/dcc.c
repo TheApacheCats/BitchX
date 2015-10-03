@@ -543,9 +543,6 @@ DCC_List		*new_i;
 		s = &new_i->sock;
 		new = (DCC_int *)s->info;
 
-#ifdef DCC_CNCT_PEND
-		flags |= DCC_CNCT_PEND;
-#endif
 		new->remport = ntohs(new->remport);
 		if ((new_s = connect_by_number(inet_ntoa(new->remote), &new->remport, SERVICE_CLIENT, PROTOCOL_TCP, 0)) < 0
 #ifdef HAVE_SSL
@@ -627,9 +624,6 @@ DCC_List		*new_i;
 		if (get_int_var(DCC_FORCE_PORT_VAR))
 			portnum = get_int_var(DCC_FORCE_PORT_VAR);
 
-#ifdef DCC_CNCT_PEND
-		flags |= DCC_CNCT_PEND;
-#endif
 		flags |= DCC_WAIT;
 		if ((s = connect_by_number(NULL, &portnum, SERVICE_SERVER, PROTOCOL_TCP, 1)) < 0)
 		{
@@ -1245,7 +1239,7 @@ UserList *ul = NULL;
 			reset_display_target();
 			return;
 		}
-		if ((s->flags && DCC_WAIT))
+		if ((s->flags & DCC_WAIT))
 		{
 			if (Ctype == DCC_CHAT)
 			{

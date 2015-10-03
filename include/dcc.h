@@ -97,21 +97,12 @@
 #define DCC_OFFER	0x00040000
 #define DCC_DELETE	0x00080000
 #define DCC_TWOCLIENTS	0x00100000
-
-#ifdef NON_BLOCKING_CONNECTS
-#define DCC_CNCT_PEND	0x00200000
-#endif
-
-#ifdef HAVE_SSL
-#define DCC_SSL		0x04000000
-#endif
-
 #define DCC_QUEUE	0x00400000
 #define DCC_TDCC	0x00800000
 #define DCC_BOTCHAT	0x01000000
 #define DCC_ECHO	0x02000000
+#define DCC_SSL		0x04000000
 #define DCC_STATES	0xffffff00
-
 
 	int	check_dcc_list (char *);
 	int	dcc_exempt_save (FILE *);
