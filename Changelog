@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Ignore DCC ACCEPT if RESUME wasn't requested. (caf)
+
 * Fix /KB so that it kicks-then-bans as intended (reported by profiler). (caf)
 
 * Fix $functioncall() scripting function (reported by |Rain|). (caf)
