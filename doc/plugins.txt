@@ -68,7 +68,7 @@ this easier ie. CHANNEL_SYNCH_LIST.
 
 flag is used in the same procedures as id. a VAR_PROC uses this as the
 default INT/BOOL value for the variable. CTCP_PROC uses this to tell the
-client what todo when we recieve one of these ctcp's. CTCP_SPECIAL,
+client what todo when we receive one of these ctcp's. CTCP_SPECIAL,
 CTCP_TELLUSER, CTCP_REPLY, CTCP_INLINE, CTCP_NOLIMIT are possible values. 
 These can be or'd together as well. HOOK_PROC uses this as the "noise"
 of this event.

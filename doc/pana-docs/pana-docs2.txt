@@ -380,7 +380,7 @@
 New status line variables:
         %D Show dcc percentage done on status line.
  
-        %^ Show number of recieved messages while away on status line.
+        %^ Show number of received messages while away on status line.
  
  
  

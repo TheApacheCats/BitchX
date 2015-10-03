@@ -892,7 +892,7 @@ static void 	handle_filedesc (Process *proc, int *fd, int hook_nonl, int hook_nl
  * has exited, or the client has attempted to fork() off a helper process
  * (such as wserv or gzip) and that process has choked on itself.  
  *
- * When SIGCHLD is recieved, the global variable 'dead_children_processes'
+ * When SIGCHLD is received, the global variable 'dead_children_processes'
  * is incremented.  When this function is called, we go through and call
  * waitpid() on all of the outstanding zombies, conditionally stopping when
  * we reach a specific wanted sub-process.
@@ -1076,7 +1076,7 @@ void 		add_process_wait (int proc_index, const char *cmd)
  * the client.  Either stage may happen first, but until both are completed
  * we keep the process around.
  *
- *	1) We must recieve an EOF on both stdin and stderr, or we must
+ *	1) We must receive an EOF on both stdin and stderr, or we must
  *	   have closed stdin and stderr already (handled by do_processes)
  *	2) The process must have died (handled by get_child_exit)
  *
@@ -1308,7 +1308,7 @@ void 	kill_process (int kill_index, int sig)
  * condition (such as a swap in).  You do not know when the process will
  * actually die.  It could be 15 ns, it could be 15 minutes, it could be
  * 15 years.  Its also useful to note that we, as the parent process, will not
- * recieve the SIGCHLD signal until after the child dies.  That means it is
+ * receive the SIGCHLD signal until after the child dies.  That means it is
  * pointless to try to reap any children processes here.  The main io()
  * loop handles reaping children (by calling get_child_exit()).
  */

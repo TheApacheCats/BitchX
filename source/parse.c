@@ -127,7 +127,7 @@ register BanList *eban = NULL;
 
 void fake (void) 
 {
-	bitchsay("--- Fake Message recieved!!! ---");
+	bitchsay("--- Fake Message received!!! ---");
 	return;
 }
 

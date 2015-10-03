@@ -665,7 +665,7 @@ BUILT_IN_COMMAND(dumpcmd)
  *   string "void", then the balance of the remaining alias arguments are 
  *   discarded and $* will expand to the false value.  If neither "..." nor
  *   "void" are provided in the argument list, then that last variable in the
- *   list will recieve all of the remaining arguments left at its position.
+ *   list will receive all of the remaining arguments left at its position.
  * 
  * Examples:
  *

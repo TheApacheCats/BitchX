@@ -258,7 +258,7 @@ enum nap_Commands {
 	CMDS_CHANGEDATA		= 703,
 
 	CMDS_PING		= 751, /* user */
-	CMDS_PONG		= 752, /* <user> recieved from a ping*/
+	CMDS_PONG		= 752, /* <user> received from a ping*/
 			       /* <user> can also be used to send a pong */
 	/* 753 */
 	
@@ -271,7 +271,7 @@ enum nap_Commands {
 	/* 821 822 823 826 827 */
 	CMDS_SENDME		= 824,
 	CMDR_NICK		= 825,
-	CMDS_NAME		= 830, /* <channel> returns 825 with nick info, 830 is recieved on end of list */
+	CMDS_NAME		= 830, /* <channel> returns 825 with nick info, 830 is received on end of list */
 	/* 831 */
 
 

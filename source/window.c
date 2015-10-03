@@ -3752,7 +3752,7 @@ Window *window_query (Window *window, char **args, char *usage)
 		else if (!strcmp(nick, ","))
 		{
 			if (!(nick = get_server_recv_nick(window->server)))
-				say("You have not recieved a message yet");
+				say("You have not received a message yet");
 		}
 		else if (!strcmp(nick, "*") && 
 			!(nick = get_current_channel_by_refnum(0)))

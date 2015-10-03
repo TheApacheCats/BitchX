@@ -94,7 +94,7 @@ Notes:    It is possible to embed spaces into a word or pattern simply by
 
 Function: $userhost()
 Usage:    $userhost()
-Returns:  the userhost (if any) of the most previously recieved message.
+Returns:  the userhost (if any) of the most previously received message.
 Notes:    $userhost() changes with every single line that appears on your
           screen, so if you want to save it, you will need to assign it to
           a variable.
@@ -754,13 +754,13 @@ Example:  $winsize(1) returns 22
 
 Function: $lastnotice()
 Usage:    $lastnotice(refnum)
-Returns:  the last notice recieved or nothing if none
+Returns:  the last notice received or nothing if none
 Example:  $lastnotice(10) returns
           "10:19pm |By-Tor| ~by-tor@by-tor.com |By-tor| yo"
 
 Function: $lastmessage()
 Usage:    $lastmessage(refnum)
-Returns:  the last message recieved or nothing if none
+Returns:  the last message received or nothing if none
 Example:  $lastmessage(10) returns
           10:19pm |By-Tor| ~by-tor@by-tor.com |By-tor| yo
  

@@ -1600,7 +1600,7 @@ BUILT_IN_FUNCTION(function_rmatch, input)
 
 /*
  * Usage: $userhost()
- * Returns: the userhost (if any) of the most previously recieved message.
+ * Returns: the userhost (if any) of the most previously received message.
  * Caveat: $userhost() changes with every single line that appears on
  *         your screen, so if you want to save it, you will need to assign
  *         it to a variable.

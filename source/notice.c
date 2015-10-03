@@ -738,7 +738,7 @@ void parse_notice(char *from, char **Args)
 		return;
 	if (!*to)
 	{
-		put_it("*** obsolete notice recieved. [%s]", line+1);
+		put_it("*** obsolete notice received. [%s]", line+1);
 		return;
 	}
 

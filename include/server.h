@@ -95,9 +95,9 @@ typedef	struct
 					 * used for redirect */
 	int	lag;			/* indication of lag from server CDE*/
 	struct timeval lag_sent;	/* time lag ping sent to server CDE */
-	struct timeval lag_recv;	/* time last lag ping reply was recieved */
+	struct timeval lag_recv;	/* time last lag ping reply was received */
 	unsigned long lag_cookie;	/* cookie to identify our lag check pings */
-	time_t	last_msg;		/* last mesg recieved from the server CDE */
+	time_t	last_msg;		/* last mesg received from the server CDE */
 
 	time_t		last_sent;	/* last mesg time sent */
 	QueueSend 	*queue;		/* queue of lines to send to a server */	

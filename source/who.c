@@ -438,7 +438,7 @@ do
 	if (!new_w)
 		break;
 	/*
-	 * We have recieved a reply to this query -- its too late to
+	 * We have received a reply to this query -- its too late to
 	 * piggyback it now!
 	 */
 	new_w->dirty = 1;

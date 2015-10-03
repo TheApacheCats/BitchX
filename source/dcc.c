@@ -1223,7 +1223,7 @@ UserList *ul = NULL;
 #endif
        	else
        	{
-		put_it("%s", convert_output_format("$G %RDCC%n Unknown DCC $0 ($1) recieved from $2", "%s %s %s", type, description, nick));
+		put_it("%s", convert_output_format("$G %RDCC%n Unknown DCC $0 ($1) received from $2", "%s %s %s", type, description, nick));
 		reset_display_target();
        	        return;
        	}
@@ -1235,7 +1235,7 @@ UserList *ul = NULL;
 		if ((s->flags & DCC_ACTIVE))
 		{
 			/* collision. */
-			put_it("%s", convert_output_format("$G %RDCC%n Recieved DCC $0 request from $1 while previous session active", "%s %s", type, nick));
+			put_it("%s", convert_output_format("$G %RDCC%n Received DCC $0 request from $1 while previous session active", "%s %s", type, nick));
 			reset_display_target();
 			return;
 		}
@@ -2902,7 +2902,7 @@ DCC_int *n;
 	}
 }
 
-/* Looks for the dcc transfer that is "current" (last recieved data)
+/* Looks for the dcc transfer that is "current" (last received data)
  * and returns information for it
  */
 extern char *DCC_get_current_transfer (void)
@@ -3040,7 +3040,7 @@ int dcc_exempt_save(FILE *fptr)
  */
 static	void 	output_reject_ctcp (UserhostItem *stuff, char *nick, char *args)
 {
-	char *nickname_recieved;
+	char *nickname_received;
 	char *type;
 	char *description;
 
@@ -3052,10 +3052,10 @@ static	void 	output_reject_ctcp (UserhostItem *stuff, char *nick, char *args)
 	next_arg(args, &args);
 	type = next_arg(args, &args);
 	description = next_arg(args, &args);
-	nickname_recieved = stuff->nick; 
+	nickname_received = stuff->nick; 
 
-	if (nickname_recieved && *nickname_recieved)
-		send_ctcp(CTCP_NOTICE, nickname_recieved, CTCP_DCC,
+	if (nickname_received && *nickname_received)
+		send_ctcp(CTCP_NOTICE, nickname_received, CTCP_DCC,
 				"REJECT %s %s", type, description);
 }
 

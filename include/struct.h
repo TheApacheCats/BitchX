@@ -1219,7 +1219,7 @@ typedef struct _dcc_internal {
 	struct transfer_struct transfer_orders;	/* structure for resending files */
 	int		file;			/* file handle open file */
 	u_32int_t	filesize;		/* the filesize to get */
-	u_32int_t	packets;		/* number of blocksize packets recieved */
+	u_32int_t	packets;		/* number of blocksize packets received */
 	int		eof;			/* in EOF condition. */
 	int		blocksize;		/* this dcc's blocksize */
 	int		dcc_fast;		/* set if non-blocking used */

@@ -795,10 +795,10 @@ RELCT
    - Changes the topic to the last CTCP command issued
 RELD
    %gUsage%n: %W/%nreld
-   - Displays the last DCC msg recieved.
+   - Displays the last DCC msg received.
 RELDT
    %gUsage%n: %W/%nreldt
-   - Sets the topic to the last DCC message recieved.
+   - Sets the topic to the last DCC message received.
 RELI
    %gUsage%n: %W/%nreli
    - Shows the last invite message received

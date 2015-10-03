@@ -785,7 +785,7 @@ extern char *BX_one_to_another (const char *what)
 
 /*
  * It is possible for a race condition to exist; such that select()
- * indicates that a listen()ing socket is able to recieve a new connection
+ * indicates that a listen()ing socket is able to receive a new connection
  * and that a later accept() call will still block because the connection
  * has been closed in the interim.  This wrapper for accept() attempts to
  * defeat this by making the accept() call nonblocking.

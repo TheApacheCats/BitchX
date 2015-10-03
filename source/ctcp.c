@@ -1014,7 +1014,7 @@ const	char	*my_host;
 
 
 /* 
- * If we recieve a CTCP DCC REJECT in a notice, then we want to remove
+ * If we receive a CTCP DCC REJECT in a notice, then we want to remove
  * the offending DCC request
  */
 CTCP_HANDLER(do_dcc_reply)

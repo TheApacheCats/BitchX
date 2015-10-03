@@ -620,7 +620,7 @@ void	do_server (fd_set *rd, fd_set *wr)
 
 /* server_lag_reply()
  *
- * Called when a reply to a lag check ping has been recieved.
+ * Called when a reply to a lag check ping has been received.
  */
 void server_lag_reply(int s, unsigned long cookie, struct timeval lag_recv, struct timeval lag_sent)
 {

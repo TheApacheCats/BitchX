@@ -823,7 +823,7 @@ NAP_COMM(cmd_error)
 			nap_error = 11;
 		}
 		else
-			nap_say("%s", cparse("Recieved error for [$0] $1-.", "%d %s", cmd, args ? args : empty_string));
+			nap_say("%s", cparse("Received error for [$0] $1-.", "%d %s", cmd, args ? args : empty_string));
 	}
 	if (nap_error > 10)
 	{
@@ -836,7 +836,7 @@ NAP_COMM(cmd_error)
 NAP_COMM(cmd_unknown)
 {
 	if (do_hook(MODULE_LIST, "NAP UNKNOWN %s", args))
-		nap_say("%s", cparse("Recieved unknown [$0] $1-.", "%d %s", cmd, args));
+		nap_say("%s", cparse("Received unknown [$0] $1-.", "%d %s", cmd, args));
 	return 0;	
 }
 

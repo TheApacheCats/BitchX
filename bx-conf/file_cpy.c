@@ -237,7 +237,7 @@ Configure userlist_default[] = {
 { "Server op protection",	"Values 0 for none, 1 for deop, 2 for announce only", "DEFAULT_HACKING",		 0,INT_TYPE, edit_dir },  /* 0 1 2 */
 {"Auto-Unban time",		"", "DEFAULT_AUTO_UNBAN",   600, INT_TYPE, edit_dir },
 {"Default Ban time",		"", "DEFAULT_BANTIME",   600, INT_TYPE, edit_dir },
-{"Send ctcp msg",		"Send notice when ctcp command recieved", "DEFAULT_SEND_CTCP_MSG",	 ON, BOOL_TYPE, NULL },
+{"Send ctcp msg",		"Send notice when ctcp command received", "DEFAULT_SEND_CTCP_MSG",	 ON, BOOL_TYPE, NULL },
 {"Send Op msg",			"Send notice when auto-op sent", "DEFAULT_SEND_OP_MSG",	 ON, BOOL_TYPE, NULL },
 { NULL, NULL, NULL, 0, 0, NULL }
 };
