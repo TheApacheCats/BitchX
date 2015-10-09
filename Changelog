@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Improve messages around DCC auto-get / auto-rename / auto-resume. (caf)
+
 * Fix spelling of "receive" in all client output. (caf)
 
 * Ignore DCC ACCEPT if RESUME wasn't requested. (caf)

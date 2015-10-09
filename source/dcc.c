@@ -1135,19 +1135,20 @@ void start_dcc_get(int s);
 
 void register_dcc_type(char *nick, char *type, char *description, char *address, char *port, char *size, char *extra, char *uhost, void (*func1)(int))
 {
-int Ctype;
-unsigned long filesize = 0;
-SocketList *s;
-DCC_int *n;
-DCC_List *new_d = NULL;
-unsigned long TempLong;
-unsigned int  TempInt;
-void (*func)(int) = NULL;
-int autoget = 0;
-int autoresume = 0;
-unsigned long tdcc = 0;
-char *fullname = NULL;
-UserList *ul = NULL;
+	int Ctype;
+	unsigned long filesize = 0;
+	SocketList *s;
+	DCC_int *n;
+	DCC_List *new_d = NULL;
+	unsigned long TempLong;
+	unsigned int  TempInt;
+	void (*func)(int) = NULL;
+	int autoget = 0;
+	int autoresume = 0;
+	struct stat resume_sb;
+	unsigned long tdcc = 0;
+	char *fullname = NULL;
+	UserList *ul = NULL;
 
 	set_display_target(NULL, LOG_DCC);
 	if (description)
@@ -1324,40 +1325,51 @@ UserList *ul = NULL;
 		
 	if ((Ctype == DCC_FILEREAD) || (Ctype == DCC_REFILEREAD))
 	{
-		struct stat statit;
 		char *tmp = NULL, *p;
 		malloc_sprintf(&tmp, "%s/%s", get_string_var(DCC_DLDIR_VAR), n->filename);
 		p = expand_twiddle(tmp);
 
+		if (!n->filesize)
+			put_it("%s", convert_output_format("$G %RDCC%n Warning: Offered file has zero size", NULL, NULL));
+
 		if ((get_int_var(DCC_AUTOGET_VAR) || find_name_in_genericlist(nick, dcc_no_flood, DCC_HASHSIZE, 0)) &&
-			(n->filesize/1024 < get_int_var(DCC_MAX_AUTOGET_SIZE_VAR)) )
+			(n->filesize/1024 < get_int_var(DCC_MAX_AUTOGET_SIZE_VAR)) && n->filesize)
 			autoget = 1;
 		if (Ctype == DCC_FILEREAD)
 		{
-			int exist = 0;
-			if ( !dcc_overwrite_var && autoget && ((exist = stat(p, &statit)) == 0))
+			if (!dcc_overwrite_var && stat(p, &resume_sb) == 0)
 			{
-				if (!get_int_var(DCC_AUTORENAME_VAR))
+				/* File already exists */
+				if (autoget)
 				{
-					if (!get_int_var(DCC_AUTORESUME_VAR))
+					/* autoget of an existing file: either rename it, resume it, or punt */
+					if (get_int_var(DCC_AUTORENAME_VAR))
 					{
-						/* the file exists. warning is generated */
-						put_it("%s", convert_output_format("$G %RDCC%n Warning: File $0 exists: use /DCC rename if you dont want to overwrite", "%s", p));
-						autoget = 0;
+						rename_file(p, &n->filename);
 					}
-					else
+#ifdef MIRC_BROKEN_DCC_RESUME
+					else if (resume_sb.st_size < n->filesize && get_int_var(DCC_AUTORESUME_VAR))
 					{
 						put_it("%s", convert_output_format("$G %RDCC%n Warning: File $0 exists: trying to autoresume", "%s", p));
 						autoresume = 1;
 					}
-				}
-				else
-					rename_file(p, &n->filename);
-			}
-#ifdef MIRC_BROKEN_DCC_RESUME
-			if (!autoget && exist)
-				put_it("%s", convert_output_format("$G %RDCC%n Warning: File $0 exists: use /DCC RESUME nick if you want to resume this file", "%s", p));
 #endif
+					else
+					{
+						autoget = 0;
+					}
+				}
+
+				if (!autoget)
+				{
+#ifdef MIRC_BROKEN_DCC_RESUME
+					if (resume_sb.st_size < n->filesize)
+						put_it("%s", convert_output_format("$G %RDCC%n Warning: File $0 exists: use /DCC RENAME or /DCC RESUME if you don't want to overwrite", "%s", p));
+					else
+#endif
+						put_it("%s", convert_output_format("$G %RDCC%n Warning: File $0 exists: use /DCC RENAME if you don't want to overwrite", "%s", p));	
+				}
+			}
 		}
 		malloc_sprintf(&tmp, "%s/%s", get_string_var(DCC_DLDIR_VAR), n->filename);
 		fullname = expand_twiddle(tmp);
@@ -1403,51 +1415,35 @@ UserList *ul = NULL;
 	pending_dcc = new_d;
 	if (autoget && fullname)
 	{
-		if (!n->filesize)
+		if (autoresume)
 		{
-			put_it("%s", convert_output_format("$G %RDCC Caution Filesize is 0!! No Autoget", NULL, NULL));
-			reset_display_target();
-			return;
+			n->transfer_orders.byteoffset = resume_sb.st_size;
+			n->bytes_read = 0L;
+			new_d->sock.flags |= DCC_RESUME_REQ;
+			send_ctcp(CTCP_PRIVMSG, nick, CTCP_DCC, "RESUME %s %d %ld", 
+				n->filename, ntohs(n->remport), resume_sb.st_size);
 		}
-		if (autoget)
+		else
 		{
-			struct stat sb;
-			if (autoresume && stat(fullname, &sb) != -1) {
-				n->transfer_orders.byteoffset = sb.st_size;
-				n->bytes_read = 0L;
-				new_d->sock.flags |= DCC_RESUME_REQ;
-				send_ctcp(CTCP_PRIVMSG, nick, CTCP_DCC, "RESUME %s %d %ld", n->filename, ntohs(n->remport), sb.st_size);
-			} else {
-				DCC_int *new = NULL;
-				int mode = O_WRONLY | O_CREAT | O_BINARY;
-				if (!dcc_quiet)
-				{
-					char *prompt;
-					char local_type[30];
-					*local_type = 0;
-					if (tdcc)
-						*local_type = 'T';
-					strcat(local_type, dcc_types[Ctype]->name);
-					lower(local_type);
-					prompt = m_strdup(convert_output_format(get_string_var(CDCC_PROMPT_VAR), NULL, NULL));
-					put_it("%s", convert_output_format("$0 Auto-$1ing file %C$3-%n from %K[%C$2%K]", "%s %s %s %s",
-													   prompt, local_type, nick, n->filename));
-					new_free(&prompt);
-				}
-				if (Ctype == DCC_REFILEREAD)
-					mode |= O_APPEND;
-				if ((n->file = open(fullname, mode, 0644)) > 0)
-				{
-					if ((new = dcc_create(nick, n->filename, NULL, n->filesize, 0, Ctype, DCC_OFFER|tdcc, func)))
-						new->blocksize = get_int_var(DCC_BLOCK_SIZE_VAR);
-				}
-				else
-					put_it("%s", convert_output_format("$G %RDCC%n Unable to open $0-", "%s", fullname));
+			DCC_int *new = NULL;
+			int mode = O_WRONLY | O_CREAT | O_BINARY;
+			if (!dcc_quiet)
+			{
+				put_it("%s", 
+					convert_output_format("$G %RDCC%n Auto-accepting $0 of file %C$2-%n from %K[%C$1%K]",
+						"%s%s %s %s", tdcc ? "T" : "", dcc_types[Ctype]->name, nick, n->filename));
 			}
+			if (Ctype == DCC_REFILEREAD)
+				mode |= O_APPEND;
+			if ((n->file = open(fullname, mode, 0644)) > 0)
+			{
+				if ((new = dcc_create(nick, n->filename, NULL, n->filesize, 0, Ctype, DCC_OFFER|tdcc, func)))
+					new->blocksize = get_int_var(DCC_BLOCK_SIZE_VAR);
+			}
+			else
+				put_it("%s", convert_output_format("$G %RDCC%n Unable to open $0-", "%s", fullname));
 		}
 	}
-	if (Ctype == DCC_CHAT && autoget)
-		dcc_create(nick, n->filename, NULL, n->filesize, 0, Ctype, DCC_OFFER, func);
 	reset_display_target();
 	new_free(&fullname);
 }
@@ -3478,7 +3474,7 @@ struct stat sb;
 			close_socketread(snum);
 		}
 	} else
-		put_it("DCC RESUME starting at %lu", sb.st_size);
+		put_it("%s", convert_output_format("$G %RDCC%n RESUME of $0 at $1", "%s %l", n->filename, sb.st_size));
 	new_free(&fullname);
 	new_free(&tmp);
 }
