@@ -563,7 +563,7 @@ DCC_List		*new_i;
 		}
 		new->remport = ntohs(new->remport);
 		flags |= DCC_ACTIVE;
-		add_socketread(new_s, port, flags|type, nick, new_i->sock.func_read, NULL);
+		add_socketread(new_s, new->remport, flags|type, nick, new_i->sock.func_read, NULL);
 		set_socketinfo(new_s, new);
 		if ((getpeername(new_s, (struct sockaddr *) &remaddr, &rl)) != -1)
 		{
@@ -3423,14 +3423,14 @@ int old_dp, old_dn, old_dc;
 	in_ctcp_flag = old_dc;
 }
 
-void dcc_getfile_resume_start (char *nick, char *description, char *address, char *port)
+void dcc_getfile_resume_start(char *nick, char *description, char *port, char *offset)
 {
-SocketList *s;
-DCC_int *n;
-const DCC_List *pending;
-char *tmp = NULL;
-char *fullname = NULL;
-struct stat sb;
+	SocketList *s;
+	DCC_int *n;
+	const DCC_List *pending;
+	char *tmp = NULL;
+	char *fullname = NULL;
+	struct stat sb;
 
 	/* resume command has been sent and accepted. */
 	if (description && !strcmp(description, "file.ext"))
