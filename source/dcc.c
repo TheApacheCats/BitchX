@@ -1432,6 +1432,10 @@ void register_dcc_type(char *nick, char *type, char *description, char *address,
 				put_it("%s", convert_output_format("$G %RDCC%n Unable to open $0-", "%s", fullname));
 		}
 	}
+
+	if (Ctype == DCC_CHAT && autoget)
+		dcc_create(nick, n->filename, NULL, n->filesize, 0, Ctype, DCC_OFFER, func);
+
 	reset_display_target();
 	new_free(&fullname);
 }
