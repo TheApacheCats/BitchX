@@ -145,7 +145,7 @@
 	
 	int	BX_add_dcc_bind(char *, char *, void *, void *, void *, void *, void *);
 
-	SocketList *BX_find_dcc(char *, char *, char *, int, int, int, int);	
+	SocketList *BX_find_dcc(const char *, const char *, const char *, int, int, int, int);	
 	void	BX_erase_dcc_info(int, int, char *, ...);
 	DCC_int	*BX_dcc_create(char *, char *, char *, unsigned long, int, int, unsigned long, void (*func)(int));
 	int	close_dcc_number(int);

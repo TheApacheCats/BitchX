@@ -362,51 +362,55 @@ static time_t last_reject = 0;
 /*	dcc_renumber_active();*/
 }
 
+/* dcc_match()
+ *
+ * Returns non-zero if the passed DCC socket matches the supplied parameters.
+ * NULL for string parameters and -1 for int parameters means Don't-Care.
+ */
+static int dcc_match(const SocketList *s, const char *nick, const char *desc, const char *other, int type, int active, int num)
+{
+	const DCC_int *n = s->info;
+
+	if (type != -1 && type != (s->flags & DCC_TYPES))
+		return 0;
+	if (num != -1 && num != n->dccnum)
+		return 0;
+	if (nick && my_stricmp(nick, s->server))
+		return 0;
+	if (desc && n->filename && my_stricmp(desc, n->filename))
+	{
+		const char *last = strrchr(n->filename, '/');
+		if (!last || my_stricmp(desc, last + 1))
+			return 0;
+	}
+	if (other && n->othername && my_stricmp(other, n->othername))
+		return 0;
+	if (active == 0 && (s->flags & DCC_ACTIVE))
+		return 0;
+	if (active == 1 && !(s->flags & DCC_ACTIVE))
+		return 0;
+
+	return 1;
+}
+
 /*
  * finds an active dcc connection. one that either is already started
  * or one that has been initiated on our side.
  */
  
-SocketList *BX_find_dcc(char *nick, char *desc, char *other, int type, int create, int active, int num)
+SocketList *BX_find_dcc(const char *nick, const char *desc, const char *other, int type, int create, int active, int num)
 {
-int i;
-SocketList *s;
-DCC_int *n;
-char *othername = NULL;
+	int i;
+	SocketList *s;
 
 	for (i = 0; i < get_max_fd()+1; i++)
 	{
 		if (!check_dcc_socket(i))
 			continue;
 		s = get_socket(i);
-		n = (DCC_int *) s->info;
-		if ( (type != -1) && !((s->flags & DCC_TYPES) == type) )
-			continue;
-		if ((num != -1) && !(n->dccnum == num))
-			continue;
-		if (nick && my_stricmp(nick, s->server))
-			continue;
-		if (desc && n->filename && my_stricmp(desc, n->filename))
-		{
-			char *last;
-			if (!(last = strrchr(n->filename, '/')))
-				continue;
-			last++;
-			if (last && my_stricmp(desc, last))
-			{
-				if (!othername || !n->othername)
-					continue;
-				if (my_stricmp(othername, n->othername))
-					continue;
-			}
-		}
-		if (other && n->othername && my_stricmp(other, n->othername))
-			continue;
-		if (active == 0 && (s->flags & DCC_ACTIVE))
-			continue;
-		if (active == 1 && !(s->flags & DCC_ACTIVE))
-			continue;
-		return s;
+
+		if (dcc_match(s, nick, desc, other, type, active, num))
+			return s;
 	}
 	return NULL;
 }
@@ -414,44 +418,28 @@ char *othername = NULL;
 /* 
  * finds a pending dcc which the other end has initiated.
  */
-DCC_List *find_dcc_pending(char *nick, char *desc, char *othername, int type, int remove, int num)
+static DCC_List *find_dcc_pending(const char *nick, const char *desc, const char *othername, int type, int remove, int num)
 {
-	unsigned long dcc_type;
 	SocketList *s;
-	DCC_int *n;
 	DCC_List *new_i;
 	DCC_List *last_i = NULL;
 
 	for (new_i = pending_dcc; new_i; last_i = new_i, new_i = new_i->next)
 	{
 		s = &new_i->sock;
-		n = (DCC_int *)s->info;
-		dcc_type = s->flags & DCC_TYPES;
-		if ((type != -1) && !(dcc_type == type))
-			continue;
-		if ((num != -1) && !(n->dccnum == num))
-			continue;
-		if (nick && my_stricmp(nick, new_i->sock.server))
-			continue;
-		if ((desc && my_stricmp(desc, n->filename)))
+
+		if (dcc_match(s, nick, desc, othername, type, -1, num))
 		{
-			char *last;
-			if (!(last = strrchr(n->filename, '/')))
-				continue;
-			last++;
-			if (last && my_stricmp(desc, last))
-				continue;
+			if (remove)
+			{
+				if (last_i)
+					last_i->next = new_i->next;
+				else
+					pending_dcc = new_i->next;
+			}
+
+			return new_i;
 		}
-		if (othername && n->othername && my_stricmp(othername, n->othername))
-			continue;
-		if (remove)
-		{
-			if (last_i)
-				last_i->next = new_i->next;
-			else
-				pending_dcc = new_i->next;
-		}
-		return new_i;
 	}
 	return NULL;
 }
