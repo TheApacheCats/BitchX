@@ -842,7 +842,7 @@ int size = -1;
  * Function courtesy of Sheik. From his CtoolZ client.
  * but modified a little by panasync
  */
-UserList *lookup_userlevelc(char *nick, char *userhost, char *channel, char *passwd)
+UserList *lookup_userlevelc(const char *nick, const char *userhost, const char *channel, const char *passwd)
 {
 	
 	if (!nick || !userhost || !*userhost || !channel)
@@ -1436,15 +1436,15 @@ char err_msg[7][50] = { empty_string, "No Level Specified", "No Protection level
 }
 #endif
 
-int check_channel_match(char *tmp, char *channel)
+int check_channel_match(const char *tmp, const char *channel)
 {
-	char *p, *q, *chan = NULL;
+	char *p, *chan = NULL;
 	int wmatch = 0;
 	if (!tmp || !channel)
 		return 0;
 	if (*channel == '*' && (strlen(channel)==1))
 		return 1;
-	q = chan = LOCAL_COPY(tmp);
+	chan = LOCAL_COPY(tmp);
 
 	while ((p = next_in_comma_list(chan, &chan)))
 	{
