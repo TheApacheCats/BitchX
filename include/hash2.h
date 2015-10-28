@@ -61,7 +61,7 @@ void BX_clear_sorted_nicklist(NickList **);
 Flooding *BX_find_name_in_floodlist(char *, char *, HashEntry *, unsigned int, int);
 Flooding *BX_add_name_to_floodlist(char *, char *, char *, HashEntry *, unsigned int);
 
-unsigned long hash_nickname(char *, unsigned int);
+unsigned long hash_nickname(const char *, unsigned int);
 
 
 #endif

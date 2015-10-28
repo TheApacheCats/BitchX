@@ -44,9 +44,9 @@ CVS_REVISION(hash_c)
  * nick by counting up the ascii values of the lower case, and 
  * then %'ing it by NICKLIST_HASHSIZE (always a prime!)
  */
-unsigned long hash_nickname(char *nick, unsigned int size)
+unsigned long hash_nickname(const char *nick, unsigned int size)
 {
-        register u_char  *p = (u_char *) nick;
+	const unsigned char *p = (const unsigned char *)nick;
 	unsigned long hash = 0, g;
 	if (!nick) return -1;
 	while (*p)
