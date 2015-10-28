@@ -179,7 +179,7 @@ int (*dcc_close_func) (int, sockaddr_foobar, int) = NULL;
 #define DCC_OUTPUT 3
 #define DCC_CLOSE 4
 
-int check_dcc_init(char *type, char *nick, char *uhost, char *description, char *size, char *extra, unsigned long TempLong, unsigned int TempInt);
+static int check_dcc_init(char *nick, char *type, char *description, char *address, char *port, char *size, char *extra, char *uhost);
 		/* bind type, sock num, type, address, port, buffer, buflen , newline */
 
 #ifndef O_BINARY
@@ -531,7 +531,6 @@ DCC_List		*new_i;
 		s = &new_i->sock;
 		new = (DCC_int *)s->info;
 
-		new->remport = ntohs(new->remport);
 		if ((new_s = connect_by_number(inet_ntoa(new->remote), &new->remport, SERVICE_CLIENT, PROTOCOL_TCP, 0)) < 0
 #ifdef HAVE_SSL
 			||  (flags & DCC_SSL ? SSL_dcc_create(s, new_s, 1) : 0) < 0
@@ -549,7 +548,6 @@ DCC_List		*new_i;
 			reset_display_target();
 			return NULL;
 		}
-		new->remport = ntohs(new->remport);
 		flags |= DCC_ACTIVE;
 		add_socketread(new_s, new->remport, flags|type, nick, new_i->sock.func_read, NULL);
 		set_socketinfo(new_s, new);
@@ -1121,174 +1119,241 @@ int i;
 void process_dcc_send1(int s);
 void start_dcc_get(int s);
 
-void register_dcc_type(char *nick, char *type, char *description, char *address, char *port, char *size, char *extra, char *uhost, void (*func1)(int))
+/* dcc_fullname()
+ * Return an allocated string with the full pathname to a DCC downloaded file.
+ */
+static char *dcc_fullname(const char *filename)
 {
-	int Ctype;
-	unsigned long filesize = 0;
-	SocketList *s;
-	DCC_int *n;
-	DCC_List *new_d = NULL;
-	unsigned long TempLong;
-	unsigned int  TempInt;
-	void (*func)(int) = NULL;
-	int autoget = 0;
-	int autoresume = 0;
-	struct stat resume_sb;
-	unsigned long tdcc = 0;
-	char *fullname = NULL;
-	UserList *ul = NULL;
+	char *fullname;
 
-	set_display_target(NULL, LOG_DCC);
-	if (description)
+	if (get_string_var(DCC_DLDIR_VAR))
 	{
-		char *c;
-#if defined(__EMX__) || defined(WINNT)
-		if ((c = strrchr(description, '/')) || (c = strrchr(description, '\\')))
-#else
-		if ((c = strrchr(description, '/')))
-#endif
-			description = c + 1;
-		if (description && *description == '.')
-			*description = '_';
+		char *tmp = m_sprintf("%s/%s", get_string_var(DCC_DLDIR_VAR), filename);
+		fullname = expand_twiddle(tmp);
+		new_free(&tmp);
 	}
+	else
+	{
+		fullname = m_strdup(filename);
+	}
+	return fullname;
+}
+
+static int parse_offer_params(const char *address, const char *port, const char *size,
+	unsigned long *p_addr, unsigned int *p_port, unsigned long *p_filesize)
+{
 	if (size && *size)
-		filesize = atol(size);
+		*p_filesize = atol(size);
+	else
+		*p_filesize = 0;
 
-	TempLong = strtoul(address, NULL, 10);
-	TempInt = (unsigned)strtoul(port, NULL, 10);
-	if (TempInt < 1024)
+	*p_addr = strtoul(address, NULL, 10);
+	*p_port = (unsigned)strtoul(port, NULL, 10);
+	if (*p_port < 1024)
 	{
-		put_it("%s", convert_output_format("$G %RDCC%n Privileged port attempt [$0]", "%d", TempInt));
-		reset_display_target();
-		return;
+		put_it("%s", convert_output_format("$G %RDCC%n Privileged port attempt [$0]", "%d", *p_port));
+		return 0;
 	}
-	else if (TempLong == 0 || TempInt == 0)
+	if (*p_addr == 0)
 	{
 		struct in_addr in;
-		in.s_addr = htonl(TempLong);
-		put_it("%s", convert_output_format("$G %RDCC%n Handshake ignored because of 0 port or address [$0:$1]", "%d %s", TempInt, inet_ntoa(in)));
-		reset_display_target();
-		return;
+		in.s_addr = htonl(*p_addr);
+		put_it("%s", convert_output_format("$G %RDCC%n Handshake ignored because of 0 port or address [$0:$1]", "%d %s", *p_port, inet_ntoa(in)));
+		return 0;
 	}
 
-	if (check_dcc_init(type, nick, uhost, description, size, extra, TempLong, TempInt))
-		return;
-	if (*type == 'T' && *(type+1)) 
-	{
-		tdcc = DCC_TDCC;
-		type++;
-	}	
+	return 1;
+}
 
+static int check_collision(char *nick, const char *description, int type)
+{
+	SocketList *s = find_dcc(nick, description, NULL, type, 0, -1, -1);
 
-	if (!my_stricmp(type, "CHAT"))
-		Ctype = DCC_CHAT;
-	else if (!my_stricmp(type, "BOT"))
-		Ctype = DCC_BOTMODE;
-	else if (!my_stricmp(type, "SEND"))
-		Ctype = DCC_FILEREAD;
-	else if (!my_stricmp(type, "RESEND"))
-		Ctype = DCC_REFILEREAD;
-#ifdef MIRC_BROKEN_DCC_RESUME
-	else if (!my_stricmp(type, "RESUME"))
-		
-	{
-		/* 
-		 * Dont be deceieved by the arguments we're passing it.
-		 * The arguments are "out of order" because MIRC doesnt
-		 * send them in the traditional order.  Ugh. Comments
-		 * borrowed from epic.
-		 */
-		dcc_getfile_resume_demanded(nick, description, address, port);
-		return;
-	}
-	else if (!my_stricmp(type, "ACCEPT"))
-	{
-		/*
-		 * See the comment above.
-		 */
-		dcc_getfile_resume_start (nick, description, address, port);
-		return;
-	}
-#endif
-       	else
-       	{
-		put_it("%s", convert_output_format("$G %RDCC%n Unknown DCC $0 ($1) received from $2", "%s %s %s", type, description, nick));
-		reset_display_target();
-       	        return;
-       	}
-	
-	if (tdcc) type--;
-	
-	if ((s = find_dcc(nick, description, NULL, Ctype, 0, -1, -1)))
+	if (s)
 	{
 		if ((s->flags & DCC_ACTIVE))
 		{
 			/* collision. */
 			put_it("%s", convert_output_format("$G %RDCC%n Received DCC $0 request from $1 while previous session active", "%s %s", type, nick));
-			reset_display_target();
-			return;
+			return 0;
 		}
 		if ((s->flags & DCC_WAIT))
 		{
-			if (Ctype == DCC_CHAT)
+			if (type == DCC_CHAT)
 			{
-				autoget = 1;
-		                if (do_hook(DCC_CONNECT_LIST,"%s CHAT %s",nick, "already requested connecting"))
+				if (do_hook(DCC_CONNECT_LIST,"%s CHAT %s",nick, "already requested connecting"))
 					put_it("%s", convert_output_format(fget_string_var(FORMAT_DCC_CONNECT_FSET), 
 						"%s %s %s %s %s %d", update_clock(GET_TIME), "CHAT", nick, 
 						space, "already requested connecting...", 0));
 		  		dcc_chat(NULL, nick);
-				return;
+				return 0;
 		  	}
 			send_ctcp(CTCP_NOTICE, nick, CTCP_DCC, "DCC %s collision occured while connecting to %s (%s)", type, nickname, description);
 			erase_dcc_info(s->is_read, 1, "%s", convert_output_format("$G %RDCC%n $0 collision for $1:$2", "%s %s %s", type, nick, description));
 			close_socketread(s->is_read);
-			reset_display_target();
-			return;
+			return 0;
 		}
   	}
-	if (do_hook(DCC_REQUEST_LIST,"%s %s %s %lu",nick, dcc_types[Ctype]->name, description, filesize))
+
+	return 1;
+}
+
+static DCC_int *create_dcc_int(const char *nick, const char *description,
+	const char *userhost, unsigned long address, unsigned short port,
+	unsigned long filesize, int server)
+{
+	UserList *ul = NULL;
+	DCC_int *n = new_malloc(sizeof *n);
+
+#ifdef WANT_USERLIST
+	ul = lookup_userlevelc(nick, userhost, "*", NULL);
+#endif
+
+	if (userhost)
+		n->userhost = m_strdup(userhost);
+	n->ul = ul;
+	n->remport = port;
+	n->remote.s_addr = htonl(address);
+	n->filesize = filesize;
+	n->filename = m_strdup(description);
+	n->user = m_strdup(nick);
+	n->blocksize = get_int_var(DCC_BLOCK_SIZE_VAR);
+	n->server = server;
+	n->file = -1; /* just in case */
+	n->struct_type = DCC_STRUCT_TYPE;
+
+	return n;
+}
+
+static DCC_List *add_dcc_pending(DCC_int *dcc, int flags, void (*func_read)(int))
+{
+	DCC_List *new_d = new_malloc(sizeof *new_d);
+
+	new_d->sock.info = dcc;
+	new_d->sock.server = new_d->nick = m_strdup(dcc->user);
+	new_d->sock.port = dcc->remport;
+	new_d->sock.flags = flags;
+	new_d->sock.time = now + dcc_timeout;
+	new_d->sock.func_read = func_read; /* point this to the startup function */
+	new_d->next = pending_dcc;
+	pending_dcc = new_d;
+
+	return new_d;
+}
+
+/* show_dcc_offer()
+ * Wrapper to show the user using the default format a non-file (eg. CHAT) DCC offer.
+ */
+static void show_dcc_offer(const char *nick, const char *dcc_name, 
+	const char *description, const char *userhost, unsigned long offer_addr,
+	 unsigned int offer_port)
+{
+	if (!dcc_quiet)
 	{
-#ifdef WANT_USERLIST
-		ul = lookup_userlevelc(nick, FromUserHost, "*", NULL);
-#endif
-		if (!dcc_quiet)
+		struct in_addr in;	
+		in.s_addr = htonl(offer_addr);
+		put_it("%s", convert_output_format(fget_string_var(FORMAT_DCC_REQUEST_FSET), 
+			"%s %s %s %s %s %s %d", 
+			update_clock(GET_TIME), dcc_name, description, nick, userhost,
+			inet_ntoa(in), offer_port));
+	}
+
+	if (beep_on_level & LOG_DCC)
+		beep_em(1);
+}
+
+/* show_dcc_fileoffer()
+ * Wrapper to show the user using the default format a file (eg. SEND) DCC offer.
+ */
+static void show_dcc_fileoffer(const char *nick, const char *dcc_name, 
+	const char *description, const char *userhost, unsigned long offer_addr,
+	 unsigned int offer_port, unsigned long filesize)
+{
+	if (!dcc_quiet)
+	{
+		struct in_addr in;	
+		char buf[40];
+		in.s_addr = htonl(offer_addr);
+		sprintf(buf, "%2.4g",_GMKv(filesize));
+		put_it("%s", convert_output_format(fget_string_var(FORMAT_DCC_REQUEST_FSET), 
+			"%s %s \"%s\" %s %s %s %d %s %s", 
+			update_clock(GET_TIME), dcc_name, description, nick, userhost,
+			inet_ntoa(in), offer_port, _GMKs(filesize), buf));
+	}
+
+	if (!filesize)
+		put_it("%s", convert_output_format("$G %RDCC%n Warning: Offered file has zero size", NULL, NULL));
+
+	if (beep_on_level & LOG_DCC)
+		beep_em(1);
+}
+
+static void dcc_chat_offer(char *nick, char *type, char *description,
+	char *address, char *port, char *size, char *extra, char *userhost,
+	int server)
+{
+	int Ctype = DCC_CHAT;
+	unsigned long filesize;
+	unsigned long TempLong;
+	unsigned int TempInt;
+	DCC_int *n;
+	int autoget = 0;
+
+	if (!parse_offer_params(address, port, size, &TempLong, &TempInt, &filesize))
+		return;
+
+	if (!check_collision(nick, description, Ctype))
+		return;
+
+	n = create_dcc_int(nick, description, userhost, TempLong, TempInt, filesize, server);
+
+	if (do_hook(DCC_REQUEST_LIST, "%s %s %s 0", nick, dcc_types[Ctype]->name, description))
+	{
+		show_dcc_offer(nick, dcc_types[Ctype]->name, description, userhost, TempLong, TempInt);
+
+		if (get_int_var(BOT_MODE_VAR) && n->ul)
 		{
-			struct in_addr in;	
-			char buf[40];
-			in.s_addr = htonl(TempLong);
-			sprintf(buf, "%2.4g",_GMKv(filesize));
-			if (filesize)
-				put_it("%s", convert_output_format(fget_string_var(FORMAT_DCC_REQUEST_FSET), 
-					"%s %s \"%s\" %s %s %s %d %s %s", 
-					update_clock(GET_TIME),dcc_types[Ctype]->name, description,
-					nick, FromUserHost,
-					inet_ntoa(in), TempInt,
-					_GMKs(filesize), buf));
-			else
-				put_it("%s", convert_output_format(fget_string_var(FORMAT_DCC_REQUEST_FSET), 
-					"%s %s %s %s %s %s %d", 
-					update_clock(GET_TIME),dcc_types[Ctype]->name,
-					description, nick, FromUserHost,
-					inet_ntoa(in), TempInt));
+			autoget = 1;
 		}
-		if (Ctype == DCC_CHAT)
+		else
 		{
-#ifdef WANT_USERLIST
-			if (get_int_var(BOT_MODE_VAR) && ul)
-				autoget = 1;
-			else
-#endif
-			{
-				extern char *last_chat_req;
-				bitchsay("Type /chat to answer or /nochat to close");
-				malloc_strcpy(&last_chat_req, nick);
-			}
-			if (beep_on_level & LOG_DCC)
-				beep_em(1);
+			extern char *last_chat_req;
+			bitchsay("Type /chat to answer or /nochat to close");
+			malloc_strcpy(&last_chat_req, nick);
 		}
+	}
+
+	n->dccnum = ++dcc_count;
+	add_dcc_pending(n, Ctype|DCC_OFFER, process_dcc_chat);
+
+	if (autoget)
+		dcc_create(nick, n->filename, NULL, n->filesize, 0, Ctype, DCC_OFFER, process_dcc_chat);
+}
+
+#ifndef BITCHX_LITE
+static void dcc_bot_offer(char *nick, char *type, char *description,
+	char *address, char *port, char *size, char *extra, char *userhost,
+	int server)
+{
+	int Ctype = DCC_BOTMODE;
+	unsigned long filesize;
+	unsigned long TempLong;
+	unsigned int TempInt;
+	DCC_int *n;
+
+	if (!parse_offer_params(address, port, size, &TempLong, &TempInt, &filesize))
+		return;
+
+	if (!check_collision(nick, description, Ctype))
+		return;
+
+	n = create_dcc_int(nick, description, userhost, TempLong, TempInt, filesize, server);
+
+	if (do_hook(DCC_REQUEST_LIST, "%s %s %s 0", nick, dcc_types[Ctype]->name, description))
+	{
+		show_dcc_offer(nick, dcc_types[Ctype]->name, description, userhost, TempLong, TempInt);
 #if 0
-		if ((Ctype == DCC_BOTMODE) && (p = get_string_var(BOT_PASSWORD_VAR)))
+		if (p = get_string_var(BOT_PASSWORD_VAR))
 		{
 			if (encrypt && !strcmp(p, encrypt))
 				;/* do it */
@@ -1297,147 +1362,255 @@ void register_dcc_type(char *nick, char *type, char *description, char *address,
 		}
 #endif
 	}
-	n = new_malloc(sizeof(DCC_int));
-	if (uhost)
-		n->userhost = m_strdup(uhost);
-	n->ul = ul;
-	n->remport = htons(TempInt);
-	n->remote.s_addr = htonl(TempLong);
-	n->filesize = filesize;
-	n->filename = m_strdup(description);
-	n->user = m_strdup(nick);
-	n->blocksize = get_int_var(DCC_BLOCK_SIZE_VAR);
-	n->server = from_server;
-	n->file = -1; /* just in case */
-	n->struct_type = DCC_STRUCT_TYPE;
-		
-	if ((Ctype == DCC_FILEREAD) || (Ctype == DCC_REFILEREAD))
+
+	n->dccnum = ++dcc_count;
+	add_dcc_pending(n, Ctype|DCC_OFFER, process_dcc_bot);
+}
+#endif
+
+static int rename_file(char **new_file)
+{
+	FILE *fp = NULL;
+	char c[10];
+	char *tmp = NULL;
+	char buffer[BIG_BUFFER_SIZE];
+	
+	strlcpy(buffer, *new_file, sizeof buffer);
+
+	do {
+		if (fp != NULL)
+			fclose(fp);
+		sprintf(c, "%03i.", getrandom(0, 999));
+		tmp = dcc_fullname(c);
+		malloc_strcat(&tmp, buffer);
+		fp = fopen(tmp, "r");
+		new_free(&tmp);
+	} while (fp != NULL);
+
+	malloc_sprintf(new_file, "%s%s", c, buffer);
+	return 0;
+}
+
+/* Logic to determine whether or not to autoget a file offer */
+static int do_autoget(const char *nick, unsigned long filesize)
+{
+	if (!get_int_var(DCC_AUTOGET_VAR) &&
+		!find_name_in_genericlist(nick, dcc_no_flood, DCC_HASHSIZE, 0))
+		return 0;
+	if (filesize/1024 > get_int_var(DCC_MAX_AUTOGET_SIZE_VAR))
+		return 0;
+	if (!filesize)
+		return 0;
+	return 1;
+}
+
+static void dcc_send_offer(char *nick, char *type, char *description,
+	char *address, char *port, char *size, char *extra, char *userhost,
+	int server)
+{
+	int Ctype = DCC_FILEREAD;
+	unsigned long filesize;
+	unsigned long TempLong;
+	unsigned int TempInt;
+	unsigned long tdcc = 0;
+	DCC_int *n;
+	DCC_List *new_d;
+	int autoget = 0;
+	int autoresume = 0;
+	struct stat resume_sb;
+	char *fullname = NULL;
+
+	if (!parse_offer_params(address, port, size, &TempLong, &TempInt, &filesize))
+		return;
+
+	if (*type == 'T') 
+		tdcc = DCC_TDCC;
+
+	if (!check_collision(nick, description, Ctype))
+		return;
+
+	n = create_dcc_int(nick, description, userhost, TempLong, TempInt, filesize, server);
+
+	if (do_hook(DCC_REQUEST_LIST,"%s %s %s %lu", nick, dcc_types[Ctype]->name, description, filesize))
 	{
-		char *tmp = NULL, *p;
-		malloc_sprintf(&tmp, "%s/%s", get_string_var(DCC_DLDIR_VAR), n->filename);
-		p = expand_twiddle(tmp);
+		show_dcc_fileoffer(nick, dcc_types[Ctype]->name, description, userhost, TempLong, TempInt, filesize);
+	}
+	
+	fullname = dcc_fullname(n->filename);
+	autoget = do_autoget(nick, n->filesize);
 
-		if (!n->filesize)
-			put_it("%s", convert_output_format("$G %RDCC%n Warning: Offered file has zero size", NULL, NULL));
-
-		if ((get_int_var(DCC_AUTOGET_VAR) || find_name_in_genericlist(nick, dcc_no_flood, DCC_HASHSIZE, 0)) &&
-			(n->filesize/1024 < get_int_var(DCC_MAX_AUTOGET_SIZE_VAR)) && n->filesize)
-			autoget = 1;
-		if (Ctype == DCC_FILEREAD)
+	if (!dcc_overwrite_var && stat(fullname, &resume_sb) == 0)
+	{
+		/* File already exists */
+		if (autoget)
 		{
-			if (!dcc_overwrite_var && stat(p, &resume_sb) == 0)
+			/* autoget of an existing file: either rename it, resume it, or punt */
+			if (get_int_var(DCC_AUTORENAME_VAR))
 			{
-				/* File already exists */
-				if (autoget)
-				{
-					/* autoget of an existing file: either rename it, resume it, or punt */
-					if (get_int_var(DCC_AUTORENAME_VAR))
-					{
-						rename_file(p, &n->filename);
-					}
+				rename_file(&n->filename);
+				new_free(&fullname);
+				fullname = dcc_fullname(n->filename);
+			}
 #ifdef MIRC_BROKEN_DCC_RESUME
-					else if (resume_sb.st_size < n->filesize && get_int_var(DCC_AUTORESUME_VAR))
-					{
-						put_it("%s", convert_output_format("$G %RDCC%n Warning: File $0 exists: trying to autoresume", "%s", p));
-						autoresume = 1;
-					}
+			else if (resume_sb.st_size < n->filesize && get_int_var(DCC_AUTORESUME_VAR))
+			{
+				put_it("%s", convert_output_format("$G %RDCC%n Warning: File $0 exists: trying to autoresume", "%s", fullname));
+				autoresume = 1;
+			}
 #endif
-					else
-					{
-						autoget = 0;
-					}
-				}
-
-				if (!autoget)
-				{
-#ifdef MIRC_BROKEN_DCC_RESUME
-					if (resume_sb.st_size < n->filesize)
-						put_it("%s", convert_output_format("$G %RDCC%n Warning: File $0 exists: use /DCC RENAME or /DCC RESUME if you don't want to overwrite", "%s", p));
-					else
-#endif
-						put_it("%s", convert_output_format("$G %RDCC%n Warning: File $0 exists: use /DCC RENAME if you don't want to overwrite", "%s", p));	
-				}
+			else
+			{
+				autoget = 0;
 			}
 		}
-		malloc_sprintf(&tmp, "%s/%s", get_string_var(DCC_DLDIR_VAR), n->filename);
-		fullname = expand_twiddle(tmp);
-		new_free(&tmp); new_free(&p);
-	}
 
-	if (!func)
-	{
-		switch (Ctype)
+		if (!autoget)
 		{
-#ifndef BITCHX_LITE
-			case DCC_BOTMODE:
-				func = process_dcc_bot;
-				break;
+#ifdef MIRC_BROKEN_DCC_RESUME
+			if (resume_sb.st_size < n->filesize)
+				put_it("%s", convert_output_format("$G %RDCC%n Warning: File $0 exists: use /DCC RENAME or /DCC RESUME if you don't want to overwrite", "%s", fullname));
+			else
 #endif
-			case DCC_CHAT:
-				func = process_dcc_chat;
-				break;
-			case DCC_REFILEREAD:
-			case DCC_FILEREAD:
-				func = start_dcc_get;
-				break;
-			case DCC_FILEOFFER:
-			case DCC_REFILEOFFER:
-				func = process_dcc_send1;
-				break;
-			default:
-				yell("Unsupported dcc type [%s]", type);
-				return;
+				put_it("%s", convert_output_format("$G %RDCC%n Warning: File $0 exists: use /DCC RENAME if you don't want to overwrite", "%s", fullname));	
 		}
 	}
-	else
-		func = func1;
+
 	n->dccnum = ++dcc_count;
-	new_d = new_malloc(sizeof(DCC_List));
-	new_d->sock.info = n;
-	new_d->sock.server = new_d->nick = m_strdup(nick);
-	new_d->sock.port = TempInt;
-	new_d->sock.flags = Ctype|DCC_OFFER|tdcc;
-	new_d->sock.time = now + dcc_timeout;
-	new_d->sock.func_read = func; /* point this to the startup function */
-	new_d->next = pending_dcc;
-	pending_dcc = new_d;
+	new_d = add_dcc_pending(n, Ctype|DCC_OFFER|tdcc, start_dcc_get);
+
+	if (autoresume)
+	{
+		n->transfer_orders.byteoffset = resume_sb.st_size;
+		n->bytes_read = 0L;
+		new_d->sock.flags |= DCC_RESUME_REQ;
+		send_ctcp(CTCP_PRIVMSG, nick, CTCP_DCC, "RESUME %s %d %ld", 
+			n->filename, n->remport, resume_sb.st_size);
+	}
 	if (autoget && fullname)
 	{
-		if (autoresume)
+		DCC_int *new = NULL;
+		if (!dcc_quiet)
 		{
-			n->transfer_orders.byteoffset = resume_sb.st_size;
-			n->bytes_read = 0L;
-			new_d->sock.flags |= DCC_RESUME_REQ;
-			send_ctcp(CTCP_PRIVMSG, nick, CTCP_DCC, "RESUME %s %d %ld", 
-				n->filename, ntohs(n->remport), resume_sb.st_size);
+			put_it("%s", 
+				convert_output_format("$G %RDCC%n Auto-accepting $0 of file %C$2-%n from %K[%C$1%K]",
+					"%s%s %s %s", tdcc ? "T" : "", dcc_types[Ctype]->name, nick, n->filename));
+		}
+		if ((n->file = open(fullname, O_WRONLY | O_CREAT | O_BINARY, 0644)) > 0)
+		{
+			if ((new = dcc_create(nick, n->filename, NULL, n->filesize, 0, Ctype, DCC_OFFER|tdcc, start_dcc_get)))
+				new->blocksize = get_int_var(DCC_BLOCK_SIZE_VAR);
 		}
 		else
+			put_it("%s", convert_output_format("$G %RDCC%n Unable to open $0-", "%s", fullname));
+	}
+}
+
+static void dcc_resend_offer(char *nick, char *type, char *description,
+	char *address, char *port, char *size, char *extra, char *userhost,
+	int server)
+{
+	int Ctype = DCC_REFILEREAD;
+	unsigned long filesize;
+	unsigned long TempLong;
+	unsigned int TempInt;
+	unsigned long tdcc = 0;
+	DCC_int *n;
+	int autoget = 0;
+	char *fullname = NULL;
+
+	if (!parse_offer_params(address, port, size, &TempLong, &TempInt, &filesize))
+		return;
+
+	if (*type == 'T') 
+		tdcc = DCC_TDCC;
+
+	if (!check_collision(nick, description, Ctype))
+		return;
+
+	n = create_dcc_int(nick, description, userhost, TempLong, TempInt, filesize, server);
+
+	if (do_hook(DCC_REQUEST_LIST,"%s %s %s %lu", nick, dcc_types[Ctype]->name, description, filesize))
+	{
+		show_dcc_fileoffer(nick, dcc_types[Ctype]->name, description, userhost, TempLong, TempInt, filesize);
+	}
+	
+	fullname = dcc_fullname(n->filename);
+	autoget = do_autoget(nick, n->filesize);
+
+	n->dccnum = ++dcc_count;
+	add_dcc_pending(n, Ctype|DCC_OFFER|tdcc, start_dcc_get);
+
+	if (autoget && fullname)
+	{
+		DCC_int *new = NULL;
+		if (!dcc_quiet)
 		{
-			DCC_int *new = NULL;
-			int mode = O_WRONLY | O_CREAT | O_BINARY;
-			if (!dcc_quiet)
-			{
-				put_it("%s", 
-					convert_output_format("$G %RDCC%n Auto-accepting $0 of file %C$2-%n from %K[%C$1%K]",
-						"%s%s %s %s", tdcc ? "T" : "", dcc_types[Ctype]->name, nick, n->filename));
-			}
-			if (Ctype == DCC_REFILEREAD)
-				mode |= O_APPEND;
-			if ((n->file = open(fullname, mode, 0644)) > 0)
-			{
-				if ((new = dcc_create(nick, n->filename, NULL, n->filesize, 0, Ctype, DCC_OFFER|tdcc, func)))
-					new->blocksize = get_int_var(DCC_BLOCK_SIZE_VAR);
-			}
-			else
-				put_it("%s", convert_output_format("$G %RDCC%n Unable to open $0-", "%s", fullname));
+			put_it("%s", 
+				convert_output_format("$G %RDCC%n Auto-accepting $0 of file %C$2-%n from %K[%C$1%K]",
+					"%s%s %s %s", tdcc ? "T" : "", dcc_types[Ctype]->name, nick, n->filename));
 		}
+		if ((n->file = open(fullname, O_WRONLY | O_CREAT | O_BINARY | O_APPEND, 0644)) > 0)
+		{
+			if ((new = dcc_create(nick, n->filename, NULL, n->filesize, 0, Ctype, DCC_OFFER|tdcc, start_dcc_get)))
+				new->blocksize = get_int_var(DCC_BLOCK_SIZE_VAR);
+		}
+		else
+			put_it("%s", convert_output_format("$G %RDCC%n Unable to open $0-", "%s", fullname));
 	}
 
-	if (Ctype == DCC_CHAT && autoget)
-		dcc_create(nick, n->filename, NULL, n->filesize, 0, Ctype, DCC_OFFER, func);
+}
+
+void handle_dcc_offer(char *nick, char *type, char *description,
+	char *address, char *port, char *size, char *extra, char *userhost)
+{
+	set_display_target(NULL, LOG_DCC);
+
+	if (description)
+	{
+		char *c;
+#if defined(__EMX__) || defined(WINNT)
+		if ((c = strrchr(description, '\\'))
+			description = c + 1;
+#endif
+		if ((c = strrchr(description, '/')))
+			description = c + 1;
+		if (description && *description == '.')
+			*description = '_';
+	}
+
+	if (check_dcc_init(nick, type, description, address, port, size, extra, userhost))
+	{
+		reset_display_target();
+		return;
+	}
+
+	if (!my_stricmp(type, "CHAT"))
+		dcc_chat_offer(nick, type, description, address, port, size, extra, userhost, from_server);
+#ifndef BITCHX_LITE
+	else if (!my_stricmp(type, "BOT"))
+		dcc_bot_offer(nick, type, description, address, port, size, extra, userhost, from_server);
+#endif
+	else if (!my_stricmp(type, "SEND") || !my_stricmp(type, "TSEND"))
+		dcc_send_offer(nick, type, description, address, port, size, extra, userhost, from_server);
+	else if (!my_stricmp(type, "RESEND") || !my_stricmp(type, "TRESEND"))
+		dcc_resend_offer(nick, type, description, address, port, size, extra, userhost, from_server);
+#ifdef MIRC_BROKEN_DCC_RESUME
+	else if (!my_stricmp(type, "RESUME"))
+		
+		/* 
+		 * Dont be deceieved by the arguments we're passing it.
+		 * The arguments are "out of order" because MIRC doesnt
+		 * send them in the traditional order.  Ugh. Comments
+		 * borrowed from epic.
+		 */
+		dcc_getfile_resume_demanded(nick, description, address, port);
+	else if (!my_stricmp(type, "ACCEPT"))
+		dcc_getfile_resume_start (nick, description, address, port);
+#endif
+	else
+		put_it("%s", convert_output_format("$G %RDCC%n Unknown DCC $0 ($1) received from $2", "%s %s %s", type, description, nick));
 
 	reset_display_target();
-	new_free(&fullname);
 }
 
 void	process_dcc(char *args)
@@ -3556,7 +3729,7 @@ int		blocksize = 0;
 		old_dp = doing_privmsg;	old_dn = doing_notice; old_dc = in_ctcp_flag;
 		/* Just in case we have to fool the protocol enforcement. */
 		doing_privmsg = doing_notice = in_ctcp_flag = 0;
-		send_ctcp(CTCP_PRIVMSG, nick, CTCP_DCC, "RESUME %s %d %ld", n->filename, ntohs(n->remport), sb.st_size);
+		send_ctcp(CTCP_PRIVMSG, nick, CTCP_DCC, "RESUME %s %d %ld", n->filename, n->remport, sb.st_size);
 		doing_privmsg = old_dp; doing_notice = old_dn; in_ctcp_flag = old_dc;
 
 	}
@@ -4102,7 +4275,7 @@ SocketList *s;
 		add_socketread(snum, port, DCC_WAIT|DCC_FTPOPEN, host, start_ftp, NULL);
 		new = new_malloc(sizeof(DCC_int));
 		new->struct_type = DCC_STRUCT_TYPE;
-		new->remport = htons(port);
+		new->remport = port;
 		new->blocksize = blocksize;
 		get_time(&new->starttime);
 		get_time(&new->lasttime);
@@ -4147,9 +4320,16 @@ char	*nick,
 	}
 }
 
-int check_dcc_init(char *type, char *nick, char *uhost, char *description, char *size, char *extra, unsigned long TempLong, unsigned int TempInt)
+static int check_dcc_init(char *nick, char *type, char *description, char *address, char *port, char *size, char *extra, char *uhost)
 {
-int i;
+	int i;
+	unsigned long filesize;
+	unsigned long TempLong;
+	unsigned int TempInt;
+
+	if (!parse_offer_params(address, port, size, &TempLong, &TempInt, &filesize))
+		return 0;
+
 	for (i = 0; dcc_types[i]->name; i++)
 	{
 		if (!my_stricmp(type, dcc_types[i]->name))

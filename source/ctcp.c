@@ -749,7 +749,7 @@ CTCP_HANDLER(do_dcc)
 	if (!size || !port || !inetaddr || !description)
 		return NULL;
 #endif
-	register_dcc_type(from, type, description, inetaddr, port, size, extra_flags, FromUserHost, NULL);
+	handle_dcc_offer(from, type, description, inetaddr, port, size, extra_flags, FromUserHost);
 	return NULL;
 }
 

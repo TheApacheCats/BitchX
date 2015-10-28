@@ -128,7 +128,7 @@
 	void	dcc_bot_transmit(char *, char *, char *);
 	void	dcc_raw_transmit(char *, char *, char *);
 
-	void	register_dcc_type(char *, char *, char *, char *, char *, char *, char *, char *, void (*func)(int));
+	void	handle_dcc_offer(char *, char *, char *, char *, char *, char *, char *, char *);
 
 	void	dcc_reject(char *, char *, char *);
 	char	*dcc_raw_connect(char *, unsigned short);

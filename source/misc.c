@@ -1243,39 +1243,6 @@ FILE	*f;
 #endif
 }
 
-int rename_file(char *old_file, char **new_file)
-{
-	FILE *fp;
-	char *c, *tmp = NULL;
-	char buffer[BIG_BUFFER_SIZE];
-	
-	c = alloca(10);
-	sprintf(c, "%03i.", getrandom(0, 999));
-	if (get_string_var(DCC_DLDIR_VAR))
-		malloc_sprintf(&tmp, "%s/%s", get_string_var(DCC_DLDIR_VAR), c);
-	else
-		malloc_sprintf(&tmp, "%s", c); 
-
-	malloc_strcat(&tmp, *new_file);
-	strlcpy(buffer, *new_file, sizeof buffer);
-	while ((fp = fopen(tmp, "r")) != NULL)
-	{
-		fclose(fp);
-		sprintf(c, "%03i.", getrandom(0, 999));
-		if (get_string_var(DCC_DLDIR_VAR))
-			malloc_sprintf(&tmp, "%s/%s", get_string_var(DCC_DLDIR_VAR), c);
-		else
-			malloc_sprintf(&tmp, "%s", c); 
-		malloc_strcat(&tmp, buffer);
-	}
-	if (fp != NULL)
-		fclose(fp);
-	malloc_sprintf(new_file, "%s", c);
-	malloc_strcat(new_file, buffer);
-	new_free(&tmp);
-	return 0;
-}
-
 int isme(char *nick)
 {
 	return ((my_stricmp(nick, get_server_nickname(from_server)) == 0) ? 1 : 0);
