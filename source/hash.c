@@ -147,11 +147,11 @@ static inline void remove_gen_link_from_list(List *tmp, List *prev, HashEntry *l
 	tmp->next = NULL;
 }
 
-List *BX_find_name_in_genericlist(char *name, HashEntry *list, unsigned int size, int remove)
+List *BX_find_name_in_genericlist(const char *name, HashEntry *list, unsigned int size, int remove)
 {
 	HashEntry *location;
-	register List *tmp, *prev = NULL;
-	unsigned long hvalue = hash_nickname(name, size);
+	List *tmp, *prev = NULL;
+	const unsigned long hvalue = hash_nickname(name, size);
 
 	location = &(list[hvalue]);
 

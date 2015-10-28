@@ -19,7 +19,7 @@
 
 /* Generic List type hash list */
 void	BX_add_name_to_genericlist (char *, HashEntry *, unsigned int);
-List	*BX_find_name_in_genericlist (char *, HashEntry *, unsigned int, int);
+List	*BX_find_name_in_genericlist (const char *, HashEntry *, unsigned int, int);
 List	*BX_next_namelist(HashEntry *, List *, unsigned int);
 
 void	BX_add_nicklist_to_channellist(NickList *, ChannelList *);

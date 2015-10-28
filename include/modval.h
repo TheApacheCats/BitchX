@@ -444,7 +444,7 @@ extern Function_ptr *global;
 #define next_nicklist (*(NickList *(*)(ChannelList *, NickList *))global[NEXT_NICKLIST])
 #define next_namelist (*(List *(*)(HashEntry *, List *, unsigned int))global[NEXT_NAMELIST])
 #define add_name_to_genericlist (*(void (*)(char *, HashEntry *, unsigned int))global[ADD_NAME_TO_GENERICLIST])
-#define find_name_in_genericlist (*(List *(*)(char *, HashEntry *, unsigned int, int))global[FIND_NAME_IN_GENERICLIST])
+#define find_name_in_genericlist (*(List *(*)(const char *, HashEntry *, unsigned int, int))global[FIND_NAME_IN_GENERICLIST])
 #define add_whowas_userhost_channel (*(void (*)(WhowasList *, WhowasWrapList *))global[ADD_WHOWAS_USERHOST_CHANNEL])
 #define find_userhost_channel (*(WhowasList *(*)(char *, char *, int, WhowasWrapList *))global[FIND_USERHOST_CHANNEL])
 #define next_userhost (*(WhowasList *(*)(WhowasWrapList *, WhowasList *))global[NEXT_USERHOST])
