@@ -447,14 +447,12 @@ static DCC_List *find_dcc_pending(const char *nick, const char *desc, const char
 void add_userhost_to_chat(UserhostItem *stuff, char *nick, char *args)
 {
 	SocketList *Client = NULL;
-	DCC_int *n = NULL;
 
 	if (!stuff || !stuff->nick || !stuff->user || !stuff->host || !strcmp(stuff->user, "<UNKNOWN>"))
 		return;
 	if ((Client = find_dcc(nick, "chat", NULL, DCC_CHAT, 0, -1, -1)))
-		n = (DCC_int *)get_socketinfo(Client->is_read);
-	if (n)	
 	{
+		DCC_int *n = Client->info;
 		n->userhost = m_sprintf("%s@%s", stuff->user, stuff->host);
 		n->server = from_server;
 	}
