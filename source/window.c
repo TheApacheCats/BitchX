@@ -574,7 +574,7 @@ static	void swap_window(Window *v_window, Window *window)
 	if (!window)
 	{
 		if (!get_int_var(WINDOW_QUIET_VAR))
-			say("The window to be swapped in does not exist.");
+			say("The window to be swapped in doesn't exist.");
 		return;
 	}
 
@@ -707,7 +707,7 @@ void BX_resize_window(int how, Window *window, int offset)
 	if (!window->visible)
 	{
 		if (!get_int_var(WINDOW_QUIET_VAR))
-			say("You cannot change the size of hidden windows!");
+			say("You can't change the size of hidden windows.");
 		return;
 	}
 
@@ -732,7 +732,7 @@ void BX_resize_window(int how, Window *window, int offset)
 
 		if (other == window)
 		{
-			say("Can't change the size of this window!");
+			say("You can't change the size of the only visible, resizable window.");
 			return;
 		}
 
@@ -767,7 +767,7 @@ void BX_resize_window(int how, Window *window, int offset)
 	if ((window_size < 0) || (other_size < 0))
 	{
 		if (!get_int_var(WINDOW_QUIET_VAR))
-			say("Not enough room to resize this window!");
+			say("Not enough room to resize this window.");
 		return;
 	}
 
