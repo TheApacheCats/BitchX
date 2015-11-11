@@ -1244,7 +1244,7 @@ void BX_scroll_window(Window *window)
 	{
 		int	scroll,	i;
 		if (window->holding_something || window->scrollback_point)
-			ircpanic("Cant scroll this window!");
+			ircpanic("Can't scroll this window!");
 
 		if ((scroll = get_int_var(SCROLL_LINES_VAR)) <= 0)
 			scroll = 1;
@@ -1597,7 +1597,7 @@ extern	Window	*BX_create_additional_screen (void)
 	s = connect_by_number(NULL, &port, SERVICE_SERVER, PROTOCOL_TCP, 0);
 	if (s < 0)
 	{
-		yell("Couldnt establish server side -- error [%d]", s);
+		yell("Couldn't establish server side -- error [%d]", s);
 		return NULL;
 	}
 
@@ -1608,7 +1608,7 @@ extern	Window	*BX_create_additional_screen (void)
 		case -1:
 		{
 			kill_screen(new);
-			say("I couldnt fire up a new wserv process");
+			say("I couldn't fire up a new wserv process");
 			break;
 		}
 
