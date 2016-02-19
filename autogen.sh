@@ -152,9 +152,18 @@ do
 done
 
 if test x"$NOCONFIGURE" = x; then
+  read -p "Would you like to run configure? (y/n): " var
+else
+  var=n
+fi
+
+case $var in
+y|Y|yes|YES)
   rm -f $srcdir/config.cache
   echo Running $srcdir/configure $conf_flags "$@" ...
   $srcdir/configure $conf_flags "$@"
-else
+;;
+*)
   echo Skipping configure process.
-fi
+;;
+esac
