@@ -181,10 +181,11 @@ MFLAGS = \
 
 ## Makefile starts here.
 
-all: Makefile .config.h $(_VERSION_) @EXTRAS@ dll done
-
-.config.h:
-	@if test ! -f $(topdir)/.config.h ; then touch $(topdir)/.config.h; fi
+all: source_all dll
+	@echo
+	@echo Now type \"$(MAKE_BIN) install\" to install $(_VERSION_) globally \(if you\'re root\), or
+	@echo else you can type \"$(MAKE_BIN) install_local\" to install $(_VERSION_) to your home
+	@echo directory.
 
 install: all installbin installdll installscript installman installhelp \
 	installtranslation reallydone
@@ -193,15 +194,14 @@ installeverything: install
 
 everything: all
 
-$(_VERSION_): .config.h
-	cd source \
-	  && $(MAKE) all
+source_all:
+	@cd source && $(MAKE) all
+	
+$(_VERSION_):
+	@cd source && $(MAKE) $(_VERSION_)
 
-dll/dummy:
-
-dll: .config.h $(srcdir)/Makefile dll/Makefile dll/dummy
-	cd dll \
-	  && $(MAKE) all
+dll:
+	@cd dll && $(MAKE) all
 
 installdll: $(srcdir)/Makefile dll/Makefile installdirs dll
 	cd dll \
@@ -252,13 +252,11 @@ install_local: all local_installdirs installdll_local
 	$(INSTALL_DATA) $(top_srcdir)/BitchX.reasons $(DEFAULT_CTOOLZ_DIR)/$(DEFAULT_BITCHX_KICK_FILE)
 	$(INSTALL_DATA) $(top_srcdir)/BitchX.kill $(DEFAULT_CTOOLZ_DIR)/$(DEFAULT_BITCHX_KILL_FILE)
 
-wserv: .config.h $(srcdir)/source/wserv.c $(srcdir)/source/term.c $(srcdir)/Makefile
-	cd source \
-	  && $(MAKE) wserv
+wserv:
+	@cd source && $(MAKE) wserv
 
-scr-bx: .config.h $(srcdir)/source/scr-bx.c $(srcdir)/source/term.c $(srcdir)/Makefile
-	cd source \
-	  && $(MAKE) scr-bx
+scr-bx:
+	@cd source && $(MAKE) scr-bx
 
 installwserv: installdirs wserv
 	$(INSTALL) source/wserv $(DESTDIR)$(INSTALL_WSERV)
@@ -396,18 +394,12 @@ $(srcdir)/./stamp-h.in: $(top_srcdir)/configure.in
 	cd $(top_srcdir) && autoheader
 	@mv $(srcdir)/./stamp-h.inT $(srcdir)/./stamp-h.in
 
-done:
-	@echo
-	@echo Now type \"$(MAKE_BIN) install\" to install $(_VERSION_) globally \(if you\'re root\), or
-	@echo else you can type \"$(MAKE_BIN) install_local\" to install $(_VERSION_) to your home
-	@echo directory.
-
 reallydone:
 	@echo
 	@echo $(_VERSION_) is now installed.
 	@echo Type \"$(INSTALL_IRC)\" to start.
 
-.PHONY: clean done reallydone installdirs local_installdirs
+.PHONY: clean all source_all dll $(_VERISON_) scr-bx wserv reallydone installdirs local_installdirs
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
