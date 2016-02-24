@@ -1388,8 +1388,8 @@ FILE *open_compression (char *executable, char *filename, int hook)
 #if !defined(WINNT) && !defined(__EMX__)
 			setsid();
 #endif			
-			setuid (getuid ());
-			setgid (getgid ());
+			setgid(getgid());
+			setuid(getuid());
 			dup2 (pipes[1], 1);
 			close (pipes[0]);
 			for (i = 2; i < 256; i++)

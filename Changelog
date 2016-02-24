@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Drop group privileges before droppping user privileges when execing. (caf)
+
 * Apply patch from cpet to make autogen.sh prompt to run configure. (caf)
 
 * Improve some messages in /window size (reported by cpet). (caf)

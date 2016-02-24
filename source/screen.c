@@ -1620,8 +1620,8 @@ extern	Window	*BX_create_additional_screen (void)
 			static char geom[32];
 			int i;
 
-			setuid(getuid());
 			setgid(getgid());
+			setuid(getuid());
 			setsid();
 
 			/*

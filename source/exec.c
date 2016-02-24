@@ -569,8 +569,8 @@ BUILT_IN_COMMAND(execcmd)
 #if !defined(WINNT) && !defined(__EMX__)
 			setsid();
 #endif			
-			setuid(getuid());
 			setgid(getgid());
+			setuid(getuid());
 			my_signal(SIGINT, SIG_IGN, 0);
 			my_signal(SIGQUIT, SIG_DFL, 0);
 			my_signal(SIGSEGV, SIG_DFL, 0);
