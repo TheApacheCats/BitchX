@@ -201,7 +201,6 @@ struct in_addr nat_address;
 
 
 static	void	quit_response (char *, char *);
-static	void	versionreply (void);
 static	char	*parse_args (char **, int, char **);
 static	void	remove_pid(void);
 	void	do_ansi_logo(int);
@@ -552,13 +551,6 @@ void set_detach_on_hup(Window *dummy, char *unused, int value)
 		my_signal(SIGHUP, irc_exit_old, 0);
 }
 
-/* shows the version of irc */
-static	void versionreply(void)
-{
-	printf("BitchX version %s (%s)\n\r", irc_version, internal_version);
-	exit (0);
-}
-
 #ifndef RAND_MAX
 #define RAND_MAX 2147483647
 #endif
@@ -676,12 +668,8 @@ static	char	*parse_args (char *argv[], int argc, char **envp)
 			case 'A': /* turn off startup ansi */
 				startup_ansi =  0;
 				break;
-			case 'v': /* Output ircII version */
-			{
-				versionreply();
-				/* NOTREACHED */
-			}
-
+			case 'v': /* Output client version (already done) and exit */
+				exit(0);
 			case 'c': /* Default channel to join */
 			{
 				char *what = empty_string;
@@ -1491,11 +1479,10 @@ int main(int argc, char *argv[], char *envp[])
 	*cx_function = 0;
 #endif
 
-#if !defined(GUI) 
-
 	printf("BitchX - Based on EPIC Software Labs epic ircII (1998).\r\n");
 	printf("Version (%s) -- Date (%s).\r\n", irc_version, internal_version);
 	printf("Process [%d]", getpid());
+#if !defined(GUI) 
 	if ((isatty(0) && !background) || (!isatty(0) && background))
 	{
 		char s[90];
