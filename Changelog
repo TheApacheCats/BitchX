@@ -1,5 +1,8 @@
 [Changes 1.2.2]
 
+* If we can't create a socket for the first address returned by getaddrinfo(),
+  try the other returned addresses. (caf)
+
 * Only show version once with -v option (reported by cpet). (caf)
 
 * Drop group privileges before droppping user privileges when execing. (caf)
