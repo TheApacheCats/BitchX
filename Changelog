@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Improve /WINDOW DESCRIBE output a little. (caf)
+
 * If we can't create a socket for the first address returned by getaddrinfo(),
   try the other returned addresses. (caf)
 

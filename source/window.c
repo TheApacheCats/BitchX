@@ -697,9 +697,7 @@ void BX_move_window(Window *window, int offset)
 void BX_resize_window(int how, Window *window, int offset)
 {
 	Window	*other;
-	int	after,
-		window_size,
-		other_size;
+	int	window_size, other_size;
 
 	if (!window)
 		window = current_window;
@@ -717,7 +715,6 @@ void BX_resize_window(int how, Window *window, int offset)
 		how = RESIZE_REL;
 	}
 
-	after = 1;
 	other = window;
 
 	do
@@ -725,10 +722,7 @@ void BX_resize_window(int how, Window *window, int offset)
 		if (other->next)
 			other = other->next;
 		else
-		{
 			other = window->screen->window_list;
-			after = 0;
-		}
 
 		if (other == window)
 		{
@@ -2981,40 +2975,36 @@ static Window *window_describe (Window *window, char **args, char *usage)
 	else
 		say("Window %u", window->refnum);
 
-	say("\tServer: [%d] %s",
-				window->server, 
-				window->server <= -1 ? 
-				get_server_name(window->server) : "<None>");
-	say("\tScreen: %p", window->screen);
+	say("\tServer: [%d] %s", window->server, get_server_name(window->server));
+	if (window->screen)
+	{
+		say("\tScreen: [%d] %s", window->screen->screennum,
+			window->screen->tty_name ? window->screen->tty_name : "");
+		say("\tCO, LI are [%d %d]", window->screen->co, window->screen->li);
+	}
+	else
+		say("\tScreen: <None>");
 	say("\tGeometry Info: [%d %d %d %d %d %d]", 
 				window->top, window->bottom, 
 				window->held_displayed, window->display_size,
 				window->cursor, window->distance_from_display);
 
-#ifndef GUI
-	say("\tCO, LI are [%d %d]", current_term->TI_cols, current_term->TI_lines);
-#else
-	say("\tCO, LI are [%d %d]", output_screen->co, output_screen->li);
-#endif
 	say("\tCurrent channel: %s", 
 				window->current_channel ? 
 				window->current_channel : "<None>");
-
-if (window->waiting_channel)
-	say("\tWaiting channel: %s", 
-				window->waiting_channel);
-
-if (window->bind_channel)
-	say("\tBound channel: %s", 
-				window->bind_channel);
+	if (window->waiting_channel)
+		say("\tWaiting channel: %s", window->waiting_channel);
+	if (window->bind_channel)
+		say("\tBound channel: %s", window->bind_channel);
 	say("\tQuery User: %s %s", 
 				window->query_nick ? 
 				window->query_nick : "<None>", 
 				window->query_cmd ? 
 				window->query_cmd : empty_string);
-	say("\tPrompt: %s", 
-				window->prompt ? 
-				window->prompt : "<None>");
+
+	if (window->prompt)
+		say("\tPrompt: %s", window->prompt);
+
 	say("\tSecond status line is %s", onoff[window->double_status]);
 	say("\tSplit line is %s triple is %s", onoff[window->status_split], onoff[window->status_lines]);
 	say("\tLogging is %s", 	 onoff[window->log]);
@@ -3024,16 +3014,11 @@ if (window->bind_channel)
 	else
 		say("\tNo logfile given");
 
-	say("\tNotification is %s", 
-			      onoff[window->miscflags & WINDOW_NOTIFY]);
-	say("\tHold mode is %s", 
-				onoff[window->hold_mode]);
-	say("\tWindow level is %s", 
-				bits_to_lastlog_level(window->window_level));
-	say("\tLastlog level is %s", 
-				bits_to_lastlog_level(window->lastlog_level));
-	say("\tNotify level is %s", 
-				bits_to_lastlog_level(window->notify_level));
+	say("\tNotification is %s", onoff[window->miscflags & WINDOW_NOTIFY]);
+	say("\tHold mode is %s", onoff[window->hold_mode]);
+	say("\tWindow level is %s", bits_to_lastlog_level(window->window_level));
+	say("\tLastlog level is %s", bits_to_lastlog_level(window->lastlog_level));
+	say("\tNotify level is %s", bits_to_lastlog_level(window->notify_level));
 
 	if (window->nicks)
 	{

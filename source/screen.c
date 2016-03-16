@@ -1531,10 +1531,15 @@ Screen	* BX_create_new_screen(void)
 	if (!main_screen)
 #ifdef GUI
 		gui_screen(new);
-	
+
+	malloc_strcpy(&new->tty_name, "<GUI>");
 	gui_resize(new);
 #else
+	{
+		extern char attach_ttyname[];
 		main_screen = new;
+		malloc_strcpy(&new->tty_name, attach_ttyname);
+	}
 #endif
 	init_input();
 	return new;
@@ -1733,8 +1738,9 @@ extern	Window	*BX_create_additional_screen (void)
 				kill(child, SIGKILL);
 				return NULL;
 			}
-			else
-				malloc_strcpy(&new->tty_name, buffer);
+
+			chop(buffer, 1);
+			malloc_strcpy(&new->tty_name, buffer);
 
 			win = new_window(new);
 			refresh_screen(0, NULL);
