@@ -19,7 +19,9 @@
 #include "hash.h"
 #include "config.h"
 #include "ssl.h"
+#ifdef HAVE_NETINET_IN_H
 #include <netinet/in.h>
+#endif
 
 /*
  * struct sockaddr_storage isn't avaiable on all ipv6-ready-systems, bleh ;(

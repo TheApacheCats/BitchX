@@ -21,9 +21,6 @@
  * $Id$
  */
 
-#include <sys/types.h>
-#include <netinet/in.h>
-
 #include "cdns.h"
 #include "irc.h"	/* To pick up our next #define checks */
 static char cvsrevision[] = "$Id$";
