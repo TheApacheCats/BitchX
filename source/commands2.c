@@ -16,17 +16,15 @@ CVS_REVISION(commands2_c)
 #include <sys/utsname.h>
 #endif
 
-#include <unistd.h>
 #ifdef HAVE_SYS_UN_H
 #include <sys/un.h>
 #endif
 
 #include <sys/wait.h>
-#include <sys/ioctl.h>
+
 #ifdef HAVE_SYS_FILIO_H
 #include <sys/filio.h>
 #endif
-
 
 #include "parse.h"
 #include "server.h"
