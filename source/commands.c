@@ -24,11 +24,10 @@ CVS_REVISION(commands_c)
 #else /* IPV6 */
 
 #include <sys/ioctl.h>
-#include <sys/socket.h>
 
-#ifndef SIOCGIFCONF
+#ifdef HAVE_SYS_SOCKIO_H
 #include <sys/sockio.h>
-#endif /* SIOCGIFCONF */
+#endif /* HAVE_SYS_SOCKIO_H */
 
 /* Some systems call it SIOCGIFCONF, some call it OSIOCGIFCONF */
 #if defined(OSIOCGIFCONF)

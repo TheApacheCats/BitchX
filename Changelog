@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Add configure check for <sys/sockio.h>. (caf)
+
 * Improve /WINDOW DESCRIBE output a little. (caf)
 
 * If we can't create a socket for the first address returned by getaddrinfo(),
