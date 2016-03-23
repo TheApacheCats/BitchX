@@ -519,6 +519,78 @@ char *t = NULL;
 }
 
 /*
+ * got_initial_version_28: this is called when ircii gets the serial
+ * number 004 reply.  We do this becuase the 004 numeric gives us the
+ * server name and version in a very easy to use fashion, and doesnt
+ * rely on the syntax or construction of the 002 numeric.
+ *
+ * Hacked as neccesary by jfn, May 1995
+ */
+static void get_nat_address(UserhostItem *stuff, char *nick, char *args)
+{
+	extern struct in_addr nat_address;
+
+	char *h;
+
+	if (!stuff || !stuff->nick || !strcmp(stuff->user, "<UNKNOWN"))
+		return;
+	if (isdigit((unsigned char)*stuff->host))
+		h = stuff->host;
+	else
+		h = host_to_ip(stuff->host);
+	nat_address.s_addr = inet_addr(h); 
+	bitchsay("using NAT address for DCC");
+}
+
+static void got_initial_version_28(char *server, char *sversion, char *channel_modes)
+{
+	extern int use_nat_address;
+		
+	if (sversion)
+	{
+		if (!strncmp(sversion, "2.8", 3))
+		{
+			if (strstr(sversion, "mu") || strstr(sversion, "me"))
+				set_server_version(from_server, Server_u2_8);
+			else if (strstr(sversion, "hybrid-6"))
+				set_server_version(from_server, Server2_8hybrid6);
+			else if (strstr(sversion, "hybrid"))
+				set_server_version(from_server, Server2_8hybrid);
+			else if (strstr(sversion, "comstud"))
+				set_server_version(from_server, Server2_8comstud);
+			else if (strstr(channel_modes, "che"))
+				set_server_version(from_server, Server2_8ts4); 
+			else
+				set_server_version(from_server, Server2_8);
+		}
+		else if (!strncmp(sversion, "2.9", 3))
+		        set_server_version(from_server, Server2_9);
+		else if (!strncmp(sversion, "2.10", 4))
+	        	set_server_version(from_server, Server2_10);
+		else if (!strncmp(sversion, "u2.9", 4))
+			set_server_version(from_server, Server_u2_9);
+		else if (!strncmp(sversion, "u2.10", 4))
+			set_server_version(from_server, Server_u2_10);
+		else if (!strncmp(sversion, "u3.0", 4))
+			set_server_version(from_server, Server_u3_0);
+		else
+			set_server_version(from_server, Server2_8);
+	} else
+		set_server_version(from_server, Server2_8);
+
+	set_server_version_string(from_server, sversion ? sversion : "2.8");
+	set_server_itsname(from_server, server);
+	reconnect_all_channels(from_server);
+
+	reset_display_target();
+	reinstate_user_modes();
+	if (use_nat_address == 1)
+		userhostbase(get_server_nickname(from_server), get_nat_address, 1, "%s", get_server_nickname(from_server));
+	update_all_status(current_window, NULL, 0);
+	do_hook(CONNECT_LIST, "%s %d %s", get_server_name(from_server), get_server_port(from_server), get_server_itsname(from_server));
+}
+
+/*
  * numbered_command: does (hopefully) the right thing with the numbered
  * responses from the server.  I wasn't real careful to be sure I got them
  * all, but the default case should handle any I missed (sorry) 
@@ -564,7 +636,7 @@ void numbered_command(char *from, int comm, char **ArgList)
 	}		
 	case 4:	/* #define RPL_MYINFO           004 */
 	{
-		got_initial_version_28(ArgList);
+		got_initial_version_28(ArgList[0], ArgList[1], ArgList[3]);
 		load_scripts();
 		PasteArgs(ArgList, 0);
 		if (do_hook(current_numeric, "%s %s", from, *ArgList))
