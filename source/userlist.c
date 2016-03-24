@@ -31,7 +31,6 @@ CVS_REVISION(userlist_c)
 #include "output.h"
 #include "exec.h"
 #include "notify.h"
-#include "numbers.h"
 #include "status.h"
 #include "list.h"
 #include "struct.h"

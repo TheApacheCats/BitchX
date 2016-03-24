@@ -43,7 +43,6 @@ CVS_REVISION(irc_c)
 #include "history.h"
 #include "exec.h"
 #include "notify.h"
-#include "numbers.h"
 #include "mail.h"
 #include "debug.h"
 #include "newio.h"

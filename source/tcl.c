@@ -32,7 +32,6 @@
 #include "output.h"
 #include "exec.h"
 #include "notify.h"
-#include "numbers.h"
 #include "status.h"
 #include "if.h"
 #include "help.h"

@@ -23,7 +23,6 @@ CVS_REVISION(funny_c)
 #include "lastlog.h"
 #include "ircterm.h"
 #include "output.h"
-#include "numbers.h"
 #include "parse.h"
 #include "status.h"
 #include "misc.h"

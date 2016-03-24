@@ -24,7 +24,6 @@ CVS_REVISION(whowas_c)
 #include "names.h"
 #include "alias.h"
 #include "output.h"
-#include "numbers.h"
 #include "status.h"
 #include "screen.h"
 #include "commands.h"

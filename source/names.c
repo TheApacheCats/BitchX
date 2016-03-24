@@ -25,7 +25,6 @@ CVS_REVISION(names_c)
 #include "lastlog.h"
 #include "list.h"
 #include "output.h"
-#include "numbers.h"
 #include "userlist.h"
 #include "timer.h"
 #include "input.h"

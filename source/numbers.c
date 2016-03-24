@@ -85,7 +85,7 @@ char	*numeric_banner(void)
 	return (thing);
 }
 
-int check_sync(int comm, char *channel, char *nick, char *whom, char *bantime, ChannelList *chan)
+static int check_sync(int comm, char *channel, char *nick, char *whom, char *bantime, ChannelList *chan)
 {
 ChannelList *tmp = NULL;
 BanList *new;
@@ -245,7 +245,7 @@ static int check_server_sync(char *from, char **ArgList)
  * possible formats that the irc server spits out.  you'd think someone would
  * simplify this 
  */
-void display_msg(char *from, char **ArgList)
+static void display_msg(char *from, char **ArgList)
 {
 	char	*ptr,
 		*s,

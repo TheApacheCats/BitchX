@@ -24,7 +24,6 @@ CVS_REVISION(alias_c)
 #include "ircaux.h"
 #include "names.h"
 #include "notify.h"
-#include "numbers.h"
 #include "output.h"
 #include "parse.h"
 #include "screen.h"
