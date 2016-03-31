@@ -139,7 +139,8 @@
 #define DEFAULT_FORMAT_IGNORE_NOTICE_FSET "%K-%P$2%K(%p$3%K)-%n $4-"
 #define DEFAULT_FORMAT_IGNORE_WALL_FSET "%K%P$1%n $2-"
 /* Done MSG */
-#define DEFAULT_FORMAT_MSG_GROUP_FSET "%K-%P$1%K:%p$3%K-%n $4-"
+#define DEFAULT_FORMAT_MSG_GROUP_FSET "%K-%P$1%K:%p$2%K-%n $3-"
+#define DEFAULT_FORMAT_NOTICE_GROUP_FSET "%K=%P$1%K:%p$2%K=%n $3-"
 
 /* Done NAMES */
 #define DEFAULT_FORMAT_NAMES_BANNER_FSET "$G "
@@ -570,6 +571,7 @@
 #define DEFAULT_FORMAT_IGNORE_NOTICE_FSET "%K-%P$2%K(%p$3%K)-%n $4-"
 #define DEFAULT_FORMAT_IGNORE_WALL_FSET "%K%P$1%n $2-"
 #define DEFAULT_FORMAT_MSG_GROUP_FSET "%K-%P$1%K:%p$2%K-%n $3-"
+#define DEFAULT_FORMAT_NOTICE_GROUP_FSET "%K=%P$1%K:%p$2%K=%n $3-"
 
 #define DEFAULT_FORMAT_NAMES_FSET ansi?"$G %K[%GUsers%K(%g$1%K:%g$2%K/%g$3%K)]%c $4":"$G [Users($1:$2/$3)] $4"
 #define DEFAULT_FORMAT_NAMES_BOT_FSET ansi?"$G %K[%GBots%K(%g$1%K:%g$2%K/%g$3%K)]%c $4":"$G [Bots($1:$2/$3)] $4"

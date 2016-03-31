@@ -153,6 +153,7 @@ HookFunc hook_functions[] =
 	{ "NICKNAME",		NULL,	2,	0,	0 },
 	{ "NOTE",		NULL,	3,	0,	0 },
 	{ "NOTICE",		NULL,	2,	0,	0 },
+	{ "NOTICE_GROUP",	NULL,	3,	0,	0 },
 	{ "NOTIFY",		NULL,	2,	0,	0 },
 	{ "NOTIFY_HEADER",	NULL,	2,	0,	0 },
 	{ "NOTIFY_SIGNOFF",	NULL,	1,	0,	0 },

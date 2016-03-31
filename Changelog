@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Add /on NOTICE_GROUP and /fset NOTICE_GROUP analogous to MSG_GROUP. (caf)
+
 * Add configure check for <sys/sockio.h>. (caf)
 
 * Improve /WINDOW DESCRIBE output a little. (caf)

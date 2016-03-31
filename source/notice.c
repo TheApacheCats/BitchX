@@ -723,12 +723,14 @@ static int check_chanwall_notice(const char *from, const char *line, int type)
 
 void parse_notice(char *from, char **Args)
 {
-	int	type;
+	int	list_type;
+	unsigned long ignore_type = IGNORE_NOTICES;
+	unsigned long log_type = LOG_NOTICE;
+	int flood_type = NOTICE_FLOOD;
 	char	*to,
 		*high = empty_string,
 		*target,
 		*line;
-	NickList *nick = NULL;	
 	ChannelList *tmpc = NULL;
 	
 	PasteArgs(Args, 1);
@@ -751,28 +753,40 @@ void parse_notice(char *from, char **Args)
 	if (is_channel(to))
 	{
 		target = to;
-		type = PUBLIC_NOTICE_LIST;
+		list_type = PUBLIC_NOTICE_LIST;
 		if ((tmpc = lookup_channel(to, from_server, CHAN_NOUNLINK)))
-			nick = find_nicklist_in_channellist(from, tmpc, 0);
+		{
+			NickList *nick = find_nicklist_in_channellist(from, tmpc, 0);
+			update_stats(NOTICELIST, nick, tmpc, 0);		
+		}
 	}
 	else
 	{
 		target = from;
-		type = NOTICE_LIST;
+		if (my_stricmp(to, get_server_nickname(from_server)))
+		{
+			/* A NOTICE to a global destination like $$*.org */
+			log_type = LOG_WALL;
+			ignore_type = IGNORE_WALLS;
+			list_type = NOTICE_GROUP_LIST;
+			flood_type = WALL_FLOOD;
+		}
+		else
+		{
+			list_type = NOTICE_LIST;
+		}
 	}
 
-	update_stats(NOTICELIST, nick, tmpc, 0);		
-
-	set_display_target(target, LOG_NOTICE);
+	set_display_target(target, log_type);
 	doing_notice = 1;
 
-	if ((check_ignore_notice(from, to, IGNORE_NOTICES, line, &high) == IGNORED))
+	if ((check_ignore_notice(from, to, ignore_type, line, &high) == IGNORED))
 		goto notice_cleanup;
 
-	if (!check_flooding(from, NOTICE_FLOOD, line, NULL))
+	if (!check_flooding(from, flood_type, line, NULL))
 		goto notice_cleanup;
 
-	if (!strchr(from, '.'))
+	if (!strchr(from, '.') && list_type != NOTICE_GROUP_LIST)
 	{
 		notify_mark(from, FromUserHost, 1, 0);
 		line = do_notice_ctcp(from, to, line);
@@ -789,29 +803,43 @@ void parse_notice(char *from, char **Args)
 		goto notice_cleanup;
 	}
 
-	if (!check_chanwall_notice(from, line, type))
+	if (!check_chanwall_notice(from, line, list_type))
 	{
 		char *s;
-		if (type == PUBLIC_NOTICE_LIST)
+		switch (list_type)
 		{
+			case PUBLIC_NOTICE_LIST:
 			s = convert_output_format(fget_string_var(check_auto_reply(line)?FORMAT_PUBLIC_NOTICE_AR_FSET:FORMAT_PUBLIC_NOTICE_FSET), "%s %s %s %s %s", update_clock(GET_TIME), from, FromUserHost, to, line);
-			if (do_hook(type, "%s %s %s", from, to, line))
-				put_it("%s", s);
-		}
-		else
-		{
+			break;
+
+			case NOTICE_GROUP_LIST:
+			s = convert_output_format(fget_string_var(FORMAT_NOTICE_GROUP_FSET), "%s %s %s %s", update_clock(GET_TIME), from, to, line);
+			break;
+
+			default:
 			s = convert_output_format(fget_string_var(FORMAT_NOTICE_FSET), "%s %s %s %s", update_clock(GET_TIME), from, FromUserHost, line);
-			if (do_hook(type, "%s %s", from, line))
+		}
+		switch (list_type)
+		{
+			case PUBLIC_NOTICE_LIST:
+			case NOTICE_GROUP_LIST:
+			if (do_hook(list_type, "%s %s %s", from, to, line))
+				put_it("%s", s);
+			break;
+
+			default:
+			if (do_hook(list_type, "%s %s", from, line))
 				put_it("%s", s);
 		}
+
 		if (tmpc)
 			add_to_log(tmpc->msglog_fp, now, s, logfile_line_mangler);
-		logmsg(LOG_NOTICE, from, 0, "%s", line);
+		logmsg(log_type, from, 0, "%s", line);
 		add_last_type(&last_notice[0], MAX_LAST_MSG, from, FromUserHost, to, line);
 	}
 
  notice_cleanup:
-	if (beep_on_level & LOG_NOTICE)
+	if (beep_on_level & log_type)
 		beep_em(1);
 	reset_display_target();
 	doing_notice = 0;
