@@ -279,20 +279,16 @@ char *ov_server(int server)
 	char *c;
 	char *d;
 	static char tmpstr[61];
-	char *string = get_server_itsname(server);
+	const char *string = get_server_itsname(server);
 	    
-	if (!string || !*string)
-		string = get_server_name(server);
-	if (!string || !*string)
-		return  empty_string;
 	strlcpy(tmpstr, string, sizeof tmpstr);
 	if (!(c = strrchr(tmpstr,'.')))
-		return(string);
+		return tmpstr;
 	*c = 0;
 	if (!(d = strrchr(tmpstr, '.'))) 
-		d = ++c; /* Extract domain */
+		d = c; /* Extract domain */
 	d++;
-	return(d);
+	return d;
 }
 
 void serversay(int save, int from_server, const char *format, ...)
