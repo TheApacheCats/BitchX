@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Treat all NOTICEs before registration as local server notices. (caf)
+
 * Add /on NOTICE_GROUP and /fset NOTICE_GROUP analogous to MSG_GROUP. (caf)
 
 * Add configure check for <sys/sockio.h>. (caf)

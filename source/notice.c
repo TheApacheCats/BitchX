@@ -41,11 +41,8 @@ CVS_REVISION(notice_c)
 #include "modval.h"
 
 extern	char	*FromUserHost;
-static	void	parse_server_notice (char *, char *);
 int	doing_notice = 0;
 unsigned long default_swatch = -1;
-
-
 
 long	oper_kills = 0,
 	nick_collisions = 0,
@@ -76,7 +73,6 @@ static	int  handle_oper_vision(const char *from, char *cline, int *up_status)
 	int done_one = 0;
 	char *line;
 	unsigned long flags;
-	int dcount;
 			
 	p = fr = for_ = temp = temp2 = NULL;
 
@@ -84,8 +80,10 @@ static	int  handle_oper_vision(const char *from, char *cline, int *up_status)
 		return 0;
 
 	line = LOCAL_COPY(cline);
-	if (!strncmp(line, "*** Notice -- ", 13)) line += 14, dcount = 14;
-	else if (!strncmp(line, "*** \002Notice\002 --", 15)) line += 16, dcount = 16;
+	if (!strncmp(line, "*** Notice -- ", 13))
+		line += 14;
+	else if (!strncmp(line, "*** \002Notice\002 --", 15))
+		line += 16;
 
 	done_one++;
 /*
@@ -112,7 +110,7 @@ static	int  handle_oper_vision(const char *from, char *cline, int *up_status)
 			nick_collisions++;
 			if (!(flags & NICK_COLLIDE))
 				goto done;  	
-			serversay(1, from_server, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_NICK_COLLISION_FSET), "%s %s %s %s", update_clock(GET_TIME), fr, for_, q));
+			serversay(1, from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_NICK_COLLISION_FSET), "%s %s %s %s", update_clock(GET_TIME), fr, for_, q));
 		}
 		else 
 		{
@@ -125,9 +123,9 @@ static	int  handle_oper_vision(const char *from, char *cline, int *up_status)
 			if (q && *q)
 				q++; chop(q, 1);
 			if (loc_check <= 2)		
-				serversay(1, from_server, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_KILL_LOCAL_FSET), "%s %s %s %s", update_clock(GET_TIME), fr, for_, q));
+				serversay(1, from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_KILL_LOCAL_FSET), "%s %s %s %s", update_clock(GET_TIME), fr, for_, q));
 			else
-				serversay(1, from_server, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_KILL_FSET), "%s %s %s %s", update_clock(GET_TIME), fr, for_, q));
+				serversay(1, from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_KILL_FSET), "%s %s %s %s", update_clock(GET_TIME), fr, for_, q));
 		}
 		(*up_status)++;
 	}
@@ -145,7 +143,7 @@ irc.BitchX.com *** Notice -- Nick collision on nickserv(irc.distracted.net <-
 			p = line + 24;
 		else
 			p = line + 18;
-		serversay(1, from_server, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_NICK_COLLISION_FSET), "%s %s", update_clock(GET_TIME), p));
+		serversay(1, from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_NICK_COLLISION_FSET), "%s %s", update_clock(GET_TIME), p));
 		(*up_status)++;
 	}
 	else if (!strncmp(line, "IP# Mismatch:", 13))
@@ -153,14 +151,14 @@ irc.BitchX.com *** Notice -- Nick collision on nickserv(irc.distracted.net <-
 		if (!(flags & IP_MISMATCH))
 			goto done;  	
 		for_ = line + 14;
-		serversay(1, from_server, "%s", convert_output_format(" IP Mismatch %C$1-", "%s %s", update_clock(GET_TIME), for_));
+		serversay(1, from, "%s", convert_output_format(" IP Mismatch %C$1-", "%s %s", update_clock(GET_TIME), for_));
 	}
 	else if (!strncmp(line, "Hacked ops on opless channel:", 29))
 	{
 		if (!(flags & HACK_OPS))
 			goto done;  	
 		for_ = line + 29;
-		serversay(1, from_server, "%s", convert_output_format(" Hacked ops on $0", "%s", for_));
+		serversay(1, from, "%s", convert_output_format(" Hacked ops on $0", "%s", for_));
 	}
 	else if (!strncmp(line, "connect failure:", 16))
 	{
@@ -169,14 +167,14 @@ irc.BitchX.com *** Notice -- Nick collision on nickserv(irc.distracted.net <-
 		if (!(flags & SERVER_CRAP))
 			goto done;  	
 		for_ = line + 16;
-		serversay(1, from_server, "%s", convert_output_format(" Connect failure %K[%n$0-%K]", "%s", for_));
+		serversay(1, from, "%s", convert_output_format(" Connect failure %K[%n$0-%K]", "%s", for_));
 	} 
 	else if (!strncmp(line, "Identd response differs", 22))
 	{
 		if (!(flags & IDENTD))
 			goto done;  	
 		for_ = line + 24;
-		serversay(1, from_server, "%s", convert_output_format(" Identd response differs %K[%C$1-%K]", "%s %s", update_clock(GET_TIME), for_));
+		serversay(1, from, "%s", convert_output_format(" Identd response differs %K[%C$1-%K]", "%s %s", update_clock(GET_TIME), for_));
 	}
   	else if (!strncmp(line, "Fake: ", 6)) /* MODE */
   	{
@@ -187,9 +185,9 @@ irc.BitchX.com *** Notice -- Nick collision on nickserv(irc.distracted.net <-
 		if ((fr = next_arg(p, &temp)))
 		{
 			if (lookup_channel(fr, from_server, CHAN_NOUNLINK))
-				serversay(1, from_server, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_FAKE_FSET), "%s %s %s", update_clock(GET_TIME), fr, temp));
+				serversay(1, from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_FAKE_FSET), "%s %s %s", update_clock(GET_TIME), fr, temp));
 			else 
-				serversay(1, from_server, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_FAKE_FSET), "%s %s %s", update_clock(GET_TIME), fr, temp));
+				serversay(1, from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_FAKE_FSET), "%s %s %s", update_clock(GET_TIME), fr, temp));
 		}
   	}
   	else if (!strncmp(line, "Unauthorized connection from",28))
@@ -198,7 +196,7 @@ irc.BitchX.com *** Notice -- Nick collision on nickserv(irc.distracted.net <-
 		if (!(flags & UNAUTHS))
 			goto done;  	
 		for_ = line + 28;
-		serversay(1, from_server, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_UNAUTH_FSET), "%s %s", update_clock(GET_TIME), for_));
+		serversay(1, from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_UNAUTH_FSET), "%s %s", update_clock(GET_TIME), for_));
 	}
   	else if (!strncmp(line, "Too many connections from",25))
   	{
@@ -206,7 +204,7 @@ irc.BitchX.com *** Notice -- Nick collision on nickserv(irc.distracted.net <-
 		if (!(flags & TOO_MANY))
 			goto done;  	
 		for_ = line + 25;
-		serversay(1, from_server, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_UNAUTH_FSET), "%s %s", update_clock(GET_TIME), for_));
+		serversay(1, from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_UNAUTH_FSET), "%s %s", update_clock(GET_TIME), for_));
 	}
 	else if (strstr(line, "Entering high-traffic mode -") || !strncmp(line, "still high-traffic mode -", 25))
 	{
@@ -247,7 +245,7 @@ irc.BitchX.com *** Notice -- Nick collision on nickserv(irc.distracted.net <-
 				q = temp2+2;
 			}
 		}
-		serversay(1, from_server, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_TRAFFIC_HIGH_FSET), "%s %s %s", update_clock(GET_TIME), for_, q));
+		serversay(1, from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_TRAFFIC_HIGH_FSET), "%s %s %s", update_clock(GET_TIME), for_, q));
 	}
 	else if (!strncmp(line, "Resuming standard operation", 27))
 	{
@@ -259,7 +257,7 @@ irc.BitchX.com *** Notice -- Nick collision on nickserv(irc.distracted.net <-
 		if (for_ && *for_ == '-')
 			for_ = next_arg(p, &p); 
 		temp = next_arg(p, &temp2);
-		serversay(1, from_server, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_TRAFFIC_NORM_FSET), "%s %s %s %s", update_clock(GET_TIME), for_, temp, temp2));
+		serversay(1, from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_TRAFFIC_NORM_FSET), "%s %s %s %s", update_clock(GET_TIME), for_, temp, temp2));
 	}
 	else if (wild_match("% is rehashing Server config*", line))
 	{
@@ -268,7 +266,7 @@ irc.BitchX.com *** Notice -- Nick collision on nickserv(irc.distracted.net <-
 			goto done;  	
 		p = line;
 		for_ = next_arg(p, &p);
-		serversay(1, from_server, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_REHASH_FSET), "%s %s", update_clock(GET_TIME), for_));
+		serversay(1, from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_REHASH_FSET), "%s %s", update_clock(GET_TIME), for_));
 	}
 	else if (wild_match("% added K-Line for *", line))
 	{
@@ -290,9 +288,9 @@ irc.BitchX.com *** Notice -- Nick collision on nickserv(irc.distracted.net <-
 		if (++temp2)
 			chop(temp2, 1);
 		if (serv)
-			serversay(1, from_server, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_GLINE_FSET), "%s %s %s %s %s", update_clock(GET_TIME), for_, temp2, serv, temp));
+			serversay(1, from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_GLINE_FSET), "%s %s %s %s %s", update_clock(GET_TIME), for_, temp2, serv, temp));
 		else
-			serversay(1, from_server, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_KLINE_FSET), "%s %s %s %s", update_clock(GET_TIME), for_, temp2, temp));
+			serversay(1, from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_KLINE_FSET), "%s %s %s %s", update_clock(GET_TIME), for_, temp2, temp));
 	}
 	else if (!strncmp(line, "Rejecting vlad/joh/com bot:", 27) || !strncmp(line+14, "Rejecting eggdrop bot:", 20) || !strncmp(line, "Rejecting ojnk/annoy bot", 24))
 	{
@@ -302,7 +300,7 @@ irc.BitchX.com *** Notice -- Nick collision on nickserv(irc.distracted.net <-
 		p = line + 10;
 		temp2 = next_arg(p, &p);
 		for_ = p + 4;
-		serversay(1, from_server, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_BOT_FSET), "%s %s %s", update_clock(GET_TIME), for_, temp2));
+		serversay(1, from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_BOT_FSET), "%s %s %s", update_clock(GET_TIME), for_, temp2));
 	}
 	else if (!strncmp(line, "Possible bot ", 13))
 	{
@@ -313,7 +311,7 @@ irc.BitchX.com *** Notice -- Nick collision on nickserv(irc.distracted.net <-
 		for_ = next_arg(p, &p);
 		if ((temp2 = next_arg(p, &p)))
 			chop(temp2, 1);
-		serversay(1, from_server, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_BOT_FSET), "%s %s %s", update_clock(GET_TIME), for_, temp2));
+		serversay(1, from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_BOT_FSET), "%s %s %s", update_clock(GET_TIME), for_, temp2));
 	}
 	else if (wild_match("Possible % bot *", line))
 	{
@@ -330,7 +328,7 @@ irc.BitchX.com *** Notice -- Nick collision on nickserv(irc.distracted.net <-
 			chop(temp2, 1);
 			*temp2 = ' ';
 		}
-		serversay(1, from_server, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_BOT1_FSET), "%s %s %s %s", update_clock(GET_TIME), possible?possible:"Unknown", for_, temp2));
+		serversay(1, from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_BOT1_FSET), "%s %s %s %s", update_clock(GET_TIME), possible?possible:"Unknown", for_, temp2));
 	}
 	else if (wild_match("% % is now operator*", line))
 	{
@@ -345,7 +343,7 @@ irc.BitchX.com *** Notice -- Nick collision on nickserv(irc.distracted.net <-
 			if (*temp2 == '(')
 				*temp2 = ' ';
 		}
-		serversay(1, from_server, "%s", convert_output_format(fget_string_var(FORMAT_OPER_FSET), "%s %s %s", update_clock(GET_TIME), fr, temp2));
+		serversay(1, from, "%s", convert_output_format(fget_string_var(FORMAT_OPER_FSET), "%s %s %s", update_clock(GET_TIME), fr, temp2));
 	} 
 	else if (!strncmp(line, "Received SQUIT", 14))
 	{
@@ -362,7 +360,7 @@ irc.BitchX.com *** Notice -- Nick collision on nickserv(irc.distracted.net <-
 			if (*temp2 == '(')
 				temp2++;
 		}
-		serversay(1, from_server, "%s", convert_output_format(" SQUIT of $1 from $2 %K[%R$3-%K]", "%s %s %s %s", update_clock(GET_TIME), for_, fr, temp2));
+		serversay(1, from, "%s", convert_output_format(" SQUIT of $1 from $2 %K[%R$3-%K]", "%s %s %s %s", update_clock(GET_TIME), for_, fr, temp2));
 	} 
 	else if (!strncmp(line, "Received SERVER", 15))
 	{
@@ -379,7 +377,7 @@ irc.BitchX.com *** Notice -- Nick collision on nickserv(irc.distracted.net <-
 			if (*temp2 == '(')
 				temp2++;
 		}
-		serversay(1, from_server, "%s", convert_output_format(" Received SERVER %c$1%n from %c$2%n %K[%W$3-%K]", "%s %s %s %s", update_clock(GET_TIME), fr, for_, temp2));
+		serversay(1, from, "%s", convert_output_format(" Received SERVER %c$1%n from %c$2%n %K[%W$3-%K]", "%s %s %s %s", update_clock(GET_TIME), fr, for_, temp2));
 	} 
 	else if (!strncmp(line, "Sending SQUIT", 13))
 	{
@@ -392,7 +390,7 @@ irc.BitchX.com *** Notice -- Nick collision on nickserv(irc.distracted.net <-
 		chop(temp2, 1);
 		if (*temp2 == '(') temp2++;
 	    }
-	    serversay(1, from_server, "%s", convert_output_format(" Sending SQUIT %c$1%n %K[%R$2-%K]", "%s %s %s", update_clock(GET_TIME), fr, temp2));
+	    serversay(1, from, "%s", convert_output_format(" Sending SQUIT %c$1%n %K[%R$2-%K]", "%s %s %s", update_clock(GET_TIME), fr, temp2));
 	}
 	else if (!strncmp(line, "Sending SERVER", 14))
 	{
@@ -405,7 +403,7 @@ irc.BitchX.com *** Notice -- Nick collision on nickserv(irc.distracted.net <-
 		chop(temp2, 1);
 		if (*temp2 == '(') temp2++;
 	    }
-	    serversay(1, from_server, "%s", convert_output_format(" Sending SERVER %c$1%n %K[%W$2-%K]", "%s %s %s", update_clock(GET_TIME), fr, temp2));
+	    serversay(1, from, "%s", convert_output_format(" Sending SERVER %c$1%n %K[%W$2-%K]", "%s %s %s", update_clock(GET_TIME), fr, temp2));
 	}
 	else if (!strncmp(line, "WALLOPS :Remote CONNECT", 23))
 	{
@@ -416,7 +414,7 @@ irc.BitchX.com *** Notice -- Nick collision on nickserv(irc.distracted.net <-
 		for_ = next_arg(p, &p);
 		fr = next_arg(p, &p);
 		next_arg(p, &temp2);
-		serversay(1, from_server, "%s", convert_output_format(" Remote Connect of $1:$2 from $3", "%s %s %s %s", update_clock(GET_TIME), for_, fr, temp2));
+		serversay(1, from, "%s", convert_output_format(" Remote Connect of $1:$2 from $3", "%s %s %s %s", update_clock(GET_TIME), for_, fr, temp2));
 	}
 	else if (!strncmp(line, "Client connecting", 17) || !strncmp(line, "Client exiting", 14))
 	{
@@ -511,7 +509,7 @@ irc.BitchX.com *** Notice -- Nick collision on nickserv(irc.distracted.net <-
 		    }
 		}
 		
-		serversay(1, from_server, "%s", convert_output_format(fget_string_var(conn ? FORMAT_SERVER_NOTICE_CLIENT_CONNECT_FSET : FORMAT_SERVER_NOTICE_CLIENT_EXIT_FSET), "%s %s %s %s", update_clock(GET_TIME), for_, q ? q : empty_string, port ? port : empty_string));
+		serversay(1, from, "%s", convert_output_format(fget_string_var(conn ? FORMAT_SERVER_NOTICE_CLIENT_CONNECT_FSET : FORMAT_SERVER_NOTICE_CLIENT_EXIT_FSET), "%s %s %s %s", update_clock(GET_TIME), for_, q ? q : empty_string, port ? port : empty_string));
 	}
 	else if (!strncmp(line, "Terminating client for excess", 29))
 	{
@@ -529,7 +527,7 @@ irc.BitchX.com *** Notice -- Nick collision on nickserv(irc.distracted.net <-
 			chop(temp2, 1);
 			q = temp2+1;
 		}
-		serversay(1, from_server, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_CLIENT_TERM_FSET), "%s %s %s", update_clock(GET_TIME), for_, q));
+		serversay(1, from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_CLIENT_TERM_FSET), "%s %s %s", update_clock(GET_TIME), for_, q));
 	}
 	else if (!strncmp(line, "Invalid username:", 17))
 	{
@@ -541,7 +539,7 @@ irc.BitchX.com *** Notice -- Nick collision on nickserv(irc.distracted.net <-
 		for_ = next_arg(p, &p);
 		if ((temp2 = next_arg(p, &p)))
 			chop(temp2, 1);
-		serversay(1, from_server, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_CLIENT_INVALID_FSET), "%s %s %s", update_clock(GET_TIME), for_, temp2));
+		serversay(1, from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_CLIENT_INVALID_FSET), "%s %s %s", update_clock(GET_TIME), for_, temp2));
 	}
 	else if (!strncmp(line, "STATS ", 6))
 	{
@@ -555,7 +553,7 @@ irc.BitchX.com *** Notice -- Nick collision on nickserv(irc.distracted.net <-
 		for_ = next_arg(p, &p);
 		if ( (temp2 = ++p) )
 			chop(temp2, 1);
-		serversay(1, from_server, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_STATS_FSET), "%s %s %s %s", update_clock(GET_TIME), temp, for_, temp2));
+		serversay(1, from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_STATS_FSET), "%s %s %s %s", update_clock(GET_TIME), temp, for_, temp2));
 	}
 	else if (!strncmp(line, "Nick flooding detected by:", 26))
 	{
@@ -563,7 +561,7 @@ irc.BitchX.com *** Notice -- Nick collision on nickserv(irc.distracted.net <-
 		if (!(flags & NICK_FLOODING))
 			goto done;  	
 		p = line + 26;
-		serversay(1, from_server, "%s", convert_output_format(" Nick Flooding %K[%B$1-%K]", "%s %s", update_clock(GET_TIME), for_));
+		serversay(1, from, "%s", convert_output_format(" Nick Flooding %K[%B$1-%K]", "%s %s", update_clock(GET_TIME), for_));
 	}
 	else if (!strncmp(line, "Kill line active for", 20) || !strncmp(line+14, "K-line active for", 17))
 	{
@@ -574,13 +572,13 @@ irc.BitchX.com *** Notice -- Nick collision on nickserv(irc.distracted.net <-
 			for_ = line + 20;
 		else
 			for_ = line + 17;
-		serversay(1, from_server, "%s", convert_output_format(" Kill line for $1 active", "%s %s", update_clock(GET_TIME), for_));
+		serversay(1, from, "%s", convert_output_format(" Kill line for $1 active", "%s %s", update_clock(GET_TIME), for_));
 	}
 	else 
 	{
 		if (!(flags & SERVER_CRAP))
 			goto done;  	
-		serversay(1, from_server, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_FSET), "%s %s %s", update_clock(GET_TIME), from, stripansicodes(line)));
+		serversay(1, from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_FSET), "%s %s %s", update_clock(GET_TIME), from, stripansicodes(line)));
 		add_last_type(&last_servermsg[0], MAX_LAST_MSG, NULL, NULL, NULL, line);
 	} 
 done:
@@ -589,16 +587,14 @@ done:
 }
 #endif
 
-static	void parse_server_notice(char *from, char *line)
+static void parse_server_notice(const char *from, char *line)
 {
 	int	flag = 0;
 	int	up_status = 0;
-const	char	*f;	
+	const char *f = from;
 				
-	f = from;
 	if (!f || !*f)
-		if (!(f = get_server_itsname(from_server)))
-			f = get_server_name(from_server);
+		f = get_server_itsname(from_server);
 			
 	if (*line != '*'  && *line != '#' && strncmp(line, "MOTD ", 4))
 		flag = 1;
@@ -621,11 +617,9 @@ const	char	*f;
 #endif
 			if (do_hook(SERVER_NOTICE_LIST, flag ? "%s *** %s" : "%s %s", f, line))
 			{
-				char *for_;
-				for_ = next_arg(line,&line);
-				serversay(1, from_server, "%s", 
-				convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_FSET), "%s %s %s", update_clock(GET_TIME), 
-				f, stripansicodes(line)));
+				next_arg(line, &line);
+				serversay(1, f, "%s", convert_output_format(
+					fget_string_var(FORMAT_SERVER_NOTICE_FSET), "%s %s %s", update_clock(GET_TIME), f, stripansicodes(line)));
 				add_last_type(&last_servermsg[0], MAX_LAST_MSG, NULL, NULL, NULL, line);
 			}
 		}
@@ -637,7 +631,7 @@ const	char	*f;
 				goto done1;
 #endif
 			if (do_hook(SERVER_NOTICE_LIST, flag ? "%s *** %s" : "%s %s", f, line))
-				serversay(1, from_server, "%s", 
+				serversay(1, f, "%s", 
 				convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_FSET), "%s %s %s", update_clock(GET_TIME), 
 				f, stripansicodes(line)));
 			add_last_type(&last_servermsg[0], MAX_LAST_MSG, NULL, NULL, NULL, line);
@@ -744,7 +738,10 @@ void parse_notice(char *from, char **Args)
 		return;
 	}
 
-	if (!from || !*from || !strcmp(get_server_itsname(from_server), from))
+	/* An unprefixed NOTICE or one received before registration is assumed to
+	 * be from the local server. */
+	if (!from || !*from || !is_server_connected(from_server) || 
+	    !strcmp(get_server_itsname(from_server), from))
 	{
 		parse_server_notice(from, line);
 		return;

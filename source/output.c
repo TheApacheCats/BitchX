@@ -274,14 +274,13 @@ void	log_put_it (const char *topic, const char *format, ...)
 	}
 }
 
-char *ov_server(int server)
+static char *ov_format(const char *server_name)
 {
 	char *c;
 	char *d;
 	static char tmpstr[61];
-	const char *string = get_server_itsname(server);
-	    
-	strlcpy(tmpstr, string, sizeof tmpstr);
+
+	strlcpy(tmpstr, server_name, sizeof tmpstr);
 	if (!(c = strrchr(tmpstr,'.')))
 		return tmpstr;
 	*c = 0;
@@ -291,32 +290,36 @@ char *ov_server(int server)
 	return d;
 }
 
-void serversay(int save, int from_server, const char *format, ...)
+char *ov_server(int server)
 {
-	Window	*old_target_window = target_window;
-	char 	servername[200];
-	int	len = 0;	
-	char	*out = NULL;
+	return ov_format(get_server_itsname(server));
+}
+
+void serversay(int save, const char *from, const char *format, ...)
+{
+	Window *old_target_window = target_window;
+	char *out = NULL;
+
 	if (get_int_var(OV_VAR))
 		target_window = get_window_by_name("OPER_VIEW");
-        if (window_display && format)
-        {
+
+	if (window_display && format)
+	{
 		va_list args;
 		va_start (args, format);
 		vsnprintf(putbuf, LARGE_BIG_BUFFER_SIZE, format, args);
 		va_end(args);
-		strmcpy(servername, convert_output_format(get_string_var(SERVER_PROMPT_VAR), "%s", ov_server(from_server)?ov_server(from_server):empty_string), 79);
-		len = strlen(putbuf);
-		out = alloca(strlen(servername)+len+5);
-		len = strlen(servername);
-		strcpy(out, servername); out[len] = ' '; out[len+1] = 0;
-		strcat(out, putbuf);
-		if (*out)
-			put_echo(out);
+
+		out = m_sprintf("%s %s", 
+			convert_output_format(get_string_var(SERVER_PROMPT_VAR), "%s", ov_format(from)),
+			putbuf);
+		put_echo(out);
 	}
+
 	target_window = old_target_window;
 	if (save && out)
 		add_last_type(&last_servermsg[0], MAX_LAST_MSG, NULL, NULL, NULL, out);
+	new_free(&out);
 }
 /*
  * Error is exactly like yell, except that if the error occured while
