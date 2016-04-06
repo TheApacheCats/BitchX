@@ -1590,7 +1590,6 @@ static char *status_lastjoin (Window *window)
 
 static char *status_newserver (Window *window)
 {
-extern char *ov_server(int);
 	if (window->server != -1)	
 		return ov_server(window->server);
 	RETURN_EMPTY;
