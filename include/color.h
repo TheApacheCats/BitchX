@@ -446,7 +446,7 @@
 #endif
 
 
-#define DEFAULT_SERVER_PROMPT "%K[%c$0%K] "
+#define DEFAULT_SERVER_PROMPT "%K[%c$0%K]"
 
 #define DEFAULT_FORMAT_WATCH_SIGNOFF_FSET "$G $0!$1@$2 has signed off"
 #define DEFAULT_FORMAT_WATCH_SIGNON_FSET "$G $0!$1@$2 has signed on $3"
@@ -655,7 +655,7 @@
 #define DEFAULT_FORMAT_SERVER_MSG2_FSET "$G%n $1-"
 #define DEFAULT_FORMAT_SERVER_MSG2_FROM_FSET "$G%n $1-"
 
-#define DEFAULT_FORMAT_SERVER_NOTICE_FSET " $2-"
+#define DEFAULT_FORMAT_SERVER_NOTICE_FSET "$2-"
 #define DEFAULT_FORMAT_SERVER_NOTICE_BOT_FSET " Possible bot: %C$1 %K[%c$2-%K]%n"
 #define DEFAULT_FORMAT_SERVER_NOTICE_BOT1_FSET " Possible $1 bot: %C$2 %K[%c$3-%K]%n"
 #define DEFAULT_FORMAT_SERVER_NOTICE_BOT_ALARM_FSET " $1 alarm activated: %C$2 %K[%c$3-%K]%n"
@@ -893,7 +893,7 @@
 #endif
 #endif
 
-#define DEFAULT_SERVER_PROMPT "[0m[1;32m[$0]"
+#define DEFAULT_SERVER_PROMPT "%G[$0]"
 
 #define DEFAULT_FORMAT_WATCH_SIGNOFF_FSET "$G $0!$1@$2 has signed off"
 #define DEFAULT_FORMAT_WATCH_SIGNON_FSET "$G $0!$1@$2 has signed on $3"
