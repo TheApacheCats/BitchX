@@ -1004,38 +1004,36 @@ int i, j;
 	return flag;
 }
 
-char *ircop_flags_to_str(long flag)
+char *ircop_flags_to_str(long flag, char *buffer, size_t len)
 {
-	int i, p;
-	char *buffer = new_malloc(IRCD_BUFFER_SIZE);
+	int i;
 
-	for (i = 0, p = 1; opflags[i]; i++, p <<= 1)
+	buffer[0] = 0;
+	for (i = 0; opflags[i]; i++)
 	{
-		if (flag & p)
+		if (flag & (1L << i))
 		{
-			strlcat(buffer, opflags[i], sizeof buffer);
-			strlcat(buffer, ",", sizeof buffer);
+			strlcat(buffer, opflags[i], len);
+			strlcat(buffer, ",", len);
 		}
 	}
-	if (*buffer)
-		chop(buffer, 1);
-	return buffer;
+	return chop(buffer, 1);
 }
 
 void print_ircop_flags(int server)
 {
-long flag;
-char *buffer = NULL;
-	flag = get_server_ircop_flags(server);
-	buffer = ircop_flags_to_str(flag);
+	char buffer[200];
+	long flag = get_server_ircop_flags(server);
+
+	ircop_flags_to_str(flag, buffer, sizeof buffer);
 	put_it("%s", convert_output_format("$G %bOper%BView%n: $0-", "%s", *buffer ? flag == -1 ? "ALL" : buffer : "NONE"));
-	new_free(&buffer);
 }
 
 void convert_swatch(Window *win, char *str, int unused)
 {
-unsigned long flag;
-char *p;
+	unsigned long flag;
+	char buffer[200];
+
 	if (from_server != -1)
 	{
 		flag = ircop_str_to_flags(get_server_ircop_flags(from_server), str);
@@ -1044,9 +1042,8 @@ char *p;
 	else
 		flag = ircop_str_to_flags(default_swatch, str);
 	default_swatch = flag;
-	p = ircop_flags_to_str(flag);
-	set_string_var(SWATCH_VAR, p);
-	new_free(&p);
+	ircop_flags_to_str(flag, buffer, sizeof buffer);
+	set_string_var(SWATCH_VAR, buffer);
 }
 
 void set_operview_flags(int server, unsigned long flags, int neg)

@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Fix display of the OperView SWATCH flags variable. (caf)
+
 * Update default /fset SERVER_NOTICE value to remove extra space. (caf)
 
 * Treat all NOTICEs before registration as local server notices. (caf)
