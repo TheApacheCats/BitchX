@@ -608,32 +608,18 @@ static void parse_server_notice(const char *from, char *line)
 			reset_display_target();
 		else 
 #endif
-		if (strstr(line, "***"))
 		{
-			set_display_target(NULL, LOG_SNOTE);
-#ifdef WANT_OPERVIEW
-			if (get_int_var(OV_VAR) && !(get_server_ircop_flags(from_server) & SERVER_CRAP))
-				goto done1;
-#endif
-			if (do_hook(SERVER_NOTICE_LIST, flag ? "%s *** %s" : "%s %s", f, line))
-			{
+			if (strstr(line, "***"))
 				next_arg(line, &line);
-				serversay(1, f, "%s", convert_output_format(
-					fget_string_var(FORMAT_SERVER_NOTICE_FSET), "%s %s %s", update_clock(GET_TIME), f, stripansicodes(line)));
-				add_last_type(&last_servermsg[0], MAX_LAST_MSG, NULL, NULL, NULL, line);
-			}
-		}
-		else
-		{
+
 			set_display_target(NULL, LOG_SNOTE);
 #ifdef WANT_OPERVIEW
 			if (get_int_var(OV_VAR) && !(get_server_ircop_flags(from_server) & SERVER_CRAP))
 				goto done1;
 #endif
-			if (do_hook(SERVER_NOTICE_LIST, flag ? "%s *** %s" : "%s %s", f, line))
-				serversay(1, f, "%s", 
-				convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_FSET), "%s %s %s", update_clock(GET_TIME), 
-				f, stripansicodes(line)));
+			serversay(1, f, "%s", convert_output_format(
+				fget_string_var(FORMAT_SERVER_NOTICE_FSET), "%s %s %s",
+				update_clock(GET_TIME), f, stripansicodes(line)));
 			add_last_type(&last_servermsg[0], MAX_LAST_MSG, NULL, NULL, NULL, line);
 		}
 	}

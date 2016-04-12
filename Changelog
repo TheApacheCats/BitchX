@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Don't fire the SERVER_NOTICE hook more than once per notice. (caf)
+
 * Fix display of the OperView SWATCH flags variable. (caf)
 
 * Update default /fset SERVER_NOTICE value to remove extra space. (caf)
