@@ -608,7 +608,7 @@ static void parse_server_notice(const char *from, char *line)
 		else 
 #endif
 		{
-			if (strstr(line, "***"))
+			if (!flag)
 				next_arg(line, &line);
 
 			set_display_target(NULL, LOG_SNOTE);
