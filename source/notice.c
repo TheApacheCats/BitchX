@@ -66,26 +66,22 @@ long	oper_kills = 0,
 #ifdef WANT_OPERVIEW
 
 extern void check_orig_nick(char *);
-static	int  handle_oper_vision(const char *from, char *cline, int *up_status)
+static void handle_oper_vision(const char *from, char *line)
 {
 	char *fr, *for_, *temp, *temp2;
 	char *p;
-	int done_one = 0;
-	char *line;
-	unsigned long flags;
+	int up_status = 0;
+	const unsigned long flags = get_server_ircop_flags(from_server);
 			
 	p = fr = for_ = temp = temp2 = NULL;
 
-	if (from_server == -1 || !(flags = get_server_ircop_flags(from_server)))
-		return 0;
-
-	line = LOCAL_COPY(cline);
 	if (!strncmp(line, "*** Notice -- ", 13))
 		line += 14;
 	else if (!strncmp(line, "*** \002Notice\002 --", 15))
 		line += 16;
+	else if (!strncmp(line, "*** ", 4))
+		line += 4;
 
-	done_one++;
 /*
 [ss]!irc.cs.cmu.edu D-line active for think[think@skateboarders.edu]
 */
@@ -103,7 +99,6 @@ static	int  handle_oper_vision(const char *from, char *cline, int *up_status)
 		fr = next_arg(q, &q);
 		q += 6; 
 		check_orig_nick(for_);
-
 		
 		if (strchr(fr, '.'))
 		{
@@ -127,7 +122,7 @@ static	int  handle_oper_vision(const char *from, char *cline, int *up_status)
 			else
 				serversay(from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_KILL_FSET), "%s %s %s %s", update_clock(GET_TIME), fr, for_, q));
 		}
-		(*up_status)++;
+		up_status++;
 	}
 	else if (!strncmp(line, "Nick collision on", 17) || !strncmp(line, "Nick change collision on", 24))
 	{
@@ -144,7 +139,7 @@ irc.BitchX.com *** Notice -- Nick collision on nickserv(irc.distracted.net <-
 		else
 			p = line + 18;
 		serversay(from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_NICK_COLLISION_FSET), "%s %s", update_clock(GET_TIME), p));
-		(*up_status)++;
+		up_status++;
 	}
 	else if (!strncmp(line, "IP# Mismatch:", 13))
 	{
@@ -582,14 +577,14 @@ irc.BitchX.com *** Notice -- Nick collision on nickserv(irc.distracted.net <-
 	} 
 done:
 	reset_display_target();
-	return done_one;
+	if (up_status)
+		update_all_status(current_window, NULL, 0);
 }
 #endif
 
 static void parse_server_notice(const char *from, char *line)
 {
 	int	flag = 0;
-	int	up_status = 0;
 	const char *f = from;
 				
 	if (!f || !*f)
@@ -603,28 +598,18 @@ static void parse_server_notice(const char *from, char *line)
 	if (do_hook(SERVER_NOTICE_LIST, flag?"%s *** %s":"%s %s", f, line))
 	{
 #ifdef WANT_OPERVIEW
-		if (handle_oper_vision(f, line, &up_status))
-			reset_display_target();
-		else 
-#endif
-		{
-			if (!flag)
-				next_arg(line, &line);
+		handle_oper_vision(f, line);
+#else	
+		if (!flag)
+			next_arg(line, &line);
 
-			set_display_target(NULL, LOG_SNOTE);
-#ifdef WANT_OPERVIEW
-			if (get_int_var(OV_VAR) && !(get_server_ircop_flags(from_server) & SERVER_CRAP))
-				goto done1;
+		set_display_target(NULL, LOG_SNOTE);
+		serversay(f, "%s", convert_output_format(
+			fget_string_var(FORMAT_SERVER_NOTICE_FSET), "%s %s %s",
+			update_clock(GET_TIME), f, stripansicodes(line)));
+		reset_display_target();
 #endif
-			serversay(f, "%s", convert_output_format(
-				fget_string_var(FORMAT_SERVER_NOTICE_FSET), "%s %s %s",
-				update_clock(GET_TIME), f, stripansicodes(line)));
-		}
 	}
-	if (up_status)
-		update_all_status(current_window, NULL, 0);
-done1:
-	reset_display_target();
 }
 
 static int check_ignore_notice(char *from, char *to, unsigned long type, char *line, char **high)
