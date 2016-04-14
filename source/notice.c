@@ -151,14 +151,14 @@ irc.BitchX.com *** Notice -- Nick collision on nickserv(irc.distracted.net <-
 		if (!(flags & IP_MISMATCH))
 			goto done;  	
 		for_ = line + 14;
-		serversay(from, "%s", convert_output_format(" IP Mismatch %C$1-", "%s %s", update_clock(GET_TIME), for_));
+		serversay(from, "%s", convert_output_format("IP Mismatch %C$1-", "%s %s", update_clock(GET_TIME), for_));
 	}
 	else if (!strncmp(line, "Hacked ops on opless channel:", 29))
 	{
 		if (!(flags & HACK_OPS))
 			goto done;  	
 		for_ = line + 29;
-		serversay(from, "%s", convert_output_format(" Hacked ops on $0", "%s", for_));
+		serversay(from, "%s", convert_output_format("Hacked ops on $0", "%s", for_));
 	}
 	else if (!strncmp(line, "connect failure:", 16))
 	{
@@ -167,14 +167,14 @@ irc.BitchX.com *** Notice -- Nick collision on nickserv(irc.distracted.net <-
 		if (!(flags & SERVER_CRAP))
 			goto done;  	
 		for_ = line + 16;
-		serversay(from, "%s", convert_output_format(" Connect failure %K[%n$0-%K]", "%s", for_));
+		serversay(from, "%s", convert_output_format("Connect failure %K[%n$0-%K]", "%s", for_));
 	} 
 	else if (!strncmp(line, "Identd response differs", 22))
 	{
 		if (!(flags & IDENTD))
 			goto done;  	
 		for_ = line + 24;
-		serversay(from, "%s", convert_output_format(" Identd response differs %K[%C$1-%K]", "%s %s", update_clock(GET_TIME), for_));
+		serversay(from, "%s", convert_output_format("Identd response differs %K[%C$1-%K]", "%s %s", update_clock(GET_TIME), for_));
 	}
   	else if (!strncmp(line, "Fake: ", 6)) /* MODE */
   	{
@@ -360,7 +360,7 @@ irc.BitchX.com *** Notice -- Nick collision on nickserv(irc.distracted.net <-
 			if (*temp2 == '(')
 				temp2++;
 		}
-		serversay(from, "%s", convert_output_format(" SQUIT of $1 from $2 %K[%R$3-%K]", "%s %s %s %s", update_clock(GET_TIME), for_, fr, temp2));
+		serversay(from, "%s", convert_output_format("SQUIT of $1 from $2 %K[%R$3-%K]", "%s %s %s %s", update_clock(GET_TIME), for_, fr, temp2));
 	} 
 	else if (!strncmp(line, "Received SERVER", 15))
 	{
@@ -377,7 +377,7 @@ irc.BitchX.com *** Notice -- Nick collision on nickserv(irc.distracted.net <-
 			if (*temp2 == '(')
 				temp2++;
 		}
-		serversay(from, "%s", convert_output_format(" Received SERVER %c$1%n from %c$2%n %K[%W$3-%K]", "%s %s %s %s", update_clock(GET_TIME), fr, for_, temp2));
+		serversay(from, "%s", convert_output_format("Received SERVER %c$1%n from %c$2%n %K[%W$3-%K]", "%s %s %s %s", update_clock(GET_TIME), fr, for_, temp2));
 	} 
 	else if (!strncmp(line, "Sending SQUIT", 13))
 	{
@@ -390,7 +390,7 @@ irc.BitchX.com *** Notice -- Nick collision on nickserv(irc.distracted.net <-
 		chop(temp2, 1);
 		if (*temp2 == '(') temp2++;
 	    }
-	    serversay(from, "%s", convert_output_format(" Sending SQUIT %c$1%n %K[%R$2-%K]", "%s %s %s", update_clock(GET_TIME), fr, temp2));
+	    serversay(from, "%s", convert_output_format("Sending SQUIT %c$1%n %K[%R$2-%K]", "%s %s %s", update_clock(GET_TIME), fr, temp2));
 	}
 	else if (!strncmp(line, "Sending SERVER", 14))
 	{
@@ -403,7 +403,7 @@ irc.BitchX.com *** Notice -- Nick collision on nickserv(irc.distracted.net <-
 		chop(temp2, 1);
 		if (*temp2 == '(') temp2++;
 	    }
-	    serversay(from, "%s", convert_output_format(" Sending SERVER %c$1%n %K[%W$2-%K]", "%s %s %s", update_clock(GET_TIME), fr, temp2));
+	    serversay(from, "%s", convert_output_format("Sending SERVER %c$1%n %K[%W$2-%K]", "%s %s %s", update_clock(GET_TIME), fr, temp2));
 	}
 	else if (!strncmp(line, "WALLOPS :Remote CONNECT", 23))
 	{
@@ -414,7 +414,7 @@ irc.BitchX.com *** Notice -- Nick collision on nickserv(irc.distracted.net <-
 		for_ = next_arg(p, &p);
 		fr = next_arg(p, &p);
 		next_arg(p, &temp2);
-		serversay(from, "%s", convert_output_format(" Remote Connect of $1:$2 from $3", "%s %s %s %s", update_clock(GET_TIME), for_, fr, temp2));
+		serversay(from, "%s", convert_output_format("Remote Connect of $1:$2 from $3", "%s %s %s %s", update_clock(GET_TIME), for_, fr, temp2));
 	}
 	else if (!strncmp(line, "Client connecting", 17) || !strncmp(line, "Client exiting", 14))
 	{
@@ -561,7 +561,7 @@ irc.BitchX.com *** Notice -- Nick collision on nickserv(irc.distracted.net <-
 		if (!(flags & NICK_FLOODING))
 			goto done;  	
 		p = line + 26;
-		serversay(from, "%s", convert_output_format(" Nick Flooding %K[%B$1-%K]", "%s %s", update_clock(GET_TIME), for_));
+		serversay(from, "%s", convert_output_format("Nick Flooding %K[%B$1-%K]", "%s %s", update_clock(GET_TIME), for_));
 	}
 	else if (!strncmp(line, "Kill line active for", 20) || !strncmp(line+14, "K-line active for", 17))
 	{
@@ -572,7 +572,7 @@ irc.BitchX.com *** Notice -- Nick collision on nickserv(irc.distracted.net <-
 			for_ = line + 20;
 		else
 			for_ = line + 17;
-		serversay(from, "%s", convert_output_format(" Kill line for $1 active", "%s %s", update_clock(GET_TIME), for_));
+		serversay(from, "%s", convert_output_format("Kill line for $1 active", "%s %s", update_clock(GET_TIME), for_));
 	}
 	else 
 	{
