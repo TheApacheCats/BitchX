@@ -295,18 +295,19 @@ char *ov_server(int server)
 	return ov_format(get_server_itsname(server));
 }
 
-void serversay(int save, const char *from, const char *format, ...)
+void serversay(const char *from, const char *format, ...)
 {
 	Window *old_target_window = target_window;
-	char *out = NULL;
 
 	if (get_int_var(OV_VAR))
 		target_window = get_window_by_name("OPER_VIEW");
 
 	if (window_display && format)
 	{
+		char *out;
 		va_list args;
-		va_start (args, format);
+
+		va_start(args, format);
 		vsnprintf(putbuf, LARGE_BIG_BUFFER_SIZE, format, args);
 		va_end(args);
 
@@ -314,12 +315,11 @@ void serversay(int save, const char *from, const char *format, ...)
 			convert_output_format(get_string_var(SERVER_PROMPT_VAR), "%s", ov_format(from)),
 			putbuf);
 		put_echo(out);
+		add_last_type(&last_servermsg[0], MAX_LAST_MSG, NULL, NULL, NULL, out);
+		new_free(&out);
 	}
 
 	target_window = old_target_window;
-	if (save && out)
-		add_last_type(&last_servermsg[0], MAX_LAST_MSG, NULL, NULL, NULL, out);
-	new_free(&out);
 }
 /*
  * Error is exactly like yell, except that if the error occured while

@@ -22,7 +22,7 @@
 
 	void	say (const char *, ...);
 	void	BX_bitchsay (const char *, ...);
-	void	serversay (int, const char *, const char *, ...);
+	void	serversay (const char *, const char *, ...);
 	void	BX_yell (const char *, ...);
 	void	error (const char *, ...);
 	
