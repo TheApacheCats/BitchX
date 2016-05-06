@@ -1629,34 +1629,32 @@ BUILT_IN_COMMAND(url_grabber)
 
 BUILT_IN_COMMAND(serv_stat)
 {
-extern long nick_collisions, oper_kills, serv_fakes, serv_unauth, serv_split;
-extern long serv_rejoin, client_connects, serv_rehash, client_exits,serv_klines;
-extern long client_floods, client_invalid, stats_req, client_bot, client_bot_alarm;
+extern long nick_collisions, oper_kills, serv_fakes, serv_unauth;
+extern long client_connects, serv_rehash, client_exits,serv_klines;
+extern long client_floods, client_invalid, stats_req, client_bot;
 extern long oper_requests, serv_squits, serv_connects;
 #ifdef ONLY_STD_CHARS
 
 put_it("%s", convert_output_format("%G-----------%K[ %WServer %wStats %K]%G----------------------------------------------", NULL));
-put_it("%s", convert_output_format("%G| %CN%cick Collisions %K[%W$[-4]0%K]    %CO%cper Kills   %K[%W$[-4]1%K]", "%d %d", nick_collisions, oper_kills));
-put_it("%s", convert_output_format("%G| %CF%cake Modes      %K[%W$[-4]0%K]    %CU%cnauth       %K[%W$[-4]1%K]", "%d %d",serv_fakes, serv_unauth));
-put_it("%s", convert_output_format("%G| %CH%cigh Traffic    %K[%W$[-4]0%K]    %CN%corm Traffic %K[%W$[-4]1%K]", "%d %d",serv_split, serv_rejoin));
-put_it("%s", convert_output_format("%G| %CT%cotal Clients   %K[%W$[-4]0%K]    %CS%cerv rehash  %K[%W$[-4]1%K]", "%d %d",client_connects, serv_rehash));
-put_it("%s", convert_output_format("%G| %CC%client exits    %K[%W$[-4]0%K]    %CK%c-lines adds %K[%W$[-4]1%K]", "%d %d",client_exits, serv_klines));
-put_it("%s", convert_output_format("%G| %CC%client Floods   %K[%W$[-4]0%K]    %CS%ctats reqs   %K[%W$[-4]1%K]", "%d %d",client_floods, stats_req));
-put_it("%s", convert_output_format("%G| %CI%cnvalid User    %K[%W$[-4]0%K]    %CO%cper Reqs    %K[%W$[-4]1%K]", "%d %d",client_invalid, oper_requests));
-put_it("%s", convert_output_format("%G| %CP%cossible Bots   %K[%W$[-4]0%K]    %CB%cot Alarms   %K[%W$[-4]1%K]", "%d %d",client_bot, client_bot_alarm));
-put_it("%s", convert_output_format("%G| %CS%cerv Squits     %K[%W$[-4]0%K]    %CS%cerv Connect %K[%W$[-4]1%K]", "%d %d",serv_squits, serv_connects));
+put_it("%s", convert_output_format("%G| %CN%cick Collisions %K[%W$[-4]0%K]    %CO%cper Kills   %K[%W$[-4]1%K]", "%l %l", nick_collisions, oper_kills));
+put_it("%s", convert_output_format("%G| %CF%cake Modes      %K[%W$[-4]0%K]    %CU%cnauth       %K[%W$[-4]1%K]", "%l %l",serv_fakes, serv_unauth));
+put_it("%s", convert_output_format("%G| %CT%cotal Clients   %K[%W$[-4]0%K]    %CS%cerv rehash  %K[%W$[-4]1%K]", "%l %l",client_connects, serv_rehash));
+put_it("%s", convert_output_format("%G| %CC%client exits    %K[%W$[-4]0%K]    %CK%c-lines adds %K[%W$[-4]1%K]", "%l %l",client_exits, serv_klines));
+put_it("%s", convert_output_format("%G| %CC%client Floods   %K[%W$[-4]0%K]    %CS%ctats reqs   %K[%W$[-4]1%K]", "%l %l",client_floods, stats_req));
+put_it("%s", convert_output_format("%G| %CI%cnvalid User    %K[%W$[-4]0%K]    %CO%cper Reqs    %K[%W$[-4]1%K]", "%l %l",client_invalid, oper_requests));
+put_it("%s", convert_output_format("%G| %CP%cossible Bots   %K[%W$[-4]0%K]", "%l", client_bot));
+put_it("%s", convert_output_format("%G| %CS%cerv Squits     %K[%W$[-4]0%K]    %CS%cerv Connect %K[%W$[-4]1%K]", "%l %l",serv_squits, serv_connects));
 
 #else
 
 put_it("%s", convert_output_format("%GÚÄÄÄÄÄ---%gÄ%G-%K[ %WServer %wStats %K]-%gÄÄ%G-%gÄÄÄÄÄÄ---%KÄ%g--%KÄÄ%g-%KÄÄÄÄÄÄÄÄÄ--- --  - --- -- -", NULL));
 put_it("%s", convert_output_format("%G³ %CN%cick Collisions %K[%W$[-4]0%K]    %CO%cper Kills   %K[%W$[-4]1%K]", "%l %l", nick_collisions, oper_kills));
 put_it("%s", convert_output_format("%G³ %CF%cake Modes      %K[%W$[-4]0%K]    %CU%cnauth       %K[%W$[-4]1%K]", "%l %l",serv_fakes, serv_unauth));
-put_it("%s", convert_output_format("%g³ %CH%cigh Traffic    %K[%W$[-4]0%K]    %CN%corm Traffic %K[%W$[-4]1%K]", "%l %l",serv_split, serv_rejoin));
 put_it("%s", convert_output_format("%G³ %CT%cotal Clients   %K[%W$[-4]0%K]    %CS%cerv rehash  %K[%W$[-4]1%K]", "%l %l",client_connects, serv_rehash));
 put_it("%s", convert_output_format("%g| %CC%client exits    %K[%W$[-4]0%K]    %CK%c-lines adds %K[%W$[-4]1%K]", "%l %l",client_exits, serv_klines));
 put_it("%s", convert_output_format("%G: %CC%client Floods   %K[%W$[-4]0%K]    %CS%ctats reqs   %K[%W$[-4]1%K]", "%l %l",client_floods, stats_req));
 put_it("%s", convert_output_format("%G: %CI%cnvalid User    %K[%W$[-4]0%K]    %CO%cper Reqs    %K[%W$[-4]1%K]", "%l %l",client_invalid, oper_requests));
-put_it("%s", convert_output_format("%K| %CP%cossible Bots   %K[%W$[-4]0%K]    %CB%cot Alarms   %K[%W$[-4]1%K]", "%l %l",client_bot, client_bot_alarm));
+put_it("%s", convert_output_format("%K| %CP%cossible Bots   %K[%W$[-4]0%K]", "%l", client_bot));
 put_it("%s", convert_output_format("%g: %CS%cerv Squits     %K[%W$[-4]0%K]    %CS%cerv Connect %K[%W$[-4]1%K]", "%l %l",serv_squits, serv_connects));
 
 #endif

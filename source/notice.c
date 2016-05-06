@@ -48,8 +48,6 @@ long	oper_kills = 0,
 	nick_collisions = 0,
 	serv_fakes = 0,
 	serv_unauth = 0,
-	serv_split = 0,
-	serv_rejoin = 0,
 	serv_squits = 0,
 	serv_connects = 0,
 	client_connects = 0,
@@ -60,21 +58,17 @@ long	oper_kills = 0,
 	client_invalid = 0,
 	stats_req = 0,
 	client_bot = 0,
-	client_bot_alarm = 0,
 	oper_requests = 0;
 
 #ifdef WANT_OPERVIEW
 
 extern void check_orig_nick(char *);
-static void handle_oper_vision(const char *from, char *line)
+static void handle_oper_vision(const char *from, const char *line)
 {
-	char *fr, *for_, *temp, *temp2;
-	char *p;
+	char arg[4][IRCD_BUFFER_SIZE];
 	int up_status = 0;
 	const unsigned long flags = get_server_ircop_flags(from_server);
 			
-	p = fr = for_ = temp = temp2 = NULL;
-
 	if (!strncmp(line, "*** Notice -- ", 13))
 		line += 14;
 	else if (!strncmp(line, "*** \002Notice\002 --", 15))
@@ -86,26 +80,20 @@ static void handle_oper_vision(const char *from, char *line)
 [ss]!irc.cs.cmu.edu D-line active for think[think@skateboarders.edu]
 */
 	set_display_target(NULL, LOG_SNOTE);	
-	
-	if (!strncmp(line, "Received KILL message for ", 26))
-	{
-		char *q = line + 26;
-		int loc_check = 0;
 
-		for_ = next_arg(q, &q);
-		if (!end_strcmp(for_, ".", 1))
-			chop(for_, 1);
-		q += 5;
-		fr = next_arg(q, &q);
-		q += 6; 
-		check_orig_nick(for_);
+	/* "Received KILL message for %s. From %s Path: %s (%s)" */	
+	if (sscanf(line, "Received KILL message for %500[^.]. From %500s Path: %500s (%500[^)])", arg[0], arg[1], arg[2], arg[3]) == 4)
+	{
+		enum FSET_TYPES kill_fset;
+
+		check_orig_nick(arg[0]);
 		
-		if (strchr(fr, '.'))
+		if (strchr(arg[1], '.'))
 		{
 			nick_collisions++;
 			if (!(flags & NICK_COLLIDE))
-				goto done;  	
-			serversay(from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_NICK_COLLISION_FSET), "%s %s %s %s", update_clock(GET_TIME), fr, for_, q));
+				goto done; 
+			kill_fset = FORMAT_SERVER_NOTICE_NICK_COLLISION_FSET;
 		}
 		else 
 		{
@@ -113,461 +101,287 @@ static void handle_oper_vision(const char *from, char *line)
 			if (!(flags & NICK_KILL))
 				goto done;  	
 
-			if ((temp2 = next_arg(q, &q)))
-				loc_check = charcount(temp2, '!');
-			if (q && *q)
-				q++; chop(q, 1);
-			if (loc_check <= 2)		
-				serversay(from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_KILL_LOCAL_FSET), "%s %s %s %s", update_clock(GET_TIME), fr, for_, q));
+			if (charcount(arg[2], '!') <= 2)
+				kill_fset = FORMAT_SERVER_NOTICE_KILL_LOCAL_FSET;
 			else
-				serversay(from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_KILL_FSET), "%s %s %s %s", update_clock(GET_TIME), fr, for_, q));
+				kill_fset = FORMAT_SERVER_NOTICE_KILL_FSET;
 		}
-		up_status++;
+		serversay(from, "%s", convert_output_format(fget_string_var(kill_fset), "%s %s %s %s", update_clock(GET_TIME), arg[1], arg[0], arg[3]));
+		up_status = 1;
 	}
-	else if (!strncmp(line, "Nick collision on", 17) || !strncmp(line, "Nick change collision on", 24))
+    /* hybrid: "Nick collision on %s(%s <- %s)(both killed)"
+     * bahamut: "Nick collision on %s"
+     * ircnet: "Nick collision on %s (%s@%s)%s <- (%s@%s)%s"
+     * unreal: "Nick collision on %s (%s %ld <- %s %ld)"
+     */
+    else if (arg[1][0] = 0, sscanf(line, "Nick collision on %500[^( ] %500[^\n]", arg[0], arg[1]) > 0)
 	{
-#if 0
-irc.BitchX.com *** Notice -- Nick collision on nickserv(irc.distracted.net <-
-               irc.distracted.net[unknown@209.51.160.249])(both killed)
-[BitchX]  Nick collision llision killed on
-#endif               
 		nick_collisions++;
+
 		if (!(flags & NICK_COLLIDE))
 			goto done;  	
-		if (!strncmp(line+5, "change", 6))
-			p = line + 24;
-		else
-			p = line + 18;
-		serversay(from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_NICK_COLLISION_FSET), "%s %s", update_clock(GET_TIME), p));
-		up_status++;
+
+		serversay(from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_NICK_COLLISION_FSET), "%s %s %s", update_clock(GET_TIME), arg[0], arg[1]));
+		up_status = 1;
 	}
-	else if (!strncmp(line, "IP# Mismatch:", 13))
+	else if (sscanf(line, "IP# Mismatch: %500[^\n]", arg[0]) == 1)
 	{
 		if (!(flags & IP_MISMATCH))
-			goto done;  	
-		for_ = line + 14;
-		serversay(from, "%s", convert_output_format("IP Mismatch %C$1-", "%s %s", update_clock(GET_TIME), for_));
+			goto done;
+
+		serversay(from, "%s", convert_output_format("IP Mismatch %C$0-", "%s %s", arg[0]));
 	}
-	else if (!strncmp(line, "Hacked ops on opless channel:", 29))
+	else if (sscanf(line, "Hacked ops on opless channel: %500s", arg[0]) == 1)
 	{
 		if (!(flags & HACK_OPS))
-			goto done;  	
-		for_ = line + 29;
-		serversay(from, "%s", convert_output_format("Hacked ops on $0", "%s", for_));
+			goto done;
+
+		serversay(from, "%s", convert_output_format("Hacked ops on $0", "%s", arg[0]));
 	}
-	else if (!strncmp(line, "connect failure:", 16))
+	else if (sscanf(line, "connect failure: %500[^\n]", arg[0]) == 1)
 	{
 		client_connects++;
 		client_exits++;
 		if (!(flags & SERVER_CRAP))
-			goto done;  	
-		for_ = line + 16;
-		serversay(from, "%s", convert_output_format("Connect failure %K[%n$0-%K]", "%s", for_));
+			goto done;
+
+		serversay(from, "%s", convert_output_format("Connect failure %K[%n$0-%K]", "%s", arg[0]));
 	} 
-	else if (!strncmp(line, "Identd response differs", 22))
-	{
-		if (!(flags & IDENTD))
-			goto done;  	
-		for_ = line + 24;
-		serversay(from, "%s", convert_output_format("Identd response differs %K[%C$1-%K]", "%s %s", update_clock(GET_TIME), for_));
-	}
-  	else if (!strncmp(line, "Fake: ", 6)) /* MODE */
+  	else if (sscanf(line, "Fake: %500s MODE %500[^\n]", arg[0], arg[1]) == 2)
   	{
 		serv_fakes++;
 		if (!(flags & FAKE_MODE))
-			goto done;  	
-		p = line + 6;
-		if ((fr = next_arg(p, &temp)))
-		{
-			if (lookup_channel(fr, from_server, CHAN_NOUNLINK))
-				serversay(from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_FAKE_FSET), "%s %s %s", update_clock(GET_TIME), fr, temp));
-			else 
-				serversay(from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_FAKE_FSET), "%s %s %s", update_clock(GET_TIME), fr, temp));
-		}
+			goto done;
+
+		serversay(from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_FAKE_FSET), "%s %s MODE %s", update_clock(GET_TIME), arg[0], arg[1]));
   	}
-  	else if (!strncmp(line, "Unauthorized connection from",28))
+	/* "Unauthorized connection from %s." */
+  	else if (sscanf(line, "Unauthorized connection from %500s", arg[0]) == 1)
   	{
 		serv_unauth++;
 		if (!(flags & UNAUTHS))
-			goto done;  	
-		for_ = line + 28;
-		serversay(from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_UNAUTH_FSET), "%s %s", update_clock(GET_TIME), for_));
+			goto done;
+		
+		chop(arg[0], 1);
+		serversay(from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_UNAUTH_FSET), "%s %s", update_clock(GET_TIME), arg[0]));
 	}
-  	else if (!strncmp(line, "Too many connections from",25))
+	/* "Too many connections from %s." */
+  	else if (sscanf(line, "Too many connections from %500s", arg[0]) == 1)
   	{
 		serv_unauth++;
 		if (!(flags & TOO_MANY))
-			goto done;  	
-		for_ = line + 25;
-		serversay(from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_UNAUTH_FSET), "%s %s", update_clock(GET_TIME), for_));
+			goto done;
+
+		chop(arg[0], 1);
+		serversay(from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_UNAUTH_FSET), "%s %s", update_clock(GET_TIME), arg[0]));
 	}
-	else if (strstr(line, "Entering high-traffic mode -") || !strncmp(line, "still high-traffic mode -", 25))
-	{
-		char *q;
- 		serv_split++;
-		if (!(flags & TRAFFIC))
-			goto done;  	
-		if (!strncmp(line, "Entering", 8))
-		{
-			p = line + 28;
-			for_ = next_arg(p, &p);
-			q = temp2 = p;
-			if (temp2)
-			{
-				chop(temp2, 1);
-				q = temp2+2;
-			}
-		}
-		else if (!strncmp(line+10, "Entering", 8))
-		{
-			p = line + 38;
-			for_ = next_arg(p, &p);
-			q = temp2 = p;
-			if (temp2)
-			{
-				chop(temp2, 1);
-				q = temp2+2;
-			}
-		}
-		else
-		{
-			p = line + 25;
-			for_ = next_arg(p, &p);
-			q = temp2 = p;
-			if (temp2)
-			{
-				chop(temp2, 1);
-				q = temp2+2;
-			}
-		}
-		serversay(from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_TRAFFIC_HIGH_FSET), "%s %s %s", update_clock(GET_TIME), for_, q));
-	}
-	else if (!strncmp(line, "Resuming standard operation", 27))
-	{
-		serv_rejoin++;
-		if (!(flags & TRAFFIC))
-			goto done;  	
-		p = line + 27;
-		for_ = next_arg(p, &p);
-		if (for_ && *for_ == '-')
-			for_ = next_arg(p, &p); 
-		temp = next_arg(p, &temp2);
-		serversay(from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_TRAFFIC_NORM_FSET), "%s %s %s %s", update_clock(GET_TIME), for_, temp, temp2));
-	}
-	else if (wild_match("% is rehashing Server config*", line))
+	/* hybrid-7/ratbox/ircnet/unreal: "%s is rehashing server config file"
+	 * hybrid-8: "%s is rehashing configuration file(s)"
+	 * bahamut: "%s is rehashing Server config file while whistling innocently"
+	 * ircu: "%s is rehashing Server config file"
+	 */
+	else if (sscanf(line, "%500s is rehashing Server config %500s", arg[0], arg[1]) == 2 ||
+		sscanf(line, "%500s is rehashing server config %500s", arg[0], arg[1]) == 2 ||
+		sscanf(line, "%500s is rehashing configuration %500s", arg[0], arg[1]) == 2)
 	{
 		serv_rehash++;
 		if (!(flags & REHASH))
-			goto done;  	
-		p = line;
-		for_ = next_arg(p, &p);
-		serversay(from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_REHASH_FSET), "%s %s", update_clock(GET_TIME), for_));
+			goto done;
+
+		serversay(from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_REHASH_FSET), "%s %s", update_clock(GET_TIME), arg[0]));
 	}
-	else if (wild_match("% added K-Line for *", line))
+	/* hybrid/ratbox: "%s added K-Line for [%s@%s] [%s]"
+	 * bahamut: "%s added "LOCAL_BAN_NAME" for [%s@%s] [%s]"
+	 */
+	else if (sscanf(line, "%500s added %500s for [%500[^]]] [%500[^\n]", arg[0], arg[1], arg[2], arg[3]) == 4)
 	{
-		char *serv = NULL;
+		char oper[IRCD_BUFFER_SIZE];
+		char serv[IRCD_BUFFER_SIZE];
+
 		serv_klines++;
 
 		if (!(flags & KLINE))
-			goto done;  	
+			goto done;
 
-		p = line;
-		for_ = next_arg(p, &p);
-		if (!strncmp(p, "from", 4))
+		chop(arg[3], 1);
+		/* hybrid/ratbox: get_oper_name() is "%s!%s@%s{%s}" */
+		if (sscanf(arg[0], "%100[^!]!%*[^@]@%*[^{]{%100s", oper, serv) == 2 && strchr(serv, '.'))
 		{
-			next_arg(p, &p);
-			serv = next_arg(p, &p);
+			chop(serv, 1);
+			serversay(from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_GLINE_FSET), "%s %s %s %s [%s]", update_clock(GET_TIME), oper, arg[2], serv, arg[3]));
 		}
-		p += 17;
-		temp2 = next_arg(p, &temp);
-		if (++temp2)
-			chop(temp2, 1);
-		if (serv)
-			serversay(from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_GLINE_FSET), "%s %s %s %s %s", update_clock(GET_TIME), for_, temp2, serv, temp));
-		else
-			serversay(from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_KLINE_FSET), "%s %s %s %s", update_clock(GET_TIME), for_, temp2, temp));
-	}
-	else if (!strncmp(line, "Rejecting vlad/joh/com bot:", 27) || !strncmp(line+14, "Rejecting eggdrop bot:", 20) || !strncmp(line, "Rejecting ojnk/annoy bot", 24))
+		else	
+			serversay(from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_KLINE_FSET), "%s %s %s [%s]", update_clock(GET_TIME), arg[0], arg[2], arg[3]));
+	}	
+	/* "User %s (%s@%s) trying to join %s is a possible spambot"
+	 * "User %s (%s@%s) is a possible spambot"
+	 */
+	else if (sscanf(line, "User %500s (%500s is a possible spam%500s", arg[0], arg[1], arg[2]) == 3 ||
+		sscanf(line, "User %500s (%500s trying to join %*s is a possible spam%500s", arg[0], arg[1], arg[2]) == 3)
 	{
 		client_bot++;
+
 		if (!(flags & POSSIBLE_BOT))
 			goto done;
-		p = line + 10;
-		temp2 = next_arg(p, &p);
-		for_ = p + 4;
-		serversay(from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_BOT_FSET), "%s %s %s", update_clock(GET_TIME), for_, temp2));
+
+		chop(arg[1], 1);
+		serversay(from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_BOT_FSET), "%s %s %s", update_clock(GET_TIME), arg[0], arg[1]));
 	}
-	else if (!strncmp(line, "Possible bot ", 13))
+	/* ircnet/ircu/bahamut: "%s (%s@%s) is now operator (%c)"
+	 * hybrid-7/ratbox: "%s (%s@%s) is now an operator"
+	 * hybrid-8: "%s!%s@%s{%s} is now an operator"
+	 */
+	else if (sscanf(line, "%500s (%500s is now oper%500s", arg[0], arg[1], arg[2]) == 3 ||
+		sscanf(line, "%500s (%500s is now an oper%500s", arg[0], arg[1], arg[2]) == 3 ||
+		sscanf(line, "%500[^!]!%500s is now an oper%500s", arg[0], arg[1], arg[2]) == 3)
 	{
-		client_bot++;
-		if (!(flags & POSSIBLE_BOT))
-			goto done;  	
-		p = line + 13;
-		for_ = next_arg(p, &p);
-		if ((temp2 = next_arg(p, &p)))
-			chop(temp2, 1);
-		serversay(from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_BOT_FSET), "%s %s %s", update_clock(GET_TIME), for_, temp2));
-	}
-	else if (wild_match("Possible % bot *", line))
-	{
-		char *possible = NULL;
-		client_bot++;
-		if (!(flags & POSSIBLE_BOT))
-			goto done;  	
-		p = line;
-		possible = next_arg(p, &p);
-		next_arg(p, &p);
-		for_ = next_arg(p, &p);
-		if ((temp2 = next_arg(p, &p)))
-		{
-			chop(temp2, 1);
-			*temp2 = ' ';
-		}
-		serversay(from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_BOT1_FSET), "%s %s %s %s", update_clock(GET_TIME), possible?possible:"Unknown", for_, temp2));
-	}
-	else if (wild_match("% % is now operator*", line))
-	{
+		size_t len;
+
 		oper_requests++;
+
 		if (!(flags & OPER_MODE))
-			goto done;  	
-		p = line;
-		fr = next_arg(p, &p);
-		if ((temp2 = next_arg(p, &p)))
-		{
-			chop(temp2, 1);
-			if (*temp2 == '(')
-				*temp2 = ' ';
-		}
-		serversay(from, "%s", convert_output_format(fget_string_var(FORMAT_OPER_FSET), "%s %s %s", update_clock(GET_TIME), fr, temp2));
+			goto done;
+
+		len = strlen(arg[1]);
+		if (arg[1][len - 1]	== ')')
+			arg[1][len - 1] = 0;
+
+		serversay(from, "%s", convert_output_format(fget_string_var(FORMAT_OPER_FSET), "%s %s %s", update_clock(GET_TIME), arg[0], arg[1]));
 	} 
-	else if (!strncmp(line, "Received SQUIT", 14))
+	/* "Received SQUIT %s from %s (%s)" */
+	else if (sscanf(line, "Received SQUIT %500s from %500s (%500[^\n]", arg[0], arg[1], arg[2]) == 3)
 	{
 		serv_squits++;
+
 		if (!(flags & SQUIT))
-			goto done;  	
-		p = line + 14;
-		fr = next_arg(p, &p);
-		p += 5;
-		for_ = next_arg(p, &temp2);
-		if (temp2)
-		{
-			chop(temp2, 1);
-			if (*temp2 == '(')
-				temp2++;
-		}
-		serversay(from, "%s", convert_output_format("SQUIT of $1 from $2 %K[%R$3-%K]", "%s %s %s %s", update_clock(GET_TIME), for_, fr, temp2));
-	} 
-	else if (!strncmp(line, "Received SERVER", 15))
-	{
-		serv_squits++;
-		if (!(flags & SERVER_CONNECT))
-			goto done;  	
-		p = line + 15;
-		fr = next_arg(p, &p);
-		p += 5;
-		for_ = next_arg(p, &temp2);
-		if (temp2)
-		{
-			chop(temp2, 1);
-			if (*temp2 == '(')
-				temp2++;
-		}
-		serversay(from, "%s", convert_output_format("Received SERVER %c$1%n from %c$2%n %K[%W$3-%K]", "%s %s %s %s", update_clock(GET_TIME), fr, for_, temp2));
-	} 
-	else if (!strncmp(line, "Sending SQUIT", 13))
-	{
-	    serv_squits++;
-	    if (!(flags & SQUIT)) goto done;
-	    p = line + 13;
-	    fr = next_arg(p, &temp2);
-	    if (temp2)
-	    {
-		chop(temp2, 1);
-		if (*temp2 == '(') temp2++;
-	    }
-	    serversay(from, "%s", convert_output_format("Sending SQUIT %c$1%n %K[%R$2-%K]", "%s %s %s", update_clock(GET_TIME), fr, temp2));
+			goto done;
+
+		chop(arg[2], 1);
+		serversay(from, "%s", convert_output_format("SQUIT of $1 from $2 %K[%R$3-%K]", "%s %s %s %s", update_clock(GET_TIME), arg[0], arg[1], arg[2]));
 	}
-	else if (!strncmp(line, "Sending SERVER", 14))
-	{
-	    serv_squits++;
-	    if (!(flags & SERVER_CONNECT)) goto done;
-	    p = line + 14;
-	    fr = next_arg(p, &temp2);
-	    if (temp2)
-	    {
-		chop(temp2, 1);
-		if (*temp2 == '(') temp2++;
-	    }
-	    serversay(from, "%s", convert_output_format("Sending SERVER %c$1%n %K[%W$2-%K]", "%s %s %s", update_clock(GET_TIME), fr, temp2));
-	}
-	else if (!strncmp(line, "WALLOPS :Remote CONNECT", 23))
+	/* "Received SERVER %s from %s (%d %s)" */
+	else if (sscanf(line, "Received SERVER %500s from %500s (%500[^\n]", arg[0], arg[1], arg[2]) == 3)
 	{
 		serv_connects++;
+
 		if (!(flags & SERVER_CONNECT))
-			goto done;  	
-		p = line + 23;
-		for_ = next_arg(p, &p);
-		fr = next_arg(p, &p);
-		next_arg(p, &temp2);
-		serversay(from, "%s", convert_output_format("Remote Connect of $1:$2 from $3", "%s %s %s %s", update_clock(GET_TIME), for_, fr, temp2));
-	}
-	else if (!strncmp(line, "Client connecting", 17) || !strncmp(line, "Client exiting", 14))
+			goto done;
+
+		chop(arg[2], 1);
+		serversay(from, "%s", convert_output_format("Received SERVER %c$1%n from %c$2%n %K[%W$3-%K]", "%s %s %s %s", update_clock(GET_TIME), arg[0], arg[1], arg[2]));
+	} 
+	/* "Sending SQUIT %s (%s)" */
+	else if (sscanf(line, "Sending SQUIT %500s (%500[^\n]", arg[0], arg[1]) == 2)
 	{
-		char *q = strchr(line, ':');
-		char *port = empty_string;
-		int conn = !strncmp(line+7, "connect", 7) ? 1 : 0;
-		int dalnet = 0, ircnet = 0;
+		serv_squits++;
 
-		if (strlen(line) >= 19 && line[18] == ':')
-			q = NULL;
-		else
-			dalnet = (q == NULL);
+		if (!(flags & SQUIT))
+			goto done;
 
-		if (!dalnet)
-		{
-		    if ((q = strchr(q + 1, ' ')))
-		    {
-			    q++;
-			    if (conn)
-				ircnet = !strcmp(q, "is ");
-			    else
-				ircnet = !strcmp(q, "was ");
-		    }
-		}
+		chop(arg[1], 1);
+		serversay(from, "%s", convert_output_format("Sending SQUIT %c$1%n %K[%R$2-%K]", "%s %s %s", update_clock(GET_TIME), arg[0], arg[1]));
+	}
+	/* "Remote CONNECT %s %d from %s" */
+	else if (sscanf(line, "Remote CONNECT %500s %500s from %500s", arg[0], arg[1], arg[2]) == 3)
+	{
+		serv_connects++;
 
-		if (conn)
-			client_connects++;
-		else 
-			client_exits++;
+		if (!(flags & SERVER_CONNECT))
+			goto done;
+
+		serversay(from, "%s", convert_output_format("Remote Connect of $1:$2 from $3", "%s %s %s %s", update_clock(GET_TIME), arg[0], arg[1], arg[2]));
+	}
+	/* hybrid-7, ratbox: "Client connecting: %s (%s@%s) [%s] {%s} [%s]"
+     * hybrid-8: "Client connecting: %s (%s@%s) [%s] {%s} [%s] <%s>"
+     * ircu: "Client connecting: %s (%s@%s) [%s] {%s} [%s] <%s%s>"
+	 * bahamut: "Client connecting: %s (%s@%s) [%s] {%s}"
+	 * unreal: "Client connecting on port %d: %s (%s@%s) [%s] %s%s%s"
+	 */
+	else if (sscanf(line, "Client connecting: %500s (%500[^)]) %500[^\n]", arg[0], arg[1], arg[2]) == 3 ||
+		sscanf(line, "Client connecting on port %*[^:]: %500s (%500[^)]) %500[^\n]", arg[0], arg[1], arg[2]) == 3)
+	{
+		client_connects++;
 
 		if (!(flags & CLIENT_CONNECT))
-			goto done;  	
-		p = line;
-		next_arg(p, &p); next_arg(p, &p);
-		if (ircnet)
-		{
-		    for_ = LOCAL_COPY(p);
-		    fr = LOCAL_COPY(p);
-		    temp = LOCAL_COPY(p);
-		    temp2 = LOCAL_COPY(p);
+			goto done;
 
-		    if (conn) sscanf(p, "%s is %s from %s", for_, fr, temp);
-		    else sscanf(p, "%s was %s from %s", for_, fr, temp);
-
-		    q = p;
-		    sprintf(q, "%s@%s", fr, temp);
-		    if (!conn) 
-		    {
-			port = strstr(temp2, "reason:");
-			port += 8;
-		    }
-		} 
-		else if (dalnet && !conn)
-		{
-			for_ = next_arg(p, &p);			
-			q = temp2 = p;
-			if (temp2)
-			{
-				chop(temp2, 1);
-				q = temp2+1;
-			}
-		} 
-		else if (conn && dalnet)
-		{
-			next_arg(p, &p); next_arg(p, &p); 
-			port = next_arg(p, &p);
-			if (!(for_ = next_arg(p, &p)))
-				for_ = port;
-			{
-				q = temp2 = p;
-				chop(port, 1);
-				if (temp2)
-				{
-					chop(temp2, 1);
-					q = temp2+1;
-				}
-			}
-		}
-		else /* hybrid */
-		{
-		    for_ = q;
-		    if ((q = strchr(q, ' ')))
-		    {
-			    *q = 0;
-			    q += 2;
-		    }
-		    if ((port = strchr(q, ' ')))
-		    {
-			    *port = 0;
-			    port++;
-			    chop(q, 1);
-		    }
-		}
-		
-		serversay(from, "%s", convert_output_format(fget_string_var(conn ? FORMAT_SERVER_NOTICE_CLIENT_CONNECT_FSET : FORMAT_SERVER_NOTICE_CLIENT_EXIT_FSET), "%s %s %s %s", update_clock(GET_TIME), for_, q ? q : empty_string, port ? port : empty_string));
+		serversay(from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_CLIENT_CONNECT_FSET),
+			"%s %s %s %s", update_clock(GET_TIME), arg[0], arg[1], arg[2]));
 	}
-	else if (!strncmp(line, "Terminating client for excess", 29))
+	/* hybrid, ratbox, bahamut: "Client exiting: %s (%s@%s) [%s] [%s]"
+	 * ircu: "Client exiting: %s (%s@%s) [%s] [%s] <%s%s>"
+	 * unreal: "Client exiting: %s (%s@%s) [%s]"
+	 */
+	else if (sscanf(line, "Client exiting: %500s (%500[^)]) %500[^\n]", arg[0], arg[1], arg[2]) == 3)
 	{
-		char *q;
+		client_exits++;
 
+		if (!(flags & CLIENT_CONNECT))
+			goto done;
+
+		serversay(from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_CLIENT_EXIT_FSET),
+			"%s %s %s %s", update_clock(GET_TIME), arg[0], arg[1], arg[2]));
+	}
+	/* bahamut: "Flood -- %s!%s@%s (%d) Exceeds %d RecvQ"
+	 * unreal: "Flood -- %s!%s@%s (%d) exceeds %d recvQ"
+	 */
+	else if (sscanf(line, "Flood -- %500s %500[^\n]", arg[0], arg[1]) == 2)
+	{
 		client_floods++;
+
 		if (!(flags & TERM_FLOOD))
 			goto done;  	
 
-		p = line + 29;
-		for_ = next_arg(p, &p);
-		q = temp2 = p;
-		if (temp2)
-		{
-			chop(temp2, 1);
-			q = temp2+1;
-		}
-		serversay(from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_CLIENT_TERM_FSET), "%s %s %s", update_clock(GET_TIME), for_, q));
+		serversay(from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_CLIENT_TERM_FSET), "%s %s %s", update_clock(GET_TIME), arg[0], arg[1]));
 	}
-	else if (!strncmp(line, "Invalid username:", 17))
+	/* !ircnet: "Invalid username: %s (%s@%s)" */
+	else if (sscanf(line, "Invalid username: %500s (%500[^)])", arg[0], arg[1]) == 2)
 	{
-
 		client_invalid++;
+
 		if (!(flags & INVALID_USER))
 			goto done;  	
-		p = line + 17;
-		for_ = next_arg(p, &p);
-		if ((temp2 = next_arg(p, &p)))
-			chop(temp2, 1);
-		serversay(from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_CLIENT_INVALID_FSET), "%s %s %s", update_clock(GET_TIME), for_, temp2));
-	}
-	else if (!strncmp(line, "STATS ", 6))
-	{
 
+		serversay(from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_CLIENT_INVALID_FSET), "%s %s %s", update_clock(GET_TIME), arg[0], arg[1]));
+	}
+	/* ircnet: "Invalid username:  %s@%s." */
+	else if (sscanf(line, "Invalid username: %500s", arg[0]) == 1)
+	{
+		client_invalid++;
+
+		if (!(flags & INVALID_USER))
+			goto done;
+
+		chop(arg[0], 1);
+		serversay(from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_CLIENT_INVALID_FSET), "%s - %s", update_clock(GET_TIME), arg[0]));
+	}
+	/* "STATS %c requested by %s (%s@%s) [%s]" */
+	else if (sscanf(line, "STATS %500s requested by %500s (%500[^)]) [%500[^]]]", arg[0], arg[1], arg[2], arg[3]) == 4)
+	{
 		stats_req++;
+
 		if (!(flags & STATS_REQUEST))
 			goto done;  	
-		p = line + 6;
-		temp = next_arg(p, &p);
-		p += 12;
-		for_ = next_arg(p, &p);
-		if ( (temp2 = ++p) )
-			chop(temp2, 1);
-		serversay(from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_STATS_FSET), "%s %s %s %s", update_clock(GET_TIME), temp, for_, temp2));
-	}
-	else if (!strncmp(line, "Nick flooding detected by:", 26))
-	{
 
+		serversay(from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_STATS_FSET), "%s %s %s %s %s", update_clock(GET_TIME), arg[0], arg[1], arg[2], arg[3]));
+	}
+	else if (sscanf(line, "Nick flooding detected by: %500[^\n]", arg[0]) == 1)
+	{
 		if (!(flags & NICK_FLOODING))
 			goto done;  	
-		p = line + 26;
-		serversay(from, "%s", convert_output_format("Nick Flooding %K[%B$1-%K]", "%s %s", update_clock(GET_TIME), for_));
-	}
-	else if (!strncmp(line, "Kill line active for", 20) || !strncmp(line+14, "K-line active for", 17))
-	{
 
+		serversay(from, "%s", convert_output_format("Nick Flooding %K[%B$1-%K]", "%s %s", update_clock(GET_TIME), arg[0]));
+	}
+	/* ircu: "K-line active for %s%s"
+	 * ircnet: "Kill line active for %s"
+	 */
+	else if (sscanf(line, "Kill line active for %500[^\n]", arg[0]) == 1 ||
+		sscanf(line, "K-line active for %500[^\n]", arg[0]) == 1)
+	{
 		if (!(flags & KILL_ACTIVE))
-			goto done;  	
-		if (!strncmp(line + 14,"Kill", 4))
-			for_ = line + 20;
-		else
-			for_ = line + 17;
-		serversay(from, "%s", convert_output_format("Kill line for $1 active", "%s %s", update_clock(GET_TIME), for_));
+			goto done;
+
+		serversay(from, "%s", convert_output_format("Kill line for $1- active", "%s %s", update_clock(GET_TIME), arg[0]));
 	}
 	else 
 	{

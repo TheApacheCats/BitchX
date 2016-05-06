@@ -1,5 +1,8 @@
 [Changes 1.2.2]
 
+* Clean up handling of oper server notices, including removing some
+  obsolete notice types (eg "high-traffic mode"). (caf)
+
 * Unify handling of SWATCH NONE between OperView and non-OperView. (caf)
 
 * Don't double-up server notices in the /RELS list. (caf)
