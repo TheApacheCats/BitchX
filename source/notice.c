@@ -208,10 +208,10 @@ static void handle_oper_vision(const char *from, const char *line)
 		if (sscanf(arg[0], "%100[^!]!%*[^@]@%*[^{]{%100s", oper, serv) == 2 && strchr(serv, '.'))
 		{
 			chop(serv, 1);
-			serversay(from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_GLINE_FSET), "%s %s %s %s [%s]", update_clock(GET_TIME), oper, arg[2], serv, arg[3]));
+			serversay(from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_GLINE_FSET), "%s %s %s %s %s %s", update_clock(GET_TIME), oper, arg[2], serv, arg[1], arg[3]));
 		}
 		else	
-			serversay(from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_KLINE_FSET), "%s %s %s [%s]", update_clock(GET_TIME), arg[0], arg[2], arg[3]));
+			serversay(from, "%s", convert_output_format(fget_string_var(FORMAT_SERVER_NOTICE_KLINE_FSET), "%s %s %s %s %s", update_clock(GET_TIME), arg[0], arg[2], arg[1], arg[3]));
 	}	
 	/* "User %s (%s@%s) trying to join %s is a possible spambot"
 	 * "User %s (%s@%s) is a possible spambot"

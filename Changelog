@@ -1,5 +1,8 @@
 [Changes 1.2.2]
 
+* Change formatting of /FSETs SERVER_NOTICE_KLINE and SERVER_NOTICE_GLINE
+  to show the ban type. (caf)
+
 * Clean up handling of oper server notices, including removing some
   obsolete notice types (eg "high-traffic mode"). (caf)
 
