@@ -4010,7 +4010,7 @@ struct target_type target[4] =
 			add_last_type(&last_sent_msg[0], MAX_LAST_MSG, NULL, NULL, target[i].nick_list, copy);
 		}
 		else if ((i == 2) || (i == 3))
-			add_last_type(&last_sent_notice[0], MAX_LAST_MSG, target[i].nick_list, NULL, get_server_nickname(from_server), copy);
+			add_last_type(&last_sent_notice[0], MAX_LAST_MSG, get_server_nickname(from_server), NULL, target[i].nick_list, copy);
 
 		send_to_server("%s %s :%s", target[i].command, target[i].nick_list, copy);
 		new_free(&copy);

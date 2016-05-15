@@ -1391,9 +1391,9 @@ BUILT_IN_COMMAND(do_dirlasttype)
 	{
 		/* ??? */
 		t = &last_sent_notice[0]; size = MAX_LAST_MSG;
-		form = fget_string_var(FORMAT_SEND_NOTICE_FSET);
-		sform = "%s %s %s %s";
-		numargs = 4;
+		form = fget_string_var(FORMAT_RELSN_FSET);
+		sform = "%s %s %s";
+		numargs = 2;
 		if (len > 5 && command[len-1] == 'T')
 			what = TOPIC;
 	}

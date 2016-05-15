@@ -1,5 +1,8 @@
 [Changes 1.2.2]
 
+* Use /FSET RELSN to format /RELSN relayed messages instead of
+  /FSET SEND_NOTICE. (caf)
+
 * Change formatting of /FSETs SERVER_NOTICE_KLINE and SERVER_NOTICE_GLINE
   to show the ban type, and improve formatting of SERVER_NOTICE_CLIENT_CONNECT
   and SERVER_NOTICE_CLIENT_EXIT. (caf)
