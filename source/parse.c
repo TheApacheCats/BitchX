@@ -1261,7 +1261,7 @@ static	void p_invite(char *from, char **ArgList)
 		}
 		if (!(chan = lookup_channel(invite_channel, from_server, 0)))
 			check_auto_join(from_server, from, invite_channel, ArgList[2]);
-		add_last_type(&last_invite_channel[0], 1, from, FromUserHost, ArgList[1], ArgList[2]?ArgList[2]:empty_string);
+		add_last_type(&last_invite_channel[0], 1, from, FromUserHost, NULL, ArgList[1]);
 		reset_display_target();
 	}
 }

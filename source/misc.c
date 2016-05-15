@@ -1308,7 +1308,6 @@ BUILT_IN_COMMAND(do_dirlasttype)
 	char *channel = NULL; int count = -1;
 	LastMsg *t = NULL;
 	char *form = NULL;
-	char *sform;
 	int numargs = 5;
 	int size = 1;
 	int len = strlen(command);
@@ -1319,7 +1318,6 @@ BUILT_IN_COMMAND(do_dirlasttype)
 	{
 		t = &last_ctcp_reply[0];
 		form = fget_string_var(FORMAT_CTCP_REPLY_FSET);
-		sform = "%s %s %s %s %s";
 		if (len == 6 && command[len-1] == 'T')
 			what = TOPIC;
 	}
@@ -1327,7 +1325,6 @@ BUILT_IN_COMMAND(do_dirlasttype)
 	{
 		t = &last_sent_ctcp[0];
 		form = fget_string_var(FORMAT_SEND_CTCP_FSET);
-		sform = "%s %s %s %s %s";
 		if (len > 4 && command[len-1] == 'T')
 			what = TOPIC;
 	}
@@ -1336,7 +1333,6 @@ BUILT_IN_COMMAND(do_dirlasttype)
 		t = &last_dcc[0];
 		size = MAX_LAST_MSG;
 		form = fget_string_var(FORMAT_DCC_CHAT_FSET);
-		sform = "%s %s %s %s";
 		if (len > 4 && command[len-1] == 'T')
 			what = TOPIC;
 		numargs = 4;
@@ -1346,7 +1342,6 @@ BUILT_IN_COMMAND(do_dirlasttype)
 		t = &last_sent_dcc[0];
 		size = MAX_LAST_MSG;
 		form = fget_string_var(FORMAT_DCC_CHAT_FSET);
-		sform = "%s %s %s %s";
 		if (len > 5 && command[len-1] == 'T')
 			what = TOPIC;
 		numargs = 4;
@@ -1355,8 +1350,7 @@ BUILT_IN_COMMAND(do_dirlasttype)
 	{
 		t = &last_invite_channel[0];
 		form = fget_string_var(FORMAT_INVITE_FSET);
-		numargs = 4;
-		sform = "%s %s %s";
+		numargs = 3;
 		if (len > 4 && command[len-1] == 'T')
 			what = TOPIC;
 	}
@@ -1365,7 +1359,6 @@ BUILT_IN_COMMAND(do_dirlasttype)
 		/* ??? */
 		t = &last_msg[0]; size = MAX_LAST_MSG;
 		form = fget_string_var(FORMAT_RELM_FSET);
-		sform = "%s %s %s %s %s";
 		if (len > 4 && command[len-1] == 'T')
 			what = TOPIC;
 	}
@@ -1374,7 +1367,6 @@ BUILT_IN_COMMAND(do_dirlasttype)
 		/* ??? */
 		t = &last_notice[0]; size = MAX_LAST_MSG;
 		form = fget_string_var(FORMAT_RELN_FSET);
-		sform = "%s %s %s %s %s";
 		if (len > 4 && command[len-1] == 'T')
 			what = TOPIC;
 	}
@@ -1383,7 +1375,6 @@ BUILT_IN_COMMAND(do_dirlasttype)
 		/* ??? */
 		t = &last_sent_msg[0]; size = MAX_LAST_MSG;
 		form = fget_string_var(FORMAT_RELSM_FSET);
-		sform = "%s %s %s %s %s";
 		if (len > 5 && command[len-1] == 'T')
 			what = TOPIC;
 	}
@@ -1392,7 +1383,6 @@ BUILT_IN_COMMAND(do_dirlasttype)
 		/* ??? */
 		t = &last_sent_notice[0]; size = MAX_LAST_MSG;
 		form = fget_string_var(FORMAT_RELSN_FSET);
-		sform = "%s %s %s";
 		numargs = 2;
 		if (len > 5 && command[len-1] == 'T')
 			what = TOPIC;
@@ -1402,7 +1392,6 @@ BUILT_IN_COMMAND(do_dirlasttype)
 		/* ??? */
 		t = &last_sent_topic[0];
 		form = fget_string_var(FORMAT_TOPIC_FSET);
-		sform = "%s %s %s";
 		numargs = 2;
 		if (len > 5 && command[len-1] == 'T')
 			what = TOPIC;
@@ -1412,7 +1401,6 @@ BUILT_IN_COMMAND(do_dirlasttype)
 		/* ??? */
 		t = &last_sent_wall[0];
 		form = fget_string_var(FORMAT_WALLOP_FSET);
-		sform = "%s %s %s %s %s";
 		if (len > 5 && command[len-1] == 'T')
 			what = TOPIC;
 	}
@@ -1420,7 +1408,6 @@ BUILT_IN_COMMAND(do_dirlasttype)
 	{
 		t = &last_servermsg[0]; size = MAX_LAST_MSG;
 		form = fget_string_var(FORMAT_RELS_FSET);
-		sform = "%s %s %s %s";
 		numargs = 4;
 		if (len > 4 && command[len-1] == 'T')
 			what = TOPIC;
@@ -1430,7 +1417,6 @@ BUILT_IN_COMMAND(do_dirlasttype)
 		/* ??? */
 		t = &last_topic[0];
 		form = fget_string_var(FORMAT_TOPIC_FSET);
-		sform = "%s %s %s";
 		numargs = 2;
 		if (len > 4 && command[len-1] == 'T')
 			what = TOPIC;
@@ -1441,7 +1427,6 @@ BUILT_IN_COMMAND(do_dirlasttype)
 		t = &last_wall[0]; 
 		size = MAX_LAST_MSG;
 		form = fget_string_var(FORMAT_WALLOP_FSET);
-		sform = "%s %s %s %s";
 		numargs = 4;
 		if (len > 4 && command[len-1] == 'T')
 			what = TOPIC;
@@ -1472,16 +1457,16 @@ BUILT_IN_COMMAND(do_dirlasttype)
 				switch(numargs)
 				{
 					case 2:
-						put_it("%2d %s", count, convert_output_format(form, sform, t[count].time, t[count].to, t[count].last_msg));
+						put_it("%2d %s", count, convert_output_format(form, "%s %s %s", t[count].time, t[count].to, t[count].last_msg));
 						break;
 					case 3:
-						put_it("%2d %s", count, convert_output_format(form, sform, t[count].time, t[count].from, t[count].last_msg));
+						put_it("%2d %s", count, convert_output_format(form, "%s %s %s", t[count].time, t[count].from, t[count].last_msg));
 						break;
 					case 4:
-						put_it("%2d %s", count, convert_output_format(form, sform, t[count].time, t[count].from, t[count].to, t[count].last_msg));
+						put_it("%2d %s", count, convert_output_format(form, "%s %s %s %s", t[count].time, t[count].from, t[count].to, t[count].last_msg));
 						break;
 					case 5:
-						put_it("%2d %s", count, convert_output_format(form, sform, t[count].time, t[count].from, t[count].uh, t[count].to, t[count].last_msg));
+						put_it("%2d %s", count, convert_output_format(form, "%s %s %s %s %s", t[count].time, t[count].from, t[count].uh, t[count].to, t[count].last_msg));
 				}
 			}
 			return;
@@ -1537,16 +1522,16 @@ BUILT_IN_COMMAND(do_dirlasttype)
 		switch(numargs)
 		{
 			case 2:
-				malloc_strcpy(&p, convert_output_format(form, sform, t[count].time, t[count].to, t[count].last_msg));
+				malloc_strcpy(&p, convert_output_format(form, "%s %s %s", t[count].time, t[count].to, t[count].last_msg));
 				break;
 			case 3:
-				malloc_strcpy(&p, convert_output_format(form, sform, t[count].time, t[count].from, t[count].last_msg));
+				malloc_strcpy(&p, convert_output_format(form, "%s %s %s", t[count].time, t[count].from, t[count].last_msg));
 				break;
 			case 4:
-				malloc_strcpy(&p, convert_output_format(form, sform, t[count].time, t[count].from, t[count].to, t[count].last_msg));
+				malloc_strcpy(&p, convert_output_format(form, "%s %s %s %s", t[count].time, t[count].from, t[count].to, t[count].last_msg));
 				break;
 			case 5:
-				malloc_strcpy(&p, convert_output_format(form, sform, t[count].time, t[count].from, t[count].uh, t[count].to, t[count].last_msg));
+				malloc_strcpy(&p, convert_output_format(form, "%s %s %s %s %s", t[count].time, t[count].from, t[count].uh, t[count].to, t[count].last_msg));
 		}
 		redirect_msg(channel, what, p, showansi);
 		new_free(&p);
