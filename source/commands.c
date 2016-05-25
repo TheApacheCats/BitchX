@@ -590,6 +590,7 @@ IrcCommand irc_command[] =
 	{ "SAY",	empty_string,	do_send_text,		0,	"-%Y<%ntype%Y>%n Says whatever you write" },
 	{ "SC",		"NAMES",	do_mynames,		0,	NULL },
 	{ "SCAN",	"scan",		do_scan,		0,	"%R[%Bchannel%R]%n\n- Scans %R[%Bchannel%R]%n or current channel for all nicks" },
+	{ "SCANB",	"ScanB",	do_scan,		0,	"%R[%Bchannel%R]%n\n- Scans %R[%Bchannel%R]%n or current channel for bots" },
 	{ "SCANF",	"ScanF",	do_scan,		0,	"%R[%Bchannel%R]%n\n- Scans %R[%Bchannel%R]%n or current channel for friends" },
 	{ "SCANI",	"ScanI",	do_scan,		0,	"%R[%Bchannel%R]%n\n- Scans %R[%Bchannel%R]%n or current channel for ircops" },
 	{ "SCANN",	"ScanN",	do_scan,		0,	"%R[%Bchannel%R]%n\n- Scans %R[%Bchannel%R]%n or current channel for non-ops" },
@@ -1321,7 +1322,7 @@ int	server = from_server;
 
 enum SCAN_TYPE {
     SCAN_ALL, SCAN_VOICES, SCAN_CHANOPS, SCAN_NONOPS, SCAN_IRCOPS, 
-    SCAN_FRIENDS, SCAN_SHITLISTED
+    SCAN_FRIENDS, SCAN_SHITLISTED, SCAN_BOTS
 };
 
 /* nick_in_scan
@@ -1355,6 +1356,10 @@ int nick_in_scan(NickList *nick, enum SCAN_TYPE scan_type, char *mask)
         
     case SCAN_SHITLISTED:
         if (!nick->shitlist) return 0;
+        break;
+
+    case SCAN_BOTS:
+        if (!nick->userlist || !(nick->userlist->flags & ADD_BOT)) return 0;
         break;
 
     case SCAN_ALL:
@@ -1401,6 +1406,8 @@ BUILT_IN_COMMAND(do_scan)
             scan_type = SCAN_SHITLISTED;
         else if (!my_stricmp(command, "scani"))
 		    scan_type = SCAN_IRCOPS;
+        else if (!my_stricmp(command, "scanb"))
+		    scan_type = SCAN_BOTS;
     }
 
 	while ((s = next_arg(args, &args)))
@@ -1461,6 +1468,11 @@ BUILT_IN_COMMAND(do_scan)
             case 'I':
                 scan_type = SCAN_IRCOPS;
                 break;
+
+            case 'b':
+            case 'B':
+                scan_type = SCAN_BOTS;
+                break;
             }
 
             continue;
@@ -1513,6 +1525,10 @@ BUILT_IN_COMMAND(do_scan)
 
     case SCAN_SHITLISTED:
 		s = fget_string_var(FORMAT_NAMES_SHIT_FSET);
+        break;
+
+    case SCAN_BOTS:
+		s = fget_string_var(FORMAT_NAMES_BOT_FSET);
         break;
 
     case SCAN_ALL:
