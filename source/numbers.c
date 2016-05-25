@@ -797,7 +797,7 @@ void numbered_command(char *from, int comm, char **ArgList)
 			malloc_sprintf(&userhost, "%s@%s", u1, host);
 #ifdef WANT_USERLIST
 			if ((tmp = lookup_userlevelc("*", userhost, "*", NULL)))
-				put_it("%s", convert_output_format(fget_string_var(FORMAT_WHOIS_FRIEND_FSET), "%s %s", convert_flags_to_str(tmp->flags), tmp->host));
+				put_it("%s", convert_output_format(fget_string_var(tmp->flags & ADD_BOT ? FORMAT_WHOIS_BOT_FSET : FORMAT_WHOIS_FRIEND_FSET), "%s %s", convert_flags_to_str(tmp->flags), tmp->host));
 			if ((tmp1 = nickinshit(ArgList[0], userhost)))
 				put_it("%s", convert_output_format(fget_string_var(FORMAT_WHOIS_SHIT_FSET),"%d %s %s %s", tmp1->level, tmp1->channels, tmp1->filter, tmp1->reason));
 			if (tmp || tmp1)

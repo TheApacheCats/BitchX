@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Wire up /FSET WHOIS_BOT for users on the userlist with the BOT flag. (caf)
+
 * Use /FSET RELSN to format /RELSN relayed messages instead of
   /FSET SEND_NOTICE. (caf)
 

@@ -298,9 +298,9 @@
 
 /* Done WHOIS WHOLEFT WHOWAS */
 #define DEFAULT_FORMAT_WHOIS_AWAY_FSET "%K³ %Wa%nway     %K:%n $1-"
-#define DEFAULT_FORMAT_WHOIS_BOT_FSET "%g³ %Wb%not      %K:%n A:$0 P:$1 [$2] $3-"
+#define DEFAULT_FORMAT_WHOIS_BOT_FSET "%g³ %Wb%not      %K:%n F:$0 $1-"
 #define DEFAULT_FORMAT_WHOIS_CHANNELS_FSET "%g³ %Wc%nhannels %K:%n $0-"
-#define DEFAULT_FORMAT_WHOIS_FRIEND_FSET "%g³ %Wf%nriend   %K:%n L:$0 A:$1 P:$2 $3-"
+#define DEFAULT_FORMAT_WHOIS_FRIEND_FSET "%g³ %Wf%nriend   %K:%n F:$0 $1-"
 #define DEFAULT_FORMAT_WHOIS_HEADER_FSET "%GÚÄÄÄÄÄÄÄÄ%gÄ%GÄÄ%gÄÄ%GÄ%gÄÄÄÄÄÄÄÄÄ%KÄ%gÄÄ%KÄÄ%gÄ%KÄÄÄÄÄÄÄÄÄÄ-Ä ÄÄ  Ä   -"
 #define DEFAULT_FORMAT_WHOIS_IDLE_FSET "%K. %Wi%ndle     %K:%n $0 hours $1 mins $2 secs (signon: $stime($3))"
 #define DEFAULT_FORMAT_WHOIS_SHIT_FSET "%g³ %Ws%nhit     %K:%n L:$0 [$1] $2 $3-"
@@ -724,7 +724,7 @@
 
 #ifdef ONLY_STD_CHARS
 #define DEFAULT_FORMAT_WHOIS_AWAY_FSET ansi?"%K| %Wa%nway     : $0 - $1-":"| away     : $0 - $1-"
-#define DEFAULT_FORMAT_WHOIS_BOT_FSET ansi?"%g| %Wb%not      : A:$0 P:$1 [$2] $3-":"| bot      : A:$0 P:$1 [$2] $3-"
+#define DEFAULT_FORMAT_WHOIS_BOT_FSET ansi?"%g| %Wb%not      : F:$0 $1-":"| bot      : F:$0 $1-"
 #define DEFAULT_FORMAT_WHOIS_CHANNELS_FSET ansi?"%g| %Wc%nhannels : $0-":"| channels : $0-"
 #define DEFAULT_FORMAT_WHOIS_FRIEND_FSET ansi?"%g| %Wf%nriend   : F:$0 $1-":"| friend   : F:$0 $1-"
 #define DEFAULT_FORMAT_WHOIS_HEADER_FSET ansi?"%G.--------%g-%G--%g--%G-%g---------%K-%g--%K--%g-%K------------ --  -":".----------------------------------------- --  -"
@@ -749,7 +749,7 @@
 #define DEFAULT_FORMAT_WHOIS_LOGGEDIN_FSET ansi?"%K: %Wl%noggedin : $0 $2- %W$1%n":": loggedin : $0 $2- $1"
 #else
 #define DEFAULT_FORMAT_WHOIS_AWAY_FSET ansi?"%K| %Wa%nway     : $0 - $1-":"| away     : $0 - $1-"
-#define DEFAULT_FORMAT_WHOIS_BOT_FSET ansi?"%g| %Wb%not      : A:$0 P:$1 [$2] $3-":"| bot      : A:$0 P:$1 [$2] $3-"
+#define DEFAULT_FORMAT_WHOIS_BOT_FSET ansi?"%g| %Wb%not      : F:$0 $1-":"| bot      : F:$0 $1-"
 #define DEFAULT_FORMAT_WHOIS_CHANNELS_FSET ansi?"%g| %Wc%nhannels : $0-":"| channels : $0-"
 #define DEFAULT_FORMAT_WHOIS_FRIEND_FSET ansi?"%g| %Wf%nriend   : F:$0 $1-":"| friend   : F:$0 $1-"
 #define DEFAULT_FORMAT_WHOIS_HEADER_FSET ansi?"%GÚÄÄÄÄÄ---%gÄ%G--%gÄÄ%G-%gÄÄÄÄÄÄ---%KÄ%g--%KÄÄ%g-%KÄÄÄÄÄÄÄÄÄ--- --  -":"ÚÄÄÄÄÄ---Ä--ÄÄ-ÄÄÄÄÄÄ---Ä--ÄÄ-ÄÄÄÄÄÄÄÄÄ--- --  -"
