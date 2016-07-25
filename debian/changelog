@@ -1,3 +1,9 @@
+bitchx (1.2.1-1) unstable; urgency=medium
+
+  * New upstream release
+
+ -- Kevin Easton <caf@bitchx.org>  Mon, 25 Jul 2016 22:51:22 +1000
+
 bitchx (1.2c01-svn-1) unstable; urgency=low
 
   * Initial release
