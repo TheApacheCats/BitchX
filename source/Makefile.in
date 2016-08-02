@@ -173,6 +173,9 @@ SOURCES = $(OBJECTS:%.o=%.c) #$(TCL_SRCS)
 
 all: $(_VERSION_) wserv scr-bx
 
+../include/../.config.h:
+	touch $@
+
 Makefile: $(srcdir)/Makefile.in
 	cd $(topdir) \
 	  && $(SHELL) ./config.status

@@ -187,6 +187,9 @@ all: source_all dll
 	@echo else you can type \"$(MAKE_BIN) install_local\" to install $(_VERSION_) to your home
 	@echo directory.
 
+.config.h:
+	touch $@
+
 install: all installbin installdll installscript installman installhelp \
 	installtranslation reallydone
 
@@ -194,13 +197,13 @@ installeverything: install
 
 everything: all
 
-source_all:
+source_all: .config.h
 	@cd source && $(MAKE) all
 	
-$(_VERSION_):
+$(_VERSION_): .config.h
 	@cd source && $(MAKE) $(_VERSION_)
 
-dll:
+dll: .config.h
 	@cd dll && $(MAKE) all
 
 installdll: $(srcdir)/Makefile dll/Makefile installdirs dll
