@@ -337,6 +337,7 @@ distclean: clean
 	-$(RM) script/.#* macros/.#* translation/.#*
 	-$(RM) doc/*~ doc/BitchX.bat *.spec
 	-$(RM) Makefile
+	-$(RM) .config.h
 
 export: distclean
 	$(top_srcdir)/autogen.sh || :
