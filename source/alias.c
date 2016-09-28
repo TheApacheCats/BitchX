@@ -384,7 +384,7 @@ BUILT_IN_COMMAND(assigncmd)
 	 * If there is no body, then the user probably wants to delete
 	 * the variable
 	 */
-	if (!args || !*args)
+	if (!*args)
 	{
 		/*
 	 	 * If the variable name starts with a hyphen, then we remove
@@ -466,7 +466,7 @@ BUILT_IN_COMMAND(stubcmd)
 	 * The rest of the argument(s) are the files to load when the
 	 * item is referenced.  This is not optional.
 	 */
-	if (!args || !*args)
+	if (!*args)
 	{
 		error("Missing file name");
 		return;
