@@ -773,7 +773,6 @@ __inline static	void	pop2s_a (expr_info *c, char **s, char **t, TOKEN *v)
 	*v = t1;
 }
 
-#if notused
 __inline static void	pop2b_a (expr_info *c, BooL *a, BooL *b, TOKEN *v)
 {
 	TOKEN	t1, t2;
@@ -788,7 +787,6 @@ __inline static void	pop2b_a (expr_info *c, BooL *a, BooL *b, TOKEN *v)
 	new_free(&x);
 	new_free(&y);
 }
-#endif
 
 __inline static	void	pop3 (expr_info *c, NUMBER *a, TOKEN *v, TOKEN *w)
 {
@@ -866,27 +864,41 @@ void	op (expr_info *cx, int what)
 	}
 #define IMPLIED(x) \
 	{ \
+		long r; \
 		pop2n_a(cx, &a, &b, &v); \
+		r = (x); \
 		if (x_debug & DEBUG_NEW_MATH_DEBUG) \
 			debugyell("O: %s = %s (%ld %ld) -> %ld",  \
-				get_token(cx, v), #x, a, b, x); \
-		pushn(cx, setnvar(cx, v, (x))); \
+				get_token(cx, v), #x, a, b, r); \
+		setnvar(cx, v, r); \
+		pushn(cx, r); \
+		break; \
+	}
+#define IMPLIED_BOOLEAN(x) \
+	{ \
+		long r; \
+		pop2b_a(cx, &c, &d, &v); \
+		r = (x); \
+		if (x_debug & DEBUG_NEW_MATH_DEBUG) \
+			debugyell("O: %s = %s (%ld %ld) -> %ld",  \
+				get_token(cx, v), #x, c, d, r); \
+		setnvar(cx, v, r); \
+		pushn(cx, r); \
 		break; \
 	}
 #define IMPLIED_NOZERO(x) \
 	{ \
+		long r = 0; \
 		pop2n_a(cx, &a, &b, &v); \
-		if (b == 0) { \
-			if (x_debug & DEBUG_NEW_MATH_DEBUG) \
-				debugyell("O: %s = %s (%ld %ld) -> 0",  \
-					get_token(cx, v), #x, a, b); \
-			error("Division by zero"); \
-			pushn(cx, setnvar(cx, v, 0)); \
-		} \
+		if (b != 0) \
+			r = (x); \
 		if (x_debug & DEBUG_NEW_MATH_DEBUG) \
 			debugyell("O: %s =  %s (%ld %ld) -> %ld",  \
-				get_token(cx, v), #x, a, b, x); \
-		pushn(cx, setnvar(cx, v, (x))); \
+				get_token(cx, v), #x, a, b, r); \
+		if (b == 0) \
+			error("Division by zero"); \
+		setnvar(cx, v, r); \
+		pushn(cx, r); \
 		break; \
 	}
 #define AUTO_UNARY(x, y) \
@@ -1040,9 +1052,9 @@ void	op (expr_info *cx, int what)
 		case OREQ:	IMPLIED(a | b)
 		case SHLEFTEQ:	IMPLIED(a << b)
 		case SHRIGHTEQ: IMPLIED(a >> b)
-		case DANDEQ:	IMPLIED((long)(c && d))
-		case DOREQ:	IMPLIED((long)(c || d))
-		case DXOREQ:	IMPLIED((long)((c && !d) || (!c && d)))
+		case DANDEQ:	IMPLIED_BOOLEAN(c && d)
+		case DOREQ:	IMPLIED_BOOLEAN(c || d)
+		case DXOREQ:	IMPLIED_BOOLEAN((c && !d) || (!c && d))
 		case STRCATEQ:
 			pop2s_a(cx, &s, &t, &v);
 			if (x_debug & DEBUG_NEW_MATH_DEBUG) 
@@ -1192,7 +1204,7 @@ int	lexerr (expr_info *c, char *format, ...)
  * case 'operand' is set to 1.  When an operand is lexed, then the next token
  * is expected to be a binary operator, so 'operand' is set to 0. 
  */
-__inline int	check_implied_arg (expr_info *c)
+static __inline int	check_implied_arg (expr_info *c)
 {
 	if (c->operand == 2)
 	{
@@ -1205,7 +1217,7 @@ __inline int	check_implied_arg (expr_info *c)
 	return c->operand;
 }
 
-__inline TOKEN 	operator (expr_info *c, char *x, int y, TOKEN z)
+static __inline TOKEN 	operator (expr_info *c, char *x, int y, TOKEN z)
 {
 	check_implied_arg(c);
 	if (c->operand)
@@ -1216,7 +1228,7 @@ __inline TOKEN 	operator (expr_info *c, char *x, int y, TOKEN z)
 	return z;
 }
 
-__inline TOKEN 	unary (expr_info *c, char *x, int y, TOKEN z)
+static __inline TOKEN 	unary (expr_info *c, char *x, int y, TOKEN z)
 {
 	if (!c->operand)
 		return lexerr(c, "An operator (%s) was found where "

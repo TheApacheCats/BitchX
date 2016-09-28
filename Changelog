@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Fix "implied" operators (eg. += ) under NEW_MATH. (caf)
+
 * Add /SCANB command to scan for users on the userlist with the BOT flag. (caf)
 
 * Wire up /FSET WHOIS_BOT for users on the userlist with the BOT flag. (caf)
