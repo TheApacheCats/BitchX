@@ -417,26 +417,26 @@ m_s3cat(&result, space, array_info.item[array_info.index[index]]);
  */
 BUILT_IN_FUNCTION(function_matchitem)
 {
-	char	*name;
-	long	index;
+	char *name = next_arg(input, &input);
+	long index;
 	an_array *array;
-        long     current_match;
-        long     best_match = 0;
-        long     match = -1;
+	long current_match;
+	long best_match = 0;
+	long match = -1;
 
-	if ((name = next_arg(input, &input)) && (array = get_array(name)))
+	if (name && (array = get_array(name)))
 	{
 		match = -2;
-        	if (*input)
-        	{
+		if (*input)
+		{
 			for (index = 0; index < array->size; index++)
-                	{
-                        	if ((current_match = wild_match(input, array->item[index])) > best_match)
-                        	{
-                               		match = index;
-                               		best_match = current_match;
-                        	}
-                	}
+			{
+				if ((current_match = wild_match(input, array->item[index])) > best_match)
+				{
+					match = index;
+					best_match = current_match;
+				}
+			}
 		}
 	}
 
@@ -445,21 +445,17 @@ BUILT_IN_FUNCTION(function_matchitem)
 
 BUILT_IN_FUNCTION(function_igetmatches)
 {
-	char    *result = NULL;
-	char    *name = NULL;
-	long    item;
+	char *result = NULL;
+	char *name = next_arg(input, &input);
+	long item;
 	an_array *array;
 
-	if ((name = next_arg(input, &input)) &&
-		(array = get_array(name)) && *input)
+	if (name && (array = get_array(name)) && *input)
 	{
-		if (*input)
+		for (item = 0; item < array->size; item++)
 		{
-			for (item = 0; item < array->size; item++)
-			{
-				if (wild_match(input, array->item[item]) > 0)
-					m_s3cat(&result, space, ltoa(find_index(array, item)));
-			}
+			if (wild_match(input, array->item[item]) > 0)
+				m_s3cat(&result, space, ltoa(find_index(array, item)));
 		}
 	}
 
@@ -475,12 +471,12 @@ BUILT_IN_FUNCTION(function_igetmatches)
  */
 BUILT_IN_FUNCTION(function_listarray)
 {
-	char	*name;
-	an_array *array;
-	long index;
 	char *result = NULL;
+	char *name = next_arg(input, &input);
+	long index;
+	an_array *array;
 	
-	if ((name = next_arg(input, &input)) && (array = get_array(name)))
+	if (name && (array = get_array(name)))
 	{
 		for (index = 0; index < array->size; index++)
 			m_s3cat(&result, space, array->item[index]);
@@ -496,26 +492,24 @@ BUILT_IN_FUNCTION(function_listarray)
  */
 BUILT_IN_FUNCTION(function_getmatches)
 {
-        char    *result = NULL;
-        char    *name = NULL;
-        long    index;
-        an_array *array;
+	char *result = NULL;
+	char *name = next_arg(input, &input);
+	long index;
+	an_array *array;
 
-        if ((name = next_arg(input, &input)) && 
-	    (array = get_array(name)) && *input)
-        {
-                if (*input)
-                {
-                        for (index = 0; index < array->size; index++)
-                        {
-                                if (wild_match(input, array->item[index]) > 0)
-					m_s3cat(&result, space, ltoa(index));
-                        }
-                }
-        }
+	if (name && (array = get_array(name)) && *input)
+	{
+		for (index = 0; index < array->size; index++)
+		{
+			if (wild_match(input, array->item[index]) > 0)
+				m_s3cat(&result, space, ltoa(index));
+		}
+	}
+
 	if (!result)
 		RETURN_EMPTY;
-        return result;
+
+	return result;
 }
 
 /*
@@ -525,28 +519,28 @@ BUILT_IN_FUNCTION(function_getmatches)
  */
 BUILT_IN_FUNCTION(function_rmatchitem)
 {
-        char    *name = NULL;
-        long    index;
-        an_array *array;
-        long     current_match;
-        long     best_match = 0;
-        long     match = -1;
+	char *name = next_arg(input, &input);
+	long index;
+	an_array *array;
+	long current_match;
+	long best_match = 0;
+	long match = -1;
 
-        if ((name = next_arg(input, &input)) && (array = get_array(name)))
-        {
-                match = -2;
-                if (*input)
-                {
-                        for (index = 0; index < array->size; index++)
-                        {
-                                if ((current_match = wild_match(array->item[index], input)) > best_match)
-                                {
-                                        match = index;
-                                        best_match = current_match;
-                                }
-                        }
-                }
-        }
+	if (name && (array = get_array(name)))
+	{
+		match = -2;
+		if (*input)
+		{
+			for (index = 0; index < array->size; index++)
+			{
+				if ((current_match = wild_match(array->item[index], input)) > best_match)
+				{
+					match = index;
+					best_match = current_match;
+				}
+			}
+		}
+	}
 	RETURN_INT(match)
 }
 
@@ -558,40 +552,37 @@ BUILT_IN_FUNCTION(function_rmatchitem)
  */
 BUILT_IN_FUNCTION(function_getrmatches)
 {
-        char    *result = NULL;
-        char    *name = NULL;
-        long    index;
-        an_array *array;
+	char *result = NULL;
+	char *name = next_arg(input, &input);
+	long index;
+	an_array *array;
 
-        if ((name = next_arg(input, &input)) && (array = get_array(name)))
-        {
-                if (*input)
-                {
-                        for (index = 0; index < array->size; index++)
-                        {
-                                if (wild_match(array->item[index], input) > 0)
-					m_s3cat(&result, space, ltoa(index));
-                        }
-                }
-        }
+	if (name && (array = get_array(name)) && *input)
+	{
+		for (index = 0; index < array->size; index++)
+		{
+			if (wild_match(array->item[index], input) > 0)
+				m_s3cat(&result, space, ltoa(index));
+		}
+	}
 
 	if (!result)
 		RETURN_EMPTY;
-        return result;
+	return result;
 }
 
 /*
- * function_numitems() returns the number of items in an array, or -1 if unable
+ * function_numitems() returns the number of items in an array, or 0 if unable
  * to find the array
  */
 BUILT_IN_FUNCTION(function_numitems)
 {
-        char *name = NULL;
+	char *name = next_arg(input, &input);
 	an_array *array;
 	long items = 0;
 
-        if ((name = next_arg(input, &input)) && (array = get_array(name)))
-                items = array->size;
+	if (name && (array = get_array(name)))
+		items = array->size;
 
 	RETURN_INT(items);
 }
@@ -602,20 +593,17 @@ BUILT_IN_FUNCTION(function_numitems)
  */
 BUILT_IN_FUNCTION(function_getitem)
 {
-	char *name = NULL;
-	char *itemstr = NULL;
+	char *name = next_arg(input, &input);
+	char *itemstr = next_arg(input, &input);
 	long item;
 	an_array *array;
 	char *found = NULL;
 
-	if ((name = next_arg(input, &input)) && (array = get_array(name)))
+	if (name && (array = get_array(name)) && itemstr)
 	{
-		if ((itemstr = next_arg(input, &input)))
-		{
-			item = my_atol(itemstr);
-			if (item >= 0 && item < array->size)
-				found = array->item[item];
-		}
+		item = my_atol(itemstr);
+		if (item >= 0 && item < array->size)
+			found = array->item[item];
 	}
 	RETURN_STR(found);
 }
@@ -634,71 +622,68 @@ BUILT_IN_FUNCTION(function_getitem)
  */
 BUILT_IN_FUNCTION(function_setitem)
 {
-        char *name = NULL;
-	char *itemstr = NULL;
+	char *name = next_arg(input, &input);
+	char *itemstr = next_arg(input, &input);
 	long item;
 	long index = 0;
 	long oldindex;
 	an_array *array;
 	int result = -1;
 
-        if ((name = next_arg(input, &input)))
-        {
-		if (strlen(name) && (itemstr = next_arg(input, &input)))
+	if (name && itemstr)
+	{
+		item = my_atol(itemstr);
+		if (item >= 0)
 		{
-			item = my_atol(itemstr);
-			if (item >= 0)
+			upper(name);
+			if (array_info.size && ((index = find_item(array_info, name)) >= 0))
 			{
-				upper(name);
-				if (array_info.size && ((index = find_item(array_info, name)) >= 0))
-       	         		{
-					array =  &array_array[array_info.index[index]];
-					result = -2;
-					if (item < array->size)
-					{
-						oldindex = find_index(array, item);
-						index = find_item(*array, input);
-						index = (index >= 0) ? index : (-index) - 1;
-						move_index(array, oldindex, index);
-						new_free(&array->item[item]);
-						malloc_strcpy(&array->item[item], input);
-						result = 0;
-					}
-					else if (item == array->size)
-					{
-						RESIZE(array->item, char *, (array->size + 1));
-						array->item[item] = NULL;
-						malloc_strcpy(&array->item[item], input);
-						index = find_item(*array, input);
-						index = (index >= 0) ? index : (-index) - 1;
-						insert_index(&array->index, &array->size, index);
-						result = 2;
-					}
-				}
-				else
+				array =  &array_array[array_info.index[index]];
+				result = -2;
+				if (item < array->size)
 				{
-					if (item == 0)
-					{
-						if (array_info.size)
-							RESIZE(array_array, an_array, (array_info.size + 1));
-						else
-							array_array = (an_array*)new_malloc(sizeof(an_array));
-						array = &array_array[array_info.size];
-						array->size = 1;
-						array->item = (char **)new_malloc(sizeof(char *));
-						array->index = (long *)new_malloc(sizeof(long));
-						array->item[0] = (char*) 0;
-						array->index[0] = 0;
-						malloc_strcpy(&array->item[0], input);
-						if (array_info.size)
-							RESIZE(array_info.item, char *, (array_info.size + 1));
-						else
-							array_info.item = (char **)new_malloc(sizeof(char *));
-						array_info.item[array_info.size] = NULL;
-						malloc_strcpy(&array_info.item[array_info.size], name);
-						insert_index(&array_info.index, &array_info.size, (-index) - 1);
-						result = 1;
-					}
+					oldindex = find_index(array, item);
+					index = find_item(*array, input);
+					index = (index >= 0) ? index : (-index) - 1;
+					move_index(array, oldindex, index);
+					new_free(&array->item[item]);
+					malloc_strcpy(&array->item[item], input);
+					result = 0;
+				}
+				else if (item == array->size)
+				{
+					RESIZE(array->item, char *, (array->size + 1));
+					array->item[item] = NULL;
+					malloc_strcpy(&array->item[item], input);
+					index = find_item(*array, input);
+					index = (index >= 0) ? index : (-index) - 1;
+					insert_index(&array->index, &array->size, index);
+					result = 2;
+				}
+			}
+			else
+			{
+				if (item == 0)
+				{
+					if (array_info.size)
+						RESIZE(array_array, an_array, (array_info.size + 1));
+					else
+						array_array = (an_array*)new_malloc(sizeof(an_array));
+					array = &array_array[array_info.size];
+					array->size = 1;
+					array->item = (char **)new_malloc(sizeof(char *));
+					array->index = (long *)new_malloc(sizeof(long));
+					array->item[0] = (char*) 0;
+					array->index[0] = 0;
+					malloc_strcpy(&array->item[0], input);
+					if (array_info.size)
+						RESIZE(array_info.item, char *, (array_info.size + 1));
+					else
+						array_info.item = (char **)new_malloc(sizeof(char *));
+					array_info.item[array_info.size] = NULL;
+					malloc_strcpy(&array_info.item[array_info.size], name);
+					insert_index(&array_info.index, &array_info.size, (-index) - 1);
+					result = 1;
 				}
 			}
 		}
@@ -716,8 +701,8 @@ BUILT_IN_FUNCTION(function_getarrays)
 	char *result = NULL;
 
 	for (index = 0; index < array_info.size; index++)
-                if (!input || !*input || wild_match(input, array_info.item[array_info.index[index]]))
-                        m_s3cat(&result, space, array_info.item[array_info.index[index]]);
+		if (!input || !*input || wild_match(input, array_info.item[array_info.index[index]]))
+			m_s3cat(&result, space, array_info.item[array_info.index[index]]);
 
 	if (!result)
 		RETURN_EMPTY;
@@ -740,18 +725,15 @@ BUILT_IN_FUNCTION(function_numarrays)
  */
 BUILT_IN_FUNCTION(function_finditem)
 {
-        char    *name = NULL;
-        an_array *array;
-	long	item = -1;
+	char *name = next_arg(input, &input);
+	an_array *array;
+	long item = -1;
 
-	if ((name = next_arg(input, &input)) && (array = get_array(name)))
-        {
-		if (*input)
-		{
-			item = find_item(*array, input);
-			item = (item >= 0) ? array->index[item] : -2;
-		}
-        }
+	if (name && (array = get_array(name)) && *input)
+	{
+		item = find_item(*array, input);
+		item = (item >= 0) ? array->index[item] : -2;
+	}
 	RETURN_INT(item)
 }
 
@@ -762,18 +744,15 @@ BUILT_IN_FUNCTION(function_finditem)
  */
 BUILT_IN_FUNCTION(function_ifinditem)
 {
-        char    *name = NULL;
-        an_array *array;
-        long    item = -1;
+	char *name = next_arg(input, &input);
+	an_array *array;
+	long item = -1;
 
-        if ((name = next_arg(input, &input)) && (array = get_array(name)))
-        {
-		if (*input)
-		{
-			if ((item = find_item(*array, input)) < 0)
-				item = -2;
-		}
-        }
+	if (name && (array = get_array(name)) && *input)
+	{
+		if ((item = find_item(*array, input)) < 0)
+			item = -2;
+	}
 	RETURN_INT(item)
 }
 
@@ -784,21 +763,18 @@ BUILT_IN_FUNCTION(function_ifinditem)
  */
 BUILT_IN_FUNCTION(function_igetitem)
 {
-        char *name = NULL;
-        char *itemstr = NULL;
-        long item;
-        an_array *array;
-        char *found = NULL;
+	char *name = next_arg(input, &input);
+	char *itemstr = next_arg(input, &input);
+	long item;
+	an_array *array;
+	char *found = NULL;
 
-        if ((name = next_arg(input, &input)) && (array = get_array(name)))
-        {
-                if ((itemstr = next_arg(input, &input)))
-                {
-                        item = my_atol(itemstr);
-                        if (item >= 0 && item < array->size)
-                                found = array->item[array->index[item]];
-                }
-        }
+	if (name && (array = get_array(name)) && itemstr)
+	{
+		item = my_atol(itemstr);
+		if (item >= 0 && item < array->size)
+			found = array->item[array->index[item]];
+	}
 	RETURN_STR(found)
 }
 
@@ -809,22 +785,22 @@ BUILT_IN_FUNCTION(function_igetitem)
  */
 BUILT_IN_FUNCTION(function_indextoitem)
 {
-        char *name = NULL;
-        char *itemstr = NULL;
-        long item;
-        an_array *array;
+	char *name = next_arg(input, &input);
+	char *itemstr = next_arg(input, &input);
+	long item;
+	an_array *array;
 	long found = -1;
 
-        if ((name = next_arg(input, &input)) && (array = get_array(name)))
-        {
+	if (name && (array = get_array(name)))
+	{
 		found = -2;
-                if ((itemstr = next_arg(input, &input)))
-                {
-                        item = my_atol(itemstr);
-                        if (item >= 0 && item < array->size)
-                                found = array->index[item];
-                }
-        }
+		if (itemstr)
+		{
+			item = my_atol(itemstr);
+			if (item >= 0 && item < array->size)
+				found = array->index[item];
+		}
+	}
 	RETURN_INT(found)
 }
 
@@ -835,22 +811,22 @@ BUILT_IN_FUNCTION(function_indextoitem)
  */
 BUILT_IN_FUNCTION(function_itemtoindex)
 {
-        char *name;
-        char *itemstr;
-        long item;
-        an_array *array;
-        long found = -1;
+	char *name = next_arg(input, &input);
+	char *itemstr = next_arg(input, &input);
+	long item;
+	an_array *array;
+	long found = -1;
 
-        if ((name = next_arg(input, &input)) && (array = get_array(name)))
+	if (name && (array = get_array(name)))
 	{
-                found = -2;
-		if ((itemstr = next_arg(input, &input)))
-                {
-                        item = my_atol(itemstr);
-                        if (item >= 0 && item < array->size)
-                                found = find_index(array, item);
-                }
-        }
+		found = -2;
+		if (itemstr)
+		{
+			item = my_atol(itemstr);
+			if (item >= 0 && item < array->size)
+				found = find_index(array, item);
+		}
+	}
 	RETURN_INT(found)
 }
 
@@ -862,24 +838,25 @@ BUILT_IN_FUNCTION(function_itemtoindex)
  */
 BUILT_IN_FUNCTION(function_delitem)
 {
-        char *name;
-	char *itemstr;
-        char **strptr;
-        long item;
+	char *name = next_arg(input, &input);
+	char *itemstr = next_arg(input, &input);
+	char **strptr;
+	long item;
 	long cnt;
 	long oldindex;
-        an_array *array;
-        long found = -1;
+	an_array *array;
+	long found = -1;
 
-        if ((name = next_arg(input, &input)) && (array = get_array(name)))
-        {
+	if (name && (array = get_array(name)))
+	{
 		found = -2;
-                if ((itemstr = next_arg(input, &input)))
-                {
-                        item = my_atol(itemstr);
-                        if (item >= 0 && item < array->size)
+		if (itemstr)
+		{
+			item = my_atol(itemstr);
+			if (item >= 0 && item < array->size)
 			{
-                                if (array->size == 1)
+				found = 0;
+				if (array->size == 1)
 					delete_array(name);
 				else
 				{
@@ -888,17 +865,16 @@ BUILT_IN_FUNCTION(function_delitem)
 						if (array->index[cnt] > item)
 							(array->index[cnt])--;
 					move_index(array, oldindex, array->size);
-                                	new_free(&array->item[item]);
+					new_free(&array->item[item]);
 					array->size--;
 					for(strptr=&(array->item[item]), cnt=item; cnt < array->size; cnt++, strptr++)
 						*strptr = *(strptr + 1);
 					RESIZE(array->item, char *, array->size);
 					RESIZE(array->index, long, array->size);
 				}
-				found = 0;
-                        }
-                }
-        }
+			}
+		}
+	}
 	RETURN_INT(found)
 }
 
@@ -908,41 +884,38 @@ BUILT_IN_FUNCTION(function_delitem)
  */
 BUILT_IN_FUNCTION(function_delarray)
 {
-        char *name;
-        long found = -1;
+	char *name = next_arg(input, &input);
+	long found = -1;
 
-	if ((name = next_arg(input, &input)) && (get_array(name)))
-        {
-                delete_array(name);
+	if (name && get_array(name))
+	{
+		delete_array(name);
 		found = 0;
 	}
 	RETURN_INT(found)
 }
 /*
  * function_ifindfirst() returns the first index of an exact match with the
- * search string, or returns -2 if unable to find the array, or -1 if unable
+ * search string, or returns -1 if unable to find the array, or -2 if unable
  * to find any matches.
  */
 BUILT_IN_FUNCTION(function_ifindfirst)
 {
-        char    *name;
-        an_array *array;
-        long    item = -1;
+	char *name = next_arg(input, &input);
+	an_array *array;
+	long item = -1;
 
-        if ((name = next_arg(input, &input)) && (array = get_array(name)))
-        {
-		if (*input)
+	if (name && (array = get_array(name)) && *input)
+	{
+		if ((item = find_item(*array, input)) < 0)
+			item = -2;
+		else
 		{
-			if ((item = find_item(*array, input)) < 0)
-				item = -2;
-			else
-			{
-				while (item >= 0 && !strcmp(array->item[array->index[item]], input))
-					item--;
-				item++;
-			}
+			while (item >= 0 && !strcmp(array->item[array->index[item]], input))
+				item--;
+			item++;
 		}
-        }
+	}
 	RETURN_INT(item)
 }
 
@@ -951,57 +924,50 @@ BUILT_IN_FUNCTION(function_ifindfirst)
  * the elements within the array. This allows parsing using % and * 
  * for wildcards. We return only the best match from the array, unlike 
  * getmatch() which returns ALL the matching items.
+ *
+ * <shade> gettmatch(users % user@host *) would match the userhost mask in the
+ *         second word of the array
  */
 
 BUILT_IN_FUNCTION(function_gettmatch)
 {
-char *name;
-an_array *array;
-char *ret = NULL;
-#if 0
-<shade> gettmatch(users % user@host *) would match the userhost mask in the
-             second word of the array
-#endif
-        if ((name = next_arg(input, &input)) && (array = get_array(name)))
-        {
-		if (*input)
-          	{
-			int index, current_match;
-			int best_match = 0;
-			int match = -1;
-                        for (index = 0; index < array->size; index++)
-                        {
-                                if ((current_match = wild_match(input, array->item[index])) > best_match)
-                                {
-                                        match = index;
-                                        best_match = current_match;
-                                }
-                        }
-			if (match != -1)
-				ret = array->item[match];
+	char *name = next_arg(input, &input);
+	an_array *array;
+	char *ret = NULL;
 
+	if (name && (array = get_array(name)) && *input)
+	{
+		int index, current_match;
+		int best_match = 0;
+		int match = -1;
+		for (index = 0; index < array->size; index++)
+		{
+			if ((current_match = wild_match(input, array->item[index])) > best_match)
+			{
+				match = index;
+				best_match = current_match;
+			}
 		}
+		if (match != -1)
+			ret = array->item[match];
+
 	}
 	RETURN_STR(ret);
 }
 
 BUILT_IN_FUNCTION(function_igetrmatches)
 {
-	char    *result = (char *) 0;
-	char    *name = (char *) 0;
-	long    item;
+	char *result = NULL;
+	char *name = next_arg(input, &input);
+	long item;
 	an_array *array;
 
-	if ((name = next_arg(input, &input)) &&
-		(array = get_array(name)) && *input)
+	if (name && (array = get_array(name)) && *input)
 	{
-		if (*input)
+		for (item = 0; item < array->size; item++)
 		{
-			for (item = 0; item < array->size; item++)
-			{
-				if (wild_match(array->item[item], input) > 0)
-					m_s3cat(&result, space, ltoa(find_index(array, item)));
-			}
+			if (wild_match(array->item[item], input) > 0)
+				m_s3cat(&result, space, ltoa(find_index(array, item)));
 		}
 	}
 
