@@ -1703,8 +1703,7 @@ register unsigned char	c;
 			TruncateAndQuote(buffer, val, length, quote_em, pad_char);
 			new_free(&val);
 			new_free(&sub_buffer);
-			if (rest)
-			    *rest = c2;
+			*rest = c2;
 			return rest;
 		}
 
@@ -1789,7 +1788,7 @@ register unsigned char	c;
 
 			    TruncateAndQuote(buffer, tmp2, length, quote_em, pad_char);
 			    new_free(&tmp2);
-			    return (ptr ? ptr : empty_string);
+			    return ptr;
 			}
 
 			/*
