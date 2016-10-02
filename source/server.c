@@ -2538,9 +2538,9 @@ QueueSend *tmp, *tmp1;
 	}
 }
 
-static void vsend_to_server(int type, const char *format, va_list args)
+static void vsend_to_server(int server, int type, const char *format, va_list args)
 {
-	int des, len, server = from_server;
+	int des, len;
 	char buffer[IRCD_BUFFER_SIZE + 1];
 
 	if (server == -1)
@@ -2589,35 +2589,27 @@ void 	BX_send_to_server (const char *format, ...)
 	va_list args;
 
 	va_start(args, format);
-	vsend_to_server(IMMED_SEND, format, args);
+	vsend_to_server(from_server, IMMED_SEND, format, args);
 	va_end(args);
 }
 
 /* send_to_server: sends the given info the the server */
 void 	BX_my_send_to_server (int refnum, const char *format, ...)
 {
-	int old_from_server = from_server;
 	va_list args;
 
-	from_server = refnum;
 	va_start(args, format);
-	vsend_to_server(IMMED_SEND, format, args);
+	vsend_to_server(refnum, IMMED_SEND, format, args);
 	va_end(args);
-	from_server = old_from_server;
-
 }
 
 void BX_queue_send_to_server(int refnum, const char *format, ...)
 {
-	int old_from_server = from_server;
 	va_list args;
 
-	from_server = refnum;
 	va_start(args, format);
-	vsend_to_server(QUEUE_SEND, format, args);
+	vsend_to_server(refnum, QUEUE_SEND, format, args);
 	va_end(args);
-	from_server = old_from_server;
-	
 }
 
 
