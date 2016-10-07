@@ -1,5 +1,8 @@
 [Changes 1.2.2]
 
+* Ensure /BAN /DBAN /MB /MK /MUB /UNBAN commands send command to the right
+  server. (caf)
+
 * Fix "implied" operators (eg. += ) under NEW_MATH. (caf)
 
 * Add /SCANB command to scan for users on the userlist with the BOT flag. (caf)

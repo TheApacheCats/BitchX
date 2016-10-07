@@ -190,14 +190,14 @@ BUILT_IN_COMMAND(LameKick)
 					(count >= get_int_var(NUM_KICKS_VAR))) || 
 					(strlen(buf2) + len_buffer) >= (IRCD_BUFFER_SIZE - (NICKNAME_LEN + 5)))
 				{
-					send_to_server(buffer, chan->channel, buf2);
+					my_send_to_server(from_server, buffer, chan->channel, buf2);
 					new_free(&buf2);
 					count = 0;
 				}
 			}
 		}
 		if (buf2)
-			send_to_server(buffer, chan->channel, buf2);
+			my_send_to_server(from_server, buffer, chan->channel, buf2);
 		new_free(&buffer);
 		new_free(&buf2);
 		say("Sent the Server all the Lamer Kicks, Sit back and Watch %d kicks!", total);
@@ -695,12 +695,12 @@ BUILT_IN_COMMAND(masskick)
 			if ((get_int_var(NUM_KICKS_VAR) && (num == get_int_var(NUM_KICKS_VAR))) || (strlen(send_buf)+len) >= (IRCD_BUFFER_SIZE - (NICKNAME_LEN + 5)))
 			{
 				num = 0;
-				send_to_server(buf, chan->channel, send_buf);
+				my_send_to_server(server, buf, chan->channel, send_buf);
 				new_free(&send_buf);
 			}
 		}
 		if (send_buf)
-			send_to_server(buf, chan->channel, send_buf);
+			my_send_to_server(server, buf, chan->channel, send_buf);
 		new_free(&send_buf);
 		shitlist_erase(&masskick_list);
 	}
@@ -856,7 +856,7 @@ BUILT_IN_COMMAND(massban)
 			if (i > maxmodes)
 			{
 				modestr[i] = '\0';
-				send_to_server("MODE %s +%s %s", chan->channel, modestr, buffer);
+				my_send_to_server(server, "MODE %s +%s %s", chan->channel, modestr, buffer);
 				i = 0;
 				new_free(&buffer);
 			}
@@ -864,7 +864,7 @@ BUILT_IN_COMMAND(massban)
 		modestr[i] = '\0';
 		if (buffer && *buffer)
 		{
-			send_to_server("MODE %s +%s %s", chan->channel, modestr, buffer);
+			my_send_to_server(server, "MODE %s +%s %s", chan->channel, modestr, buffer);
 			new_free(&buffer);
 		}
 		shitlist_erase(&massban_list);
@@ -910,7 +910,7 @@ BUILT_IN_COMMAND(unban)
 			{
 				if (bans->sent_unban == 0)
 				{
-					send_to_server("MODE %s -b %s", chan->channel, bans->ban);
+					my_send_to_server(server, "MODE %s -b %s", chan->channel, bans->ban);
 					bans->sent_unban++;
 					tmp = 0;
 					break;
@@ -939,13 +939,13 @@ BUILT_IN_COMMAND(unban)
 			}
 			if (count && (count % get_int_var(NUM_BANMODES_VAR) == 0))
 			{
-				send_to_server("MODE %s -%s %s", chan->channel, strfill('b', num), banstring);
+				my_send_to_server(server, "MODE %s -%s %s", chan->channel, strfill('b', num), banstring);
 				new_free(&banstring);
 				num = 0;
 			}
 		}
 		if (banstring && num)
-			send_to_server("MODE %s -%s %s", chan->channel, strfill('b', num), banstring);
+			my_send_to_server(server, "MODE %s -%s %s", chan->channel, strfill('b', num), banstring);
 		new_free(&banstring);
 	}
 	if (!count)
@@ -1108,14 +1108,14 @@ BUILT_IN_COMMAND(ban)
 			char *t = LOCAL_COPY(nicks->host), *user = clear_server_flags(t), *host = strchr(user, '@');
 
 			*host++ = 0;
-			send_to_server("MODE %s -o+b %s %s", chan->channel, nicks->nick, ban_it(nicks->nick, user, host, nicks->ip));
+			my_send_to_server(server, "MODE %s -o+b %s %s", chan->channel, nicks->nick, ban_it(nicks->nick, user, host, nicks->ip));
 			found++;
 		}
 	}
 	if (!found)
 	{
 		if (strchr(spec, '!') && strchr(spec, '@'))
-			send_to_server("MODE %s +b %s", chan->channel, spec);
+			my_send_to_server(server, "MODE %s +b %s", chan->channel, spec);
 		else
 			userhostbase(spec, userhost_ban, 1, "%s", chan->channel);
 	}
@@ -1206,14 +1206,14 @@ void remove_bans(char *stuff, char *line)
 				tmpc->sent_unban++;
 				if (num % get_int_var(NUM_BANMODES_VAR) == 0)
 				{
-					send_to_server("MODE %s -%s %s", stuff, strfill('b', num), banstring);
+					my_send_to_server(server, "MODE %s -%s %s", stuff, strfill('b', num), banstring);
 					new_free(&banstring);
 					num = 0;
 				}
 				done++;
 			}
 		if (banstring && num)
-			send_to_server("MODE %s -%s %s", stuff, strfill('b', num), banstring);
+			my_send_to_server(server, "MODE %s -%s %s", stuff, strfill('b', num), banstring);
 		new_free(&banstring);
 		num = 0;
 		if (!done)
@@ -1227,7 +1227,7 @@ void remove_bans(char *stuff, char *line)
 					tmpc->sent_unban++;
 					if (num % get_int_var(NUM_BANMODES_VAR) == 0)
 					{
-						send_to_server("MODE %s -%s %s", stuff, strfill('e', num), banstring);
+						my_send_to_server(server, "MODE %s -%s %s", stuff, strfill('e', num), banstring);
 						new_free(&banstring);
 						num = 0;
 					}
@@ -1235,7 +1235,7 @@ void remove_bans(char *stuff, char *line)
 				}
 		}
 		if (banstring && num)
-			send_to_server("MODE %s -%s %s", stuff, strfill('b', num), banstring);
+			my_send_to_server(server, "MODE %s -%s %s", stuff, strfill('b', num), banstring);
 		for (tmpc = chan->bans; tmpc; tmpc = next)
 		{
 			next = tmpc->next;
