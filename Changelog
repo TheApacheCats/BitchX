@@ -1,5 +1,8 @@
 [Changes 1.2.2]
 
+* Rename reserved identifiers from irc_std.h to fix building on under
+  latest cygwin. (caf)
+
 * Ensure /BAN /DBAN /MB /MK /MUB /UNBAN commands send command to the right
   server. (caf)
 

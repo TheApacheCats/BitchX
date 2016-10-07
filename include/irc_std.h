@@ -10,8 +10,8 @@
  * @(#)$Id$
  */
 
-#ifndef __irc_std_h
-#define __irc_std_h
+#ifndef IRC_STD_H_
+#define IRC_STD_H_
 #include "defs.h"
 
 /*
@@ -97,16 +97,16 @@
  */
 #ifndef __GNUC__
 # define __inline		/* delete gcc keyword */
-# define __A(x)
-# define __N
+# define _printf_(x)
+# define _noreturn_
 # define __inline__
 #else
 # if (__GNUC__ > 2) || ((__GNUC__ == 2) && (__GNUC_MINOR__ >= 7))
-#  define __A(x) __attribute__ ((format (printf, x, x + 1)))
-#  define __N    __attribute__ ((noreturn))
+#  define _printf_(x) __attribute__ ((format (printf, x, x + 1)))
+#  define _noreturn_  __attribute__ ((noreturn))
 # else
-#  define __A(x)
-#  define __N
+#  define _printf_(x)
+#  define _noreturn_
 #  define __inline
 # endif
 #endif
