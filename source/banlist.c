@@ -163,19 +163,18 @@ BUILT_IN_COMMAND(LameKick)
 {
 	ChannelList *chan;
 	NickList *tmp;
-	char *channel = NULL, *buffer = NULL, *buf2 = NULL;
+	char *channel = NULL;
 	int old_server = from_server;
 
 	if (args && *args && is_channel(args))
 		channel = next_arg(args, &args);	
 	if ((chan = prepare_command(&from_server, channel, NEED_OP)))
 	{
-		int len_buffer, count = 0, total = 0;
-		char reason[BIG_BUFFER_SIZE+1];
-		*reason = 0;
-		quote_it(args ? args : empty_string, NULL, reason);
-		malloc_sprintf(&buffer, "KICK %%s %%s :<\002BX\002-LK> %s", reason);
-		len_buffer = strlen(buffer) + 2;
+		int count = 0, total = 0;
+		char *targets = NULL;
+		const char * const reason = args ? args : empty_string;
+		const size_t cmd_len = strlen(chan->channel) + strlen("KICK   :<\002BX\002-LK> ") + strlen(reason);
+
 		for (tmp = next_nicklist(chan, NULL); tmp; tmp = next_nicklist(chan, tmp))
 		{
 			int level = 0;
@@ -183,23 +182,22 @@ BUILT_IN_COMMAND(LameKick)
 				level = ((tmp->userlist->flags | 0xff) & PROT_ALL);
 			if (!nick_isop(tmp) && !nick_isvoice(tmp) && ((tmp->userlist && !level) || !tmp->userlist))
 			{
-				m_s3cat(&buf2, ",", tmp->nick);
+				m_s3cat(&targets, ",", tmp->nick);
 				count++;
 				total++;
 				if (((get_int_var(NUM_KICKS_VAR)) && 
 					(count >= get_int_var(NUM_KICKS_VAR))) || 
-					(strlen(buf2) + len_buffer) >= (IRCD_BUFFER_SIZE - (NICKNAME_LEN + 5)))
+					(strlen(targets) + cmd_len) >= (MAX_PROTOCOL_SIZE - (NICKNAME_LEN + 5)))
 				{
-					my_send_to_server(from_server, buffer, chan->channel, buf2);
-					new_free(&buf2);
+					my_send_to_server(from_server, "KICK %s %s :<\002BX\002-LK> %s", chan->channel, targets, reason);
+					new_free(&targets);
 					count = 0;
 				}
 			}
 		}
-		if (buf2)
-			my_send_to_server(from_server, buffer, chan->channel, buf2);
-		new_free(&buffer);
-		new_free(&buf2);
+		if (targets)
+			my_send_to_server(from_server, "KICK %s %s :<\002BX\002-LK> %s", chan->channel, targets, reason);
+		new_free(&targets);
 		say("Sent the Server all the Lamer Kicks, Sit back and Watch %d kicks!", total);
 	}
 	from_server = old_server;
@@ -679,29 +677,28 @@ BUILT_IN_COMMAND(masskick)
 
 	if (masskick_list)
 	{
-		int len, num = 0;
-		char *send_buf = NULL;
-		char buf[BIG_BUFFER_SIZE + 1];
-		char reason[BIG_BUFFER_SIZE+1];
-		*reason = 0;
-		quote_it(rest ? rest : "MassKick", NULL, reason);						
-		bitchsay("Performing (%s) Mass Kick on %s", all? "opz/non-opz" : ops ? "ops":"non-opz", chan->channel);
-		sprintf(buf, "KICK %%s %%s :\002%s\002", reason);
-		len = strlen(buf);
+		int num = 0;
+		char *targets = NULL;
+		const char * const reason = rest ? rest : "MassKick";
+		const size_t cmd_len = strlen(chan->channel) + strlen("KICK   :\002\002") + strlen(reason);
+
+		bitchsay("Performing (%s) Mass Kick on %s", all ? "opz/non-opz" : ops ? "ops":"non-opz", chan->channel);
+
 		for (new = masskick_list; new; new = new->next)
 		{
-			send_buf = m_s3cat(&send_buf, ",", new->filter);
+			m_s3cat(&targets, ",", new->filter);
 			num++;
-			if ((get_int_var(NUM_KICKS_VAR) && (num == get_int_var(NUM_KICKS_VAR))) || (strlen(send_buf)+len) >= (IRCD_BUFFER_SIZE - (NICKNAME_LEN + 5)))
+			if ((get_int_var(NUM_KICKS_VAR) && (num == get_int_var(NUM_KICKS_VAR))) || 
+			    (strlen(targets) + cmd_len) >= (MAX_PROTOCOL_SIZE - (NICKNAME_LEN + 5)))
 			{
 				num = 0;
-				my_send_to_server(server, buf, chan->channel, send_buf);
-				new_free(&send_buf);
+				my_send_to_server(server, "KICK %s %s :\002%s\002", chan->channel, targets, reason);
+				new_free(&targets);
 			}
 		}
-		if (send_buf)
-			my_send_to_server(server, buf, chan->channel, send_buf);
-		new_free(&send_buf);
+		if (targets)
+			my_send_to_server(server, "KICK %s %s :\002%s\002", chan->channel, targets, reason);
+		new_free(&targets);
 		shitlist_erase(&masskick_list);
 	}
 	else
