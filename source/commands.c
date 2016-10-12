@@ -3159,21 +3159,18 @@ int silent = 0;
 			bitchsay("You were /away for %i hours %i minutes and %i seconds. [\002BX\002-MsgLog %s]",
 				hours, minutes, seconds,
 				on_off(get_int_var(MSGLOG_VAR)));
+			if (fget_string_var(FORMAT_BACK_FSET))
 			{
 				char str[BIG_BUFFER_SIZE+1];
-				char reason[BIG_BUFFER_SIZE+1];
-				char fset[BIG_BUFFER_SIZE+1];
-				*reason = 0;
-				quote_it(args ? args : get_server_away(from_server), NULL, reason);
-				if(fget_string_var(FORMAT_BACK_FSET))
-				{
-					quote_it(stripansicodes(convert_output_format(fget_string_var(FORMAT_BACK_FSET), "%s %d %d %d %d %s",
-																  update_clock(GET_TIME),	hours, minutes, seconds,
-																  get_int_var(MSGCOUNT_VAR), reason)), NULL, fset);
-					snprintf(str, BIG_BUFFER_SIZE,
-							 "PRIVMSG %%s :ACTION %s", fset);
-					send_msg_to_channels(get_server_channels(from_server), from_server, str);
-				}
+				char *fset;
+				char *reason = args ? args : get_server_away(from_server);
+
+				fset = stripansicodes(convert_output_format(
+					fget_string_var(FORMAT_BACK_FSET), "%s %d %d %d %d %s",
+					update_clock(GET_TIME), hours, minutes, seconds,
+					get_int_var(MSGCOUNT_VAR), reason));
+				snprintf(str, BIG_BUFFER_SIZE, "ACTION %s", fset);
+				send_msg_to_channels(from_server, str);
 			}
 		}
 		set_server_away(from_server, NULL, silent);

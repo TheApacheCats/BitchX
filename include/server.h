@@ -375,7 +375,7 @@ struct sockaddr_foobar	get_server_local_addr		(int);
 struct sockaddr_foobar	get_server_uh_addr		(int);
 NotifyItem	*get_server_notify_list		(int);
 	void	BX_send_msg_to_nicks		(ChannelList *, int, char *);        
-	void	BX_send_msg_to_channels		(ChannelList *, int, char *);        
+	void	BX_send_msg_to_channels		(int, const char *);        
 	int	BX_is_server_queue			(void);
 	int	save_servers			(FILE *);	        
 	void	add_split_server		(char *, char *, int);

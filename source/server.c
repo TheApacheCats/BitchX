@@ -1919,23 +1919,11 @@ void	BX_set_server_away (int ssa_index, char *message, int silent)
 			char buffer[BIG_BUFFER_SIZE+1];
 			if (get_int_var(SEND_AWAY_MSG_VAR))
 			{
-				char *p = NULL;
-				ChannelList *chan;
-				if (get_server_version(ssa_index) == Server2_8hybrid6)
-				{
-					for (chan = server_list[ssa_index].chan_list; chan; chan = chan->next)
-						send_to_server("PRIVMSG %s :ACTION %s", chan->channel, 
-							stripansicodes(convert_output_format(fget_string_var(FORMAT_AWAY_FSET), "%s [\002BX\002-MsgLog %s] %s",update_clock(GET_TIME), get_int_var(MSGLOG_VAR)?"On":"Off", message)));
-				}
-				else
-				{
-					for (chan = server_list[ssa_index].chan_list; chan; chan = chan->next)
-						m_s3cat(&p, ",", chan->channel);
-					if (p)
-						send_to_server("PRIVMSG %s :ACTION %s", p, 
-							stripansicodes(convert_output_format(fget_string_var(FORMAT_AWAY_FSET), "%s [\002BX\002-MsgLog %s] %s",update_clock(GET_TIME), get_int_var(MSGLOG_VAR)?"On":"Off", message)));
-						new_free(&p);
-				}
+				snprintf(buffer, BIG_BUFFER_SIZE, "ACTION %s", 
+					stripansicodes(convert_output_format(
+						fget_string_var(FORMAT_AWAY_FSET), "%s [\002BX\002-MsgLog %s] %s",
+						update_clock(GET_TIME), get_int_var(MSGLOG_VAR)? "On" : "Off", message)));
+				send_msg_to_channels(ssa_index, buffer);
 			}
 			send_to_server("%s :%s", "AWAY", stripansicodes(convert_output_format(fget_string_var(FORMAT_AWAY_FSET), "%s [\002BX\002-MsgLog %s] %s", update_clock(GET_TIME), get_int_var(MSGLOG_VAR)?"On":"Off",message)));
 			strncpy(buffer, convert_output_format(fget_string_var(FORMAT_SEND_ACTION_FSET), "%s %s $C ", update_clock(GET_TIME), server_list[ssa_index].nickname), BIG_BUFFER_SIZE);
@@ -3712,40 +3700,37 @@ struct	sockaddr_foobar	get_server_uh_addr (int servnum)
 	return server_list[servnum].uh_addr;
 }
 
-
-void BX_send_msg_to_channels(ChannelList *channel, int server, char *msg)
+void BX_send_msg_to_channels(int server, const char *msg)
 {
-int serv_version;
-char *p = NULL;
-ChannelList *chan = NULL;
-int count;
+	char *p = NULL;
+	ChannelList *chan = NULL;
+	int count;
 	/* 
 	 * Because of hybrid and it's removal of , targets 
 	 * we need to detect this and get around it..
 	 */
-	serv_version = get_server_version(server);
-	if (serv_version == Server2_8hybrid6)
+	if (get_server_version(server) == Server2_8hybrid6)
 	{
 		/* this might be a cause for some flooding however. 
 		 * so we use the server queue. Which will help alleviate
 		 * some flooding from the client.
 		 */
-		for (chan = channel; chan; chan = chan->next)
-			queue_send_to_server(server, msg, chan->channel);
+		for (chan = get_server_channels(server); chan; chan = chan->next)
+			queue_send_to_server(server, "PRIVMSG %s :%s", chan->channel, msg);
 		return;
 	}
-	for (chan = channel, count = 1; chan; chan = chan->next, count++)
+	for (chan = get_server_channels(server), count = 1; chan; chan = chan->next, count++)
 	{
 		m_s3cat(&p, ",", chan->channel);
 		if (count > 3)
 		{
-			send_to_server(msg, p);
+			my_send_to_server(server, "PRIVMSG %s :%s", p, msg);
 			new_free(&p);
 			count = 0;
 		}
 	}
 	if (p)
-		send_to_server(msg, p);                                
+		my_send_to_server(server, "PRIVMSG %s :%s", p, msg);
 	new_free(&p);
 }
 

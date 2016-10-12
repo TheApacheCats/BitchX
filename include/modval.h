@@ -569,7 +569,7 @@ extern Function_ptr *global;
 #define set_server_trace_kill (*(void (*)(int , int ))global[SET_SERVER_TRACE_KILL])
 #define add_server_channels (*(void (*)(int, ChannelList *))global[ADD_SERVER_CHANNELS])
 #define set_server_channels (*(void (*)(int, ChannelList *))global[SET_SERVER_CHANNELS])
-#define send_msg_to_channels (*(void (*)(ChannelList *, int, char *))global[SEND_MSG_TO_CHANNELS])
+#define send_msg_to_channels (*(void (*)(int, const char *))global[SEND_MSG_TO_CHANNELS])
 #define send_msg_to_nicks (*(void (*)(ChannelList *, int, char *))global[SEND_MSG_TO_NICKS])
 #define is_server_queue (*(int (*)(void ))global[IS_SERVER_QUEUE])
 
