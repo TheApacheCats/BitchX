@@ -1284,29 +1284,6 @@ char	*BX_double_quote (const char *str, const char *stuff, char *buffer)
 	return buffer;
 }
 
-char	*quote_it (const char *str, const char *stuff, char *buffer)
-{
-	register char	c;
-	register int	pos;
-
-	*buffer = 0;
-	for (pos = 0; (c = *str); str++)
-	{
-		if (stuff && strchr(stuff, c))
-		{
-			if (c == '%')
-				buffer[pos++] = '%';
-			else
-				buffer[pos++] = '\\';
-		}
-		else if (c == '%')
-			buffer[pos++] = '%';
-		buffer[pos++] = c;
-	}
-	buffer[pos] = '\0';
-	return buffer;
-}
-
 void	BX_ircpanic (char *format, ...)
 {
 	char buffer[3 * BIG_BUFFER_SIZE + 1];

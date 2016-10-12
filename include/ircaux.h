@@ -35,7 +35,6 @@ char *	BX_sindex			(register char *, char *);
 char *	BX_rsindex 		(register char *, char *, char *, int);
 char *	BX_path_search 		(char *, char *);
 char *	BX_double_quote 		(const char *, const char *, char *);
-char *	quote_it 		(const char *, const char *, char *);
 
 char *	n_malloc_strcpy		(char **, const char *, const char *, const char *, const int);
 char *	BX_malloc_str2cpy		(char **, const char *, const char *);
