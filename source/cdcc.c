@@ -545,7 +545,7 @@ static int do_dcc_sends(char *command, char *from, char *args)
 				break;
 		if (ptr)
 		{
-			if (ptr->password && (!password || (password && strcmp(ptr->password, password))))
+			if (ptr->password && (!password || strcmp(ptr->password, password)))
 			{
 				put_it("%s: Attempted get of secure pack %d from %s failed. [%s]", cparse(get_string_var(CDCC_PROMPT_VAR)), ptr->num, from, !password? "No Password": "Invalid Password");
 				queue_send_to_server(from_server, "NOTICE %s :\002CDCC\002: Failed attempt to get secure pack %d", from, ptr->num);
@@ -1494,8 +1494,8 @@ int BX_add_to_queue(char *nick, char *command, pack *sendpack)
 		queuelist = new;
 	numqueue++;
 	put_it("%s: Queue position %d queuing %d files for %s", cparse(get_string_var(CDCC_PROMPT_VAR)), numqueue, sendpack->numfiles, nick);
-	if (!lastnick || (lastnick && my_stricmp(lastnick, nick)))
-		malloc_strcpy(&lastnick, nick);
+
+	malloc_strcpy(&lastnick, nick);
 	return 1;
 }
 	
