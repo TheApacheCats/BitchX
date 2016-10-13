@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Fix memory leaks in /CDCC PLIST and /CDCC NOTICE. (caf) 
+
 * Rename reserved identifiers from irc_std.h to fix building on under
   latest cygwin. (caf)
 
