@@ -245,7 +245,7 @@ extern Function_ptr *global;
 #define array_lookup (*(Array_item *(*)(Array *, char *, int, int ))global[ARRAY_LOOKUP])
 #define find_array_item (*(Array_item *(*)(Array *, char *, int *, int *))global[FIND_ARRAY_ITEM])
 
-#define find_fixed_array_item (*(void *(*)(void *, size_t, int, char *, int *, int *))global[FIND_FIXED_ARRAY_ITEM])
+#define find_fixed_array_item (*(void *(*)(void *, size_t, int, const char *, int *, int *))global[FIND_FIXED_ARRAY_ITEM])
 
 /* output.c */
 #define put_it (*(void (*)(const char *, ...))global[PUT_IT])

@@ -351,7 +351,7 @@ Array_item *BX_find_array_item (Array *set, char *name, int *cnt, int *loc)
  * This code is identical to find_array_item except ``list'' is a 1st
  * level array instead of a 2nd level array.
  */
-void * BX_find_fixed_array_item (void *list, size_t size, int howmany, char *name, int *cnt, int *loc)
+void * BX_find_fixed_array_item (void *list, size_t size, int howmany, const char *name, int *cnt, int *loc)
 {
 	int	len = strlen(name),
 		min = 0,

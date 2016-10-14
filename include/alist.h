@@ -111,6 +111,6 @@ Array_item *BX_remove_all_from_array (Array *, char *);
 Array_item *BX_array_lookup	(Array *, char *, int wild, int delete);
 Array_item *BX_find_array_item	(Array *, char *, int *cnt, int *loc);
 
-void *BX_find_fixed_array_item	(void *Array, size_t size, int siz, char *, int *cnt, int *loc);
+void *BX_find_fixed_array_item	(void *Array, size_t size, int siz, const char *, int *cnt, int *loc);
 
 #endif
