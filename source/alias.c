@@ -2227,13 +2227,35 @@ char *lookup_member(char *varname, char *var_args, char *ptr, char *args)
 
 /****************************** ALIASCTL ************************************/
 #define EMPTY empty_string
-#define RETURN_EMPTY return m_strdup(EMPTY)
+#define EMPTY_STRING m_strdup(EMPTY)
+#define RETURN_EMPTY return EMPTY_STRING 
 #define RETURN_IF_EMPTY(x) if (empty( x )) RETURN_EMPTY
 #define GET_INT_ARG(x, y) {RETURN_IF_EMPTY(y); x = my_atol(safe_new_next_arg(y, &y));}
 #define GET_FLOAT_ARG(x, y) {RETURN_IF_EMPTY(y); x = atof(safe_new_next_arg(y, &y));}
 #define GET_STR_ARG(x, y) {RETURN_IF_EMPTY(y); x = new_next_arg(y, &y);RETURN_IF_EMPTY(x);}
 #define RETURN_STR(x) return m_strdup(x ? x : EMPTY)
+#define RETURN_MSTR(x) return ((x) ? (x) : EMPTY_STRING)
 #define RETURN_INT(x) return m_strdup(ltoa(x));
+
+/* glob_commands()
+ * Returns a space-separated list of commands beginning with 'prefix'.
+ */
+static char *glob_commands(const char *prefix, int *cnt)
+{
+	IrcCommand *var;
+	char *mylist = NULL;
+	const size_t prefix_len = strlen(prefix);
+
+	*cnt = 0;
+	/* let's do a command completion here */
+	for (var = find_command(prefix, cnt);
+		var && var->name && !strncmp(prefix, var->name, prefix_len);
+		var++)
+	{
+		m_s3cat(&mylist, space, var->name);
+	}
+	RETURN_MSTR(mylist);
+}
 
 /* Used by function_aliasctl */
 /* MUST BE FIXED */
@@ -2321,7 +2343,7 @@ BUILT_IN_FUNCTION(aliasctl)
 			else if (list == VAR_ALIAS)
 				mlist = glob_assign_alias(listc, &num);
 			else if (list == -1)
-				return glob_commands(listc, &num, 0);
+				return glob_commands(listc, &num);
 
 			for (ctr = 0; ctr < num; ctr++)
 			{
@@ -2345,7 +2367,7 @@ BUILT_IN_FUNCTION(aliasctl)
 			else if (list == VAR_ALIAS)
 				mlist = pmatch_assign_alias(listc, &num);
 			else if (list == -1)
-				return glob_commands(listc, &num, 1);
+				return glob_commands(listc, &num);
 
 			for (ctr = 0; ctr < num; ctr++)
 			{

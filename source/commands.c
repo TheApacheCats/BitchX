@@ -153,7 +153,7 @@ char	lame_wait_nick[] = "***LW***";
 char	wait_nick[] = "***W***";
 
 #ifdef WANT_DLL
-	IrcCommandDll *find_dll_command (char *, int *);
+	IrcCommandDll *find_dll_command (const char *, int *);
 	IrcCommandDll *dll_commands = NULL;
 #endif
 
@@ -904,25 +904,6 @@ BUILT_IN_COMMAND(init_ftp)
 }
 #endif
 
-char *glob_commands(char *name, int *cnt, int pmatch)
-{
-IrcCommand *var = NULL;
-char *loc_match;
-char *mylist = NULL;
-	*cnt = 0;
-	/* let's do a command completion here */
-	if (!(var = find_command(name, cnt)))
-		return m_strdup(empty_string);
-	loc_match = alloca(strlen(name)+2);
-	sprintf(loc_match, "%s*", (name && *name) ? name : empty_string);
-	while (wild_match(loc_match, var->name))
-	{
-		m_s3cat(&mylist, space, var->name);
-		var++;
-	}
-	return m_strdup(mylist ? mylist : empty_string);
-}
-
 /*
  * find_command: looks for the given name in the command list, returning a
  * pointer to the first match and the number of matches in cnt.  If no
@@ -932,7 +913,7 @@ char *mylist = NULL;
  * returned and cnt is set to the number of matches * -1.  Thus is 4 commands
  * matched, but the first was as exact match, cnt is -4.
  */
-IrcCommand *BX_find_command(char *com, int *cnt)
+IrcCommand *BX_find_command(const char *com, int *cnt)
 {
 	IrcCommand *retval;
 	int loc;
@@ -951,7 +932,7 @@ IrcCommand *BX_find_command(char *com, int *cnt)
 }
 
 #ifdef WANT_DLL
-IrcCommandDll * find_dll_command(char *com, int *cnt)
+IrcCommandDll *find_dll_command(const char *com, int *cnt)
 {
 	int len = 0;
 	
