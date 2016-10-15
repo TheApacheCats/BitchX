@@ -3298,9 +3298,9 @@ BUILT_IN_COMMAND(flush)
 /* e_wall: used for WALLOPS */
 BUILT_IN_COMMAND(e_wall)
 {
-	
-	if ((!args || !*args))
+	if (!args || !*args)
 		return;
+
 	set_display_target(NULL, LOG_WALLOP);
 	send_to_server("%s :%s", command, args);
 	if (get_server_flag(from_server, USER_MODE_W))
@@ -4337,8 +4337,6 @@ void BX_parse_line (const char *name, char *org_line, const char *args, int hist
 	int	args_flag = 0,
 		die = 0;
 
-	
-
 	if (handle_local)
 		make_local_stack((char *)name);
 
@@ -4349,16 +4347,16 @@ void BX_parse_line (const char *name, char *org_line, const char *args, int hist
 	else if (args) do
 	{
 		while (*line == '{') 
-               	{
-                       	if (!(stuff = next_expr(&line, '{'))) 
+		{
+			if (!(stuff = next_expr(&line, '{'))) 
 			{
 				error("Unmatched {");
 				destroy_local_stack();
-                               	return;
-                        }
+				return;
+			}
 			if (((internal_debug & DEBUG_CMDALIAS) || (internal_debug & DEBUG_HOOK)) && alias_debug && !in_debug_yell)
 				debugyell("%3d %s", debug_count++, stuff);
-       	                parse_line(name, stuff, args, hist_flag, append_flag, handle_local);
+			parse_line(name, stuff, args, hist_flag, append_flag, handle_local);
 
 			if ((will_catch_break_exceptions && break_exception) ||
 			    (will_catch_return_exceptions && return_exception) ||
@@ -4368,11 +4366,11 @@ void BX_parse_line (const char *name, char *org_line, const char *args, int hist
 				break;
 			}
 
-			while (line && *line && ((*line == ';') || (my_isspace(*line))))
+			while (*line == ';' || my_isspace(*line))
 				*line++ = '\0';
 		}
 
-		if (!line || !*line || die)
+		if (!*line || die)
 			break;
 
 		stuff = expand_alias(line, args, &args_flag, &line);
@@ -4383,14 +4381,14 @@ void BX_parse_line (const char *name, char *org_line, const char *args, int hist
 			debugyell("%3d %s", debug_count++, stuff);
 
 		parse_command(stuff, hist_flag, (char *)args);
-       	        new_free(&stuff);
+		new_free(&stuff);
 
 		if ((will_catch_break_exceptions && break_exception) ||
 		    (will_catch_return_exceptions && return_exception) ||
 		    (will_catch_continue_exceptions && continue_exception))
 			break;
 	} while (line && *line);
-        else
+	else
 	{
 		if (load_depth != -1) /* CDE should this be != 1 or > 0 */
 			parse_command(line, hist_flag, (char *)args);
