@@ -258,7 +258,7 @@ extern	void	ame			(char *, char *, char *, char *);
 extern	void	unload_dll		(char *, char *, char *, char *);
 #endif
 
-IrcCommand *BX_find_command (const char *, int *);
+const IrcCommand *BX_find_command (const char *, int *);
 		
 #define AWAY_ONE 0
 #define AWAY_ALL 1

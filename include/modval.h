@@ -627,7 +627,7 @@ extern Function_ptr *global;
 #define io (*(void (*)(const char *))global[IRC_IO_FUNC])
 
 /* commands.c */
-#define find_command (*(IrcCommand *(*)(const char *, int *))global[FIND_COMMAND_FUNC])
+#define find_command (*(const IrcCommand *(*)(const char *, int *))global[FIND_COMMAND_FUNC])
 
 #define lock_stack_frame (*(void (*)(void ))global[LOCK_STACK_FRAME])
 #define unlock_stack_frame (*(void (*)(void ))global[UNLOCK_STACK_FRAME])

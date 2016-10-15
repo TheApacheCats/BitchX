@@ -2242,7 +2242,7 @@ char *lookup_member(char *varname, char *var_args, char *ptr, char *args)
  */
 static char *glob_commands(const char *prefix, int *cnt)
 {
-	IrcCommand *var;
+	const IrcCommand *var;
 	char *mylist = NULL;
 	const size_t prefix_len = strlen(prefix);
 

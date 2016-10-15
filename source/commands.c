@@ -913,7 +913,7 @@ BUILT_IN_COMMAND(init_ftp)
  * returned and cnt is set to the number of matches * -1.  Thus is 4 commands
  * matched, but the first was as exact match, cnt is -4.
  */
-IrcCommand *BX_find_command(const char *com, int *cnt)
+const IrcCommand *BX_find_command(const char *com, int *cnt)
 {
 	IrcCommand *retval;
 	int loc;
@@ -4114,7 +4114,7 @@ void command_completion(char unused, char *not_used)
 		*cmdchars,
 		*rest,
 		firstcmdchar[2] = "/";
-	IrcCommand	*command;
+	const IrcCommand *command;
 #ifdef WANT_DLL
 	IrcCommandDll	*dll = NULL;
 #endif
@@ -4542,7 +4542,7 @@ static	unsigned int	 level = 0;
 				*alias = NULL,
 				*alias_name = NULL,
 				*cline = NULL;
-		IrcCommand	*command = NULL;
+		const IrcCommand *command = NULL;
 		void		*arglist = NULL; 
 		int		cmd_cnt,
 				alias_cnt = 0;
@@ -5569,7 +5569,7 @@ BUILT_IN_COMMAND(returncmd)
 
 BUILT_IN_COMMAND(help)
 {
-	IrcCommand *cmd = NULL;
+	const IrcCommand *cmd = NULL;
 #ifdef WANT_DLL
 	IrcCommandDll *cmddll = NULL;
 #endif
