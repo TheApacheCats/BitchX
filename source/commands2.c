@@ -291,11 +291,11 @@ char *s;
 
 int check_mode_lock(char *channel, char *mode_list, int server)
 {
-	ChannelList *chan;
-	char buffer[BIG_BUFFER_SIZE];
+	ChannelList *chan = lookup_channel(channel, server, CHAN_NOUNLINK);
 	
-	if ((chan = lookup_channel(channel, server, 0)) && chan->modelock_key)
+	if (chan && chan->modelock_key && (chan->have_op || chan->hop))
 	{
+		char buffer[BIG_BUFFER_SIZE];
 		char *modelock, *new_mode_list, *newmode, *save, *save1;
 		char *args = NULL, *args1 = NULL;
 		int add = 0;
@@ -389,8 +389,8 @@ int check_mode_lock(char *channel, char *mode_list, int server)
 			}
 			modelock++;
 		}
-		if (chan && chan->have_op && *buffer)
-			send_to_server("MODE %s %s", chan->channel, buffer);
+		if (*buffer)
+			my_send_to_server(server, "MODE %s %s", chan->channel, buffer);
 		new_free(&save);
 		new_free(&save1);
 		return 1;

@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Act on channel mode lock as half-op. (caf)
+
 * Fix crash and memory leak in $aliasctl(COMMAND MATCH). (caf)
 
 * Fix memory leaks in /CDCC PLIST and /CDCC NOTICE. (caf) 
