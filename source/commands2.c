@@ -770,7 +770,7 @@ else
 		} else if (!my_strnicmp(arg, "ctcp_flood_protection", 6))
 		{
 			var = CTCP_FLOOD_PROTECTION_VAR;
-			str = "$G %cToggled %GCtcp Flood Protection %K[%W$[-3]0%K]","%s";
+			str = "$G %cToggled %GCtcp Flood Protection %K[%W$[-3]0%K]";
 		} else if (!my_strnicmp(arg, "flood_protection",7))
 		{
 			var = FLOOD_PROTECTION_VAR;
@@ -805,7 +805,7 @@ else
 		} else if (!my_strnicmp(arg, "kickflood",5))
 		{
 			var = KICKFLOOD_VAR;
-			str = "$G %cToggled %GKick Flood %K[%W$[-3]0%K]","%s";
+			str = "$G %cToggled %GKick Flood %K[%W$[-3]0%K]";
 		} else if (!my_strnicmp(arg, "msglog", 3))
 		{
 			var = MSGLOG_VAR;
@@ -833,11 +833,11 @@ else
 		} else if (!my_strnicmp(arg, "auto_rejoin", 8))
 		{
 			var = AUTO_REJOIN_VAR;
-			str = "$G %cToggled %GAuto_Rejoin %K[%W$[-3]0%K]","%s";
+			str = "$G %cToggled %GAuto_Rejoin %K[%W$[-3]0%K]";
 		} else if (!my_strnicmp(arg, "nick_completion", 6))
 		{
 			var = NICK_COMPLETION_VAR;
-			str = "$G %cToggled %GNick Completion %K[%W$[-3]0%K]","%s";
+			str = "$G %cToggled %GNick Completion %K[%W$[-3]0%K]";
 		} else if (!my_strnicmp(arg, "aop", 3))
 		{
 			var = AOP_VAR;
@@ -2472,7 +2472,7 @@ int n;
 		new_open(n);
 
 
-		term_init((parm.termid && *parm.termid) ? parm.termid : NULL);
+		term_init(*parm.termid ? parm.termid : NULL);
 		reset_cols(parm.cols);
 		reset_lines(parm.rows);
 		reinit_term(main_screen->fdin);
