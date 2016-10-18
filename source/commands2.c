@@ -914,18 +914,22 @@ else
 
 BUILT_IN_COMMAND(show_version)
 {
-char *nick;
-char *version_buf = NULL;
-extern char tcl_versionstr[];
+	char *nick;
+	char *version_buf;
+	const char *sysname = "unknown";
+	const char *release = "unknown";
+	extern char tcl_versionstr[];
 
 #ifdef HAVE_UNAME
-struct utsname buf;
-	
+	struct utsname buf;
+
 	uname(&buf);
-	malloc_strcpy(&version_buf, stripansicodes(convert_output_format(fget_string_var(FORMAT_VERSION_FSET), "%s %s %s %s %s", irc_version, internal_version, buf.sysname, buf.release?buf.release:empty_string, tcl_versionstr)));
-#else
-	malloc_strcpy(&version_buf, stripansicodes(convert_output_format(fget_string_var(FORMAT_VERSION_FSET), "%s %s %s %s %s", irc_version, internal_version, "unknown", tcl_versionstr, empty_string)));
+	sysname = buf.sysname;
+	release = buf.release;
 #endif
+
+	version_buf = m_strdup(stripansicodes(convert_output_format(fget_string_var(FORMAT_VERSION_FSET), "%s %s %s %s %s", irc_version, internal_version, sysname, release, tcl_versionstr)));
+
 	if (args && *args)
 		nick = next_arg(args, &args);
 	else
