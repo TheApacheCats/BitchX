@@ -1745,27 +1745,27 @@ void dcc_chat(char *command, char *args)
 
 void close_dcc_file(int snum)
 {
-SocketList	*s;
-DCC_int		*n;
-char		lame_ultrix[30];	/* should be plenty */
-char		lame_ultrix2[30];
-char		lame_ultrix3[30];
-char		buffer[50];
-char		*tofrom = NULL;
-char		*filename, *p;
+	SocketList *s;
+	DCC_int *n;
+	char lame_ultrix[30]; /* should be plenty */
+	char lame_ultrix2[30];
+	char lame_ultrix3[30];
+	char *tofrom = NULL;
+	char *filename, *p;
 #ifdef GUI
-char		*who;
+	char *who;
 #endif
 
-double		xtime;
-double		xfer;
-double		temp;
-unsigned long	type;
-char		lame_type[30];
+	double xtime;
+	double xfer;
+	double temp;
+	unsigned long type;
+	char lame_type[30];
 
 	s = get_socket(snum);
 	if (!s || !(n = (DCC_int *)s->info))
 		return;
+
 	type = s->flags & DCC_TYPES;
 	*lame_type = 0;
 	if (s->flags & DCC_TDCC)
@@ -1784,7 +1784,6 @@ char		lame_type[30];
 	/* Cant pass %g to put_it (lame ultrix/dgux), fix suggested by sheik. */
 	sprintf(lame_ultrix2, "%2.4g%s", _GMKv(xfer), _GMKs(xfer));
 	sprintf(lame_ultrix3, "%2.4g", xtime);
-	sprintf(buffer, "%%s %s %%s %%s TRANSFER COMPLETE", lame_type);
 
 	filename = LOCAL_COPY(n->filename);
 	p = filename;
@@ -1804,8 +1803,9 @@ char		lame_type[30];
 		default:
 			tofrom = "to";
 	}
+
 	set_display_target(NULL, LOG_DCC);
-	if(do_hook(DCC_LOST_LIST,buffer,s->server, strip_path(n->filename), lame_ultrix))
+	if (do_hook(DCC_LOST_LIST, "%s %s %s %s TRANSFER COMPLETE", s->server, lame_type, strip_path(n->filename), lame_ultrix))
 		put_it("%s", convert_output_format(fget_string_var(FORMAT_DCC_LOST_FSET),
 			"%s %s %s %s %s %s %s %s", 
 			update_clock(GET_TIME), lame_type, strip_path(filename), 
