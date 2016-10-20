@@ -2891,11 +2891,14 @@ register int		i = 0;
 /*		chop(transfer_buffer, 1);*/
 		if (fget_string_var(FORMAT_DCC_FSET))
 		{
-			sprintf(DCC_current_transfer_buffer, "%s", convert_output_format(fget_string_var(FORMAT_DCC_FSET), "%s", transfer_buffer));
+			strlcpy(DCC_current_transfer_buffer,
+				convert_output_format(fget_string_var(FORMAT_DCC_FSET), "%s", transfer_buffer),
+				sizeof DCC_current_transfer_buffer);
 			chop(DCC_current_transfer_buffer, 4);
 		}
 		else
-			sprintf(DCC_current_transfer_buffer, "[%s]", transfer_buffer);
+			snprintf(DCC_current_transfer_buffer, sizeof DCC_current_transfer_buffer, 
+				"[%s]", transfer_buffer);
 	}
 	else
 		*DCC_current_transfer_buffer = 0;
