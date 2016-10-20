@@ -1850,7 +1850,7 @@ char *buffer = alloca(MAX_DCC_BLOCK_SIZE+1);
 			}
 			if (numbytes)
 			{	
-				if (read(snum, &bytes, sizeof(u_32int_t)) < sizeof(u_32int_t))
+				if (read(snum, &bytes, sizeof bytes) < (int)sizeof bytes)
 				{
 					erase_dcc_info(snum, 1, convert_output_format("$G %RDCC%n Remote closed dcc send", NULL));
 					close_socketread(snum);
