@@ -3835,32 +3835,42 @@ int err;
 
 int open_listen_port(int s)
 {
-struct sockaddr_in data_addr = { 0 };
-socklen_t len = sizeof(struct sockaddr_in), data = -1;
-int on = 1;
-char *a, *p;
+	struct sockaddr_in data_addr = { 0 };
+	socklen_t len = sizeof(struct sockaddr_in);
+	int data_s;
+	const int on = 1;
+	unsigned char *a, *p;
 
 	if (getsockname(s, (struct sockaddr *)&data_addr, &len) < 0)
 		return -1;
 
 	data_addr.sin_port = 0;
-	if ((data = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+	if ((data_s = socket(AF_INET, SOCK_STREAM, 0)) < 0)
 		return -1;
-	if ((setsockopt(data, SOL_SOCKET, SO_REUSEADDR, (char *)&on, sizeof(on))) < 0)
+	if ((setsockopt(data_s, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on))) < 0)
+	{
+		close(data_s);
 		return -1;
-	if ((bind(data, (struct sockaddr *)&data_addr, sizeof(data_addr))) < 0)
+	}
+	if ((bind(data_s, (struct sockaddr *)&data_addr, sizeof(data_addr))) < 0)
+	{
+		close(data_s);
 		return -1;
-	len = sizeof(struct sockaddr_in);
-	getsockname(data, (struct sockaddr *)&data_addr, &len);
+	}
+	if ((listen(data_s, 1)) < 0)
+	{
+		close(data_s);
+		return -1;
+	}
 
-	a = (char *)&data_addr.sin_addr;
-	p = (char *)&data_addr.sin_port;
-#define UC(b) (((int)b)&0xff)
-	dcc_printf(s, "PORT %d,%d,%d,%d,%d,%d\n", UC(a[0]), UC(a[1]), UC(a[2]), UC(a[3]),UC(p[0]), UC(p[1]));
-#undef UC
-	if ((listen(data, 1)) < 0)
-		return -1;
-	return data;
+	len = sizeof(struct sockaddr_in);
+	getsockname(data_s, (struct sockaddr *)&data_addr, &len);
+
+	a = (unsigned char *)&data_addr.sin_addr;
+	p = (unsigned char *)&data_addr.sin_port;
+	dcc_printf(s, "PORT %d,%d,%d,%d,%d,%d\n", a[0], a[1], a[2], a[3], p[0], p[1]);
+
+	return data_s;
 }
 
 
