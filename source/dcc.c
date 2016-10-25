@@ -2502,29 +2502,25 @@ static char *_dcc_offer[12] = {"%K±°°°°°°°°°%n",		/*  0 */
 
 void dcc_glist(char *command, char *args)
 {
-char	*dformat =
-	"#$[3]0 $[6]1%Y$2%n $[11]3 $[25]4 $[7]5 $6-";
-char	*d1format =
-	"#$[3]0 $[6]1%Y$2%n $[11]3 $4 $[7]5 $[11]6 $[7]7 $8-";
-char	*c1format =
-	"#$[3]0 $[6]1%Y$2%n $[11]3 $4 $[-4]5 $[-4]6 $[-3]7 $[-3]8  $[7]9 $10";
-
-int i;
-DCC_int *n = NULL;
-SocketList *s;
-int type;
-int tdcc = 0;
-char *status;
-int count = 0;
-DCC_List *c;
-char stats[80];
-char kilobytes[20];
-double barsize = 0.0;
-char spec[BIG_BUFFER_SIZE];
-char *filename, *p;
-
+#define DCC_FORMAT_STAT_PENDING "#$[3]0 $[6]1%Y$2%n $[11]3 $[25]4 $[7]5 $6-"
+#define DCC_FORMAT_STAT_CHAT "#$[3]0 $[6]1%Y$2%n $[11]3 $4 $[-4]5 $[-4]6 $[-3]7 $[-3]8  $[7]9 $10"
+#define DCC_FORMAT_STAT_BARTYPE_0 "#$[3]0 $[6]1%Y$2%n $[11]3 $4 $[7]5 $[11]6 $[7]7 $8-"
+#define DCC_FORMAT_STAT_BARTYPE_1 "#$[3]0 $[6]1%Y$2%n $[11]3 $[7]5 $[22]6 $[7]7 $8-"
+	int i;
+	DCC_int *n = NULL;
+	SocketList *s;
+	int type;
+	int tdcc = 0;
+	char *status;
+	int count = 0;
+	DCC_List *c;
+	char kilobytes[20];
+	double barsize = 0.0;
+	char spec[BIG_BUFFER_SIZE];
+	char *filename, *p;
+	
 	reset_display_target();
-#if !defined(WINNT) && !defined(__EMX__)
+#if !defined(WINNT) && !defined(__EMX__) && (defined(LATIN1) || defined(CHARSET_CUSTOM))
 	charset_ibmpc();
 #endif
 	if (do_hook(DCC_HEADER_LIST, "%s %s %s %s %s %s %s", "Dnum","Type","Nick", "Status", "K/s", "File","Encrypt"))
@@ -2564,7 +2560,7 @@ char *filename, *p;
 				"Unknown",
 				"N/A", strip_path(filename), n->encrypt?"E":empty_string))
 		{				
-			put_it("%s", convert_output_format(dformat, "%d %s %s %s %s %s %s", 
+			put_it("%s", convert_output_format(DCC_FORMAT_STAT_PENDING, "%d %s %s %s %s %s %s", 
 				n->dccnum, 
 				local_type, 
 				n->encrypt ? "E" : "ÿ",
@@ -2619,7 +2615,7 @@ char *filename, *p;
 					s->flags & DCC_ACTIVE ?"Active" :
 					"Unknown",
 					"N/A", strip_path(filename), n->encrypt?"E":empty_string))
-				put_it("%s", convert_output_format(c1format, "%d %s %s %s %s %s %s %s", 
+				put_it("%s", convert_output_format(DCC_FORMAT_STAT_CHAT, "%d %s %s %s %s %s %s %s", 
 					n->dccnum, 
 					local_type, 
 					n->encrypt ? "E" : "ÿ",
@@ -2643,7 +2639,7 @@ char *filename, *p;
 					s->flags & DCC_ACTIVE ?"Active" :
 					"Unknown",
 					"N/A", strip_path(filename), n->encrypt?"E":empty_string))
-				put_it("%s", convert_output_format(dformat, "%d %s %s %s %s %s %s", 
+				put_it("%s", convert_output_format(DCC_FORMAT_STAT_PENDING, "%d %s %s %s %s %s %s", 
 					n->dccnum, 
 					local_type, 
 					n->encrypt ? "E" : "ÿ",
@@ -2690,11 +2686,7 @@ char *filename, *p;
 	
 				if (n->filesize == 0)
 					size = BAR_LENGTH;
-				sprintf(stats, "%4.1f", perc);
-				if (!get_int_var(DCC_BAR_TYPE_VAR))
-					sprintf(spec, "%s %s%s %02d:%02d", get_bar_percent(iperc), stats, "%%", minutes, seconds);
-				else
-					sprintf(spec, "%s%s %02d:%02d", stats, "%%", minutes, seconds);
+				sprintf(spec, "%s %4.1f%s %02d:%02d", get_bar_percent(iperc), perc, "%%", minutes, seconds);
 
 				strcpy(spec, convert_output_format(spec, NULL, NULL));
 			}	
@@ -2703,21 +2695,22 @@ char *filename, *p;
 				kilobytes, strip_path(filename), 
 				n->encrypt?"E":empty_string))
 			{
-				char *s1;
+				const char *stat_format;
 				if (!get_int_var(DCC_BAR_TYPE_VAR))
-					s1 = d1format;
+					stat_format = DCC_FORMAT_STAT_BARTYPE_0;
 				else
-					s1 = dformat;
+					stat_format = DCC_FORMAT_STAT_BARTYPE_1;
 
-				put_it("%s", convert_output_format(s1, "%d %s %s %s %s %s %s", 
+				put_it("%s", convert_output_format(stat_format, "%d %s %s %s %s %s %s", 
 					n->dccnum, local_type, n->encrypt ? "E":"ÿ",
 					s->server, spec, kilobytes, 
 					strip_path(filename)));
 			}
 
 			/* This prints the second DCC stat line, if DCC_BAR_TYPE is non-zero. */
-			if (do_hook(DCC_STATF1_LIST, "%s %lu %lu %d %d", stats, (unsigned long)bytes, (unsigned long)n->filesize, minutes, seconds))
+			if (do_hook(DCC_STATF1_LIST, "%4.1f %lu %lu %d %d", perc, (unsigned long)bytes, (unsigned long)n->filesize, minutes, seconds))
 			{
+				char stats[80];
 				char *stat_ptr, *spec_ptr;
 				if (!get_int_var(DCC_BAR_TYPE_VAR))
 					continue;
