@@ -1,7 +1,7 @@
 [Changes 1.2.2]
 
-* Set completion bar for /SET DCC_BAR_TYPE 1 to empty rather than full for
-  zero filesize files. (caf)
+* Improve completion bar for /SET DCC_BAR_TYPE 1 so that it always matches
+  the completion percentage. (caf)
 
 * Correctly align formatting of /DCC LIST line for /SET DCC_BAR_TYPE 1. (caf)
 

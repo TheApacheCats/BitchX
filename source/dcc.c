@@ -2465,7 +2465,7 @@ int 	blocksize = get_int_var(DCC_BLOCK_SIZE_VAR);
 	doing_multi = 0;
 }
 
-static const char *get_bar_percent(int percent)
+static const char *get_bar_percent(double pcomplete)
 {
 #ifdef ONLY_STD_CHARS
 static const char * const _dcc_offer[] = {
@@ -2494,7 +2494,7 @@ static const char * const _dcc_offer[] = {
 	"%K±²Û%1%K²±°ÿ%R°±%0%K°%n",	/* 90 */
 	"%K±²Û%1%K²±°ÿ%R°±²%n"};	/* 100 */
 #endif
-	const int idx = percent / 10;
+	const int idx = pcomplete * 10;
 
 	if (idx >= 0 && idx < (sizeof _dcc_offer / sizeof _dcc_offer[0]))
 		return _dcc_offer[idx];
@@ -2577,14 +2577,8 @@ void dcc_glist(char *command, char *args)
 	}
 	for (i = 0; i < get_max_fd() + 1; i++, count++)
 	{
-		double perc = 0.0;
-		double bytes = 0.0;
 		char local_type[30];
 		time_t xtime;
-		int seconds = 0, minutes = 0;
-		char percent[20];
-		char eta[20];
-		char kilobytes[20];
 
 		if (!check_dcc_socket(i))
 			continue;
@@ -2630,17 +2624,16 @@ void dcc_glist(char *command, char *args)
 					"N/A",
 					strip_path(filename)));
 		}
-		else
+		else if (!(s->flags & DCC_ACTIVE))
 		{
-			if (!(s->flags & DCC_ACTIVE))
-			{
 			if (do_hook(DCC_STAT_LIST, "%d %s %s %s %s %s %s", 
-					n->dccnum, local_type, s->server,
-					s->flags & DCC_OFFER ? "Offer " :
-					s->flags & DCC_WAIT ?  "Wait  " :
-					s->flags & DCC_ACTIVE ?"Active" :
-					"Unknown",
-					"N/A", strip_path(filename), n->encrypt?"E":empty_string))
+				n->dccnum, local_type, s->server,
+				s->flags & DCC_OFFER ? "Offer " :
+				s->flags & DCC_WAIT ?  "Wait  " :
+				s->flags & DCC_ACTIVE ?"Active" :
+				"Unknown",
+				"N/A", strip_path(filename), n->encrypt?"E":empty_string))
+			{
 				put_it("%s", convert_output_format(DCC_FORMAT_STAT_PENDING, "%d %s %s %s %s %s %s", 
 					n->dccnum, 
 					local_type, 
@@ -2652,24 +2645,37 @@ void dcc_glist(char *command, char *args)
 					"Unknown",
 					"N/A", 
 					strip_path(filename)));
-				continue;
 			}
-
-			bytes = n->bytes_read + n->bytes_sent;
+		}
+		else 
+		{
+			double bytes = n->bytes_read + n->bytes_sent;
+			double pcomplete; /* proportion of transfer completed, 0.0 to 1.0 */
+			char percent[20];
+			char eta[20];
+			char kilobytes[20];
+			int seconds = 0, minutes = 0;
 
 			type = s->flags & DCC_TYPES;
 			tdcc = s->flags & DCC_TDCC;
 			status = s->flags & DCC_OFFER ? "Offer":s->flags & DCC_ACTIVE ? "Active": s->flags&DCC_WAIT?"Wait":"Unknown";
 
-			if (bytes && (n->filesize - n->transfer_orders.byteoffset) >= bytes)
+			/* Calculate proportion of transfer completed */
+			if (n->filesize > 0)
 			{
-				perc = 100.0 * (bytes + n->transfer_orders.byteoffset) / n->filesize;
-				if (perc > 100.0)
-					perc = 100.0;
-				else if (perc < 0.0)
-					perc = 0.0;
+				pcomplete = (bytes + n->transfer_orders.byteoffset) / n->filesize;
+				if (pcomplete > 1.0)
+					pcomplete = 1.0;
+				else if (pcomplete < 0.0)
+					pcomplete = 0.0;
+			}
+			else
+				pcomplete = 0.0;
 
-				seconds = (int) (((n->filesize - n->transfer_orders.byteoffset - bytes) / (bytes / xtime)) + 0.5);
+			/* Calculate ETA */
+			if (pcomplete > 0.0)
+			{
+				seconds = (int)((1.0 / pcomplete - 1.0) * xtime + 0.5);
 				minutes = seconds / 60;
 				seconds = seconds % 60;
 				if (minutes > 999) {
@@ -2677,11 +2683,12 @@ void dcc_glist(char *command, char *args)
 					seconds = 59;
 				}
 				if (seconds < 0) seconds = 0;
-			} else
-				seconds = minutes = perc = 0;
+			}
+			else
+				seconds = minutes = pcomplete = 0;
 				
-			strcpy(spec, convert_output_format(get_bar_percent(perc), NULL, NULL));
-			snprintf(percent, sizeof percent, "%4.1f%%", perc);
+			strcpy(spec, convert_output_format(get_bar_percent(pcomplete), NULL, NULL));
+			snprintf(percent, sizeof percent, "%4.1f%%", pcomplete * 100.0);
 			snprintf(eta, sizeof eta, "%02d:%02d", minutes, seconds);
 			snprintf(kilobytes, sizeof kilobytes, "%2.4g", bytes / 1024.0 / xtime);
 
@@ -2703,7 +2710,7 @@ void dcc_glist(char *command, char *args)
 			}
 
 			/* This prints the second DCC stat line, if DCC_BAR_TYPE is non-zero. */
-			if (do_hook(DCC_STATF1_LIST, "%4.1f %lu %lu %d %d", perc, (unsigned long)bytes, (unsigned long)n->filesize, minutes, seconds))
+			if (do_hook(DCC_STATF1_LIST, "%4.1f %lu %lu %d %d", pcomplete * 100.0, (unsigned long)bytes, (unsigned long)n->filesize, minutes, seconds))
 			{
 				char stats[80];
 				char *stat_ptr, *spec_ptr;
@@ -2713,10 +2720,10 @@ void dcc_glist(char *command, char *args)
 					continue;
 
 				if (n->filesize > 0)
-					size = (int)(BAR_LENGTH * bytes / n->filesize);
+					size = (int)(BAR_LENGTH * pcomplete);
 
 				snprintf(stats, sizeof stats, "%4.1f%% (%lu of %lu bytes)", 
-					perc, (unsigned long)bytes, (unsigned long)n->filesize);
+					pcomplete * 100.0, (unsigned long)bytes, (unsigned long)n->filesize);
 				snprintf(spec, sizeof spec, BOLD_TOG_STR "[" 
 					REV_TOG_STR "%*.*s" REV_TOG_STR "%*.*s]" BOLD_TOG_STR 
 					" ETA " BOLD_TOG_STR "%02d:%02d",
