@@ -2465,37 +2465,39 @@ int 	blocksize = get_int_var(DCC_BLOCK_SIZE_VAR);
 	doing_multi = 0;
 }
 
-static char *get_bar_percent(int percent)
+static const char *get_bar_percent(int percent)
 {
 #ifdef ONLY_STD_CHARS
-static char *_dcc_offer[12] = {"%K-.........%n",		/*  0 */
-				"%K-.........%n",		/* 10 */
-				"%K-=........%n",		/* 20 */
-				"%K-=*.......%n",		/* 30 */
-				"%K-=*%1%K=%0%K......%n",	/* 40 */
-				"%K-=*%1%K=-%0%K.....%n",	/* 50 */
-				"%K-=*%1%K=-.%0%K....%n",	/* 60 */
-				"%K-=*%1%K=-. %0%K...%n",	/* 70 */
-				"%K-=*%1%K=-. %R.%0%K..%n",	/* 80 */
-				"%K-=*%1%K=-. %R.-%0%K.%n",	/* 90 */
-				"%K-=*%1%K=-. %R.-=%n",		/* 100 */
-				empty_string};
+static const char * const _dcc_offer[] = {
+	"%K-.........%n",		/*  0 */
+	"%K-.........%n",		/* 10 */
+	"%K-=........%n",		/* 20 */
+	"%K-=*.......%n",		/* 30 */
+	"%K-=*%1%K=%0%K......%n",	/* 40 */
+	"%K-=*%1%K=-%0%K.....%n",	/* 50 */
+	"%K-=*%1%K=-.%0%K....%n",	/* 60 */
+	"%K-=*%1%K=-. %0%K...%n",	/* 70 */
+	"%K-=*%1%K=-. %R.%0%K..%n",	/* 80 */
+	"%K-=*%1%K=-. %R.-%0%K.%n",	/* 90 */
+	"%K-=*%1%K=-. %R.-=%n"};	/* 100 */
 #else
-static char *_dcc_offer[12] = {"%K±°°°°°°°°°%n",		/*  0 */
-				"%K±°°°°°°°°°%n",		/* 10 */
-				"%K±²°°°°°°°°%n",		/* 20 */
-				"%K±²Û°°°°°°°%n",		/* 30 */
-				"%K±²Û%1%K²%0%K°°°°°°%n",	/* 40 */
-				"%K±²Û%1%K²±%0%K°°°°°%n",	/* 50 */
-				"%K±²Û%1%K²±°%0%K°°°°%n",	/* 60 */
-				"%K±²Û%1%K²±°ÿ%0%K°°°%n",	/* 70 */
-				"%K±²Û%1%K²±°ÿ%R°%0%K°°%n",	/* 80 */
-				"%K±²Û%1%K²±°ÿ%R°±%0%K°%n",	/* 90 */
-				"%K±²Û%1%K²±°ÿ%R°±²%n",		/* 100 */
-				empty_string};
+static const char * const _dcc_offer[] = {
+	"%K±°°°°°°°°°%n",		/*  0 */
+	"%K±°°°°°°°°°%n",		/* 10 */
+	"%K±²°°°°°°°°%n",		/* 20 */
+	"%K±²Û°°°°°°°%n",		/* 30 */
+	"%K±²Û%1%K²%0%K°°°°°°%n",	/* 40 */
+	"%K±²Û%1%K²±%0%K°°°°°%n",	/* 50 */
+	"%K±²Û%1%K²±°%0%K°°°°%n",	/* 60 */
+	"%K±²Û%1%K²±°ÿ%0%K°°°%n",	/* 70 */
+	"%K±²Û%1%K²±°ÿ%R°%0%K°°%n",	/* 80 */
+	"%K±²Û%1%K²±°ÿ%R°±%0%K°%n",	/* 90 */
+	"%K±²Û%1%K²±°ÿ%R°±²%n"};	/* 100 */
 #endif
-	if (percent <= 100)
-		return _dcc_offer[percent];
+	const int idx = percent / 10;
+
+	if (idx >= 0 && idx < (sizeof _dcc_offer / sizeof _dcc_offer[0]))
+		return _dcc_offer[idx];
 	return empty_string;
 }
 
@@ -2504,8 +2506,8 @@ void dcc_glist(char *command, char *args)
 {
 #define DCC_FORMAT_STAT_PENDING "#$[3]0 $[6]1%Y$2%n $[11]3 $[25]4 $[7]5 $6-"
 #define DCC_FORMAT_STAT_CHAT "#$[3]0 $[6]1%Y$2%n $[11]3 $4 $[-4]5 $[-4]6 $[-3]7 $[-3]8  $[7]9 $10"
-#define DCC_FORMAT_STAT_BARTYPE_0 "#$[3]0 $[6]1%Y$2%n $[11]3 $4 $[7]5 $[11]6 $[7]7 $8-"
-#define DCC_FORMAT_STAT_BARTYPE_1 "#$[3]0 $[6]1%Y$2%n $[11]3 $[7]5 $[22]6 $[7]7 $8-"
+#define DCC_FORMAT_STAT_BARTYPE_0 "#$[3]0 $[6]1%Y$2%n $[11]3 $4 $[7]5 $[7]6 $[7]7 $8-"
+#define DCC_FORMAT_STAT_BARTYPE_1 "#$[3]0 $[6]1%Y$2%n $[11]3 $[7]5 $[18]6 $[7]7 $8-"
 	int i;
 	DCC_int *n = NULL;
 	SocketList *s;
@@ -2514,8 +2516,6 @@ void dcc_glist(char *command, char *args)
 	char *status;
 	int count = 0;
 	DCC_List *c;
-	char kilobytes[20];
-	double barsize = 0.0;
 	char spec[BIG_BUFFER_SIZE];
 	char *filename, *p;
 	
@@ -2582,8 +2582,10 @@ void dcc_glist(char *command, char *args)
 		char local_type[30];
 		time_t xtime;
 		int seconds = 0, minutes = 0;
-		int iperc = 0;
-		int size = 0;
+		char percent[20];
+		char eta[20];
+		char kilobytes[20];
+
 		if (!check_dcc_socket(i))
 			continue;
 		s = get_socket(i);
@@ -2653,43 +2655,36 @@ void dcc_glist(char *command, char *args)
 				continue;
 			}
 
-
 			bytes = n->bytes_read + n->bytes_sent;
-
-			sprintf(kilobytes, "%2.4g", bytes / 1024.0 / xtime);
 
 			type = s->flags & DCC_TYPES;
 			tdcc = s->flags & DCC_TDCC;
 			status = s->flags & DCC_OFFER ? "Offer":s->flags & DCC_ACTIVE ? "Active": s->flags&DCC_WAIT?"Wait":"Unknown";
-			if ((bytes >= 0) && (s->flags & DCC_ACTIVE))
-			{
-				if (bytes && (n->filesize - n->transfer_orders.byteoffset) >= bytes)
-				{
-					perc = (100.0 * ((double)bytes + n->transfer_orders.byteoffset)   / (double)(n->filesize));
-					if ( perc > 100.0) perc = 100.0;
-					else if (perc < 0.0) perc = 0.0;
-					seconds = (int) (( (n->filesize - n->transfer_orders.byteoffset - bytes) / (bytes / xtime)) + 0.5);
-					minutes = seconds / 60;
-					seconds = seconds - (minutes * 60);
-					if (minutes > 999) {
-						minutes = 999;
-						seconds = 59;
-					}	
-					if (seconds < 0) seconds = 0;
-				} else
-					seconds = minutes = perc = 0;
-				
-				iperc = ((int)perc) / 10;
-				barsize = ((double) (n->filesize)) / (double) BAR_LENGTH;
-	
-				size = (int) ((double) bytes / (double)barsize);
-	
-				if (n->filesize == 0)
-					size = BAR_LENGTH;
-				sprintf(spec, "%s %4.1f%s %02d:%02d", get_bar_percent(iperc), perc, "%%", minutes, seconds);
 
-				strcpy(spec, convert_output_format(spec, NULL, NULL));
-			}	
+			if (bytes && (n->filesize - n->transfer_orders.byteoffset) >= bytes)
+			{
+				perc = 100.0 * (bytes + n->transfer_orders.byteoffset) / n->filesize;
+				if (perc > 100.0)
+					perc = 100.0;
+				else if (perc < 0.0)
+					perc = 0.0;
+
+				seconds = (int) (((n->filesize - n->transfer_orders.byteoffset - bytes) / (bytes / xtime)) + 0.5);
+				minutes = seconds / 60;
+				seconds = seconds % 60;
+				if (minutes > 999) {
+					minutes = 999;
+					seconds = 59;
+				}
+				if (seconds < 0) seconds = 0;
+			} else
+				seconds = minutes = perc = 0;
+				
+			strcpy(spec, convert_output_format(get_bar_percent(perc), NULL, NULL));
+			snprintf(percent, sizeof percent, "%4.1f%%", perc);
+			snprintf(eta, sizeof eta, "%02d:%02d", minutes, seconds);
+			snprintf(kilobytes, sizeof kilobytes, "%2.4g", bytes / 1024.0 / xtime);
+
 			if (do_hook(DCC_STATF_LIST, "%d %s %s %s %s %s %s", 
 				n->dccnum, local_type, s->server, status,
 				kilobytes, strip_path(filename), 
@@ -2701,9 +2696,9 @@ void dcc_glist(char *command, char *args)
 				else
 					stat_format = DCC_FORMAT_STAT_BARTYPE_1;
 
-				put_it("%s", convert_output_format(stat_format, "%d %s %s %s %s %s %s", 
+				put_it("%s", convert_output_format(stat_format, "%d %s %s %s %s %s %s %s %s", 
 					n->dccnum, local_type, n->encrypt ? "E":"ÿ",
-					s->server, spec, kilobytes, 
+					s->server, spec, percent, eta, kilobytes, 
 					strip_path(filename)));
 			}
 
@@ -2712,8 +2707,13 @@ void dcc_glist(char *command, char *args)
 			{
 				char stats[80];
 				char *stat_ptr, *spec_ptr;
+				int size = 0;
+
 				if (!get_int_var(DCC_BAR_TYPE_VAR))
 					continue;
+
+				if (n->filesize > 0)
+					size = (int)(BAR_LENGTH * bytes / n->filesize);
 
 				snprintf(stats, sizeof stats, "%4.1f%% (%lu of %lu bytes)", 
 					perc, (unsigned long)bytes, (unsigned long)n->filesize);

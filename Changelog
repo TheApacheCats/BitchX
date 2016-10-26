@@ -1,5 +1,8 @@
 [Changes 1.2.2]
 
+* Set completion bar for /SET DCC_BAR_TYPE 1 to empty rather than full for
+  zero filesize files. (caf)
+
 * Correctly align formatting of /DCC LIST line for /SET DCC_BAR_TYPE 1. (caf)
 
 * Act on channel mode lock as half-op. (caf)
