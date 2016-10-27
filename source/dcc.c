@@ -2465,6 +2465,18 @@ int 	blocksize = get_int_var(DCC_BLOCK_SIZE_VAR);
 	doing_multi = 0;
 }
 
+static const char *dcc_get_state(const SocketList *s)
+{
+	if (s->flags & DCC_OFFER)
+		return "Offer";
+	if (s->flags & DCC_WAIT)
+		return "Wait";
+	if (s->flags & DCC_ACTIVE)
+		return "Active";
+
+	return "Unknown";
+}
+
 static const char *get_bar_percent(double pcomplete)
 {
 #ifdef ONLY_STD_CHARS
@@ -2513,7 +2525,6 @@ void dcc_glist(char *command, char *args)
 	SocketList *s;
 	int type;
 	int tdcc = 0;
-	char *status;
 	int count = 0;
 	DCC_List *c;
 	char spec[BIG_BUFFER_SIZE];
@@ -2554,10 +2565,7 @@ void dcc_glist(char *command, char *args)
 		if (do_hook(DCC_STAT_LIST, "%d %s %s %s %s %s %s", 
 				n->dccnum, local_type, 
 				c->sock.server,
-				s->flags & DCC_OFFER ? "Offer" :
-				s->flags & DCC_WAIT ? "Wait" :
-				s->flags & DCC_ACTIVE ? "Active" :
-				"Unknown",
+				dcc_get_state(s),
 				"N/A", strip_path(filename), n->encrypt?"E":empty_string))
 		{				
 			put_it("%s", convert_output_format(DCC_FORMAT_STAT_PENDING, "%d %s %s %s %s %s %s", 
@@ -2565,11 +2573,7 @@ void dcc_glist(char *command, char *args)
 				local_type, 
 				n->encrypt ? "E" : "ÿ",
 				c->sock.server,
-			
-				s->flags & DCC_OFFER ?     "Offer " :
-				s->flags & DCC_WAIT ?      "Wait  " :
-				s->flags & DCC_ACTIVE ?    "Active" :
-				"Unknown",
+				dcc_get_state(s),
 				"N/A", 
 				strip_path(filename)));
 		}
@@ -2606,20 +2610,14 @@ void dcc_glist(char *command, char *args)
 				xtime = now - s->time;
 			if (do_hook(DCC_STAT_LIST, "%d %s %s %s %s %s %s", 
 					n->dccnum, local_type, s->server,
-					s->flags & DCC_OFFER ? "Offer " :
-					s->flags & DCC_WAIT ?  "Wait  " :
-					s->flags & DCC_ACTIVE ?"Active" :
-					"Unknown",
+					dcc_get_state(s),
 					"N/A", strip_path(filename), n->encrypt?"E":empty_string))
 				put_it("%s", convert_output_format(DCC_FORMAT_STAT_CHAT, "%d %s %s %s %s %s %s %s", 
 					n->dccnum, 
 					local_type, 
 					n->encrypt ? "E" : "ÿ",
 					s->server,
-					s->flags & DCC_OFFER ? "Offer" :
-					s->flags & DCC_WAIT ? "Wait" :
-					s->flags & DCC_ACTIVE ? "Active" :
-					"Unknown",
+					dcc_get_state(s),
 					convert_time(xtime),
 					"N/A",
 					strip_path(filename)));
@@ -2628,10 +2626,7 @@ void dcc_glist(char *command, char *args)
 		{
 			if (do_hook(DCC_STAT_LIST, "%d %s %s %s %s %s %s", 
 				n->dccnum, local_type, s->server,
-				s->flags & DCC_OFFER ? "Offer " :
-				s->flags & DCC_WAIT ?  "Wait  " :
-				s->flags & DCC_ACTIVE ?"Active" :
-				"Unknown",
+				dcc_get_state(s),
 				"N/A", strip_path(filename), n->encrypt?"E":empty_string))
 			{
 				put_it("%s", convert_output_format(DCC_FORMAT_STAT_PENDING, "%d %s %s %s %s %s %s", 
@@ -2639,10 +2634,7 @@ void dcc_glist(char *command, char *args)
 					local_type, 
 					n->encrypt ? "E" : "ÿ",
 					s->server,
-					s->flags & DCC_OFFER ?     "Offer" :
-					s->flags & DCC_WAIT ?      "Wait" :
-					s->flags & DCC_ACTIVE ?    "Active" :
-					"Unknown",
+					dcc_get_state(s),
 					"N/A", 
 					strip_path(filename)));
 			}
@@ -2658,7 +2650,6 @@ void dcc_glist(char *command, char *args)
 
 			type = s->flags & DCC_TYPES;
 			tdcc = s->flags & DCC_TDCC;
-			status = s->flags & DCC_OFFER ? "Offer":s->flags & DCC_ACTIVE ? "Active": s->flags&DCC_WAIT?"Wait":"Unknown";
 
 			/* Calculate proportion of transfer completed */
 			if (n->filesize > 0)
@@ -2693,7 +2684,7 @@ void dcc_glist(char *command, char *args)
 			snprintf(kilobytes, sizeof kilobytes, "%2.4g", bytes / 1024.0 / xtime);
 
 			if (do_hook(DCC_STATF_LIST, "%d %s %s %s %s %s %s", 
-				n->dccnum, local_type, s->server, status,
+				n->dccnum, local_type, s->server, dcc_get_state(s),
 				kilobytes, strip_path(filename), 
 				n->encrypt?"E":empty_string))
 			{
@@ -2714,13 +2705,10 @@ void dcc_glist(char *command, char *args)
 			{
 				char stats[80];
 				char *stat_ptr, *spec_ptr;
-				int size = 0;
+				int size = (int)(BAR_LENGTH * pcomplete);
 
 				if (!get_int_var(DCC_BAR_TYPE_VAR))
 					continue;
-
-				if (n->filesize > 0)
-					size = (int)(BAR_LENGTH * pcomplete);
 
 				snprintf(stats, sizeof stats, "%4.1f%% (%lu of %lu bytes)", 
 					pcomplete * 100.0, (unsigned long)bytes, (unsigned long)n->filesize);
@@ -2746,10 +2734,10 @@ void dcc_glist(char *command, char *args)
 	charset_cst();
 #endif
 #endif
-	if (!count)
+	if (count)
+		do_hook(DCC_POST_LIST, "%s %s %s %s %s %s %s", "DCCnum","Type","Nick", "Status", "K/s", "File","Encrypt");
+	else 
 		bitchsay("No active/pending dcc's");
-	else if (do_hook(DCC_POST_LIST, "%s %s %s %s %s %s %s", "DCCnum","Type","Nick", "Status", "K/s", "File","Encrypt"))
-		;
 }
 
 unsigned char byte_order_test(void)
@@ -4427,16 +4415,15 @@ int i;
 
 char *get_dcc_info(SocketList *s, DCC_int *n, int i)
 {
-char local_type[80];
+	char local_type[80];
+
 	*local_type = 0;
 	if (s->flags & DCC_TDCC)
 		strcpy(local_type, "T");
 	strcat(local_type, dcc_types[s->flags & DCC_TYPES]->name);
 	return m_sprintf("%s %s %s %ld %lu %lu %lu %s #%d %d", 
-			local_type, s->server, 
-			s->flags & DCC_OFFER ? "Offer": 
-				s->flags & DCC_WAIT ? "Wait": 
-				s->flags & DCC_ACTIVE? "Active":"Unknown", 
+			local_type, s->server,
+			dcc_get_state(s),
 			(long)n->starttime.tv_sec,
 			(unsigned long)n->transfer_orders.byteoffset,
 			(unsigned long)n->bytes_sent, (unsigned long)n->bytes_read, 
