@@ -2517,7 +2517,7 @@ static const char * const _dcc_offer[] = {
 void dcc_glist(char *command, char *args)
 {
 #define DCC_FORMAT_STAT_PENDING "#$[3]0 $[6]1%Y$2%n $[11]3 $[25]4 $[7]5 $6-"
-#define DCC_FORMAT_STAT_CHAT "#$[3]0 $[6]1%Y$2%n $[11]3 $4 $[-4]5 $[-4]6 $[-3]7 $[-3]8  $[7]9 $10"
+#define DCC_FORMAT_STAT_CHAT "#$[3]0 $[6]1%Y$2%n $[11]3 $[7]4 $[-4]5 $[-3]6 $[-3]7 $[-3]8  $[7]9 $10"
 #define DCC_FORMAT_STAT_BARTYPE_0 "#$[3]0 $[6]1%Y$2%n $[11]3 $4 $[7]5 $[7]6 $[7]7 $8-"
 #define DCC_FORMAT_STAT_BARTYPE_1 "#$[3]0 $[6]1%Y$2%n $[11]3 $[7]5 $[18]6 $[7]7 $8-"
 	int i;
@@ -2607,7 +2607,7 @@ void dcc_glist(char *command, char *args)
 		if (((type == DCC_CHAT) || (type == DCC_RAW) || (type == DCC_BOTMODE) || (type == DCC_FTPOPEN)))
 		{
 			if (!(s->flags & DCC_ACTIVE))
-				xtime = now - s->time;
+				xtime = now - n->lasttime.tv_sec;
 			if (do_hook(DCC_STAT_LIST, "%d %s %s %s %s %s %s", 
 					n->dccnum, local_type, s->server,
 					dcc_get_state(s),
