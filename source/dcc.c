@@ -2467,49 +2467,56 @@ static const char *dcc_get_state(const SocketList *s)
 	return "Unknown";
 }
 
-static const char *get_bar_percent(double pcomplete)
+/* get_stat_format()
+ * Returns the cparse format string to use for display the DCC file stat line.
+ * Includes the inline completion bar if DCC_VAR_TYPE is 0.
+ */
+#define STAT_FORMAT_PREFIX "#$[3]0 $[6]1%Y$2%n $[11]3 "
+#define STAT_FORMAT_SUFFIX " $[7]4 $[7]5 $[7]6 $7-"
+static const char *get_stat_format(double pcomplete)
 {
 #ifdef ONLY_STD_CHARS
-static const char * const _dcc_offer[] = {
-	"%K-.........%n",		/*  0 */
-	"%K-.........%n",		/* 10 */
-	"%K-=........%n",		/* 20 */
-	"%K-=*.......%n",		/* 30 */
-	"%K-=*%1%K=%0%K......%n",	/* 40 */
-	"%K-=*%1%K=-%0%K.....%n",	/* 50 */
-	"%K-=*%1%K=-.%0%K....%n",	/* 60 */
-	"%K-=*%1%K=-. %0%K...%n",	/* 70 */
-	"%K-=*%1%K=-. %R.%0%K..%n",	/* 80 */
-	"%K-=*%1%K=-. %R.-%0%K.%n",	/* 90 */
-	"%K-=*%1%K=-. %R.-=%n"};	/* 100 */
+static const char * const bar_format[] = {
+	STAT_FORMAT_PREFIX "%K-.........%n" STAT_FORMAT_SUFFIX,		/*  0 */
+	STAT_FORMAT_PREFIX "%K-.........%n" STAT_FORMAT_SUFFIX,		/* 10 */
+	STAT_FORMAT_PREFIX "%K-=........%n" STAT_FORMAT_SUFFIX,		/* 20 */
+	STAT_FORMAT_PREFIX "%K-=*.......%n" STAT_FORMAT_SUFFIX,		/* 30 */
+	STAT_FORMAT_PREFIX "%K-=*%1%K=%0%K......%n" STAT_FORMAT_SUFFIX,	/* 40 */
+	STAT_FORMAT_PREFIX "%K-=*%1%K=-%0%K.....%n" STAT_FORMAT_SUFFIX,	/* 50 */
+	STAT_FORMAT_PREFIX "%K-=*%1%K=-.%0%K....%n" STAT_FORMAT_SUFFIX,	/* 60 */
+	STAT_FORMAT_PREFIX "%K-=*%1%K=-. %0%K...%n" STAT_FORMAT_SUFFIX,	/* 70 */
+	STAT_FORMAT_PREFIX "%K-=*%1%K=-. %R.%0%K..%n" STAT_FORMAT_SUFFIX,	/* 80 */
+	STAT_FORMAT_PREFIX "%K-=*%1%K=-. %R.-%0%K.%n" STAT_FORMAT_SUFFIX,	/* 90 */
+	STAT_FORMAT_PREFIX "%K-=*%1%K=-. %R.-=%n" STAT_FORMAT_SUFFIX};	/* 100 */
 #else
-static const char * const _dcc_offer[] = {
-	"%K±°°°°°°°°°%n",		/*  0 */
-	"%K±°°°°°°°°°%n",		/* 10 */
-	"%K±²°°°°°°°°%n",		/* 20 */
-	"%K±²Û°°°°°°°%n",		/* 30 */
-	"%K±²Û%1%K²%0%K°°°°°°%n",	/* 40 */
-	"%K±²Û%1%K²±%0%K°°°°°%n",	/* 50 */
-	"%K±²Û%1%K²±°%0%K°°°°%n",	/* 60 */
-	"%K±²Û%1%K²±°ÿ%0%K°°°%n",	/* 70 */
-	"%K±²Û%1%K²±°ÿ%R°%0%K°°%n",	/* 80 */
-	"%K±²Û%1%K²±°ÿ%R°±%0%K°%n",	/* 90 */
-	"%K±²Û%1%K²±°ÿ%R°±²%n"};	/* 100 */
+static const char * const bar_format[] = {
+	STAT_FORMAT_PREFIX "%K±°°°°°°°°°%n" STAT_FORMAT_SUFFIX,		/*  0 */
+	STAT_FORMAT_PREFIX "%K±°°°°°°°°°%n" STAT_FORMAT_SUFFIX,		/* 10 */
+	STAT_FORMAT_PREFIX "%K±²°°°°°°°°%n" STAT_FORMAT_SUFFIX,		/* 20 */
+	STAT_FORMAT_PREFIX "%K±²Û°°°°°°°%n" STAT_FORMAT_SUFFIX,		/* 30 */
+	STAT_FORMAT_PREFIX "%K±²Û%1%K²%0%K°°°°°°%n" STAT_FORMAT_SUFFIX,	/* 40 */
+	STAT_FORMAT_PREFIX "%K±²Û%1%K²±%0%K°°°°°%n" STAT_FORMAT_SUFFIX,	/* 50 */
+	STAT_FORMAT_PREFIX "%K±²Û%1%K²±°%0%K°°°°%n" STAT_FORMAT_SUFFIX,	/* 60 */
+	STAT_FORMAT_PREFIX "%K±²Û%1%K²±°ÿ%0%K°°°%n" STAT_FORMAT_SUFFIX,	/* 70 */
+	STAT_FORMAT_PREFIX "%K±²Û%1%K²±°ÿ%R°%0%K°°%n" STAT_FORMAT_SUFFIX,	/* 80 */
+	STAT_FORMAT_PREFIX "%K±²Û%1%K²±°ÿ%R°±%0%K°%n" STAT_FORMAT_SUFFIX,	/* 90 */
+	STAT_FORMAT_PREFIX "%K±²Û%1%K²±°ÿ%R°±²%n" STAT_FORMAT_SUFFIX};	/* 100 */
 #endif
 	const int idx = pcomplete * 10;
 
-	if (idx >= 0 && idx < (sizeof _dcc_offer / sizeof _dcc_offer[0]))
-		return _dcc_offer[idx];
-	return empty_string;
+	if (!get_int_var(DCC_BAR_TYPE_VAR) &&
+		idx >= 0 && idx < (sizeof bar_format / sizeof bar_format[0]))
+	{
+		return bar_format[idx];
+	}
+	return STAT_FORMAT_PREFIX "$[7]4 $[18]5 $[7]6 $7-";
 }
 
 
 void dcc_glist(char *command, char *args)
 {
-#define DCC_FORMAT_STAT_PENDING "#$[3]0 $[6]1%Y$2%n $[11]3 $[25]4 $[7]5 $6-"
-#define DCC_FORMAT_STAT_CHAT "#$[3]0 $[6]1%Y$2%n $[11]3 $[7]4 $[-4]5 $[-3]6 $[-3]7 $[-3]8  $[7]9 $10"
-#define DCC_FORMAT_STAT_BARTYPE_0 "#$[3]0 $[6]1%Y$2%n $[11]3 $4 $[7]5 $[7]6 $[7]7 $8-"
-#define DCC_FORMAT_STAT_BARTYPE_1 "#$[3]0 $[6]1%Y$2%n $[11]3 $[7]5 $[18]6 $[7]7 $8-"
+#define DCC_FORMAT_STAT_PENDING STAT_FORMAT_PREFIX "$[25]4 $[7]5 $6-"
+#define DCC_FORMAT_STAT_CHAT STAT_FORMAT_PREFIX "$[7]4 $[-4]5 $[-3]6 $[-3]7 $[-3]8  $[7]9 $10"
 	int i;
 	DCC_int *n = NULL;
 	SocketList *s;
@@ -2626,7 +2633,6 @@ void dcc_glist(char *command, char *args)
 		{
 			double bytes = n->bytes_read + n->bytes_sent;
 			double pcomplete; /* proportion of transfer completed, 0.0 to 1.0 */
-			char spec[BIG_BUFFER_SIZE];
 			char percent[20];
 			char eta[20];
 			char kilobytes[20];
@@ -2659,7 +2665,6 @@ void dcc_glist(char *command, char *args)
 			else
 				seconds = minutes = 0;
 				
-			strcpy(spec, convert_output_format(get_bar_percent(pcomplete), NULL, NULL));
 			snprintf(percent, sizeof percent, "%4.1f%%", pcomplete * 100.0);
 			snprintf(eta, sizeof eta, "%02d:%02d", minutes, seconds);
 			snprintf(kilobytes, sizeof kilobytes, "%2.4g", bytes / 1024.0 / xtime);
@@ -2669,21 +2674,18 @@ void dcc_glist(char *command, char *args)
 				kilobytes, strip_path(filename), 
 				n->encrypt?"E":empty_string))
 			{
-				const char *stat_format;
-				if (!get_int_var(DCC_BAR_TYPE_VAR))
-					stat_format = DCC_FORMAT_STAT_BARTYPE_0;
-				else
-					stat_format = DCC_FORMAT_STAT_BARTYPE_1;
+				const char *stat_format = get_stat_format(pcomplete);
 
-				put_it("%s", convert_output_format(stat_format, "%d %s %s %s %s %s %s %s %s", 
+				put_it("%s", convert_output_format(stat_format, "%d %s %s %s %s %s %s %s", 
 					n->dccnum, type_name, n->encrypt ? "E":"ÿ",
-					s->server, spec, percent, eta, kilobytes, 
+					s->server, percent, eta, kilobytes, 
 					strip_path(filename)));
 			}
 
 			/* This prints the second DCC stat line, if DCC_BAR_TYPE is non-zero. */
 			if (do_hook(DCC_STATF1_LIST, "%4.1f %lu %lu %d %d", pcomplete * 100.0, (unsigned long)bytes, (unsigned long)n->filesize, minutes, seconds))
 			{
+				char spec[BIG_BUFFER_SIZE];
 				char stats[80];
 				char *stat_ptr, *spec_ptr;
 				int size = (int)(BAR_LENGTH * pcomplete);
