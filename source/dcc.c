@@ -2573,7 +2573,7 @@ void dcc_glist(char *command, char *args)
 	}
 	for (i = 0; i < get_max_fd() + 1; i++, count++)
 	{
-		time_t xtime;
+		double xtime;
 		char *filename, *p;
 		const char *type_name;
 
@@ -2584,10 +2584,14 @@ void dcc_glist(char *command, char *args)
 		type = s->flags & DCC_TYPES;
 		tdcc = s->flags & DCC_TDCC;
 		type_name = dcc_type_name(type, tdcc);
-		xtime = now - n->starttime.tv_sec;
+
+		if (s->flags & DCC_ACTIVE)
+			xtime = time_since(&n->starttime);
+		else
+			xtime = time_since(&n->lasttime);
 	
-		if (xtime <= 0)
-			xtime = 1;
+		if (xtime <= 0.0)
+			xtime = 1e-3;
 
 		filename = LOCAL_COPY(n->filename);
 		p = filename;
@@ -2598,8 +2602,6 @@ void dcc_glist(char *command, char *args)
 		if (!(s->flags & DCC_ACTIVE) || 
 			(type == DCC_CHAT) || (type == DCC_RAW) || (type == DCC_BOTMODE) || (type == DCC_FTPOPEN))
 		{
-			if (!(s->flags & DCC_ACTIVE))
-				xtime = now - n->lasttime.tv_sec;
 			if (do_hook(DCC_STAT_LIST, "%d %s %s %s %s %s %s", 
 					n->dccnum, type_name, s->server,
 					dcc_get_state(s),
