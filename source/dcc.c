@@ -147,8 +147,7 @@ static void process_dcc_chat(int);
 #ifndef BITCHX_LITE
 static void process_dcc_bot(int);
 #endif
-static void
-	start_dcc_chat(int);
+static void start_dcc_chat(int);
 static unsigned char byte_order_test (void);
 static void dcc_update_stats(int);
 
@@ -157,7 +156,7 @@ static void update_transfer();
 static char *strip_path(char *);
 static void dcc_getfile_resume_demanded(char *, char *, char *, char *);
 static void dcc_getfile_resume_start (char *, char *, char *, char *);
-static	void 	output_reject_ctcp (UserhostItem *, char *, char *);
+static void output_reject_ctcp (UserhostItem *, char *, char *);
 
 extern int use_nat_address;
 extern struct in_addr nat_address;
@@ -1098,20 +1097,17 @@ int dcc_activeraw(char *user)
 	return find_dcc(user, NULL, NULL, DCC_RAW, 0, 1, -1) ? 1 : 0;
 }
 
-int get_dcc_type(char *type)
+static const char *dcc_type_name(int type, int tdcc)
 {
-int tdcc = 0;
-int i;
-	if (!type || !*type)
-		return -1;
-	upper(type);
-	if (*type == 'T')
-		type++, tdcc = DCC_TDCC;
+	static char buffer[30];
 
-	for (i = 0; dcc_types[i]->name; i++)
-		if (!strcmp(type, dcc_types[i]->name))
-			return i | tdcc;
-	return -1;
+	if (tdcc)
+	{
+		snprintf(buffer, sizeof buffer, "T%s", dcc_types[type]->name);
+		return buffer;
+	}
+
+	return dcc_types[type]->name;
 }
 
 void process_dcc_send1(int s);
@@ -1491,7 +1487,7 @@ static void dcc_send_offer(char *nick, char *type, char *description,
 		{
 			put_it("%s", 
 				convert_output_format("$G %RDCC%n Auto-accepting $0 of file %C$2-%n from %K[%C$1%K]",
-					"%s%s %s %s", tdcc ? "T" : "", dcc_types[Ctype]->name, nick, n->filename));
+					"%s %s %s", dcc_type_name(Ctype, tdcc), nick, n->filename));
 		}
 		if ((n->file = open(fullname, O_WRONLY | O_CREAT | O_BINARY, 0644)) > 0)
 		{
@@ -1545,7 +1541,7 @@ static void dcc_resend_offer(char *nick, char *type, char *description,
 		{
 			put_it("%s", 
 				convert_output_format("$G %RDCC%n Auto-accepting $0 of file %C$2-%n from %K[%C$1%K]",
-					"%s%s %s %s", tdcc ? "T" : "", dcc_types[Ctype]->name, nick, n->filename));
+					"%s %s %s", dcc_type_name(Ctype, tdcc), nick, n->filename));
 		}
 		if ((n->file = open(fullname, O_WRONLY | O_CREAT | O_BINARY | O_APPEND, 0644)) > 0)
 		{
@@ -1760,17 +1756,14 @@ void close_dcc_file(int snum)
 	double xfer;
 	double temp;
 	unsigned long type;
-	char lame_type[30];
+	const char *type_name;
 
 	s = get_socket(snum);
 	if (!s || !(n = (DCC_int *)s->info))
 		return;
 
 	type = s->flags & DCC_TYPES;
-	*lame_type = 0;
-	if (s->flags & DCC_TDCC)
-		strcpy(lame_type, "T");	
-	strcat(lame_type, dcc_types[type]->name);
+	type_name = dcc_type_name(type, s->flags & DCC_TDCC);
 
 	xtime = time_since(&n->starttime);
 	xfer = (double)(n->bytes_sent ? n->bytes_sent : n->bytes_read);
@@ -1805,10 +1798,10 @@ void close_dcc_file(int snum)
 	}
 
 	set_display_target(NULL, LOG_DCC);
-	if (do_hook(DCC_LOST_LIST, "%s %s %s %s TRANSFER COMPLETE", s->server, lame_type, strip_path(n->filename), lame_ultrix))
+	if (do_hook(DCC_LOST_LIST, "%s %s %s %s TRANSFER COMPLETE", s->server, type_name, strip_path(n->filename), lame_ultrix))
 		put_it("%s", convert_output_format(fget_string_var(FORMAT_DCC_LOST_FSET),
 			"%s %s %s %s %s %s %s %s", 
-			update_clock(GET_TIME), lame_type, strip_path(filename), 
+			update_clock(GET_TIME), type_name, strip_path(filename), 
 			lame_ultrix2, tofrom, s->server, lame_ultrix3, lame_ultrix));
 
 #ifdef GUI
@@ -1942,16 +1935,16 @@ char *buffer = alloca(MAX_DCC_BLOCK_SIZE+1);
 
 void start_dcc_send(int s)
 {
-struct	sockaddr_in	remaddr;
-socklen_t	sra;
-int	type;
-int	new_s = -1;
-int	tdcc = 0;
-char	*nick = NULL;	
-unsigned long flags;
-DCC_int *n = NULL;
-struct	transfer_struct received = {0};
-char local_type[30];
+	struct sockaddr_in remaddr;
+	socklen_t sra;
+	int	type;
+	int	new_s = -1;
+	int	tdcc = 0;
+	char *nick = NULL;
+	unsigned long flags;
+	DCC_int *n = NULL;
+	struct transfer_struct received = { 0 };
+	const char *type_name;
                 
 	if (!(flags = get_socketflags(s))) 
 		return; /* wrong place damn it */
@@ -2016,15 +2009,12 @@ char local_type[30];
 	}
 	lseek(n->file, n->transfer_orders.byteoffset, SEEK_SET);
 	errno = 0;
-	*local_type = 0;
-	if (tdcc)
-		strcpy(local_type, "T");
-	strcat(local_type, dcc_types[type]->name);
-	if (do_hook(DCC_CONNECT_LIST, "%s %s %s %d %ld %s", nick, local_type,
+	type_name = dcc_type_name(type, tdcc);
+	if (do_hook(DCC_CONNECT_LIST, "%s %s %s %d %ld %s", nick, type_name,
 		inet_ntoa(remaddr.sin_addr), ntohs(remaddr.sin_port), (unsigned long)n->filesize, n->filename) && !dcc_quiet)
 		put_it("%s", convert_output_format(fget_string_var(FORMAT_DCC_CONNECT_FSET),
 			"%s %s %s %s %s %d %d", update_clock(GET_TIME),
-			local_type, nick, n->userhost?n->userhost:"u@h",
+			type_name, nick, n->userhost?n->userhost:"u@h",
 			inet_ntoa(remaddr.sin_addr),ntohs(remaddr.sin_port),n->transfer_orders.byteoffset ));
 	get_time(&n->starttime);
 	get_time(&n->lasttime);
@@ -2527,8 +2517,6 @@ void dcc_glist(char *command, char *args)
 	int tdcc = 0;
 	int count = 0;
 	DCC_List *c;
-	char spec[BIG_BUFFER_SIZE];
-	char *filename, *p;
 	
 	reset_display_target();
 #if !defined(WINNT) && !defined(__EMX__) && (defined(LATIN1) || defined(CHARSET_CUSTOM))
@@ -2546,43 +2534,41 @@ void dcc_glist(char *command, char *args)
 	}
 	for (c = pending_dcc; c; c = c->next, count++)	
 	{
-		char local_type[30];
 		char *filename, *p;
+		const char *type_name;
+
 		s = &c->sock;
 		type = c->sock.flags & DCC_TYPES;
 		tdcc = c->sock.flags & DCC_TDCC;
+		type_name = dcc_type_name(type, tdcc);
 		n = (DCC_int *)c->sock.info;
-		*local_type = 0;
-		if (tdcc)
-			strcpy(local_type, "T");
-		strcat(local_type, dcc_types[type]->name);
-		filename = LOCAL_COPY(n->filename);
 
+		filename = LOCAL_COPY(n->filename);
 		p = filename;
 		while ((p = strchr(p, ' ')))
 			*p = '_';
 
 		if (do_hook(DCC_STAT_LIST, "%d %s %s %s %s %s %s", 
-				n->dccnum, local_type, 
+				n->dccnum, type_name,
 				c->sock.server,
 				dcc_get_state(s),
 				"N/A", strip_path(filename), n->encrypt?"E":empty_string))
 		{				
 			put_it("%s", convert_output_format(DCC_FORMAT_STAT_PENDING, "%d %s %s %s %s %s %s", 
 				n->dccnum, 
-				local_type, 
+				type_name, 
 				n->encrypt ? "E" : "ÿ",
 				c->sock.server,
 				dcc_get_state(s),
 				"N/A", 
 				strip_path(filename)));
 		}
-		count++;
 	}
 	for (i = 0; i < get_max_fd() + 1; i++, count++)
 	{
-		char local_type[30];
 		time_t xtime;
+		char *filename, *p;
+		const char *type_name;
 
 		if (!check_dcc_socket(i))
 			continue;
@@ -2590,14 +2576,11 @@ void dcc_glist(char *command, char *args)
 		n = (DCC_int *)s->info;
 		type = s->flags & DCC_TYPES;
 		tdcc = s->flags & DCC_TDCC;
+		type_name = dcc_type_name(type, tdcc);
 		xtime = now - n->starttime.tv_sec;
 	
 		if (xtime <= 0)
 			xtime = 1;
-		*local_type = 0;
-		if (tdcc)
-			strcpy(local_type, "T");
-		strcat(local_type, dcc_types[type]->name);
 
 		filename = LOCAL_COPY(n->filename);
 		p = filename;
@@ -2609,12 +2592,12 @@ void dcc_glist(char *command, char *args)
 			if (!(s->flags & DCC_ACTIVE))
 				xtime = now - n->lasttime.tv_sec;
 			if (do_hook(DCC_STAT_LIST, "%d %s %s %s %s %s %s", 
-					n->dccnum, local_type, s->server,
+					n->dccnum, type_name, s->server,
 					dcc_get_state(s),
 					"N/A", strip_path(filename), n->encrypt?"E":empty_string))
 				put_it("%s", convert_output_format(DCC_FORMAT_STAT_CHAT, "%d %s %s %s %s %s %s %s", 
 					n->dccnum, 
-					local_type, 
+					type_name, 
 					n->encrypt ? "E" : "ÿ",
 					s->server,
 					dcc_get_state(s),
@@ -2625,13 +2608,13 @@ void dcc_glist(char *command, char *args)
 		else if (!(s->flags & DCC_ACTIVE))
 		{
 			if (do_hook(DCC_STAT_LIST, "%d %s %s %s %s %s %s", 
-				n->dccnum, local_type, s->server,
+				n->dccnum, type_name, s->server,
 				dcc_get_state(s),
 				"N/A", strip_path(filename), n->encrypt?"E":empty_string))
 			{
 				put_it("%s", convert_output_format(DCC_FORMAT_STAT_PENDING, "%d %s %s %s %s %s %s", 
 					n->dccnum, 
-					local_type, 
+					type_name, 
 					n->encrypt ? "E" : "ÿ",
 					s->server,
 					dcc_get_state(s),
@@ -2643,13 +2626,11 @@ void dcc_glist(char *command, char *args)
 		{
 			double bytes = n->bytes_read + n->bytes_sent;
 			double pcomplete; /* proportion of transfer completed, 0.0 to 1.0 */
+			char spec[BIG_BUFFER_SIZE];
 			char percent[20];
 			char eta[20];
 			char kilobytes[20];
 			int seconds = 0, minutes = 0;
-
-			type = s->flags & DCC_TYPES;
-			tdcc = s->flags & DCC_TDCC;
 
 			/* Calculate proportion of transfer completed */
 			if (n->filesize > 0)
@@ -2676,7 +2657,7 @@ void dcc_glist(char *command, char *args)
 				if (seconds < 0) seconds = 0;
 			}
 			else
-				seconds = minutes = pcomplete = 0;
+				seconds = minutes = 0;
 				
 			strcpy(spec, convert_output_format(get_bar_percent(pcomplete), NULL, NULL));
 			snprintf(percent, sizeof percent, "%4.1f%%", pcomplete * 100.0);
@@ -2684,7 +2665,7 @@ void dcc_glist(char *command, char *args)
 			snprintf(kilobytes, sizeof kilobytes, "%2.4g", bytes / 1024.0 / xtime);
 
 			if (do_hook(DCC_STATF_LIST, "%d %s %s %s %s %s %s", 
-				n->dccnum, local_type, s->server, dcc_get_state(s),
+				n->dccnum, type_name, s->server, dcc_get_state(s),
 				kilobytes, strip_path(filename), 
 				n->encrypt?"E":empty_string))
 			{
@@ -2695,7 +2676,7 @@ void dcc_glist(char *command, char *args)
 					stat_format = DCC_FORMAT_STAT_BARTYPE_1;
 
 				put_it("%s", convert_output_format(stat_format, "%d %s %s %s %s %s %s %s %s", 
-					n->dccnum, local_type, n->encrypt ? "E":"ÿ",
+					n->dccnum, type_name, n->encrypt ? "E":"ÿ",
 					s->server, spec, percent, eta, kilobytes, 
 					strip_path(filename)));
 			}
@@ -4415,19 +4396,13 @@ int i;
 
 char *get_dcc_info(SocketList *s, DCC_int *n, int i)
 {
-	char local_type[80];
-
-	*local_type = 0;
-	if (s->flags & DCC_TDCC)
-		strcpy(local_type, "T");
-	strcat(local_type, dcc_types[s->flags & DCC_TYPES]->name);
 	return m_sprintf("%s %s %s %ld %lu %lu %lu %s #%d %d", 
-			local_type, s->server,
-			dcc_get_state(s),
-			(long)n->starttime.tv_sec,
-			(unsigned long)n->transfer_orders.byteoffset,
-			(unsigned long)n->bytes_sent, (unsigned long)n->bytes_read, 
-			n->filename, i, n->server);
+		dcc_type_name(s->flags & DCC_TYPES, s->flags & DCC_TDCC),
+		s->server, dcc_get_state(s),
+		(long)n->starttime.tv_sec,
+		(unsigned long)n->transfer_orders.byteoffset,
+		(unsigned long)n->bytes_sent, (unsigned long)n->bytes_read, 
+		n->filename, i, n->server);
 }
 
 void dcc_raw_transmit (char *user, char *text, char *type)
