@@ -1,5 +1,8 @@
 [Changes 1.2.2]
 
+* Use the same format in /DCC LIST for all waiting offers and tweak
+  the DCC_BAR_TYPE 1 format to show DCC state. (caf)
+
 * Correctly show time since offer for DCC CHAT offers in /DCC LIST. (caf)
 
 * Improve completion bar for /SET DCC_BAR_TYPE 1 so that it always matches

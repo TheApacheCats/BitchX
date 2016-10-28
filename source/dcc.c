@@ -2472,7 +2472,7 @@ static const char *dcc_get_state(const SocketList *s)
  * Includes the inline completion bar if DCC_VAR_TYPE is 0.
  */
 #define STAT_FORMAT_PREFIX "#$[3]0 $[6]1%Y$2%n $[11]3 "
-#define STAT_FORMAT_SUFFIX " $[7]4 $[7]5 $[7]6 $7-"
+#define STAT_FORMAT_SUFFIX " $[7]5 $[7]6 $[7]7 $8-"
 static const char *get_stat_format(double pcomplete)
 {
 #ifdef ONLY_STD_CHARS
@@ -2509,14 +2509,14 @@ static const char * const bar_format[] = {
 	{
 		return bar_format[idx];
 	}
-	return STAT_FORMAT_PREFIX "$[7]4 $[18]5 $[7]6 $7-";
+	return STAT_FORMAT_PREFIX "$[10]4" STAT_FORMAT_SUFFIX;
 }
 
 
 void dcc_glist(char *command, char *args)
 {
 #define DCC_FORMAT_STAT_PENDING STAT_FORMAT_PREFIX "$[25]4 $[7]5 $6-"
-#define DCC_FORMAT_STAT_CHAT STAT_FORMAT_PREFIX "$[7]4 $[-4]5 $[-3]6 $[-3]7 $[-3]8  $[7]9 $10"
+#define DCC_FORMAT_STAT STAT_FORMAT_PREFIX "$[7]4 $[-4]5 $[-3]6 $[-3]7 $[-3]8  $[7]9 $10"
 	int i;
 	DCC_int *n = NULL;
 	SocketList *s;
@@ -2593,8 +2593,10 @@ void dcc_glist(char *command, char *args)
 		p = filename;
 		while ((p = strchr(p, ' ')))
 			*p = '_';
-	
-		if (((type == DCC_CHAT) || (type == DCC_RAW) || (type == DCC_BOTMODE) || (type == DCC_FTPOPEN)))
+
+		/* All Waiting or non-file DCCs use the ordinary STAT line */	
+		if (!(s->flags & DCC_ACTIVE) || 
+			(type == DCC_CHAT) || (type == DCC_RAW) || (type == DCC_BOTMODE) || (type == DCC_FTPOPEN))
 		{
 			if (!(s->flags & DCC_ACTIVE))
 				xtime = now - n->lasttime.tv_sec;
@@ -2602,7 +2604,7 @@ void dcc_glist(char *command, char *args)
 					n->dccnum, type_name, s->server,
 					dcc_get_state(s),
 					"N/A", strip_path(filename), n->encrypt?"E":empty_string))
-				put_it("%s", convert_output_format(DCC_FORMAT_STAT_CHAT, "%d %s %s %s %s %s %s %s", 
+				put_it("%s", convert_output_format(DCC_FORMAT_STAT, "%d %s %s %s %s %s %s %s", 
 					n->dccnum, 
 					type_name, 
 					n->encrypt ? "E" : "ÿ",
@@ -2612,23 +2614,7 @@ void dcc_glist(char *command, char *args)
 					"N/A",
 					strip_path(filename)));
 		}
-		else if (!(s->flags & DCC_ACTIVE))
-		{
-			if (do_hook(DCC_STAT_LIST, "%d %s %s %s %s %s %s", 
-				n->dccnum, type_name, s->server,
-				dcc_get_state(s),
-				"N/A", strip_path(filename), n->encrypt?"E":empty_string))
-			{
-				put_it("%s", convert_output_format(DCC_FORMAT_STAT_PENDING, "%d %s %s %s %s %s %s", 
-					n->dccnum, 
-					type_name, 
-					n->encrypt ? "E" : "ÿ",
-					s->server,
-					dcc_get_state(s),
-					"N/A", 
-					strip_path(filename)));
-			}
-		}
+		/* Active file DCCs use the STATF / STATF1 lines */
 		else 
 		{
 			double bytes = n->bytes_read + n->bytes_sent;
@@ -2676,9 +2662,9 @@ void dcc_glist(char *command, char *args)
 			{
 				const char *stat_format = get_stat_format(pcomplete);
 
-				put_it("%s", convert_output_format(stat_format, "%d %s %s %s %s %s %s %s", 
+				put_it("%s", convert_output_format(stat_format, "%d %s %s %s %s %s %s %s %s", 
 					n->dccnum, type_name, n->encrypt ? "E":"ÿ",
-					s->server, percent, eta, kilobytes, 
+					s->server, dcc_get_state(s), percent, eta, kilobytes, 
 					strip_path(filename)));
 			}
 
