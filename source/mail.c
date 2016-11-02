@@ -87,8 +87,8 @@ int count_maildir_mail(void)
 
 
 #ifdef WANT_DLL
-#define check_ext_mail global_table[CHECK_EXT_MAIL]
-#define check_ext_mail_status global_table[CHECK_EXT_MAIL_STATUS]
+#define check_ext_mail ((char *(*)(void))global_table[CHECK_EXT_MAIL])
+#define check_ext_mail_status ((int (*)(void))global_table[CHECK_EXT_MAIL_STATUS])
 #endif
 
 /*
@@ -111,7 +111,7 @@ static time_t old_stat = 0;
 struct stat stat_buf;
 #endif        
 #ifdef WANT_DLL
-	if (check_ext_mail)
+	if (check_ext_mail_status)
 		return (*check_ext_mail_status)();
 #endif
 	if (!get_int_var(MAIL_VAR))
@@ -182,7 +182,7 @@ static	char ret_str[12];
 static  int	i = 0;
 #ifdef WANT_DLL
 	if (check_ext_mail)
-		return (char *)(*check_ext_mail)();
+		return (*check_ext_mail)();
 #endif
 	switch (get_int_var(MAIL_VAR))
 	{
