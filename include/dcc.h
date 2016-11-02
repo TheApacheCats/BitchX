@@ -105,6 +105,20 @@
 #define DCC_SSL		0x04000000
 #define DCC_STATES	0xffffff00
 
+/* This collects together the various broken-out fields of a
+ * CTCP DCC offer, because they're passed around as a group.
+ */
+struct dcc_offer {
+	char *nick;
+	char *type;
+	char *description;
+	char *address;
+	char *port;
+	char *size;
+	char *extra;
+	char *userhost;
+};
+
 	int	check_dcc_list (char *);
 	int	dcc_exempt_save (FILE *);
 
@@ -128,7 +142,7 @@
 	void	dcc_bot_transmit(char *, char *, char *);
 	void	dcc_raw_transmit(char *, char *, char *);
 
-	void	handle_dcc_offer(char *, char *, char *, char *, char *, char *, char *, char *);
+	void	handle_dcc_offer(struct dcc_offer *);
 
 	void	dcc_reject(char *, char *, char *);
 	char	*dcc_raw_connect(char *, unsigned short);

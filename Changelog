@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Fix bug in DCC privileged port detection logic. (caf)
+
 * Don't show DCC "Handshake failed" message twice, improve the message itself
   and use the same one for privileged port / zero address. (caf)
 

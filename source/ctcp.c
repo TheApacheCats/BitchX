@@ -723,33 +723,23 @@ CTCP_HANDLER(do_atmosphere)
  */
 CTCP_HANDLER(do_dcc)
 {
-	char	*type;
-	char	*description = NULL;
-	char	*inetaddr = NULL;
-	char	*port = NULL;
-	char	*size = NULL;
-	char	*extra_flags = NULL;
+	struct dcc_offer offer;
+
 	if (my_stricmp(to, get_server_nickname(from_server)))
 		return NULL;
-	if (!(type = next_arg(cmd, &cmd)))
-		return NULL;
-#if 1
-	if (!(description = new_next_arg(cmd, &cmd)) || !*description)
-		return NULL;
-	if     (!(inetaddr = next_arg(cmd, &cmd)) ||
-		!(port = next_arg(cmd, &cmd)))
-			return NULL;
 
-	size = next_arg(cmd, &cmd);
-	extra_flags = next_arg(cmd, &cmd);
-#else
-	size = last_arg(&cmd);
-	port = last_arg(&cmd);
-	inetaddr = last_arg(&cmd);
-	if (!size || !port || !inetaddr || !description)
-		return NULL;
-#endif
-	handle_dcc_offer(from, type, description, inetaddr, port, size, extra_flags, FromUserHost);
+	offer.nick = from;
+	offer.userhost = FromUserHost;
+	offer.type = next_arg(cmd, &cmd);
+	offer.description = new_next_arg(cmd, &cmd);
+	offer.address = next_arg(cmd, &cmd);
+	offer.port = next_arg(cmd, &cmd);
+	offer.size = next_arg(cmd, &cmd);
+	offer.extra = next_arg(cmd, &cmd);
+
+	if (offer.type && offer.description && *offer.description && offer.address && offer.port)
+		handle_dcc_offer(&offer);
+
 	return NULL;
 }
 
