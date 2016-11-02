@@ -1,5 +1,8 @@
 [Changes 1.2.2]
 
+* Don't show DCC "Handshake failed" message twice, improve the message itself
+  and use the same one for privileged port / zero address. (caf)
+
 * Use the same format in /DCC LIST for all waiting offers and tweak
   the DCC_BAR_TYPE 1 format to show DCC state. (caf)
 

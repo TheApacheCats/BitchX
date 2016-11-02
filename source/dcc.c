@@ -1143,16 +1143,12 @@ static int parse_offer_params(const char *address, const char *port, const char 
 
 	*p_addr = strtoul(address, NULL, 10);
 	*p_port = (unsigned)strtoul(port, NULL, 10);
-	if (*p_port < 1024)
-	{
-		put_it("%s", convert_output_format("$G %RDCC%n Privileged port attempt [$0]", "%d", *p_port));
-		return 0;
-	}
-	if (*p_addr == 0)
+
+	if (*p_addr == 0 || *p_port < 1024)
 	{
 		struct in_addr in;
 		in.s_addr = htonl(*p_addr);
-		put_it("%s", convert_output_format("$G %RDCC%n Handshake ignored because of 0 port or address [$0:$1]", "%d %s", *p_port, inet_ntoa(in)));
+		put_it("%s", convert_output_format("$G %RDCC%n Handshake ignored because of privileged port or zero address [$0:$1]", "%s %d", inet_ntoa(in), *p_port));
 		return 0;
 	}
 
@@ -4293,22 +4289,22 @@ char	*nick,
 static int check_dcc_init(char *nick, char *type, char *description, char *address, char *port, char *size, char *extra, char *uhost)
 {
 	int i;
-	unsigned long filesize;
-	unsigned long TempLong;
-	unsigned int TempInt;
-
-	if (!parse_offer_params(address, port, size, &TempLong, &TempInt, &filesize))
-		return 0;
 
 	for (i = 0; dcc_types[i]->name; i++)
 	{
 		if (!my_stricmp(type, dcc_types[i]->name))
 			break;
 	}
-	if (!dcc_types[i]->name)
-		return 0;
-	if (dcc_types[i]->init_func)
-		return (*dcc_types[i]->init_func)(type, nick, uhost, description, size, extra, TempLong, TempInt);
+
+	if (dcc_types[i]->name && dcc_types[i]->init_func)
+	{
+		unsigned long filesize;
+		unsigned long TempLong;
+		unsigned int TempInt;
+
+		if (parse_offer_params(address, port, size, &TempLong, &TempInt, &filesize))
+			return dcc_types[i]->init_func(type, nick, uhost, description, size, extra, TempLong, TempInt);
+	}
 	return 0;
 }
 
