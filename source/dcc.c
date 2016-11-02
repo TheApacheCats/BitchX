@@ -1131,7 +1131,7 @@ static char *dcc_fullname(const char *filename)
 }
 
 static int parse_offer_params(const struct dcc_offer *offer,
-	unsigned long *p_addr, unsigned *p_port, unsigned long *p_filesize)
+	unsigned long *p_addr, unsigned short *p_port, unsigned long *p_filesize)
 {
 	if (offer->size && *offer->size)
 		*p_filesize = strtoul(offer->size, NULL, 10);
@@ -1185,25 +1185,31 @@ static int check_collision(char *nick, const char *description, int type)
 	return 1;
 }
 
-static DCC_int *create_dcc_int(const char *nick, const char *description,
-	const char *userhost, unsigned long address, unsigned short port,
-	unsigned long filesize, int server)
+static DCC_int *create_dcc_int(const struct dcc_offer *offer, int server)
 {
 	UserList *ul = NULL;
-	DCC_int *n = new_malloc(sizeof *n);
+	DCC_int *n;
+	unsigned long filesize;
+	unsigned long address;
+	unsigned short port;
 
+	if (!parse_offer_params(offer, &address, &port, &filesize))
+		return NULL;
+
+	n = new_malloc(sizeof *n);
+	
 #ifdef WANT_USERLIST
-	ul = lookup_userlevelc(nick, userhost, "*", NULL);
+	ul = lookup_userlevelc(offer->nick, offer->userhost, "*", NULL);
 #endif
 
-	if (userhost)
-		n->userhost = m_strdup(userhost);
+	if (offer->userhost)
+		n->userhost = m_strdup(offer->userhost);
 	n->ul = ul;
 	n->remport = port;
 	n->remote.s_addr = htonl(address);
 	n->filesize = filesize;
-	n->filename = m_strdup(description);
-	n->user = m_strdup(nick);
+	n->filename = m_strdup(offer->description);
+	n->user = m_strdup(offer->nick);
 	n->blocksize = get_int_var(DCC_BLOCK_SIZE_VAR);
 	n->server = server;
 	n->file = -1; /* just in case */
@@ -1231,18 +1237,14 @@ static DCC_List *add_dcc_pending(DCC_int *dcc, int flags, void (*func_read)(int)
 /* show_dcc_offer()
  * Wrapper to show the user using the default format a non-file (eg. CHAT) DCC offer.
  */
-static void show_dcc_offer(const char *nick, const char *dcc_name, 
-	const char *description, const char *userhost, unsigned long offer_addr,
-	 unsigned int offer_port)
+static void show_dcc_offer(const DCC_int *n, const char *dcc_name)
 {
 	if (!dcc_quiet)
 	{
-		struct in_addr in;	
-		in.s_addr = htonl(offer_addr);
 		put_it("%s", convert_output_format(fget_string_var(FORMAT_DCC_REQUEST_FSET), 
 			"%s %s %s %s %s %s %d", 
-			update_clock(GET_TIME), dcc_name, description, nick, userhost,
-			inet_ntoa(in), offer_port));
+			update_clock(GET_TIME), dcc_name, n->filename, n->user, n->userhost,
+			inet_ntoa(n->remote), n->remport));
 	}
 
 	if (beep_on_level & LOG_DCC)
@@ -1252,23 +1254,19 @@ static void show_dcc_offer(const char *nick, const char *dcc_name,
 /* show_dcc_fileoffer()
  * Wrapper to show the user using the default format a file (eg. SEND) DCC offer.
  */
-static void show_dcc_fileoffer(const char *nick, const char *dcc_name, 
-	const char *description, const char *userhost, unsigned long offer_addr,
-	 unsigned int offer_port, unsigned long filesize)
+static void show_dcc_fileoffer(const DCC_int *n, const char *dcc_name)
 {
 	if (!dcc_quiet)
 	{
-		struct in_addr in;	
 		char buf[40];
-		in.s_addr = htonl(offer_addr);
-		sprintf(buf, "%2.4g",_GMKv(filesize));
+		sprintf(buf, "%2.4g", _GMKv(n->filesize));
 		put_it("%s", convert_output_format(fget_string_var(FORMAT_DCC_REQUEST_FSET), 
 			"%s %s \"%s\" %s %s %s %d %s %s", 
-			update_clock(GET_TIME), dcc_name, description, nick, userhost,
-			inet_ntoa(in), offer_port, _GMKs(filesize), buf));
+			update_clock(GET_TIME), dcc_name, n->filename, n->user, n->userhost,
+			inet_ntoa(n->remote), n->remport, _GMKs(n->filesize), buf));
 	}
 
-	if (!filesize)
+	if (!n->filesize)
 		put_it("%s", convert_output_format("$G %RDCC%n Warning: Offered file has zero size", NULL, NULL));
 
 	if (beep_on_level & LOG_DCC)
@@ -1278,23 +1276,18 @@ static void show_dcc_fileoffer(const char *nick, const char *dcc_name,
 static void dcc_chat_offer(const struct dcc_offer *offer, int server)
 {
 	int Ctype = DCC_CHAT;
-	unsigned long filesize;
-	unsigned long TempLong;
-	unsigned int TempInt;
 	DCC_int *n;
 	int autoget = 0;
-
-	if (!parse_offer_params(offer, &TempLong, &TempInt, &filesize))
-		return;
 
 	if (!check_collision(offer->nick, offer->description, Ctype))
 		return;
 
-	n = create_dcc_int(offer->nick, offer->description, offer->userhost, TempLong, TempInt, filesize, server);
+	if (!(n = create_dcc_int(offer, server)))
+		return;
 
-	if (do_hook(DCC_REQUEST_LIST, "%s %s %s 0", offer->nick, dcc_types[Ctype]->name, offer->description))
+	if (do_hook(DCC_REQUEST_LIST, "%s %s %s 0", n->user, dcc_types[Ctype]->name, n->filename))
 	{
-		show_dcc_offer(offer->nick, dcc_types[Ctype]->name, offer->description, offer->userhost, TempLong, TempInt);
+		show_dcc_offer(n, dcc_types[Ctype]->name);
 
 		if (get_int_var(BOT_MODE_VAR) && n->ul)
 		{
@@ -1319,22 +1312,17 @@ static void dcc_chat_offer(const struct dcc_offer *offer, int server)
 static void dcc_bot_offer(const struct dcc_offer *offer, int server)
 {
 	int Ctype = DCC_BOTMODE;
-	unsigned long filesize;
-	unsigned long TempLong;
-	unsigned int TempInt;
 	DCC_int *n;
-
-	if (!parse_offer_params(offer, &TempLong, &TempInt, &filesize))
-		return;
 
 	if (!check_collision(offer->nick, offer->description, Ctype))
 		return;
 
-	n = create_dcc_int(offer->nick, offer->description, offer->userhost, TempLong, TempInt, filesize, server);
+	if (!(n = create_dcc_int(offer, server)))
+		return;
 
-	if (do_hook(DCC_REQUEST_LIST, "%s %s %s 0", offer->nick, dcc_types[Ctype]->name, offer->description))
+	if (do_hook(DCC_REQUEST_LIST, "%s %s %s 0", n->user, dcc_types[Ctype]->name, n->filename))
 	{
-		show_dcc_offer(offer->nick, dcc_types[Ctype]->name, offer->description, offer->userhost, TempLong, TempInt);
+		show_dcc_offer(n, dcc_types[Ctype]->name);
 #if 0
 		if (p = get_string_var(BOT_PASSWORD_VAR))
 		{
@@ -1390,9 +1378,6 @@ static int do_autoget(const char *nick, unsigned long filesize)
 static void dcc_send_offer(const struct dcc_offer *offer, int server)
 {
 	int Ctype = DCC_FILEREAD;
-	unsigned long filesize;
-	unsigned long TempLong;
-	unsigned int TempInt;
 	unsigned long tdcc = 0;
 	DCC_int *n;
 	DCC_List *new_d;
@@ -1401,20 +1386,18 @@ static void dcc_send_offer(const struct dcc_offer *offer, int server)
 	struct stat resume_sb;
 	char *fullname = NULL;
 
-	if (!parse_offer_params(offer, &TempLong, &TempInt, &filesize))
-		return;
-
 	if (*offer->type == 'T') 
 		tdcc = DCC_TDCC;
 
 	if (!check_collision(offer->nick, offer->description, Ctype))
 		return;
 
-	n = create_dcc_int(offer->nick, offer->description, offer->userhost, TempLong, TempInt, filesize, server);
+	if (!(n = create_dcc_int(offer, server)))
+		return;
 
-	if (do_hook(DCC_REQUEST_LIST,"%s %s %s %lu", offer->nick, dcc_types[Ctype]->name, offer->description, filesize))
+	if (do_hook(DCC_REQUEST_LIST,"%s %s %s %lu", n->user, dcc_types[Ctype]->name, n->filename, n->filesize))
 	{
-		show_dcc_fileoffer(offer->nick, dcc_types[Ctype]->name, offer->description, offer->userhost, TempLong, TempInt, filesize);
+		show_dcc_fileoffer(n, dcc_types[Ctype]->name);
 	}
 	
 	fullname = dcc_fullname(n->filename);
@@ -1489,16 +1472,10 @@ static void dcc_send_offer(const struct dcc_offer *offer, int server)
 static void dcc_resend_offer(const struct dcc_offer *offer, int server)
 {
 	int Ctype = DCC_REFILEREAD;
-	unsigned long filesize;
-	unsigned long TempLong;
-	unsigned int TempInt;
 	unsigned long tdcc = 0;
 	DCC_int *n;
 	int autoget = 0;
 	char *fullname = NULL;
-
-	if (!parse_offer_params(offer, &TempLong, &TempInt, &filesize))
-		return;
 
 	if (*offer->type == 'T') 
 		tdcc = DCC_TDCC;
@@ -1506,11 +1483,12 @@ static void dcc_resend_offer(const struct dcc_offer *offer, int server)
 	if (!check_collision(offer->nick, offer->description, Ctype))
 		return;
 
-	n = create_dcc_int(offer->nick, offer->description, offer->userhost, TempLong, TempInt, filesize, server);
+	if (!(n = create_dcc_int(offer, server)))
+		return;
 
-	if (do_hook(DCC_REQUEST_LIST,"%s %s %s %lu", offer->nick, dcc_types[Ctype]->name, offer->description, filesize))
+	if (do_hook(DCC_REQUEST_LIST,"%s %s %s %lu", n->user, dcc_types[Ctype]->name, n->filename, n->filesize))
 	{
-		show_dcc_fileoffer(offer->nick, dcc_types[Ctype]->name, offer->description, offer->userhost, TempLong, TempInt, filesize);
+		show_dcc_fileoffer(n, dcc_types[Ctype]->name);
 	}
 	
 	fullname = dcc_fullname(n->filename);
@@ -1552,11 +1530,11 @@ static int check_dcc_init(const struct dcc_offer *offer)
 	if (dcc_types[i]->name && dcc_types[i]->init_func)
 	{
 		unsigned long filesize;
-		unsigned long TempLong;
-		unsigned int TempInt;
+		unsigned long address;
+		unsigned short port;
 
-		if (parse_offer_params(offer, &TempLong, &TempInt, &filesize))
-			return dcc_types[i]->init_func(offer->type, offer->nick, offer->userhost, offer->description, offer->size, offer->extra, TempLong, TempInt);
+		if (parse_offer_params(offer, &address, &port, &filesize))
+			return dcc_types[i]->init_func(offer->type, offer->nick, offer->userhost, offer->description, offer->size, offer->extra, address, port);
 	}
 	return 0;
 }
