@@ -436,74 +436,63 @@ struct	ScreenStru;	/* ooh! */
 #define nick_isaway(s) (s->flags & NICK_AWAY)
 #define nick_isircop(s) (s->flags & NICK_IRCOP)
 
-typedef unsigned int my_uint;
-
 /* NickList: structure for the list of nicknames of people on a channel */
 typedef struct nick_stru
 {
-	struct	nick_stru	*next;	/* pointer to next nickname entry */
-	char	*nick;			/* nickname of person on channel */
-	char	*host;
-	char	*ip;
-	char	*server;
+	struct nick_stru *next;	/* pointer to next nickname entry */
+	char *nick;			/* nickname of person on channel */
+	char *host;
+	char *ip;
+	char *server;
 	int	serverhops;
-	my_uint	ip_count;
+	unsigned ip_count;
 	UserList *userlist;
 	ShitList *shitlist;
+	unsigned flags;
+	time_t idle_time;
 
-	my_uint flags;
-#if 0
-	int	chanop;			/* True if the given nick has chanop */
-	int	halfop;
-	int	away;
-	int	voice;
-	int	ircop;
-#endif	
-	time_t	idle_time;
+	unsigned floodcount;
+	time_t floodtime;
 
-	my_uint	floodcount;
-	time_t	floodtime;
+	unsigned nickcount;
+	time_t nicktime;
 
-	my_uint	nickcount;
-	time_t  nicktime;
+	unsigned kickcount;
+	time_t kicktime;
 
-	my_uint	kickcount;
-	time_t	kicktime;
+	unsigned joincount;
+	time_t jointime;
 
-	my_uint	joincount;
-	time_t	jointime;
+	unsigned dopcount;
+	time_t doptime;
 
-	my_uint	dopcount;
-	time_t	doptime;
+	unsigned bancount;
+	time_t bantime;
 
-	my_uint	bancount;
-	time_t	bantime;
+	time_t created;
 
+	unsigned stat_kicks;		/* Total kicks done by user */
+	unsigned stat_dops;		/* Total deops done by user */
+	unsigned stat_ops;		/* Total ops done by user */
+	unsigned stat_hops;
+	unsigned stat_dhops;
+	unsigned stat_eban;
+	unsigned stat_uneban;
+	unsigned stat_bans;		/* Total bans done by user */
+	unsigned stat_unbans;		/* Total unbans done by user */
+	unsigned stat_nicks;		/* Total nicks done by user */
+	unsigned stat_pub;		/* Total publics sent by user */
+	unsigned stat_topics;		/* Total topics set by user */
 
-	time_t	created;
+	unsigned sent_reop;
+	time_t sent_reop_time;
+	unsigned sent_voice;
+	time_t sent_voice_time;
+	unsigned sent_deop;
+	time_t sent_deop_time;
 
-	my_uint	stat_kicks;		/* Total kicks done by user */
-	my_uint	stat_dops;		/* Total deops done by user */
-	my_uint	stat_ops;		/* Total ops done by user */
-	my_uint	stat_hops;
-	my_uint	stat_dhops;
-	my_uint	stat_eban;
-	my_uint	stat_uneban;
-	my_uint	stat_bans;		/* Total bans done by user */
-	my_uint	stat_unbans;		/* Total unbans done by user */
-	my_uint	stat_nicks;		/* Total nicks done by user */
-	my_uint	stat_pub;		/* Total publics sent by user */
-	my_uint	stat_topics;		/* Total topics set by user */
-
-	my_uint	sent_reop;
-	time_t	sent_reop_time;
-	my_uint	sent_voice;
-	time_t	sent_voice_time;
-	
-	my_uint	sent_deop;
-	time_t	sent_deop_time;
-	my_uint	need_userhost;		/* on join we send a userhost for this nick */	
-	my_uint	check_clone;		/* added for builtin clone detect */
+	unsigned need_userhost;		/* on join we send a userhost for this nick */	
+	unsigned check_clone;		/* added for builtin clone detect */
 }	NickList;
 
 typedef	struct	DisplayStru
