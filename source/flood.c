@@ -57,17 +57,9 @@ static	char	*ignore_types[] =
 HashEntry no_flood_list[FLOOD_HASHSIZE];
 HashEntry flood_list[FLOOD_HASHSIZE];
 
-static int remove_oldest_flood_hashlist(HashEntry *, time_t, int);
-
-
-
-
 extern	char	*FromUserHost;
 extern	unsigned int window_display;
 extern	int	from_server;
-
-static double allow_flood = 0.0;
-static double this_flood = 0.0;
 
 #define NO_RESET 0
 #define RESET 1
@@ -354,6 +346,39 @@ int flood_rate = 0, flood_count = 0;
 	return 0;
 } 
 
+/* Prune any flood entries older than FLOOD_RATE_VAR (or from the future, in case the clock has
+ * gone backwards). */
+static int remove_oldest_flood_hashlist(HashEntry *list)
+{
+	const double flood_rate = get_int_var(FLOOD_RATE_VAR);
+	Flooding *ptr;
+	int total = 0;
+	unsigned long x;
+
+	for (x = 0; x < FLOOD_HASHSIZE; x++)
+	{
+		ptr = list[x].list;
+		if (!ptr || !*ptr->name)
+			continue;
+		while (ptr)
+		{
+			double elapsed = time_since(&ptr->start);
+			if (elapsed > flood_rate || elapsed < 0)
+			{
+				if (!(ptr = find_name_in_floodlist(ptr->name, ptr->host, flood_list, FLOOD_HASHSIZE, 1)))
+					continue;
+				new_free(&(ptr->channel));
+				new_free(&(ptr->name));
+				new_free(&ptr->host);
+				new_free((char **)&ptr);
+				total++;
+				ptr = list[x].list;
+			} else ptr = ptr->next;
+		}
+	}
+	return total;
+}
+
 /*
  * check_flooding: This checks for message flooding of the type specified for
  * the given nickname.  This is described above.  This will return 0 if no
@@ -364,32 +389,22 @@ int flood_rate = 0, flood_count = 0;
 
 int BX_check_flooding(char *nick, int type, char *line, char *channel)
 {
-static	int	users = 0,
-		pos = 0;
-time_t flood_time = now,
-		diff = 0;
+	Flooding *tmp;
+	int flood_rate;
+	int flood_count;
 
-Flooding 	*tmp;
-int		flood_rate, 
-		flood_count;
-
-
-	if (!(users = get_int_var(FLOOD_USERS_VAR)) || !*FromUserHost)
+	if (!get_int_var(FLOOD_USERS_VAR) || !*FromUserHost)
 		return 1;
 	if (find_name_in_genericlist(nick, no_flood_list, FLOOD_HASHSIZE, 0))
 		return 1;
 	if (!(tmp = find_name_in_floodlist(nick, FromUserHost, flood_list, FLOOD_HASHSIZE, 0)))
 	{
-		if (pos >= users)
-		{
-			pos -= remove_oldest_flood_hashlist(&flood_list[0], 0, (users + 1 - pos));
-		}
+		remove_oldest_flood_hashlist(&flood_list[0]);
 		tmp = add_name_to_floodlist(nick, FromUserHost, channel, flood_list, FLOOD_HASHSIZE);
 		tmp->type = type;
 		tmp->cnt = 1;
-		tmp->start = flood_time;
+		get_time(&tmp->start);
 		tmp->flood = 0;
-		pos++;
 		return 1;
 	} 
 	if (!(tmp->type & type))
@@ -398,10 +413,6 @@ int		flood_rate,
 		return 1;
 	}
 
-#if 0
-	flood_count = get_flood_count(type, NULL); /* FLOOD_AFTER_VAR */
-	flood_rate = get_flood_rate(type, NULL); /* FLOOD_RATE_VAR */
-#endif
 	get_flood_val(NULL, type, &flood_count, &flood_rate);
 	if (!flood_count || !flood_rate)
 		return 1;
@@ -409,13 +420,13 @@ int		flood_rate,
 	if (tmp->cnt > flood_count)
 	{
 		int ret;
-		diff = flood_time - tmp->start;
+		double diff = time_since(&tmp->start);
+		double allow_flood = (double)flood_count / (double)flood_rate;
+		double this_flood = 0.0;
+
 		if (diff != 0)
-			this_flood = (double)tmp->cnt / (double)diff;
-		else
-			this_flood = 0;
-		allow_flood = (double)flood_count / (double)flood_rate;
-		if (!diff || !this_flood || (this_flood > allow_flood))
+			this_flood = (double)tmp->cnt / diff;
+		if (!diff || this_flood > allow_flood)
 		{
 			if (tmp->flood == 0)
 			{
@@ -447,7 +458,7 @@ int		flood_rate,
 		{
 			tmp->flood = 0;
 			tmp->cnt = 1;
-			tmp->start = flood_time;
+			get_time(&tmp->start);
 		}
 	}
 	return 1;
@@ -546,64 +557,7 @@ int	kick_on_flood = 1;
 	return 1;
 }
 
-static int remove_oldest_flood_hashlist(HashEntry *list, time_t timet, int count)
-{
-Flooding *ptr;
-register time_t t;
-int total = 0;
-register unsigned long x;
-	t = now;
-	if (!count)
-	{
-		for (x = 0; x < FLOOD_HASHSIZE; x++)
-		{
-			ptr = (Flooding *) (list + x)->list;
-			if (!ptr || !*ptr->name)
-				continue;
-			while (ptr)
-			{
-				if ((ptr->start + timet) <= t)
-				{
-					if (!(ptr = find_name_in_floodlist(ptr->name, ptr->host, flood_list, FLOOD_HASHSIZE, 1)))
-						continue;
-					new_free(&(ptr->channel));
-					new_free(&(ptr->name));
-					new_free(&ptr->host);
-					new_free((char **)&ptr);
-					total++;
-					ptr = (Flooding *) (list + x)->list;
-				} else ptr = ptr->next;
-			}
-		}
-	}
-	else
-	{
-		for (x = 0; x < FLOOD_HASHSIZE; x++)
-		{
-			Flooding *next = NULL;
-			ptr = (Flooding *) (list + x)->list;
-			if (!ptr || !*ptr->name)
-				continue;
-			while(ptr && count)
-			{
-				if ((ptr = find_name_in_floodlist(ptr->name, ptr->host, flood_list, FLOOD_HASHSIZE, 1)))
-				{
-					next = ptr->next;
-					new_free(&(ptr->channel));
-					new_free(&(ptr->name));
-					new_free(&ptr->host);
-					new_free((char **)&ptr);
-					total++; count--;			
-					ptr = (Flooding *) (list + x)->list;
-					ptr = next;
-				}
-			}
-		}
-	}
-	return total;
-}
-
 void clean_flood_list()
 {
-	remove_oldest_flood_hashlist(&flood_list[0], get_int_var(FLOOD_RATE_VAR)+1, 0);
+	remove_oldest_flood_hashlist(&flood_list[0]);
 }

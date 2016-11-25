@@ -1015,7 +1015,7 @@ typedef struct	flood_stru
 	int	type;
 	char	flood;
 	unsigned long	cnt;
-	time_t	start;
+	struct timeval	start;
 }	Flooding;
 
 

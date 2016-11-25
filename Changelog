@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Correct issue where flood detection could become unreliable. (caf)
+
 * Cast check_ext_mail and check_ext_mail_status function pointers to the
   correct type before using them. This might have caused a problem with
   the qmail plugin on 64 bit architectures. (caf)
