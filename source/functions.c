@@ -2130,46 +2130,54 @@ BUILT_IN_FUNCTION(function_restw, word)
  * returns "string of text" with the word "word" removed
  * EX: $remw(the now is the time for) returns "now is time for"
  */
-BUILT_IN_FUNCTION(function_remw, word)
+BUILT_IN_FUNCTION(function_remw, text)
 {
-	char 	*word_to_remove;
-	int	len;
-	char	*str;
+	char *word_to_remove;
+	size_t len;
+	char *str;
 
-	GET_STR_ARG(word_to_remove, word);
+	GET_STR_ARG(word_to_remove, text);
 	len = strlen(word_to_remove);
 
-	str = stristr(word, word_to_remove);
-	for (; str && *str; str = stristr(str + 1, word_to_remove))
+	/* Find the first instance of word_to_remove that's either at the start
+	 * of the text or preceded by a space, and is either at the end of the
+	 * text or followed by a space. */
+	str = stristr(text, word_to_remove);
+
+	while (str && 
+		((str != text && !isspace((unsigned char)str[-1])) ||
+		 (str[len] && !isspace((unsigned char)str[len]))))
 	{
-		if (str == word || isspace((unsigned char)str[-1]))
-		{
-			if (!str[len] || isspace((unsigned char)str[len]))
-			{
-				if (!str[len])
-				{
-					if (str != word)
-						str--;
-					*str = 0;
-				}
-				else if (str > word)
-				{
-					char *safe = (char *)alloca(strlen(str));
-					strcpy(safe, str + len);
-					strcpy(str - 1, safe);
-				}
-				else 
-				{
-					char *safe = (char *)alloca(strlen(str));
-					strcpy(safe, str + len + 1);
-					strcpy(str, safe);
-				}
-				break;
-			}
-		}
+		str = stristr(str + 1, word_to_remove);
 	}
 
-	RETURN_STR(word);
+	if (str)
+	{
+		/* Move from the following space (if any) */
+		char *src = str + len;
+		char *dest;
+
+		/* We always discard at least one space around the word (except for the
+		 * special case where the text is exactly equal to the word).  If the
+		 * word was found in the middle or end of text, we discard the space
+		 * preceding the word, but if the word was found at the start of text
+		 * we have to discard the space following the word, if any.
+		 */
+		if (str == text)
+		{
+			dest = str;
+			if (*src)
+				src++;
+		}
+		else
+		{
+			dest = str - 1;
+		}
+
+		memmove(dest, src, strlen(src) + 1);
+	}
+
+	RETURN_STR(text);
 }
 
 /* $insertw(num word string of text)
