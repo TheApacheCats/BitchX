@@ -1,0 +1,39 @@
+/* Regression test script for $remw() function */
+
+alias do_test {
+	if ([$1] != [$2]) {
+		xecho -banner Test $0 failed: Got $1, expected $2
+		@tests_failed++
+	}
+}
+
+alias regress_remw {
+	@tests_failed = 0
+	
+	do_test 1 $encode(|$remw(foo foo bar baz)) HMGCGBHCCAGCGBHK
+	do_test 2 $encode(|$remw(foo foo foo baz)) HMGGGPGPCAGCGBHK
+	do_test 3 $encode(|$remw(foo bar foo baz)) HMGCGBHCCAGCGBHK
+	do_test 4 $encode(|$remw(foo  foo bar baz)) HMCAGCGBHCCAGCGBHK
+	do_test 5 $encode(|$remw(foo foo bar baz )) HMGCGBHCCAGCGBHKCA
+	do_test 6 $encode(|$remw(foo bar baz foo )) HMGCGBHCCAGCGBHKCA
+	do_test 7 $encode(|$remw("" foo bar baz)) HM
+	do_test 8 $encode(|$remw("foo bar" foo bar baz)) HMGCGBHK
+	do_test 9 $encode(|$remw("foo bar" foo foo bar baz)) HMGGGPGPCAGCGBHK
+	do_test 10 $encode(|$remw(foo foo	bar baz)) HMGCGBHCCAGCGBHK
+	do_test 11 $encode(|$remw(foo 	foo bar baz)) HMCAGCGBHCCAGCGBHK
+	do_test 12 $encode(|$remw(foo bar	foo baz)) HMGCGBHCCAGCGBHK
+	do_test 13 $encode(|$remw(foo bar foo	baz)) HMGCGBHCAJGCGBHK
+	do_test 14 $encode(|$remw(foo bar baz foo)) HMGCGBHCCAGCGBHK
+	do_test 15 $encode(|$remw(foo bar baz	foo)) HMGCGBHCCAGCGBHK
+	do_test 16 $encode(|$remw(foo foo)) HM
+	do_test 17 $encode(|$remw(foo bar)) HMGCGBHC
+	do_test 18 $encode(|$remw(foo barfoo)) HMGCGBHCGGGPGP
+	do_test 19 $encode(|$remw(foo foobar)) HMGGGPGPGCGBHC
+	do_test 20 $encode(|$remw(foo bar foobar)) HMGCGBHCCAGGGPGPGCGBHC
+	do_test 21 $encode(|$remw(foo barfoo bar)) HMGCGBHCGGGPGPCAGCGBHC
+	
+	xecho -banner remw() tests complete, $tests_failed total failures.
+}
+
+/regress_remw
+
