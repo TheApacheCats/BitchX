@@ -3081,19 +3081,38 @@ char	*function_pop(char *n, char *word)
 */
 BUILT_IN_FUNCTION(function_sar, word)
 {
-	register char    delimiter;
-	register char	*pointer	= NULL;
-	char    *search         = NULL;
-	char    *replace        = NULL;
-	char    *data		= NULL;
-	char	*value		= NULL;
-	char	*booya		= NULL;
-	int	variable = 0,this_global = 0,searchlen,oldwindow = window_display;
-	char *(*func) (const char *, const char *) = strstr;
-	char 	*svalue;
+	char delimiter;
+	char *pointer = NULL;
+	char *search = NULL;
+	char *replace = NULL;
+	char *data = NULL;
+	char *value = NULL;
+	char *booya = NULL;
+	int	variable = 0;
+	int this_global = 0;
+	int searchlen;
+	int oldwindow = window_display;
+	char *(*func)(const char *, const char *) = strstr;
+	char *svalue;
 
-	while (((*word == 'r') && (variable = 1)) || ((*word == 'g') && (this_global = 1)) || ((*word == 'i') && (func = (char *(*)(const char *, const char *))global[STRISTR])))
+	while (*word == 'r' || *word == 'g' || *word == 'i')
+	{
+		switch (*word)
+		{
+			case 'r':
+			variable = 1;
+			break;
+
+			case 'g':
+			this_global = 1;
+			break;
+
+			case 'i':
+			func = &stristr;
+			break;
+		}
 		word++;
+	}
 
 	RETURN_IF_EMPTY(word);
 
@@ -3164,23 +3183,41 @@ BUILT_IN_FUNCTION(function_sar, word)
    The delimiter MUST be the first character after the command
    Returns empty string on error
 */
-#if 0
 BUILT_IN_FUNCTION(function_msar, word)
 {
-	register char    delimiter;
-	register char	*pointer	= NULL;
-	char    *search         = NULL;
-	char    *replace        = NULL;
-	char    *data		= NULL;
-	char	*value		= NULL;
-	char	*booya		= NULL;
-	char	*p		= NULL;
-	int	variable = 0,this_global = 0,searchlen,oldwindow = window_display;
-	char *(*func) (const char *, const char *) = strstr;
-	char 	*svalue = NULL;
+	char delimiter;
+	char *pointer = NULL;
+	char *search = NULL;
+	char *replace = NULL;
+	char *data = NULL;
+	char *value = NULL;
+	char *booya = NULL;
+	char *p = NULL;
+	int variable = 0;
+	int this_global = 0;
+	int searchlen;
+	int oldwindow = window_display;
+	char *(*func)(const char *, const char *) = strstr;
+	char *svalue;
 
-	while (((*word == 'r') && (variable = 1)) || ((*word == 'g') && (this_global = 1)) || ((*word == 'i') && (func = (char *(*)(const char *, const char *))global[STRISTR])))
+	while (*word == 'r' || *word == 'g' || *word == 'i')
+	{
+		switch (*word)
+		{
+			case 'r':
+			variable = 1;
+			break;
+
+			case 'g':
+			this_global = 1;
+			break;
+
+			case 'i':
+			func = &stristr;
+			break;
+		}
 		word++;
+	}
 
 	RETURN_IF_EMPTY(word);
 
@@ -3202,7 +3239,7 @@ BUILT_IN_FUNCTION(function_msar, word)
 		*p++ = 0;
 		value = (variable == 1) ? get_variable(p) : m_strdup(p);
 	}
-	
+
 	if (!value || !*value)
 	{
 		new_free(&value);
@@ -3213,7 +3250,8 @@ BUILT_IN_FUNCTION(function_msar, word)
 
 	do 
 	{
-		if ( (searchlen = (strlen(search) - 1)) < 0)
+		searchlen = strlen(search) - 1;
+		if (searchlen < 0)
 			searchlen = 0;
 		if (this_global)
 		{
@@ -3249,7 +3287,7 @@ BUILT_IN_FUNCTION(function_msar, word)
 					*data++ = 0;
 			}
 			/* patch from RoboHak */
-			if (!replace || !search)
+			if (!replace)
 			{
 				pointer = value = svalue;
 				break;
@@ -3267,116 +3305,7 @@ BUILT_IN_FUNCTION(function_msar, word)
 		window_display = oldwindow;
 	}
 	new_free(&svalue);
-	return booya ? booya : m_strdup(empty_string);
-}
-#endif
-BUILT_IN_FUNCTION(function_msar, word)
-{
-	char    delimiter;
-	char    *pointer        = NULL;
-	char    *search         = NULL;
-	char    *replace        = NULL;
-	char    *data           = NULL;
-	char    *value          = NULL;
-	char    *booya          = NULL;
-	char    *p              = NULL;
-	int     variable 	= 0,
-		this_global 		= 0,
-		searchlen,
-		oldwindow 	= window_display;
-	char 	*(*func) (const char *, const char *) = strstr;
-	char    *svalue;
-
-        while (((*word == 'r') && (variable = 1)) || ((*word == 'g') && (this_global = 1)) || ((*word == 'i') && (func = (char *(*)(const char *, const char *))global[STRISTR])))
-                word++;
-
-        RETURN_IF_EMPTY(word);
-
-        delimiter = *word;
-        search = word + 1;
-        if (!(replace = strchr(search, delimiter)))
-                RETURN_EMPTY;
-
-        *replace++ = 0;
-        if (!(data = strchr(replace,delimiter)))
-                RETURN_EMPTY;
-
-        *data++ = 0;
-
-        if (!(p = strrchr(data, delimiter)))
-                value = (variable == 1) ? get_variable(data) : m_strdup(data);
-        else
-        {
-                *p++ = 0;
-                value = (variable == 1) ? get_variable(p) : m_strdup(p);
-        }
-
-        if (!value || !*value)
-        {
-                new_free(&value);
-                RETURN_EMPTY;
-        }
-
-        pointer = svalue = value;
-
-        do 
-        {
-                searchlen = strlen(search) - 1;
-                if (searchlen < 0)
-                        searchlen = 0;
-                if (this_global)
-                {
-                        while ((pointer = func(pointer,search)))
-                        {
-                                pointer[0] = pointer[searchlen] = 0;
-                                pointer += searchlen + 1;
-                                m_e3cat(&booya, value, replace);
-                                value = pointer;
-                                if (!*pointer)
-                                        break;
-                        }
-                } 
-                else
-                {
-                        if ((pointer = func(pointer,search)))
-                        {
-                                pointer[0] = pointer[searchlen] = 0;
-                                pointer += searchlen + 1;
-                                m_e3cat(&booya, value, replace);
-                                value = pointer;
-                        }
-                }
-                malloc_strcat(&booya, value);
-                if (data && *data)
-                {
-			new_free(&svalue);
-                        search = data;
-                        if ((replace = strchr(data, delimiter)))
-                        {
-                                *replace++ = 0;
-                                if ((data = strchr(replace, delimiter)))
-                                        *data++ = 0;
-                        }
-			/* patch from RoboHak */
-			if (!replace || !search)
-			{
-				pointer = value = svalue;
-				break;
-			}
-			pointer = value = svalue = booya;
-			booya = NULL;
-                } else 
-                        break;
-        } while (1);
-
-        if (variable) 
-        {
-                window_display = 0;
-                add_var_alias(data, booya);
-                window_display = oldwindow;
-        }
-        new_free(&svalue);
-        return (booya);
+	return (booya);
 }
 
 
