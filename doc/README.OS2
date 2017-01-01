@@ -26,7 +26,7 @@ IRCNICK = PMBXUser
 
 HOSTNAME = mycomputer
 
-Scripts are located at scripts.bitchx.com. To install untar them into the
+Scripts are located in the scripts/ directory. To install untar them into the
 HOME directory and /load them.  Also try /load menu.bx for pull down 
 menus. If it is a clean installation and you don't have the HOME environment
 variable set... it should load automatically.

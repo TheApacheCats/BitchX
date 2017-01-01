@@ -20,24 +20,14 @@ maintained by Colten Edwards and a few others. EPIC is maintained by Jeremy
 Nelson aka "hop". Alot of changes that appear within BitchX are backported
 to EPIC as I am a contributor to epic.
 
-You can get a copy of the BitchX client via ftp from these mirrors:
-Not all sites will be always up to date, but many of them try.
+You can get a copy of the BitchX client from the official site:
 
-   Site                 Directory                         Maintainer
-   ftp.bitchx.com       /pub/BitchX			    Mhacker/panasync
-   ftp.bitchx.org       /pub/BitchX                       sideshow
-
-If you want to mirror the BitchX client, please drop an email to Colten
-Edwards (panasync@BitchX.com) telling him the host and directory where 
-we can count on you to keep a copy of the current version of the BitchX 
-client.  The BitchX client takes about 1.2m, the help files take about 150k, 
-and from time to time there are other patches that range from 5k to 30k in 
-size.
+   http://www.bitchx.org/
 
 A mailing list for all things related to BitchX exists.  Send email to
-majordomo@lists.bitchx.com with the words "subscribe bitchx" in the body
-(and nothing else!).  This list exists for bug reports, discussion about and
-requests for new features, and anything else that has to do with BitchX.
+bitchx-devel@lists.sourceforge.net This list exists for bug reports,
+discussion about and requests for new features, and anything else that is
+relevant to BitchX.
 
  * BitchX is completely safe:  There are no hidden trap doors.  
    We value your trust, and will not do anything to abuse it.
