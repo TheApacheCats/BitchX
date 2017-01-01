@@ -7237,29 +7237,31 @@ BUILT_IN_FUNCTION(function_functioncall, input)
  * the latter intentionally.  If you really want to calculate from the end of
  * your string, then just add your negative value to $strlen(string) and
  * pass that.
+ *
+ * 10/01/02 At the suggestion of fudd and rain, if pos == len, then return
+ * the number of words in 'input' because if the cursor is at the end of the
+ * input prompt and you do $indextoword($curpos() $L), right now it would
+ * return EMPTY but it should return the word number right before the cursor.
  */
 BUILT_IN_FUNCTION(function_indextoword, input)
 {
-	size_t	pos;
-	size_t	len;
+	size_t pos;
+	size_t len;
+	int count;
 
 	GET_INT_ARG(pos, input);
-	if (pos < 0)
-		RETURN_EMPTY;
 	len = strlen(input);
-	if (pos < 0 || pos >= len)
+	if (pos > len)
 		RETURN_EMPTY;
 
-	/* 
-	 * XXX
-	 * Using 'word_count' to do this is a really lazy cop-out, but it
-	 * renders the desired effect and its pretty cheap.  Anyone want
-	 * to bicker with me about it?
-	 */
 	/* Truncate the string if neccesary */
 	if (pos + 1 < len)
 		input[pos + 1] = 0;
-	RETURN_INT(word_count(input));
+
+	count = word_count(input);
+	if (count > 0)
+		count--;
+	RETURN_INT(count);
 }
 
 BUILT_IN_FUNCTION(function_realpath, input)
