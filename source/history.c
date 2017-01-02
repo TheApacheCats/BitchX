@@ -307,7 +307,7 @@ BUILT_IN_COMMAND(history)
 		for (tmp = command_history_tail, cnt = 0; tmp && (match || (cnt < max));
 				tmp = tmp->prev, cnt++)
 		{
-			if (!match || (match && wild_match(match, tmp->stuff)))
+			if (!match || wild_match(match, tmp->stuff))
 				put_it("%d: %s", tmp->number, tmp->stuff);
 		}
 	}
