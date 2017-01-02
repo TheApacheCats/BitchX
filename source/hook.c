@@ -946,7 +946,7 @@ int 	BX_do_hook (int which, char *format, ...)
 			if (currser != oldser)
 			{
 				oldser = currser;
-				currmatch = oldmatch = 0;
+				oldmatch = 0;
 				if (bestmatch)
 					hook_array[hook_num++] = bestmatch;
 				bestmatch = NULL;
