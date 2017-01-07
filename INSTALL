@@ -17,8 +17,9 @@ BitchX is known to compile on the following systems (maybe others as well):
 
 Introduction:
 
-	Problems may occur during the compilation process of BitchX. If
-you do have a problem, please gather as much information about the error
+	Problems may occur during the compilation process of BitchX. Some common
+problems are described below under "Compile Problems". If you do have a 
+problem you can't resolve, please gather as much information about the error
 (*FULL* output of "make") and join #BitchX on EFNet, or use the Sourceforge
 page at http://sourceforge.net/projects/bitchx/.
 
@@ -82,11 +83,25 @@ are marked with an asterisk, "*")
      Users without superuser access will typically see a "permission denied"
      error here if they try to install to the default prefix.
 
+Compile Problems:
+
+	BitchX requires either the terminfo or termcap terminal-handling library.
+This is commonly provided by the ncurses package, so if you get the error:
+
+Cannot find terminfo or termcap - try installing the ncurses-dev / ncurses-devel package.
+
+	..then you should try to find the ncurses development package for your OS.
+Some examples of what this package may be called:
+
+	Debian, Ubuntu:	libncurses5-dev
+	Fedora, CentOS, OpenSuSE: ncurses-devel
+	Cygwin: libncurses-devel
+
 --
 Last Updated:
 caf
-caf@guarana.org
-December 31st, 2012
+caf@bitchx.org
+January 7th, 2017
 
 Previous authors:
 Rob Andrews <sin@bitchx.org>
