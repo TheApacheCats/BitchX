@@ -7,10 +7,10 @@
 #ifndef __flood_h_
 #define __flood_h_
 
-	int	BX_check_flooding (char *, int, char *, char *);
-	int	BX_is_other_flood (ChannelList *, NickList *, int, int *);
-	int	BX_flood_prot (char *, char *, char *, int, int, char *);
-	void	clean_flood_list (void);		
+int BX_check_flooding(char *, int, char *, char *);
+int BX_is_other_flood(ChannelList *, NickList *, int, int *);
+int BX_flood_prot(char *nick, char *userhost, int flood_type, int ignoretime, char *channel);
+void clean_flood_list(void);
 
 #define MSG_FLOOD 	0x0001
 #define PUBLIC_FLOOD 	0x0002

@@ -64,7 +64,7 @@ extern	int	from_server;
 #define NO_RESET 0
 #define RESET 1
 
-char *get_flood_types(unsigned int type)
+static char *get_flood_types(unsigned int type)
 {
 int x = 0;
 	while (type)
@@ -440,13 +440,11 @@ int BX_check_flooding(char *nick, int type, char *line, char *channel)
 					case NOTICE_FLOOD:
 					case CDCC_FLOOD:
 					case CTCP_FLOOD:
-						if (flood_prot(nick, FromUserHost, get_flood_types(type), type, get_int_var(IGNORE_TIME_VAR), channel))
+					case CTCP_ACTION_FLOOD:
+						if (flood_prot(nick, FromUserHost, type, get_int_var(IGNORE_TIME_VAR), channel))
 							return 0;
 						break;
-					case CTCP_ACTION_FLOOD:
-						if (flood_prot(nick, FromUserHost, get_flood_types(CTCP_FLOOD), type, get_int_var(IGNORE_TIME_VAR), channel))
-							return 0;
-					default:
+					default: /* INVITE_FLOOD and WALLOP_FLOOD - not clear if this is intentional */
 						break;
 				}
 				if (get_int_var(FLOOD_WARNING_VAR))
@@ -489,22 +487,23 @@ ChannelList *chan = NULL;
 	}
 }
 
-int BX_flood_prot (char *nick, char *userhost, char *type, int ctcp_type, int ignoretime, char *channel)
+int BX_flood_prot(char *nick, char *userhost, int flood_type, int ignoretime, char *channel)
 {
-ChannelList *chan;
-NickList *Nick;
-char tmp[BIG_BUFFER_SIZE+1];
-char *uh;
-int	old_window_display;
-int	kick_on_flood = 1;
+	ChannelList *chan;
+	NickList *Nick;
+	char tmp[BIG_BUFFER_SIZE+1];
+	char *uh;
+	int	old_window_display;
+	int	kick_on_flood = 1;
+	char *type = get_flood_types(flood_type);
 
-	if ((ctcp_type == CDCC_FLOOD || ctcp_type == CTCP_FLOOD || ctcp_type == CTCP_ACTION_FLOOD) && !get_int_var(CTCP_FLOOD_PROTECTION_VAR))
+	if ((flood_type == CDCC_FLOOD || flood_type == CTCP_FLOOD || flood_type == CTCP_ACTION_FLOOD) && !get_int_var(CTCP_FLOOD_PROTECTION_VAR))
 		return 0;
 	else if (!get_int_var(FLOOD_PROTECTION_VAR))
 		return 0;
 	else if (!my_stricmp(nick, get_server_nickname(from_server)))
 		return 0;
-	switch (ctcp_type)
+	switch (flood_type)
 	{
 		case WALL_FLOOD:
 		case MSG_FLOOD:
@@ -549,7 +548,7 @@ int	kick_on_flood = 1;
 	snprintf(tmp, sizeof tmp, "*!*%s", uh);
 	old_window_display = window_display;
 	window_display = 0;
-	ignore_nickname(tmp, ignore_type(type, strlen(type)), 0);
+	ignore_nickname(tmp, flood_type == CTCP_ACTION_FLOOD ? IGNORE_CTCPS : ignore_type(type, strlen(type)), 0);
 	window_display = old_window_display;
 	snprintf(tmp, sizeof tmp, "%d ^IGNORE *!*%s NONE", ignoretime, uh);
 	timercmd("TIMER", tmp, NULL, NULL);

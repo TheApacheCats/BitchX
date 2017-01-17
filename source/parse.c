@@ -607,7 +607,7 @@ static	void p_privmsg(char *from, char **Args)
 		if (is_other_flood(channel, tmpnick, PUBLIC_FLOOD, &blah))
 		{
 			no_flood = 0;
-			flood_prot(tmpnick->nick, FromUserHost, "PUBLIC", flood_type, get_cset_int_var(channel->csets, PUBFLOOD_IGNORE_TIME_CSET), channel->channel);
+			flood_prot(tmpnick->nick, FromUserHost, flood_type, get_cset_int_var(channel->csets, PUBFLOOD_IGNORE_TIME_CSET), channel->channel);
 		}
 	}
 	else
