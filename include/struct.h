@@ -1012,7 +1012,7 @@ typedef struct	flood_stru
 	char	*name;
 	char	*host;
 	char	*channel;
-	int	type;
+	unsigned flags;
 	char	flood;
 	unsigned long	cnt;
 	struct timeval	start;

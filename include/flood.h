@@ -26,6 +26,8 @@ void clean_flood_list(void);
 #define KICK_FLOOD	0x0800
 #define JOIN_FLOOD	0x1000
 
+#define FLOOD_FLAG(t) ((unsigned)(t))
+
 #include "hash.h"
 #define FLOOD_HASHSIZE 31
 extern HashEntry no_flood_list[FLOOD_HASHSIZE];

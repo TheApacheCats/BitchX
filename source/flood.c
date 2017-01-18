@@ -401,15 +401,15 @@ int BX_check_flooding(char *nick, int type, char *line, char *channel)
 	{
 		remove_oldest_flood_hashlist(&flood_list[0]);
 		tmp = add_name_to_floodlist(nick, FromUserHost, channel, flood_list, FLOOD_HASHSIZE);
-		tmp->type = type;
+		tmp->flags = FLOOD_FLAG(type);
 		tmp->cnt = 1;
 		get_time(&tmp->start);
 		tmp->flood = 0;
 		return 1;
 	} 
-	if (!(tmp->type & type))
+	if (!(tmp->flags & FLOOD_FLAG(type)))
 	{
-		tmp->type |= type; 
+		tmp->flags |= FLOOD_FLAG(type); 
 		return 1;
 	}
 
