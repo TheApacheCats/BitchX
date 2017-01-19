@@ -162,7 +162,7 @@ int get_flood_count(int type, ChannelList * channel)
 }
 #endif
 
-void get_flood_val(ChannelList *chan, int type, int *flood_count, int *flood_rate)
+static void get_flood_val(ChannelList *chan, enum flood_type type, int *flood_count, int *flood_rate)
 {
 	*flood_count = get_int_var(FLOOD_AFTER_VAR);
 	*flood_rate = get_int_var(FLOOD_RATE_VAR);
@@ -212,7 +212,7 @@ void get_flood_val(ChannelList *chan, int type, int *flood_count, int *flood_rat
 	}
 }
 
-int set_flood(int type, time_t flood_time, int reset, NickList *tmpnick)
+static int set_flood(enum flood_type type, time_t flood_time, int reset, NickList *tmpnick)
 {
 	if (!tmpnick)
 		return 0;
@@ -259,7 +259,7 @@ int set_flood(int type, time_t flood_time, int reset, NickList *tmpnick)
 	return 1;
 }
 
-int BX_is_other_flood(ChannelList *channel, NickList *tmpnick, int type, int *t_flood)
+int BX_is_other_flood(ChannelList *channel, NickList *tmpnick, enum flood_type type, int *t_flood)
 {
 time_t diff = 0, flood_time = 0;
 int doit = 0;
@@ -387,7 +387,7 @@ static int remove_oldest_flood_hashlist(HashEntry *list)
  * FLOOD is activated. 
  */
 
-int BX_check_flooding(char *nick, int type, char *line, char *channel)
+int BX_check_flooding(char *nick, enum flood_type type, char *line, char *channel)
 {
 	Flooding *tmp;
 	int flood_rate;
@@ -462,7 +462,7 @@ int BX_check_flooding(char *nick, int type, char *line, char *channel)
 	return 1;
 }
 
-void check_ctcp_ban_flood(char *channel, char *nick)
+static void check_ctcp_ban_flood(char *channel, char *nick)
 {
 NickList *Nick = NULL;
 ChannelList *chan = NULL;
@@ -487,7 +487,7 @@ ChannelList *chan = NULL;
 	}
 }
 
-int BX_flood_prot(char *nick, char *userhost, int flood_type, int ignoretime, char *channel)
+int BX_flood_prot(char *nick, char *userhost, enum flood_type flood_type, int ignoretime, char *channel)
 {
 	ChannelList *chan;
 	NickList *Nick;

@@ -594,9 +594,9 @@ extern Function_ptr *global;
 
 
 /* flood.c */
-#define is_other_flood (*(int (*)(ChannelList *, NickList *, int, int *))global[IS_OTHER_FLOOD])
-#define check_flooding (*(int (*)(char *, int , char *, char *))global[CHECK_FLOODING])
-#define flood_prot (*(int (*)(char *, char *, int , int , char *))global[FLOOD_PROT])
+#define is_other_flood (*(int (*)(ChannelList *, NickList *, enum flood_type, int *))global[IS_OTHER_FLOOD])
+#define check_flooding (*(int (*)(char *, enum flood_type, char *, char *))global[CHECK_FLOODING])
+#define flood_prot (*(int (*)(char *, char *, enum flood_type, int, char *))global[FLOOD_PROT])
 
 /* expr.c */
 #define next_unit (*(char *(*)(char *, const char *, int *, int ))global[NEXT_UNIT])
