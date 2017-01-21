@@ -35,22 +35,25 @@ CVS_REVISION(flood_c)
 #define MAIN_SOURCE
 #include "modval.h"
 
-static	char	*ignore_types[] =
+static const struct flood_table {
+	const char *text;
+	long ig_type;
+} flood_table[] =
 {
-	"",
-	"MSG",
-	"PUBLIC",
-	"NOTICE",
-	"WALL",
-	"WALLOP",
-	"CTCP",
-	"INVITE",
-	"CDCC",
-	"ACTION",
-	"NICK",
-	"DEOP",
-	"KICK",
-	"JOIN"
+	{ "MSG", IGNORE_MSGS },
+	{ "PUBLIC", IGNORE_PUBLIC },
+	{ "NOTICE", IGNORE_NOTICES },
+	{ "WALL", IGNORE_WALLS },
+	{ "WALLOP", IGNORE_WALLOPS },
+	{ "CTCP", IGNORE_CTCPS },
+	{ "INVITE", IGNORE_INVITES },
+	{ "CDCC", IGNORE_CDCC },
+	{ "ACTION", IGNORE_CTCPS },
+	/* Flood types below here do not set ignores */
+	{ "NICK", IGNORE_NICKS },
+	{ "DEOP", IGNORE_MODES },
+	{ "KICK", IGNORE_KICKS },
+	{ "JOIN", IGNORE_JOINS }
 };
 
 #define FLOOD_HASHSIZE 31
@@ -63,17 +66,6 @@ extern	int	from_server;
 
 #define NO_RESET 0
 #define RESET 1
-
-static char *get_flood_types(unsigned int type)
-{
-int x = 0;
-	while (type)
-	{
-		type = type >> 1;
-		x++;
-	}
-	return ignore_types[x];
-}
 
 #if 0
 int get_flood_rate(int type, ChannelList * channel)
@@ -334,7 +326,7 @@ int flood_rate = 0, flood_count = 0;
 				{
 					*t_flood = diff;
 					flooded = 1;
-					do_hook(FLOOD_LIST, "%s %s %s %s", tmpnick->nick, get_flood_types(type),channel?channel->channel:zero, tmpnick->host);
+					do_hook(FLOOD_LIST, "%s %s %s %s", tmpnick->nick, flood_table[type].text,channel?channel->channel:zero, tmpnick->host);
 				}
 				set_flood(type, flood_time, RESET, tmpnick);
 				return flooded;
@@ -431,7 +423,7 @@ int BX_check_flooding(char *nick, enum flood_type type, char *line, char *channe
 			if (tmp->flood == 0)
 			{
 				tmp->flood = 1;
-				if ((ret = do_hook(FLOOD_LIST, "%s %s %s %s", nick, get_flood_types(type),channel?channel:zero, line)) != 1)
+				if ((ret = do_hook(FLOOD_LIST, "%s %s %s %s", nick, flood_table[type].text, channel?channel:zero, line)) != 1)
 					return ret;
 				switch(type)
 				{
@@ -448,7 +440,7 @@ int BX_check_flooding(char *nick, enum flood_type type, char *line, char *channe
 						break;
 				}
 				if (get_int_var(FLOOD_WARNING_VAR))
-					put_it("%s", convert_output_format(fget_string_var(FORMAT_FLOOD_FSET), "%s %s %s %s %s", update_clock(GET_TIME), get_flood_types(type), nick, FromUserHost, channel?channel:"unknown"));
+					put_it("%s", convert_output_format(fget_string_var(FORMAT_FLOOD_FSET), "%s %s %s %s %s", update_clock(GET_TIME), flood_table[type].text, nick, FromUserHost, channel?channel:"unknown"));
 			}
 			return 1;
 		}
@@ -495,7 +487,6 @@ int BX_flood_prot(char *nick, char *userhost, enum flood_type flood_type, int ig
 	char *uh;
 	int	old_window_display;
 	int	kick_on_flood = 1;
-	char *type = get_flood_types(flood_type);
 
 	if ((flood_type == CDCC_FLOOD || flood_type == CTCP_FLOOD || flood_type == CTCP_ACTION_FLOOD) && !get_int_var(CTCP_FLOOD_PROTECTION_VAR))
 		return 0;
@@ -520,7 +511,7 @@ int BX_flood_prot(char *nick, char *userhost, enum flood_type flood_type, int ig
 					{
 						if (chan->have_op && (!Nick->userlist || (Nick->userlist && !(Nick->userlist->flags & ADD_FLOOD))))
 							if (!nick_isop(Nick) || get_cset_int_var(chan->csets, KICK_OPS_CSET))
-								send_to_server("KICK %s %s :\002%s\002 flooder", chan->channel, nick, type);
+								send_to_server("KICK %s %s :\002%s\002 flooder", chan->channel, nick, flood_table[flood_type].text);
 					} 
 				}
 			}
@@ -537,7 +528,7 @@ int BX_flood_prot(char *nick, char *userhost, enum flood_type flood_type, int ig
 					{
 						if ((!Nick->userlist || (Nick->userlist && !(Nick->userlist->flags & ADD_FLOOD))))
 							if (!nick_isop(Nick) || get_cset_int_var(chan->csets, KICK_OPS_CSET))
-								send_to_server("KICK %s %s :\002%s\002 flooder", chan->channel, nick, type);
+								send_to_server("KICK %s %s :\002%s\002 flooder", chan->channel, nick, flood_table[flood_type].text);
 					}
 				}
 			}
@@ -548,11 +539,11 @@ int BX_flood_prot(char *nick, char *userhost, enum flood_type flood_type, int ig
 	snprintf(tmp, sizeof tmp, "*!*%s", uh);
 	old_window_display = window_display;
 	window_display = 0;
-	ignore_nickname(tmp, flood_type == CTCP_ACTION_FLOOD ? IGNORE_CTCPS : ignore_type(type, strlen(type)), 0);
+	ignore_nickname(tmp, flood_table[flood_type].ig_type, 0);
 	window_display = old_window_display;
 	snprintf(tmp, sizeof tmp, "%d ^IGNORE *!*%s NONE", ignoretime, uh);
 	timercmd("TIMER", tmp, NULL, NULL);
-	bitchsay("Auto-ignoring %s for %d minutes [\002%s\002 flood]", nick, ignoretime/60, type);
+	bitchsay("Auto-ignoring %s for %d minutes [\002%s\002 flood]", nick, ignoretime/60, flood_table[flood_type].text);
 	return 1;
 }
 
