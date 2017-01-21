@@ -571,11 +571,13 @@ static	void ignore_list(char *nick)
 		bitchsay("There are no nicknames or channels being ignored");
 }
 
-long ignore_type (char *type, int len)
+long ignore_type(const char *type, size_t len)
 {
-long ret = -1;
+	long ret = -1;
+
 	if (!type || !*type)
 		return -1;
+
 	if (!strncmp(type, "ALL", len))
 		ret = IGNORE_ALL;
 	else if (!strncmp(type, "MSGS", len))

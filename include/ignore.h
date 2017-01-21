@@ -57,7 +57,7 @@ int	check_ignore (char *, char *, char *, long, char *);
 void	ignore (char *, char *, char *, char *);
 void	tignore (char *, char *, char *, char *);
 void	ignore_nickname (char *, long, int);
-long	ignore_type (char *, int);
+long ignore_type(const char *, size_t);
 int	check_is_ignored(char *);
 char 	*get_ignores_by_pattern (char *patterns, int covered);
 int	get_type_by_desc (char *type, int *do_mask, int *dont_mask);
