@@ -425,20 +425,8 @@ int BX_check_flooding(char *nick, enum flood_type type, char *line, char *channe
 				tmp->flood = 1;
 				if ((ret = do_hook(FLOOD_LIST, "%s %s %s %s", nick, flood_table[type].text, channel?channel:zero, line)) != 1)
 					return ret;
-				switch(type)
-				{
-					case WALL_FLOOD:
-					case MSG_FLOOD:
-					case NOTICE_FLOOD:
-					case CDCC_FLOOD:
-					case CTCP_FLOOD:
-					case CTCP_ACTION_FLOOD:
-						if (flood_prot(nick, FromUserHost, type, get_int_var(IGNORE_TIME_VAR), channel))
-							return 0;
-						break;
-					default: /* INVITE_FLOOD and WALLOP_FLOOD - not clear if this is intentional */
-						break;
-				}
+				if (flood_prot(nick, FromUserHost, type, get_int_var(IGNORE_TIME_VAR), channel))
+					return 0;
 				if (get_int_var(FLOOD_WARNING_VAR))
 					put_it("%s", convert_output_format(fget_string_var(FORMAT_FLOOD_FSET), "%s %s %s %s %s", update_clock(GET_TIME), flood_table[type].text, nick, FromUserHost, channel?channel:"unknown"));
 			}

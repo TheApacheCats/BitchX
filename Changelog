@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Allow INVITE and WALLOP floods to trigger auto-ignore. (caf)
+
 * Change $indextoword() so that the return value numbers the words from 0
   rather than 1, to align with documentation and EPIC4/5. (caf)
 
