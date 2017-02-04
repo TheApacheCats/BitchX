@@ -360,7 +360,7 @@ int is_ignored(char *nick, long type)
 				return (IGNORED);
 			if (tmp->high & type)
 				return (HIGHLIGHTED);
-			if (tmp->high & type)
+			if (tmp->cgrep & type)
 				return (CHANNEL_GREP);
 		}
 	}
