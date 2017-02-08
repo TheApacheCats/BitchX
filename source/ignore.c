@@ -340,33 +340,6 @@ static	int remove_ignore(char *nick)
 	return count;
 }
 
-/*
- * is_ignored: checks to see if nick is being ignored (poor nick).  Checks
- * against type to see if ignoring is to take place.  If nick is marked as
- * IGNORE_ALL or ignorace types match, 1 is returned, otherwise 0 is
- * returned.  
- */
-int is_ignored(char *nick, long type)
-{
-	Ignore	*tmp;
-
-	if (ignored_nicks)
-	{
-		if ((tmp = (Ignore *) list_lookup((List **) &ignored_nicks, nick, USE_WILDCARDS, !REMOVE_FROM_LIST)) != NULL)
-		{
-			if (tmp->dont & type)
-				return (DONT_IGNORE);
-			if (tmp->type & type)
-				return (IGNORED);
-			if (tmp->high & type)
-				return (HIGHLIGHTED);
-			if (tmp->cgrep & type)
-				return (CHANNEL_GREP);
-		}
-	}
-	return (0);
-}
-
 int check_is_ignored(char *nick)
 {
 	Ignore	*tmp;
