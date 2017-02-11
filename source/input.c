@@ -2704,7 +2704,6 @@ do_more_tab:
 			{
 				if (!got_space)
 				{
-					old = inp;
 					old = last_arg(&inp);
 					if ((*old == '"'))
 					{
