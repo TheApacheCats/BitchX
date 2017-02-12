@@ -2004,17 +2004,15 @@ NickTab *tmp, *new;
 
 NickTab *BX_getnextnick(int which, char *input_nick, char *oldnick, char *nick)
 {
-ChannelList *chan; 
-NickList *cnick = NULL;
-NickTab  *tmp =  (which == 1) ? autoreply_array : tabkey_array;
-int server = from_server;
-static NickTab sucks = { NULL };
+	ChannelList *chan;
+	NickList *cnick = NULL;
+	NickTab *tmp = (which == 1) ? autoreply_array : tabkey_array;
+	int server = from_server;
+	static NickTab sucks = { NULL };
 
 	if (tmp && (in_completion == STATE_NORMAL || in_completion == STATE_TABKEY))
 	{
-	
-
-		if (!oldnick && !nick && tmp)
+		if (!oldnick && !nick)
 		{
 			in_completion = STATE_TABKEY;
 			return tmp;
