@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Unsetting CMDCHARS sets it back to the default. (caf)
+
 * Fix a double-free bug when a window on an alternate screen queries an exec
   process. (caf)
 

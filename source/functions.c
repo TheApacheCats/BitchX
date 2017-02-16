@@ -1183,12 +1183,9 @@ static	char	*alias_target 		(void)
 
 static	char	*alias_cmdchar 		(void)
 {
-	char	*cmdchars, tmp[2];
+	const char *cmdchars = get_string_var(CMDCHARS_VAR);
+	char tmp[2] = { cmdchars[0], 0 };
 
-	if ((cmdchars = get_string_var(CMDCHARS_VAR)) == NULL)
-		cmdchars = DEFAULT_CMDCHARS;
-	tmp[0] = cmdchars[0];
-	tmp[1] = 0;
 	return m_strdup(tmp);
 }
 

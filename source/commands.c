@@ -4111,21 +4111,18 @@ void command_completion(char unused, char *not_used)
 	
 	char	*line = NULL,
 		*com,
-		*cmdchars,
 		*rest,
 		firstcmdchar[2] = "/";
+	const char *cmdchars = get_string_var(CMDCHARS_VAR);
 	const IrcCommand *command;
 #ifdef WANT_DLL
 	IrcCommandDll	*dll = NULL;
 #endif
 	char	buffer[BIG_BUFFER_SIZE];
 	
-	
 	malloc_strcpy(&line, get_input());
 	if ((com = next_arg(line, &rest)) != NULL)
 	{
-		if (!(cmdchars = get_string_var(CMDCHARS_VAR)))
-			cmdchars = DEFAULT_CMDCHARS;
 		if (*com == '/' || strchr(cmdchars, *com))
 		{
 			*firstcmdchar = *cmdchars;
@@ -4439,20 +4436,20 @@ void BX_parse_line (const char *name, char *org_line, const char *args, int hist
  * characters or anything (beyond those specific for a given command being
  * executed). 
  */
-int BX_parse_command(register char *line, int hist_flag, char *sub_args)
+int BX_parse_command(char *line, int hist_flag, char *sub_args)
 {
-static	unsigned int	 level = 0;
-	unsigned int	display,
-			old_display_var;
-		char	*cmdchars;
-	const	char	*com;
-		char	*this_cmd = NULL;
-		int	args_flag = 0,
-			add_to_hist,
-			cmdchar_used = 0;
-		int	noisy = 1;
+	static unsigned int level = 0;
+	unsigned int display,
+		old_display_var;
+	const char *cmdchars = get_string_var(CMDCHARS_VAR);
+	const char *com;
+	char *this_cmd = NULL;
+	int args_flag = 0,
+		add_to_hist,
+		cmdchar_used = 0;
+	int noisy = 1;
 
-		int	old_alias_debug = alias_debug;
+	int old_alias_debug = alias_debug;
 				
 	if (!line || !*line)
 		return 0;
@@ -4460,10 +4457,6 @@ static	unsigned int	 level = 0;
 	if (internal_debug & DEBUG_COMMANDS && !in_debug_yell)
 		debugyell("Executing [%d] %s", level, line);
 	level++;
-
-	if (!(cmdchars = get_string_var(CMDCHARS_VAR)))
-		cmdchars = DEFAULT_CMDCHARS;
-
 
 	this_cmd = LOCAL_COPY(line);
 	set_current_command(this_cmd);

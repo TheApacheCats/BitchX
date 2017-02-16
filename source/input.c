@@ -983,14 +983,11 @@ BUILT_IN_KEYBINDING(toggle_insert_mode)
 
 BUILT_IN_KEYBINDING(input_msgreply)
 {
-char *cmdchar;
-char *line, *cmd, *t;
-char *snick;
-NickTab *nick = NULL;
-int got_space = 0;
-
-	if (!(cmdchar = get_string_var(CMDCHARS_VAR))) 
-		cmdchar = DEFAULT_CMDCHARS;
+	const char *cmdchar = get_string_var(CMDCHARS_VAR);
+	char *line, *cmd, *t;
+	char *snick;
+	NickTab *nick = NULL;
+	int got_space = 0;
 
 	t = line = m_strdup(get_input());
 	if (t)
@@ -1172,14 +1169,10 @@ BUILT_IN_KEYBINDING(send_line)
 	}
 	else
 	{
-		char	*line,
-			*cmdchar,
-			*tmp = NULL;
+		const char *cmdchar = get_string_var(CMDCHARS_VAR);
+		char *line = get_input();
+		char *tmp = m_strdup(line);
 
-		line = get_input();
-		if (!(cmdchar = get_string_var(CMDCHARS_VAR)))
-			cmdchar = "/";
-		malloc_strcpy(&tmp, line);
 		if (line && (*line != *cmdchar) && get_int_var(NICK_COMPLETION_VAR) && !current_window->query_nick)
 		{
 			char auto_comp_char;
@@ -2523,17 +2516,17 @@ char	buffer[BIG_BUFFER_SIZE+1];
 
 BUILT_IN_KEYBINDING(tab_completion)
 {
-int	count = 0, 
-	wcount = 0;
-enum completion type = NO_COMPLETION;
-char *inp = NULL;
-char *possible = NULL, *old_pos = NULL;
-char *cmdchar;
-char *suggested = NULL;
-int got_space = 0;
-char *get = NULL;
-Ext_Name_Type *extcomp = ext_completion;
-
+	int	count = 0, 
+		wcount = 0;
+	enum completion type = NO_COMPLETION;
+	char *inp = NULL;
+	char *possible = NULL, *old_pos = NULL;
+	const char *cmdchar = get_string_var(CMDCHARS_VAR);
+	char *suggested = NULL;
+	int got_space = 0;
+	char *get = NULL;
+	Ext_Name_Type *extcomp = ext_completion;
+	
 	/* 
 	 * is this the != second word, then just complete from the 
 	 * channel nicks. if it is the second word, grab the first word, and 
@@ -2546,8 +2539,7 @@ Ext_Name_Type *extcomp = ext_completion;
 	if (*inp && inp[strlen(inp)-1] == ' ')
 		got_space = 1;
 	wcount = word_count(inp);
-	if (!(cmdchar = get_string_var(CMDCHARS_VAR)))
-		cmdchar = "/";
+
 	switch(wcount)
 	{
 		case 0:

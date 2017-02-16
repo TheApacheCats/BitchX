@@ -90,6 +90,7 @@ static	void	set_clock_format (Window *, char *, int);
 static	void	set_dcc_timeout(Window *, char *, int);
 	void	BX_set_scrollback_size (Window *, char *, int);
 static	void	set_use_socks(Window *, char *, int);
+static	void	set_cmdchars(Window *, char *, int);
 
 static	void	set_mangle_inbound (Window *, char *, int);
 static	void	set_mangle_outbound (Window *, char *, int);
@@ -166,7 +167,7 @@ static	IrcVariable irc_variable[] =
 	{ "CLOCK_FORMAT",0,		STR_TYPE_VAR,	0, NULL, set_clock_format, 0, 0 },
 	{ "CLONE_CHECK",0,		INT_TYPE_VAR,	0, NULL, NULL, 0, 0 }, 
 	{ "CLONE_COUNT",0,		INT_TYPE_VAR,	0, NULL, NULL, 0, 0 },
-	{ "CMDCHARS",0,			STR_TYPE_VAR,	0, NULL, NULL, 0, 0 },
+	{ "CMDCHARS",0,			STR_TYPE_VAR,	0, NULL, set_cmdchars, 0, 0 },
 	{ "COLOR",0,			BOOL_TYPE_VAR,	1, NULL, NULL, 0, 0 },
 	{ "COMMAND_MODE",0,		BOOL_TYPE_VAR,	DEFAULT_COMMAND_MODE, NULL, NULL, 0, 0 },
 	{ "COMMENT_BREAKAGE",0,		BOOL_TYPE_VAR,	0, NULL, NULL, 0, 0 },
@@ -1561,6 +1562,11 @@ extern int use_socks;
 		use_socks = 0;
 }
 
+/* CMDCHARS cannot be unset - unsetting it just sets it back to the default. */
+static void	set_cmdchars(Window *win, char *value, int unused)
+{
+	set_string_var(CMDCHARS_VAR, value ? value : DEFAULT_CMDCHARS);
+}
 
 int	parse_mangle (char *value, int nvalue, char **rv)
 {
