@@ -1,5 +1,8 @@
 [Changes 1.2.2]
 
+* Fix a double-free bug when a window on an alternate screen queries an exec
+  process. (caf)
+
 * Use 127.0.0.1 for wserv socket, which fixes /WINDOW CREATE with IPv6. (caf)
 
 * Allow INVITE and WALLOP floods to trigger auto-ignore. (caf)

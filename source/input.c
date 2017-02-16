@@ -166,10 +166,9 @@ extern void BX_cursor_to_input (void)
  */
 extern void	BX_update_input (int update)
 {
-	int	old_zone;
-	char	*ptr, *ptr_free;
+	int old_zone;
+	char *ptr;
 	int	len,
-		free_it = 0,
 		echo = 1,
 		max;
 
@@ -177,7 +176,6 @@ extern void	BX_update_input (int update)
 	Screen	*os = last_input_screen;
 	Screen	*ns;
 	Window	*saved_current_window = current_window;
-
 
 #ifdef WANT_HEBREW
 	void BX_set_input_heb (char *str);
@@ -230,32 +228,29 @@ extern void	BX_update_input (int update)
 				
 		if (prompt && update != NO_UPDATE)
 		{
-			int	args_used;	
+			int args_used;
+			char *ptr_free = NULL;
 
 			if (is_valid_process(get_target_by_refnum(0)) != -1)
 				ptr = (char *)get_prompt_by_refnum(0);
 			else
 			{
 				ptr = expand_alias(prompt, empty_string, &args_used, NULL);
-				free_it = 1;
+				ptr_free = ptr;
 			}
 			if (last_input_screen->promptlist)
 				term_echo(last_input_screen->promptlist->echo);
 
-			ptr_free = ptr;
 			ptr = strip_ansi(ptr);
 			strcat(ptr, ALL_OFF_STR);	/* Yes, we can do this */
-			if (free_it)
-				new_free(&ptr_free);
-			free_it = 1;
+			new_free(&ptr_free);
 			
-			if ((ptr && !INPUT_LINE) || (!ptr && INPUT_LINE) ||
-				strcmp(ptr, last_input_screen->input_buffer))
+			if (!INPUT_LINE || strcmp(ptr, last_input_screen->input_buffer))
 			{
 				if (last_input_screen->input_prompt_malloc)
 					new_free(&INPUT_PROMPT);
 	
-				last_input_screen->input_prompt_malloc = free_it;
+				last_input_screen->input_prompt_malloc = 1;
 	
 				INPUT_PROMPT = ptr;
 				len = strlen(INPUT_PROMPT);
@@ -264,8 +259,7 @@ extern void	BX_update_input (int update)
 			}
 			else
 			{
-				if (free_it)
-					new_free(&ptr);
+				new_free(&ptr);
 			}
 		}
 
