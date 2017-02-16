@@ -1599,7 +1599,7 @@ extern	Window	*BX_create_additional_screen (void)
                 screen_type == ST_SCREEN ? "screen" :
                                            "wound" );
 	port = 0;
-	s = connect_by_number(NULL, &port, SERVICE_SERVER, PROTOCOL_TCP, 0);
+	s = connect_by_number("127.0.0.1", &port, SERVICE_SERVER, PROTOCOL_TCP, 0);
 	if (s < 0)
 	{
 		yell("Couldn't establish server side -- error [%d]", s);
@@ -1676,7 +1676,7 @@ extern	Window	*BX_create_additional_screen (void)
 			}
 
 			*args_ptr++ = WSERV_PATH;
-			*args_ptr++ = "localhost";
+			*args_ptr++ = "127.0.0.1";
 			*args_ptr++ = ltoa((long)port);
 			*args_ptr++ = NULL;
 

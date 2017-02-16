@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Use 127.0.0.1 for wserv socket, which fixes /WINDOW CREATE with IPv6. (caf)
+
 * Allow INVITE and WALLOP floods to trigger auto-ignore. (caf)
 
 * Change $indextoword() so that the return value numbers the words from 0
