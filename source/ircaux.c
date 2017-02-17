@@ -174,7 +174,7 @@ char *	n_malloc_strcpy (char **ptr, const char *src, const char *module, const c
 {
 	if (!src)
 		return *ptr = n_free(*ptr, module, file, line);
-	if (ptr && *ptr)
+	if (*ptr)
 	{
 		if (*ptr == src)
 			return *ptr;
@@ -183,8 +183,8 @@ char *	n_malloc_strcpy (char **ptr, const char *src, const char *module, const c
 		*ptr = n_free(*ptr, module, file, line);
 	}
 	*ptr = n_malloc(strlen(src) + 1, module, file, line);
+
 	return strcpy(*ptr, src);
-	return *ptr;
 }
 
 /* malloc_strcat: Yeah, right */
