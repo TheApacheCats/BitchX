@@ -1425,7 +1425,7 @@ FILE *t;
 void setup_pid(void)
 {
 #ifdef WANT_DETACH
-pid_t pid;
+	pid_t pid;
 	if (!do_check_pid)
 		return;
 	if ((pid = getpid()))
@@ -1434,7 +1434,7 @@ pid_t pid;
 		unlink(pidfile);
 		if ((t = fopen(pidfile, "w")))
 		{
-			fprintf(t, "%u\n", pid);
+			fprintf(t, "%ld\n", (long)pid);
 			fclose(t);
 		}
 	}
