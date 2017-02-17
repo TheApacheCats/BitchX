@@ -4800,8 +4800,7 @@ ChannelList *chan = NULL;
 		
 		if (!channel) {		
 			if (flags != PC_SILENT) {
-				if (current_window)
-					message_to(current_window->refnum);
+				message_to(current_window->refnum);
 				bitchsay("You're not on a channel!");
 				message_to(0);
 			}
@@ -4813,8 +4812,7 @@ ChannelList *chan = NULL;
 	if (!(chan = lookup_channel(channel, server, 0)))
 	{
 		if (flags != PC_SILENT) {
-			if (current_window)
-				message_to(current_window->refnum);
+			message_to(current_window->refnum);
 			bitchsay("You're not on the channel: %s", channel);
 			message_to(0);
 		}
