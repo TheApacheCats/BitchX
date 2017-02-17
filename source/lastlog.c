@@ -614,18 +614,24 @@ int logmsg(unsigned long log_type, const char *from, int flag, const char *forma
 			lines = split_up_line(stripansicodes(convert_output_format(format, "%s %s %s %s", type, timestr, from, msglog_buffer)), 80);
 			for ( ; *lines; lines++)
 			{
-				char *local_copy;
-				int len = strlen(*lines) * 2 + 1;
-				if (!*lines || !**lines) break;
-				local_copy = alloca(len);
-				strcpy(local_copy, *lines);
+				const size_t line_len = strlen(*lines);
+				const size_t local_len = line_len * 2 + 1;
 
-				if (local_copy[strlen(local_copy)-1] == ALL_OFF)
-					local_copy[strlen(local_copy)-1] = 0;
-				if (logfile_line_mangler)
-					mangle_line(local_copy, logfile_line_mangler, len);
-				if (*local_copy)
-					fprintf(logptr, "%s\n", local_copy);
+				if (line_len > 0)
+				{
+					char *local_copy = new_malloc(local_len);
+
+					strcpy(local_copy, *lines);
+
+					if (local_copy[line_len - 1] == ALL_OFF)
+						local_copy[line_len - 1] = 0;
+					if (logfile_line_mangler)
+						mangle_line(local_copy, logfile_line_mangler, local_len);
+					if (*local_copy)
+						fprintf(logptr, "%s\n", local_copy);
+
+					new_free(&local_copy);
+				}
 			}
 			fflush(logptr);
 		}
