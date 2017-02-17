@@ -4333,7 +4333,6 @@ static char time_str[61];
 	return empty_string;	
 }
 
-static int cparse_recurse = -1;
 #ifndef BITCHX_LITE
 #define MAX_RECURSE 5
 #else
@@ -4341,133 +4340,122 @@ static int cparse_recurse = -1;
 #endif
 #define RECURSE_CPARSE
 
-/* One buffer for each recursive invocation.  We also keep track of the 
- * buffer size, so that it can be resized when necessary.
- */
-static char *cof_buffer[MAX_RECURSE + 1] = { NULL };
-static size_t cof_buffer_sz[MAX_RECURSE + 1 ] = { 0 };
-#define COF_BUFFER_HEADROOM 100
-#define COF_BUFFER_FREE(p) (cof_buffer[cparse_recurse] + cof_buffer_sz[cparse_recurse] - (p)) 
-
 char *convert_output_format_raw(const char *format, const char *str, va_list args)
 {
-char buffer2[5*BIG_BUFFER_SIZE+1];
-enum color_attributes this_color = BLACK;
-char *s;
-char *copy = NULL;
-char *tmpc = NULL;
-register char *p;
-int old_who_level = who_level;
-int bold = 0;
-
 #ifdef WANT_CHELP
-extern int in_chelp;
+	extern int in_chelp;
 #endif
+	static int cparse_recurse = -1;
+	/* One buffer for each recursive invocation.  We also keep track of the 
+	 * buffer size, so that it can be resized when necessary.
+	 */
+	static char *cof_buffer[MAX_RECURSE + 1] = { NULL };
+	static size_t cof_buffer_sz[MAX_RECURSE + 1 ] = { 0 };
+#define COF_BUFFER_HEADROOM 100
+#define COF_BUFFER_FREE(p) (cof_buffer[cparse_recurse] + cof_buffer_sz[cparse_recurse] - (p))
+	static const char color_mod[] = "kbgcrmywKBGCRMYWn";
 
-int arg_flags;
-char color_mod[] = "kbgcrmywKBGCRMYWn"; 
-char *c_mod = color_mod;
-int do_timestamp = get_int_var(TIMESTAMP_VAR);
-char *timestamp_str = get_string_var(TIMESTAMP_STRING_VAR);
+	char buffer2[5 * BIG_BUFFER_SIZE + 1] = "";
+	enum color_attributes this_color = BLACK;
+	char *s;
+	char *copy = NULL;
+	char *tmpc = NULL;
+	const char *p;
+	int old_who_level = who_level;
+	int bold = 0;
+	int arg_flags;
+	int do_timestamp = get_int_var(TIMESTAMP_VAR);
+	char *timestamp_str = get_string_var(TIMESTAMP_STRING_VAR);
 
 	if (!format)
 		return empty_string;
 	copy = LOCAL_COPY(format);
-	
 
-    cparse_recurse++;
-
-	if (cparse_recurse > MAX_RECURSE)
+	if (cparse_recurse >= MAX_RECURSE)
 	{
 		yell("cparse_recurse() recursed too many times!  this should never happen!");
 		return empty_string;
 	}
+    cparse_recurse++;
 
-	*buffer2 = 0;
-	if (str)
+	p = str;
+	while (p && *p)
 	{
-		memset(buffer2, 0, sizeof buffer2);
-		p = (char *)str;
-		while(p && *p)
+		if (*p == '%')
 		{
-			if (*p == '%')
+			switch(*++p)
 			{
-				switch(*++p)
-				{
-				case 's':
-				{
-					char *q, *s = (char *)va_arg(args, char *);
+			case 's':
+			{
+				char *q, *s = (char *)va_arg(args, char *);
 #ifdef RECURSE_CPARSE
-					char buff[(5 * BIG_BUFFER_SIZE)+1];
-					q = buff;
-					while (s && *s)
-					{
-						if (*s == '%')
-							*q++ = '%';
-						else if (*s == '$')
-							*q++ = '$';
-						*q++ = *s++;
-					}
-					*q = 0;
-					if (*buff)
-						strcat(buffer2, buff);
+				char buff[(5 * BIG_BUFFER_SIZE)+1];
+				q = buff;
+				while (s && *s)
+				{
+					if (*s == '%')
+						*q++ = '%';
+					else if (*s == '$')
+						*q++ = '$';
+					*q++ = *s++;
+				}
+				*q = 0;
+				if (*buff)
+					strcat(buffer2, buff);
 #else
-					if (s)
-						strcat(buffer2, s);
+				if (s)
+					strcat(buffer2, s);
 #endif
-					break;
-				}
-				case 'd':
-				{
-					int d = (int) va_arg(args, int);
-					strlcat(buffer2, ltoa((long)d), 5 * BIG_BUFFER_SIZE);
-					break;
-				}
-				case 'c':
-				{
-					char c = (char )va_arg(args, int);
-#ifdef RECURSE_CPARSE
-                    if (c == '%')
-                        buffer2[strlen(buffer2)] = '%';
-                    else if (c == '$')
-                        buffer2[strlen(buffer2)] = '$';
-#endif
-					buffer2[strlen(buffer2)] = c;
-					break;
-				}
-				case 'u':
-				{
-					unsigned int d = (unsigned int) va_arg(args, unsigned int);
-					strlcat(buffer2, ltoa(d), 5 * BIG_BUFFER_SIZE);
-					break;
-				}
-				case 'l':
-				{
-					unsigned long d = (unsigned long) va_arg(args, unsigned long);
-					strlcat(buffer2, ltoa(d), 5 * BIG_BUFFER_SIZE);
-					break;
-				}
-				case '%':
-				{
-					buffer2[strlen(buffer2)] = '%';
-					p++;
-					break;
-				}
-				default:
-					strlcat(buffer2, "%", 5 * BIG_BUFFER_SIZE);
-					buffer2[strlen(buffer2)] = *p;
-				}
-				p++;
-			} 
-			else 
-			{
-				buffer2[strlen(buffer2)] = *p;
-				p++;
+				break;
 			}
+			case 'd':
+			{
+				int d = (int) va_arg(args, int);
+				strlcat(buffer2, ltoa((long)d), 5 * BIG_BUFFER_SIZE);
+				break;
+			}
+			case 'c':
+			{
+				char c = (char )va_arg(args, int);
+#ifdef RECURSE_CPARSE
+				if (c == '%')
+					buffer2[strlen(buffer2)] = '%';
+				else if (c == '$')
+					buffer2[strlen(buffer2)] = '$';
+#endif
+				buffer2[strlen(buffer2)] = c;
+				break;
+			}
+			case 'u':
+			{
+				unsigned int d = (unsigned int) va_arg(args, unsigned int);
+				strlcat(buffer2, ltoa(d), 5 * BIG_BUFFER_SIZE);
+				break;
+			}
+			case 'l':
+			{
+				unsigned long d = (unsigned long) va_arg(args, unsigned long);
+				strlcat(buffer2, ltoa(d), 5 * BIG_BUFFER_SIZE);
+				break;
+			}
+			case '%':
+			{
+				buffer2[strlen(buffer2)] = '%';
+				p++;
+				break;
+			}
+			default:
+				strlcat(buffer2, "%", 5 * BIG_BUFFER_SIZE);
+				buffer2[strlen(buffer2)] = *p;
+			}
+			p++;
 		}
-	} 
-	else if (str)
-		strlcpy(buffer2, str, 5 * BIG_BUFFER_SIZE);
+		else
+		{
+			buffer2[strlen(buffer2)] = *p;
+			p++;
+		}
+	}
 
     if (!cof_buffer[cparse_recurse])
     {
@@ -4530,7 +4518,7 @@ char *timestamp_str = get_string_var(TIMESTAMP_STRING_VAR);
 				}
 			}
 			else if ((cs = strchr(color_mod, *tmpc)))
-				this_color = (cs - c_mod);
+				this_color = (cs - color_mod);
 			else if (*tmpc == 'F')
 				this_color = BLINK_COLOR;
 			else if (*tmpc == 'U')
