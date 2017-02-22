@@ -3842,7 +3842,7 @@ void userhost_ignore (UserhostItem *stuff, char *nick1, char *args)
 	arg = next_arg(args, &args);
 	if (!stuff || !stuff->nick || !strcmp(stuff->user, "<UNKNOWN>") || my_stricmp(stuff->nick, nick1))
 	{
-		if ((whowas = check_whowas_nick_buffer(nick1, arg, 0)))
+		if ((whowas = check_whowas_nick_buffer(nick1, arg)))
 		{
 			bitchsay("Using WhoWas info for %s of %s ", arg, nick1);
 			user = host; host = strchr(host, '@'); *host++ = 0;

@@ -39,7 +39,7 @@ typedef struct _whowas_wrap_str {
 } WhowasWrapList;
 
 WhowasList *check_whowas_buffer (char *, char *, char *);
-WhowasList *check_whowas_nick_buffer (char *, char *, int);
+WhowasList *check_whowas_nick_buffer(const char *, const char *);
 WhowasList *check_whosplitin_buffer (char *, char *, char *, int);
 
 void add_to_whowas_buffer (NickList *, char *, char *, char *);

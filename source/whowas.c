@@ -77,34 +77,25 @@ extern	WhowasList *check_whowas_buffer(char *nick, char *userhost, char *channel
 }
 
 
-extern	WhowasList * check_whowas_nick_buffer(char *nick, char *channel, int unlink)
+WhowasList *check_whowas_nick_buffer(const char *nick, const char *channel)
 {
-	WhowasList *tmp = NULL, *last = NULL;
+	WhowasList *tmp = NULL;
+
 	for (tmp = next_userhost(&whowas_userlist_list, NULL); tmp; tmp = next_userhost(&whowas_userlist_list, tmp))
 	{
 		if (!my_stricmp(tmp->nicklist->nick, nick) && !my_stricmp(tmp->channel, channel))
 		{
-			if (unlink)
-			{
-				last = find_userhost_channel(tmp->nicklist->host, tmp->channel, 1, &whowas_userlist_list);
-				tmp = NULL;
-			}
-			return last?last:tmp;
+			return tmp;
 		}
 	}
 	for (tmp = next_userhost(&whowas_reg_list, NULL); tmp; tmp = next_userhost(&whowas_reg_list, tmp))
 	{
 		if (!my_stricmp(tmp->nicklist->nick, nick) && !my_stricmp(tmp->channel, channel))
 		{
-			if (unlink)
-			{
-				last = find_userhost_channel(tmp->nicklist->host, tmp->channel, 1, &whowas_reg_list);
-				tmp = NULL;
-			}
-			return last?last:tmp;
+			return tmp;
 		}
 	}
-	return( NULL );
+	return NULL;
 }
 
 extern	WhowasList * check_whosplitin_buffer(char *nick, char *userhost, char *channel, int unlink)

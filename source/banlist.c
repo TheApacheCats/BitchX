@@ -305,7 +305,7 @@ void userhost_unban(UserhostItem *stuff, char *nick1, char *args)
 	
 	if (!stuff || !stuff->nick || !strcmp(stuff->user, "<UNKNOWN>") || my_stricmp(stuff->nick, nick1))
 	{
-		if ((whowas = check_whowas_nick_buffer(nick1, args, 0)))
+		if ((whowas = check_whowas_nick_buffer(nick1, args)))
 		{
 			malloc_sprintf(&host, "%s!%s", whowas->nicklist->nick, whowas->nicklist->host);
 			bitchsay("Using WhoWas info for unban of %s ", nick1);
@@ -369,7 +369,7 @@ void userhost_ban(UserhostItem *stuff, char *nick1, char *args)
 	
 	if (!stuff || !stuff->nick || !strcmp(stuff->user, "<UNKNOWN>") || my_stricmp(stuff->nick, nick1))
 	{
-		if (channel && (whowas = check_whowas_nick_buffer(nick1, channel, 0)))
+		if (channel && (whowas = check_whowas_nick_buffer(nick1, channel)))
 		{
 			nick = whowas->nicklist->nick;
 			user = m_strdup(clear_server_flags(whowas->nicklist->host));
