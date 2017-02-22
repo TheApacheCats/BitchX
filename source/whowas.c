@@ -76,21 +76,23 @@ extern	WhowasList *check_whowas_buffer(char *nick, char *userhost, char *channel
 	return tmp;
 }
 
-
+/* Search the whowas buffer for a nick and channel combination.  NULL channel matches any channel. */
 WhowasList *check_whowas_nick_buffer(const char *nick, const char *channel)
 {
 	WhowasList *tmp = NULL;
 
 	for (tmp = next_userhost(&whowas_userlist_list, NULL); tmp; tmp = next_userhost(&whowas_userlist_list, tmp))
 	{
-		if (!my_stricmp(tmp->nicklist->nick, nick) && !my_stricmp(tmp->channel, channel))
+		if (!my_stricmp(tmp->nicklist->nick, nick) &&
+			(!channel || !my_stricmp(tmp->channel, channel)))
 		{
 			return tmp;
 		}
 	}
 	for (tmp = next_userhost(&whowas_reg_list, NULL); tmp; tmp = next_userhost(&whowas_reg_list, tmp))
 	{
-		if (!my_stricmp(tmp->nicklist->nick, nick) && !my_stricmp(tmp->channel, channel))
+		if (!my_stricmp(tmp->nicklist->nick, nick) &&
+			(!channel || !my_stricmp(tmp->channel, channel)))
 		{
 			return tmp;
 		}
