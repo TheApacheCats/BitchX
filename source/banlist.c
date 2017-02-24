@@ -294,47 +294,68 @@ char * ban_it(char *nick, char *user, char *host, char *ip)
 	return banstr;
 }
 
-void userhost_unban(UserhostItem *stuff, char *nick1, char *args)
+/* userhost_unban()
+ *
+ * userhostbase() callback for /UNBAN <nick>.
+ * Expected 'args' are channel and server number.  Uses userhost or cached
+ * whowas information to unset all matching bans on the channel.
+ */
+void userhost_unban(UserhostItem *uhi, char *nick, char *args)
 {
 	ChannelList *chan;
 	BanList *bans;
 	WhowasList *whowas;
 	NickList *n = NULL;
 	char *channel, *ip_str = NULL, *host = NULL;
-	int count = 0, old_server = from_server;
+	int count = 0;
+	int server = -1;
 	
-	if (!stuff || !stuff->nick || !strcmp(stuff->user, "<UNKNOWN>") || my_stricmp(stuff->nick, nick1))
-	{
-		if ((whowas = check_whowas_nick_buffer(nick1, args)))
-		{
-			malloc_sprintf(&host, "%s!%s", whowas->nicklist->nick, whowas->nicklist->host);
-			bitchsay("Using WhoWas info for unban of %s ", nick1);
-			n = whowas->nicklist;
-		}
-		else
-		{
-			bitchsay("No match for the unban of %s on %s", nick1, args);
-			return;
-		}
-	}
-	else
-		malloc_sprintf(&host, "%s!%s@%s",stuff->nick, stuff->user, stuff->host); 
-
 	channel = next_arg(args, &args);
 	if (args && *args)
-		from_server = atoi(args);
+		server = atoi(args);
 
-	if (!(chan = prepare_command(&from_server, channel, NEED_OP)))
+	/* Should not happen, indicates a bug in the code that setup this callback. */
+	if (!channel || server == -1)
+		return;
+
+	set_display_target(channel, LOG_CRAP);
+
+	if (!(chan = lookup_channel(channel, server, 0)) || (!chan->have_op && !chan->hop))
 	{
-		new_free(&host);
-		from_server = old_server;
+		bitchsay("No longer opped on channel %s", channel);
+		reset_display_target();
 		return;
 	}
 
-	if (!n)
-		n = find_nicklist_in_channellist(stuff->nick, chan, 0);
+	if (uhi && uhi->nick && strcmp(uhi->user, "<UNKNOWN>") && !my_stricmp(uhi->nick, nick))
+	{
+		host = m_sprintf("%s!%s@%s", uhi->nick, uhi->user, uhi->host); 
+		n = find_nicklist_in_channellist(uhi->nick, chan, 0);
+	}
+	else if ((whowas = check_whowas_nick_buffer(nick, channel)))
+	{
+		n = whowas->nicklist;
+		host = m_sprintf("%s!%s", n->nick, n->host);
+		bitchsay("Using WhoWas info for unban of %s", nick);
+	}
+	else
+	{
+		bitchsay("No matching nick for the unban of %s on %s", nick, channel);
+		reset_display_target();
+		return;
+	}
+
 	if (n && n->ip)
-		malloc_sprintf(&ip_str, "%s!%s@%s", stuff->nick, stuff->user, n->ip);
+	{
+		char *user = m_strdup(n->host);
+		char *p = strchr(user, '@');
+
+		if (p)
+			*p = 0;
+
+		ip_str = m_sprintf("%s!%s@%s", n->nick, user, n->ip);
+		new_free(&user);
+	}
 
 	for (bans = chan->bans; bans; bans = bans->next)
 	{
@@ -348,10 +369,10 @@ void userhost_unban(UserhostItem *stuff, char *nick1, char *args)
 
 	flush_mode_all(chan);
 	if (!count)
-		bitchsay("No match for Unban of %s on %s", nick1, args);
+		bitchsay("No matching bans for %s on %s", host, channel);
 	new_free(&host);
 	new_free(&ip_str);
-	from_server = old_server;
+	reset_display_target();
 }
 
 void userhost_ban(UserhostItem *stuff, char *nick1, char *args)
@@ -893,7 +914,7 @@ BUILT_IN_COMMAND(unban)
 		count = atoi(spec + 1);
 	else if (!strchr(spec, '*'))
 	{
-		userhostbase(spec, userhost_unban, 1, "%s %d", chan->channel, current_window->refnum);
+		userhostbase(spec, userhost_unban, 1, "%s %d", chan->channel, server);
 		reset_display_target();
 		return;
 	}
