@@ -86,7 +86,7 @@ static	void	init_io (void)
 	}
 }
 
-#ifdef HAVE_SSL
+#ifdef HAVE_LIBSSL
 void SSL_show_errors(void)
 {
 	char buf[1000];
@@ -234,13 +234,13 @@ int BX_dgets (char *str, int des, int buffer, int buffersize, void *ssl_fd)
 
 		else if (nbytes)
 		{
-#ifdef HAVE_SSL
+#ifdef HAVE_LIBSSL
 			int rc = 0;
 #endif
 
 			if (nbytes >= IO_BUFFER_SIZE)
 				nbytes = IO_BUFFER_SIZE-1;
-#ifdef HAVE_SSL
+#ifdef HAVE_LIBSSL
 			if(ssl_fd)
 			{
 				c = SSL_read((SSL *)ssl_fd, ioe->buffer + ioe->write_pos,
@@ -266,7 +266,7 @@ int BX_dgets (char *str, int des, int buffer, int buffersize, void *ssl_fd)
 
 			if (c <= 0)
 			{
-#ifdef HAVE_SSL
+#ifdef HAVE_LIBSSL
 				if(ssl_fd)
 				{
 					say("SSL_read() failed, SSL error %d", rc);

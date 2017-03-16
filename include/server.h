@@ -157,7 +157,7 @@ typedef	struct
 #endif
 	char *orignick;
 	struct timeval connect_time;
-#if defined(HAVE_SSL) && !defined(IN_MODULE)   
+#if defined(HAVE_LIBSSL) && !defined(IN_MODULE)   
 	SSL_CTX* ctx;
 	int enable_ssl;
 	int ssl_error;
@@ -328,7 +328,7 @@ ChannelList	*BX_get_server_channels		(int);
 	int	get_server_reconnect		(int);
 	int	get_server_reconnecting		(int);
 	int get_server_change_pending   (int);
-#ifdef HAVE_SSL
+#ifdef HAVE_LIBSSL
 	void set_server_ssl(int, int);
 	int get_server_ssl(int);
 #endif

@@ -97,7 +97,7 @@ typedef struct
 	void (*func_write) (int);
 	void (*cleanup) (int);
 	void *info;
-#if defined(HAVE_SSL) && !defined(IN_MODULE)
+#if defined(HAVE_LIBSSL) && !defined(IN_MODULE)
 	SSL_CTX* ctx;
 	int ssl_error;
 	SSL* ssl_fd;

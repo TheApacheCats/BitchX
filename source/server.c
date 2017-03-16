@@ -150,7 +150,7 @@ void	BX_close_server (int cs_index, char *message)
 					   cs_index, message ? message : empty_string);
 			snprintf(buffer, MAX_PROTOCOL_SIZE + 1, "QUIT :%s", message);
 			strlcat(buffer, "\r\n", sizeof buffer);
-#ifdef HAVE_SSL
+#ifdef HAVE_LIBSSL
 			if (get_server_ssl(cs_index))
 			{
 				SSL_write(server_list[cs_index].ssl_fd, buffer, strlen(buffer));
@@ -498,13 +498,13 @@ void	do_server (fd_set *rd, fd_set *wr)
 
 			if (getpeername(des, (struct sockaddr *) &sa, &salen) != -1)
 			{
-#ifdef HAVE_SSL
+#ifdef HAVE_LIBSSL
 				if(!server_list[i].ctx || server_list[i].ssl_error == SSL_ERROR_WANT_WRITE)
 				{
 #endif
 					server_list[i].connect_wait = 0;
 					finalize_server_connect(i, server_list[i].c_server, i);
-#ifdef HAVE_SSL
+#ifdef HAVE_LIBSSL
 				}
 #endif
 			}
@@ -521,7 +521,7 @@ void	do_server (fd_set *rd, fd_set *wr)
 				junk = (*serv_input_func)(i, bufptr, des, 1, BIG_BUFFER_SIZE);
 			else
 			{
-#ifdef HAVE_SSL
+#ifdef HAVE_LIBSSL
 				if(get_server_ssl(i))
 				{
 #ifdef NON_BLOCKING_CONNECTS
@@ -798,7 +798,7 @@ extern int default_swatch;
 		server_list[from_server].motd = 1;
 		server_list[from_server].ircop_flags = default_swatch;
 		server_list[from_server].port = port;
-#ifdef HAVE_SSL
+#ifdef HAVE_LIBSSL
 		set_server_ssl(from_server, ssl);
 #endif
 		malloc_strcpy(&server_list[from_server].umodes, umodes);
@@ -863,7 +863,7 @@ void 	remove_from_server_list (int i)
 	new_free(&server_list[i].recv_nick);
 	new_free(&server_list[i].sent_nick);
 	new_free(&server_list[i].sent_body);
-#ifdef HAVE_SSL
+#ifdef HAVE_LIBSSL
 	SSL_CTX_free(server_list[i].ctx);
 #endif
 	clear_server_sping(i, NULL);
@@ -984,7 +984,7 @@ int	BX_build_server_list (char *servers)
 
 	int	port_num;
 	int	i = 0;
-#ifdef HAVE_SSL
+#ifdef HAVE_LIBSSL
 	extern int do_use_ssl;
 #else
 	int do_use_ssl = 0;
@@ -1336,7 +1336,7 @@ int finalize_server_connect(int refnum, int c_server, int my_from_server)
 		close_server(c_server, "changing servers");
 	}
 
-#ifdef HAVE_SSL
+#ifdef HAVE_LIBSSL
 	if(get_server_ssl(refnum))
 	{
 		int err = 0;
@@ -1551,7 +1551,7 @@ void	try_connect (int server, int old_server)
 		else if (server < 0)
 			server = 0;
 
-#ifdef HAVE_SSL
+#ifdef HAVE_LIBSSL
 		server_list[server].ctx = NULL;
 #endif
 		if(server_list[server].server_change_refnum > -1)
@@ -1645,7 +1645,7 @@ BUILT_IN_COMMAND(servercmd)
 {
 	char	*server = NULL;
 	int	i, my_from_server = from_server;
-#ifdef HAVE_SSL 
+#ifdef HAVE_LIBSSL 
 	int     ssl_connect = 0;
 #endif
 
@@ -1655,7 +1655,7 @@ BUILT_IN_COMMAND(servercmd)
 		return;
 	}
 
-#ifdef HAVE_SSL
+#ifdef HAVE_LIBSSL
 	if((i = find_in_server_list(server, 0)) != -1)
 		set_server_ssl(i, 0);
 
@@ -1738,7 +1738,7 @@ BUILT_IN_COMMAND(servercmd)
 		if (*++server)
 		{
 			i = find_server_refnum(server, &args);
-#ifdef HAVE_SSL
+#ifdef HAVE_LIBSSL
 			if(ssl_connect)
 				set_server_ssl(i, 1);
 #endif
@@ -1773,7 +1773,7 @@ BUILT_IN_COMMAND(servercmd)
 	else
 	{
 		i = find_server_refnum(server, &args);
-#ifdef HAVE_SSL
+#ifdef HAVE_LIBSSL
 		if(ssl_connect)
 			set_server_ssl(i, 1);
 #endif
@@ -2450,7 +2450,7 @@ int err = 0;
 			err = (*serv_output_func)(server, des, buffer, strlen(buffer));
 		else
 		{
-#ifdef HAVE_SSL
+#ifdef HAVE_LIBSSL
 			if(get_server_ssl(server))
 			{
 				if(!server_list[server].ssl_fd)
@@ -2467,7 +2467,7 @@ int err = 0;
 		if ((err == -1) && !get_int_var(NO_FAIL_DISCONNECT_VAR))
 		{
 			say("Write to server failed.  Closing connection.");
-#ifdef HAVE_SSL
+#ifdef HAVE_LIBSSL
 			if(get_server_ssl(server))
 				SSL_shutdown (server_list[server].ssl_fd);
 #endif
@@ -3307,7 +3307,7 @@ void set_server_reconnect(int s, int val)
 	}
 }
 
-#ifdef HAVE_SSL
+#ifdef HAVE_LIBSSL
 void set_server_ssl(int s, int val)
 {
 	if (s > -1 && s < number_of_servers)

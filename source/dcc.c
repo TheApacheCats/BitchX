@@ -468,7 +468,7 @@ struct stat buf;
 	send(s, (const char *)&n->transfer_orders, sizeof(struct transfer_struct), 0);
 } 
 
-#ifdef HAVE_SSL
+#ifdef HAVE_LIBSSL
 int SSL_dcc_create(SocketList *s, int sock, int doconnect)
 {
 	set_blocking(sock);
@@ -526,12 +526,12 @@ DCC_List		*new_i;
 		new = (DCC_int *)s->info;
 
 		if ((new_s = connect_by_number(inet_ntoa(new->remote), &new->remport, SERVICE_CLIENT, PROTOCOL_TCP, 0)) < 0
-#ifdef HAVE_SSL
+#ifdef HAVE_LIBSSL
 			||  (flags & DCC_SSL ? SSL_dcc_create(s, new_s, 1) : 0) < 0
 #endif
 		   )
 		{
-#ifdef HAVE_SSL
+#ifdef HAVE_LIBSSL
 			SSL_show_errors();
 #endif
 			erase_dcc_info(s->is_read, 1, "%s", convert_output_format("$G %RDCC%n Unable to create connection: $0-", "%s", errno ? strerror(errno) : "Unknown Host"));
@@ -574,7 +574,7 @@ DCC_List		*new_i;
 		if (type == DCC_REFILEREAD)
 			refileread_send_start(new_s, new);
 		if (get_int_var(DCC_FAST_VAR)
-#ifdef HAVE_SSL
+#ifdef HAVE_LIBSSL
 			&& !(flags & DCC_SSL)
 #endif
 		   )
@@ -737,7 +737,7 @@ void	(*func)(int) = process_dcc_chat;
 	set_socketinfo(new_s, n);
 
 	new_sa = get_socket(new_s);
-#ifdef HAVE_SSL
+#ifdef HAVE_LIBSSL
 	if((flags & DCC_SSL) && SSL_dcc_create(new_sa, new_s, 0) < 0)
 	{
 		say("SSL_accept failed.");
@@ -781,7 +781,7 @@ SocketList 	*sl;
 	if (dcc_types[type]->input)
 		bytesread = (*dcc_types[type]->input)(s, type, bufptr, 1, BIG_BUFFER_SIZE);
 	else
-#ifdef HAVE_SSL
+#ifdef HAVE_LIBSSL
 		bytesread = dgets(bufptr, s, 1, BIG_BUFFER_SIZE, sl->ssl_fd);
 #else
 		bytesread = dgets(bufptr, s, 1, BIG_BUFFER_SIZE, NULL);
@@ -915,7 +915,7 @@ SocketList *sl;
 	if (dcc_types[type]->input)
 		bytesread = (*dcc_types[type]->input) (type, s, bufptr, 1, BIG_BUFFER_SIZE);
 	else
-#ifdef HAVE_SSL
+#ifdef HAVE_LIBSSL
 		bytesread = dgets(bufptr, s, 1, BIG_BUFFER_SIZE, sl->ssl_fd);
 #else
 		bytesread = dgets(bufptr, s, 1, BIG_BUFFER_SIZE, NULL);
@@ -1017,7 +1017,7 @@ char		thing = 0;
 	if (dcc_types[type]->output)
 		(*dcc_types[type]->output) (type, s->is_read, tmp, len);
 	else
-#ifdef HAVE_SSL
+#ifdef HAVE_LIBSSL
 		if(s->ssl_fd)
 			SSL_write(s->ssl_fd, tmp, len);
 		else
@@ -1669,7 +1669,7 @@ void dcc_chat(char *command, char *args)
 		bot++;
 #endif
 
-#ifdef HAVE_SSL
+#ifdef HAVE_LIBSSL
 	if(my_strnicmp(args, "-SSL", 4) == 0)
 	{
 		new_next_arg(args, &args);
@@ -3024,7 +3024,7 @@ BUILT_IN_COMMAND(chat)
 	if (!my_strnicmp(command, "NOC", 3))
 		no_chat = 1;
 
-#if HAVE_SSL
+#if HAVE_LIBSSL
 	if(my_strnicmp(args, "-SSL", 4) == 0)
 	{
 		new_next_arg(args, &args);
@@ -3038,7 +3038,7 @@ BUILT_IN_COMMAND(chat)
 		if (no_chat)
 			malloc_sprintf(&tmp, "CLOSE CHAT %s", args);
 		else
-#ifdef HAVE_SSL
+#ifdef HAVE_LIBSSL
 			if(flags & DCC_SSL)
 				malloc_sprintf(&tmp, "CHAT -ssl %s", args);
 			else

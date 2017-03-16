@@ -1,4 +1,4 @@
-#if defined(HAVE_SSL) && !defined(IN_MODULE)
+#if defined(HAVE_LIBSSL) && !defined(IN_MODULE)
 
 #ifndef __ssl_h__
 #define __ssl_h__

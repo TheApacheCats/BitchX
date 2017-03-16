@@ -109,7 +109,7 @@ int	irc_port = IRC_PORT,			/* port of ircd */
 	background = 0,
 	do_check_pid = 0,
 	do_ignore_ajoin = 0,
-#ifdef HAVE_SSL
+#ifdef HAVE_LIBSSL
 	do_use_ssl = 0,
 #endif
 	run_level = 0,
@@ -244,7 +244,7 @@ static		char	*switch_help[] = {
 "   -Z\t\tuse NAT address when doing dcc.\n",
 "   -P\t\ttoggle check pid.nickname for running program.\n",
 "   -v\t\ttells you about the client's version\n",
-#ifdef HAVE_SSL
+#ifdef HAVE_LIBSSL
 "   -s\t\tservers specified are SSL.\n",
 #endif
 "   -i\t\tignores the autojoin list entries.\n",
@@ -924,7 +924,7 @@ static	char	*parse_args (char *argv[], int argc, char **envp)
 			case 'i':
 				do_ignore_ajoin = 1;
 				break;
-#ifdef HAVE_SSL
+#ifdef HAVE_LIBSSL
 			case 's':
 				do_use_ssl = 1;
 				break;
@@ -953,7 +953,7 @@ static	char	*parse_args (char *argv[], int argc, char **envp)
 				strlcpy(nickname, argv[ac], sizeof nickname);
 			else
 				build_server_list(argv[ac]);
-#ifdef HAVE_SSL
+#ifdef HAVE_LIBSSL
 			do_use_ssl = 0;
 #endif
 		}
@@ -1610,7 +1610,7 @@ int main(int argc, char *argv[], char *envp[])
 #endif
 	add_tcl_vars();
 #endif
-#ifdef HAVE_SSL
+#ifdef HAVE_LIBSSL
 	{
 		char *entropy = malloc(100);
 		int i;

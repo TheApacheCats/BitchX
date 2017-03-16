@@ -3849,13 +3849,13 @@ static Window *window_remove (Window *window, char **args, char *usage)
 BUILT_IN_WINDOW(window_server)
 {
 	char *arg;
-#ifdef HAVE_SSL
+#ifdef HAVE_LIBSSL
   	int withSSL = 0;
 #endif
 
 	if ((arg = next_arg(*args, args)))
 	{
-#ifdef HAVE_SSL
+#ifdef HAVE_LIBSSL
 		if (!my_strnicmp(arg, "-SSL", strlen(arg)))
 		{
 			withSSL = 1;
@@ -3867,7 +3867,7 @@ BUILT_IN_WINDOW(window_server)
 #endif
 			int i = find_server_refnum(arg, NULL);
 
-#ifdef HAVE_SSL
+#ifdef HAVE_LIBSSL
 			if(i != -1)
 			{
 				if(withSSL)
@@ -3890,7 +3890,7 @@ BUILT_IN_WINDOW(window_server)
 #endif
 			}
 			window_check_servers(from_server);
-#ifdef HAVE_SSL
+#ifdef HAVE_LIBSSL
 		}
 #endif
 	}
