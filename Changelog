@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Enable use of cached whowas info for /IG* and /UNIG* commands. (caf)
+
 * Add support for OpenSSL 1.1.0 to configure script. (caf)
 
 * /UNBAN <nick> can use cached whowas info to unset bans. (caf)

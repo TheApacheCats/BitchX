@@ -3830,42 +3830,46 @@ struct sockaddr_foobar *host;
 	return;
 }
 
-void userhost_ignore (UserhostItem *stuff, char *nick1, char *args)
+void userhost_ignore (UserhostItem *uhi, char *nick1, char *args)
 {
 	char *p, *arg;
-	char *nick = NULL, *user = NULL, *host = NULL;
+	char *userhost_buf = NULL;
+	char *nick, *user, *host;
 	int old_window_display;
 	char ignorebuf[BIG_BUFFER_SIZE+1];
-	Ignore *igptr, *igtmp;
 	WhowasList *whowas;
 
-	arg = next_arg(args, &args);
-	if (!stuff || !stuff->nick || !strcmp(stuff->user, "<UNKNOWN>") || my_stricmp(stuff->nick, nick1))
+	if (uhi && uhi->nick && strcmp(uhi->user, "<UNKNOWN>") && !my_stricmp(uhi->nick, nick1))
 	{
-		if ((whowas = check_whowas_nick_buffer(nick1, arg)))
-		{
-			bitchsay("Using WhoWas info for %s of %s ", arg, nick1);
-			user = host; host = strchr(host, '@'); *host++ = 0;
-			nick = whowas->nicklist->nick;
-		}
-		else
-		{                                                                                                                
-			say("No match for user %s", nick1);
-			return;
-		}
+		nick = uhi->nick;
+		user = uhi->user;
+		host = uhi->host;
+	}
+	else if ((whowas = check_whowas_nick_buffer(nick1, NULL)))
+	{
+		nick = whowas->nicklist->nick;
+		user = userhost_buf = m_strdup(whowas->nicklist->host);
+		host = strchr(user, '@');
+		*host++ = 0;
+		bitchsay("Using WhoWas info for (un)ignore of %s", nick1);
 	}
 	else
 	{
-		user = clear_server_flags(stuff->user);
-		host = stuff->host; nick = stuff->nick;
+		say("No match for user %s", nick1);
+		return;
 	}
+	user = clear_server_flags(user);
+
+	arg = next_arg(args, &args);
 	if (!arg || !*arg || !my_stricmp(arg, "+HOST"))
 		sprintf(ignorebuf, "*!*@%s ALL -CRAP -PUBLIC", cluster(host));
 	else if (!my_stricmp(arg, "+USER"))
 		sprintf(ignorebuf, "*%s@%s ALL -CRAP -PUBLIC", user, cluster(host));
 	else if (!my_stricmp(arg, "-USER") || !my_stricmp(arg, "-HOST"))
 	{
+		Ignore *igptr, *igtmp;
 		int found = 0;
+
 		if (!my_stricmp(arg, "-HOST"))
 			sprintf(ignorebuf, "*!*@%s", cluster(host));
 		else
@@ -3889,6 +3893,7 @@ void userhost_ignore (UserhostItem *stuff, char *nick1, char *args)
 		}
 		if (!found)
 			bitchsay("No ignore matching %s found", nick);
+		new_free(&userhost_buf);
 		return;
 	}
 	old_window_display = window_display;
@@ -3904,6 +3909,7 @@ void userhost_ignore (UserhostItem *stuff, char *nick1, char *args)
 	if ((p = strchr(ignorebuf, ' ')))
 		*p = 0;
 	say("Now ignoring ALL except CRAP and PUBLIC from %s", ignorebuf);
+	new_free(&userhost_buf);
 	return;
 }
 
