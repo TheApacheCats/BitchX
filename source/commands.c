@@ -188,6 +188,7 @@ BUILT_IN_COMMAND(do_mtopic);
 BUILT_IN_COMMAND(xevalcmd);
 BUILT_IN_COMMAND(send_kline);
 BUILT_IN_COMMAND(show_revisions);
+BUILT_IN_COMMAND(ctcp_simple);
 
 #ifdef GUI
 BUILT_IN_COMMAND(os2popupmenu);
@@ -366,7 +367,7 @@ IrcCommand irc_command[] =
 #ifdef GUI
 	{ "FILEDIALOG",	NULL,		filedialog,		0,	"GUI - File dialog" },
 #endif
-	{ "FINGER",	NULL,		finger,			0,	"%Y<%Cnick%Y>%n\n- Fetches finger info on %Y<%Cnick%Y>%n" },
+	{ "FINGER",	"FINGER",	ctcp_simple,	0,	"%Y<%Cnick%Y>%n\n- Sends a CTCP FINGER query to %Y<%Cnick%Y>%n" },
 	{ "FK",		"FK",		masskick,		SERVERREQ,	"%Y<%Cnick%G!%nuser%Y@%nhostname%Y>%n%R[%nreason%R]%n\nFinds clienTs matching %Y<%Cnick%G!%nuser%Y@%nhostname%Y>%n and immediately kicks them from current channel for %R[%nreason%R]%n" },
 	{ "FLUSH",	NULL,		flush,			0,	"- Flush ALL server output" },
 #ifdef GUI
@@ -1726,6 +1727,26 @@ BUILT_IN_COMMAND(pingcmd)
 			snprintf(buffer, 100, "%s PING %lu", to, (unsigned long)now);
 	}
 	ctcp(command, buffer, empty_string, NULL);
+}
+
+BUILT_IN_COMMAND(ctcp_simple)
+{
+	char *person = next_arg(args, &args);
+
+	if (person == NULL || !strcmp(person, "*"))
+	{
+		if ((person = get_current_channel_by_refnum(0)) == NULL)
+			if ((person = get_target_by_refnum(0)) == NULL)
+				person = zero;
+	}
+
+	if (!in_ctcp())
+	{
+		send_ctcp(CTCP_PRIVMSG, person, get_ctcp_val(command), NULL);
+		put_it("%s", convert_output_format(fget_string_var(FORMAT_SEND_CTCP_FSET),
+			"%s %s %s",update_clock(GET_TIME), person, command));
+		add_last_type(&last_sent_ctcp[0], 1, NULL, NULL, person, command);
+	}
 }
 
 BUILT_IN_COMMAND(ctcp_version)

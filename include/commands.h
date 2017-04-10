@@ -128,7 +128,6 @@ extern  void    MegaDeop		(char *, char *, char *, char *);
 extern  void    do_flood		(char *, char *, char *, char *);
 extern  void    cycle			(char *, char *, char *, char *);
 extern  void    bomb			(char *, char *, char *, char *);
-extern  void    finger			(char *, char *, char *, char *);
 extern  void    multkick		(char *, char *, char *, char *);
 extern  void    massdeop		(char *, char *, char *, char *);
 extern  void    doop			(char *, char *, char *, char *);

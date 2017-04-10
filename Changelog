@@ -1,5 +1,8 @@
 [Changes 1.2.2]
 
+* Remove netfinger client code (no-one is running fingerd anymore) and
+  repurpose /FINGER command to send a CTCP FINGER instead. (caf)
+
 * Enable use of cached whowas info for /IG* and /UNIG* commands. (caf)
 
 * Add support for OpenSSL 1.1.0 to configure script. (caf)
