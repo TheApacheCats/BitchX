@@ -697,7 +697,7 @@ IrcCommand irc_command[] =
 #endif
 	{ "USLEEP",	NULL,		usleepcmd,		0,	NULL },
 	{ "USRIP",	"USRIP",	usripcmd,		0,	NULL },
-	{ "VER",	"Version",	ctcp_version,		0,	NULL },
+	{ "VER",	"VERSION",	ctcp_simple,		0,	"%Y<%Cnick%Y>%n\n- Sends a CTCP VERSION query to %Y<%Cnick%Y>%n" },
 	{ "VERSION",	"VERSION",	version1,		0,	NULL },
 	{ "VOICE",	"v",	doop,			0,	NULL },
 	{ "W",		"W",		whocmd,			0,	NULL },
@@ -1746,29 +1746,6 @@ BUILT_IN_COMMAND(ctcp_simple)
 		put_it("%s", convert_output_format(fget_string_var(FORMAT_SEND_CTCP_FSET),
 			"%s %s %s",update_clock(GET_TIME), person, command));
 		add_last_type(&last_sent_ctcp[0], 1, NULL, NULL, person, command);
-	}
-}
-
-BUILT_IN_COMMAND(ctcp_version)
-{
-char *person;
-int type = 0;
-
-	
-	if ((person = next_arg(args, &args)) == NULL || !strcmp(person, "*"))
-	{
-		if ((person = get_current_channel_by_refnum(0)) == NULL)
-			if (!(person = get_target_by_refnum(0)))
-				person = zero;
-	}		
-	if ((type = in_ctcp()) == -1)
-		echocmd(NULL, "*** You may not use the CTCP command in an ON CTCP_REPLY!", empty_string, NULL);
-	else
-	{
-		send_ctcp(type, person, CTCP_VERSION, NULL);
-		put_it("%s", convert_output_format(fget_string_var(FORMAT_SEND_CTCP_FSET),
-			"%s %s %s",update_clock(GET_TIME), person, "VERSION"));
-		add_last_type(&last_sent_ctcp[0], 1, NULL, NULL, person, "VERSION");
 	}
 }
 

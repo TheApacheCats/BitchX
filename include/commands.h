@@ -106,7 +106,6 @@ extern	void	dcc_crash		(char *, char *, char *, char *);
 extern	void	do_msay			(char *, char *, char *, char *);
 extern	void	send_mode		(char *, char *, char *, char *);
 extern	void	do_offers		(char *, char *, char *, char *);
-extern	void	ctcp_version		(char *, char *, char *, char *);
 extern	void	about			(char *, char *, char *, char *);
 extern	void	dcc_stat_comm		(char *, char *, char *, char *);
 extern	void	sping			(char *, char *, char *, char *);
