@@ -313,11 +313,10 @@ UserList *user = NULL;
 
 BUILT_IN_COMMAND(addidle)
 {
-time_t default_idle = 10 * 60;
-char *channel = NULL, *p;
-time_t seconds = 0;
-ChannelList *tmp, *new = NULL;
-
+	time_t default_idle = 10 * 60;
+	char *channel = NULL, *p;
+	time_t seconds = 0;
+	ChannelList *tmp, *new = NULL;
 	
 	if ((p = next_arg(args, &args)))
 	{
@@ -339,24 +338,22 @@ ChannelList *tmp, *new = NULL;
 		new->max_idle = seconds;
 		new->check_idle = (my_strnicmp(command, "UN", 2) == 0) ? 0: 1;
 
+		tmp = lookup_channel(channel, from_server, CHAN_NOUNLINK);
 		if (!new->check_idle)
 		{
-			bitchsay("Idle checking turned %s for %s",on_off(new->check_idle), channel); 
-			if ((tmp = lookup_channel(channel, from_server, CHAN_NOUNLINK)))
+			bitchsay("Idle checking turned %s for %s", on_off(new->check_idle), channel); 
+			if (tmp)
 				tmp->check_idle = tmp->max_idle = 0;
 			new->max_idle = 0;
 		} 
 		else
 		{
-			if ((tmp = lookup_channel(channel, from_server, CHAN_NOUNLINK)))
+			bitchsay("Idle checking turned %s for %s %d mins", on_off(tmp->check_idle), channel, (int)(tmp->max_idle/60)); 
+			if (tmp)
 			{
-				if (new && new->check_idle)
-				{
-					tmp->max_idle = new->max_idle;
-					tmp->check_idle = new->check_idle;
-					add_timer(0, empty_string, get_int_var(IDLE_CHECK_VAR) * 1000, 1, timer_idlekick, channel, NULL, current_window->refnum, "idle-check");
-					bitchsay("Idle checking turned %s for %s %d mins",on_off(tmp->check_idle), channel, (int)(tmp->max_idle/60)); 
-				} 
+				tmp->max_idle = new->max_idle;
+				tmp->check_idle = new->check_idle;
+				add_timer(0, empty_string, get_int_var(IDLE_CHECK_VAR) * 1000, 1, timer_idlekick, channel, NULL, current_window->refnum, "idle-check");
 			}
 		}
 		new_free(&channel);
