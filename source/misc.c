@@ -1556,7 +1556,7 @@ BUILT_IN_COMMAND(ChanWallOp)
 	
 	char	buffer[BIG_BUFFER_SIZE + 1];
 	
-	if (!args || (args && !*args))
+	if (!args || !*args)
 		return;
 
 	if (get_current_channel_by_refnum(0))
