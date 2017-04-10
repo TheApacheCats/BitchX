@@ -1200,42 +1200,33 @@ void check_auto_away(time_t idlet)
 /*char *logfile[] = { "tcl.log", "msg.log", NULL };*/
 
 /* putlog(level,channel_name,format,...);  */
-void putlog(int type, ...)
+void putlog(int type, const char *chname, const char *format, ...)
 {
 #ifdef PUBLIC_ACCESS
 		return;
 #else
-va_list va; 
-time_t	t;
-char	*format,
-	*chname,
-	*logfilen = NULL, 
-	s[BIG_BUFFER_SIZE+1],
-	s1[40],
-	s2[BIG_BUFFER_SIZE+1];
-FILE	*f; 
+	va_list va;
+	char *logfilen;
+	char ftime[40];
+	FILE *f;
+
 	if (!get_int_var(BOT_LOG_VAR))
 		return;
 	if (!(logfilen = get_string_var(BOT_LOGFILE_VAR)))
 		return;
-			
-	va_start(va, type); 
-	t = now;
-	strftime(s1, 30, "%I:%M%p", localtime(&t));
-	chname=va_arg(va,char *);
-	format=va_arg(va,char *);
-	vsprintf(s,format,va);
-	
-	if (!*s) 
-		strcpy(s2,empty_string);
-	else 
-		sprintf(s2,"[%s] %s",s1,s); 
+
+	strftime(ftime, sizeof ftime, "%I:%M%p", localtime(&now));
 
 	if (chname && *chname =='*')
 	{
-		if ((f=fopen(logfilen, "a+")) != NULL)
+		if ((f = fopen(logfilen, "a+")) != NULL)
 		{
-			fprintf(f,"%s\n",s2); 
+			va_start(va, format);
+			fprintf(f, "[%s] ", ftime);
+			vfprintf(f, format, va); 
+			fprintf(f, "\n");
+			va_end(va);
+
 			fclose(f);
 		}
 	}

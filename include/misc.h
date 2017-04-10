@@ -81,7 +81,7 @@ extern LastMsg last_sent_ctcp[2];
 	char	*BX_random_str (int, int);
 	void	check_auto_away (time_t);
 ChannelList *	BX_prepare_command (int *, char *, int);
-	void	putlog (int, ...);
+void putlog(int type, const char *chname, const char *format, ...);
 
 	void	add_mode_buffer ( char *, int);
 	void	flush_mode (ChannelList *);
