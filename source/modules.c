@@ -829,7 +829,7 @@ int code = 0;
 		
 	}
 
-	procname  = m_strdup(p);
+	procname = m_strdup(p);
 	if ((p = strchr(procname, '.')))
 		*p = 0;
 
@@ -842,10 +842,9 @@ int code = 0;
 		p++;
 	}
 
-	if (!procname || find_in_list((List **)&install_pack, procname, 0))
+	if (find_in_list((List **)&install_pack, procname, 0))
 	{
-		if (procname)
-			bitchsay("Module [%s] Already installed", procname);
+		bitchsay("Module [%s] Already installed", procname);
 		new_free(&f);
 		new_free(&procname);
 		return;
