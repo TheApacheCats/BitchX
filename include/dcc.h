@@ -8,6 +8,10 @@
 #ifndef __dcc_h_
 #define __dcc_h_
 
+#include "struct.h"
+
+extern DCC_dllcommands *dcc_dllcommands;
+
 	/* 
 	 * these are all used in the bot_link layer. the dcc_printf is used in
 	 * a few other places as well. ie dcc.c

@@ -43,7 +43,6 @@ CVS_REVISION(modules_c)
 
 IrcVariableDll *dll_variable = NULL;
 extern void *default_output_function;
-extern DCC_dllcommands dcc_dllcommands;
 extern void *default_status_output_function;
 
 Function_ptr global_table[NUMBER_OF_GLOBAL_FUNCTIONS] = { NULL };
@@ -1158,6 +1157,11 @@ register	List2	*tmp;
 	return NULL;
 }
 
+static int cmp_dcc_dllcmd_module(List *node, char *name)
+{
+	const DCC_dllcommands *dllcmd = (DCC_dllcommands *)node;
+	return strcasecmp(dllcmd->module, name);
+}
 
 int BX_remove_module_proc(unsigned int mod_type, char *modname, char *procname, char *desc)
 {
@@ -1274,7 +1278,7 @@ int count = 0;
 		case DCC_PROC:
 		{
 			DCC_dllcommands *ptr;
-			while ((ptr = (DCC_dllcommands *)remove_module((List2 **)&dcc_dllcommands, modname)))
+			while ((ptr = (DCC_dllcommands *)remove_from_list_ext((List **)&dcc_dllcommands, modname, cmp_dcc_dllcmd_module)))
 			{
 				new_free(&ptr->name);
 				new_free(&ptr->module);
