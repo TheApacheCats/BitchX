@@ -54,7 +54,7 @@ int		is_channel_mode (char *, int, int);
 int		BX_is_chanop (char *, char *);
 int		BX_is_halfop (char *, char *);
 char		*is_chanoper (char *, char *);
-ChannelList	*BX_lookup_channel (char *, int, int);
+ChannelList	*BX_lookup_channel (const char *, int, int);
 char		*BX_get_channel_mode (char *, int);
 #ifdef	INCLUDE_UNUSED_FUNCTIONS
 void		set_channel_mode (char *, int, char *);

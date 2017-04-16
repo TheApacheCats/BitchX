@@ -436,7 +436,7 @@ extern Function_ptr *global;
 #define fetch_userhost (*(char *(*)(int , char *))global[FETCH_USERHOST])
 #define create_channel_list (*(char *(*)(Window *))global[CREATE_CHANNEL_LIST])
 #define flush_channel_stats (*(void (*)(void ))global[FLUSH_CHANNEL_STATS])
-#define lookup_channel (*(ChannelList *(*)(char *, int, int))global[LOOKUP_CHANNEL])
+#define lookup_channel (*(ChannelList *(*)(const char *, int, int))global[LOOKUP_CHANNEL])
 
 /* hash.c */
 #define find_nicklist_in_channellist (*(NickList *(*)(char *, ChannelList *, int))global[FIND_NICKLIST_IN_CHANNELLIST])

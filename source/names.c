@@ -105,7 +105,7 @@ NickList *Nick, *n;
 	chan->totalnicks = 0;
 }
 
-extern	ChannelList *BX_lookup_channel(char *channel, int server, int unlink)
+ChannelList *BX_lookup_channel(const char *channel, int server, int unlink)
 {
 	register ChannelList	*chan = NULL,
 				*last = NULL;
