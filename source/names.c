@@ -1207,48 +1207,30 @@ void BX_clear_bans(ChannelList *channel)
 	channel->exemptbans = NULL;
 }
 
-/*
- * remove_channel: removes the named channel from the
- * server_list[server].chan_list.  If the channel is not on the
- * server_list[server].chan_list, nothing happens.  If the channel was
- * the current channel, this will select the top of the
- * server_list[server].chan_list to be the current_channel, or 0 if the
- * list is empty. 
+/* remove_channel()
+ *
+ * Removes the named channel from the channel list for the current context
+ * server. If the channel was the current channel for a window, this will
+ * select a new current channel if possible.
+ *
+ * Should be called in direct response to a message from the server indicating
+ * that we are no longer on the channel.
  */
-
-void BX_remove_channel (char *channel, int server)
+void BX_remove_channel(const char *channel)
 {
 	ChannelList *tmp;
-	int old_from_server = from_server;
 	
-	if (channel)
+	if (*channel == '*')
+		return;
+	if ((tmp = lookup_channel(channel, from_server, CHAN_UNLINK)))
 	{
-		if (*channel == '*')
-			return;
-		from_server = server;
-		from_server = old_from_server;
-		if ((tmp = lookup_channel(channel, server, CHAN_UNLINK)))
-		{
-			clear_bans(tmp);
-			clear_channel(tmp);
-			add_to_whowas_chan_buffer(tmp);
-		}
-		if (is_current_channel(channel, server, 1))
-			switch_channels(0, NULL);
+		clear_bans(tmp);
+		clear_channel(tmp);
+		add_to_whowas_chan_buffer(tmp);
 	}
-	else
-	{
-		ChannelList *next;
+	if (is_current_channel(channel, from_server, 1))
+		switch_channels(0, NULL);
 
-		for (tmp = get_server_channels(server); tmp; tmp = next)
-		{
-			next = tmp->next;
-			clear_channel(tmp);
-			clear_bans(tmp);
-			add_to_whowas_chan_buffer(tmp);
-		}
-		set_server_channels(server, NULL);
-	}
 	xterm_settitle();
 	update_all_windows();
 }

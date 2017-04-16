@@ -427,7 +427,7 @@ extern Function_ptr *global;
 #define get_channel_bans (*(char *(*)(char *, int , int ))global[GET_CHANNEL_BANS])
 #define get_channel_mode (*(char *(*)(char *, int ))global[GET_CHANNEL_MODE])
 #define clear_bans (*(void (*)(ChannelList *))global[CLEAR_BANS])
-#define remove_channel (*(void (*)(char *, int ))global[REMOVE_CHANNEL])
+#define remove_channel (*(void (*)(const char *))global[REMOVE_CHANNEL])
 #define remove_from_channel (*(void (*)(char *, char *, int , int , char *))global[REMOVE_FROM_CHANNEL])
 #define rename_nick (*(void (*)(char *, char *, int ))global[RENAME_NICK])
 #define get_channel_oper (*(int (*)(char *, int ))global[GET_CHANNEL_OPER])

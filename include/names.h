@@ -61,7 +61,7 @@ void		set_channel_mode (char *, int, char *);
 #endif /* INCLUDE_UNUSED_FUNCTIONS */
 ChannelList *	BX_add_channel (char *, int, int);
 ChannelList *	BX_add_to_channel (char *, char *, int, int, int, char *, char *, char *, int, int);
-void		BX_remove_channel (char *, int);
+void BX_remove_channel (const char *);
 void		BX_remove_from_channel (char *, char *, int, int, char *);
 int		BX_is_on_channel (char *, int, char *);
 void		list_channels (void);

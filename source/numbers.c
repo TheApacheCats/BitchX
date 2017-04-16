@@ -316,7 +316,7 @@ static	void not_valid_channel(char *from, char **ArgList)
 	if (!my_stricmp(from, get_server_itsname(from_server)))
 	{
 		if (strcmp(channel, "*"))
-			remove_channel(channel, from_server);
+			remove_channel(channel);
 		put_it("%s", convert_output_format(fget_string_var(FORMAT_SERVER_MSG2_FSET), "%s %s %s", update_clock(GET_TIME), channel, ArgList[1]));
 	}
 }
@@ -343,7 +343,7 @@ static	void cannot_join_channel(char *from, char **ArgList)
 
 	remove_from_join_list(chan, from_server);
 	if (!is_on_channel(chan, from_server, get_server_nickname(from_server)))
-		remove_channel(chan, from_server);
+		remove_channel(chan);
 	else
 		return;
 

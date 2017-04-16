@@ -1719,7 +1719,7 @@ static	void p_kick(char *from, char **ArgList)
 			new_free(&chankey);
 			if (do_hook(KICK_LIST, "%s %s %s %s", who, from, channel, comment?comment:empty_string))
 				put_it("%s",convert_output_format(fget_string_var(FORMAT_KICK_USER_FSET),"%s %s %s %s %s",update_clock(GET_TIME),from, channel, who, comment));
-			remove_channel(channel, from_server);
+			remove_channel(channel);
 			update_all_status(window ? window : current_window, NULL, 0);
 			update_input(UPDATE_ALL);
 			logmsg(LOG_KICK_USER, from, 0, "%s %s %s %s", FromUserHost, who, channel, comment);
@@ -1784,7 +1784,7 @@ static	void p_part(char *from, char **ArgList)
 		put_it("%s",convert_output_format(fget_string_var(FORMAT_LEAVE_FSET), "%s %s %s %s %s", update_clock(GET_TIME), from, FromUserHost, channel, ArgList[1]?ArgList[1]:empty_string));
 	if (!my_stricmp(from, get_server_nickname(from_server)))
 	{
-		remove_channel(channel, from_server);
+		remove_channel(channel);
 		remove_from_mode_list(channel, from_server);
 		remove_from_join_list(channel, from_server);
 		set_input_prompt(current_window, get_string_var(INPUT_PROMPT_VAR), 0);
