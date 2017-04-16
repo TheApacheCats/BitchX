@@ -63,7 +63,7 @@
 	char	*BX_get_prompt_by_refnum		(unsigned);
 	char	*BX_get_target_by_refnum		(unsigned);
 	void	BX_set_query_nick			(char *, char *, char *);
-	int	BX_is_current_channel		(char *, int, int);
+	int	BX_is_current_channel		(const char *, int, int);
 const	char	*BX_set_current_channel_by_refnum	(unsigned, char *);
 	char	*BX_get_current_channel_by_refnum	(unsigned);
 	int	BX_is_bound_to_window		(const Window *, const char *);

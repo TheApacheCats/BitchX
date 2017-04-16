@@ -342,7 +342,7 @@ extern Function_ptr *global;
 #define get_target_by_refnum (*(char *(*)(unsigned ))global[GET_TARGET_BY_REFNUM])
 #define get_target_cmd_by_refnum (*(char *(*)(u_int))global[GET_TARGET_CMD_BY_REFNUM])
 #define get_window_target_by_desc (*(Window *(*)(char *))global[GET_WINDOW_TARGET_BY_DESC])
-#define is_current_channel (*(int (*)(char *, int , int ))global[IS_CURRENT_CHANNEL])
+#define is_current_channel (*(int (*)(const char *, int , int ))global[IS_CURRENT_CHANNEL])
 #define set_current_channel_by_refnum (*(const char *(*)(unsigned , char *))global[SET_CURRENT_CHANNEL_BY_REFNUM])
 #define get_current_channel_by_refnum (*(char *(*)(unsigned ))global[GET_CURRENT_CHANNEL_BY_REFNUM])
 #define get_refnum_by_window (*(char *(*)(const Window *))global[GET_REFNUM_BY_WINDOW])

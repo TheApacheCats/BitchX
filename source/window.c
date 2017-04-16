@@ -1552,9 +1552,8 @@ void set_query_nick(char *nick, char *host, char *cmd)
  * channel and attempt to replace it by a non-current channel or the 
  * current_channel of window specified by value of delete
  */
-int BX_is_current_channel(char *channel, int server, int delete)
+int BX_is_current_channel(const char *channel, int server, int delete)
 {
-
 	Window	*tmp = NULL;
 	int	found = 0;
 
@@ -1572,7 +1571,8 @@ int BX_is_current_channel(char *channel, int server, int delete)
 			}
 		}
 	}
-	return (found);
+
+	return found;
 }
 
 /*
