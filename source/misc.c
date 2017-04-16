@@ -3615,7 +3615,7 @@ char buf[128], *hostname = buf;
 	close_socketread(rc);
 }
 
-static int scan(char *remote_host, int low_port, int high_port, struct sockaddr_foobar *host)
+static int scan(char *remote_host, int low_port, int high_port)
 {
 	unsigned short int port;
 	int rc;
@@ -3652,7 +3652,7 @@ void userhost_scanport(UserhostItem *stuff, char *nick, char *args)
 	if ((host = resolv(stuff->host)))
 	{
 		bitchsay("Scanning %s ports %d to %d", stuff->host, low_port, high_port);
-		scan(stuff->host, low_port, high_port, host);
+		scan(stuff->host, low_port, high_port);
 		return;
 	}
 	bitchsay("Cannot resolv host %s for %s", stuff->host, stuff->nick);
@@ -3687,7 +3687,7 @@ struct sockaddr_foobar *host;
 			if ((host = resolv(remote_host)))
 			{
 				bitchsay("Scanning %s's tcp ports %d through %d",remote_host, low_port,high_port);
-				scan(remote_host, low_port, high_port, host);
+				scan(remote_host, low_port, high_port);
 			} else
 				bitchsay("No such host %s", remote_host);
 		}
