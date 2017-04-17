@@ -3637,7 +3637,6 @@ void userhost_scanport(UserhostItem *stuff, char *nick, char *args)
 {
 	char *t;
 	int	low_port = 0, high_port = 0;
-	struct sockaddr_foobar *host; /* gee, and what's this one for? */
 
 	if (!stuff || !stuff->nick || !strcmp(stuff->user, "<UNKNOWN>") || my_stricmp(stuff->nick, nick))
 	{
@@ -3649,7 +3648,7 @@ void userhost_scanport(UserhostItem *stuff, char *nick, char *args)
 	low_port = atol(t);
 	t = next_arg(args, &args);
 	high_port = atol(t);	
-	if ((host = resolv(stuff->host)))
+	if (resolv(stuff->host))
 	{
 		bitchsay("Scanning %s ports %d to %d", stuff->host, low_port, high_port);
 		scan(stuff->host, low_port, high_port);
@@ -3660,11 +3659,9 @@ void userhost_scanport(UserhostItem *stuff, char *nick, char *args)
 
 BUILT_IN_COMMAND(findports)
 {
-char *remote_host;
-int low_port = 6660;
-int high_port = 7000;
-struct sockaddr_foobar *host;
-
+	char *remote_host;
+	int low_port = 6660;
+	int high_port = 7000;
 	
 	if (args && *args)
 	{
@@ -3684,7 +3681,7 @@ struct sockaddr_foobar *host;
 		}
 		if (strchr(remote_host, '.') || strchr(remote_host, ':'))
 		{
-			if ((host = resolv(remote_host)))
+			if (resolv(remote_host))
 			{
 				bitchsay("Scanning %s's tcp ports %d through %d",remote_host, low_port,high_port);
 				scan(remote_host, low_port, high_port);
