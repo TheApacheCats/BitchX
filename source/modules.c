@@ -774,11 +774,11 @@ BUILT_IN_COMMAND(dll_load)
 	void *handle = NULL;
 #endif
     
-char *filename = NULL;
-Irc_PackageInitProc *proc1Ptr;
-Irc_PackageVersionProc *proc2Ptr;
-char *f, *p, *procname = NULL;
-int code = 0;
+	char *filename = NULL;
+	Irc_PackageInitProc *proc1Ptr;
+	Irc_PackageVersionProc *proc2Ptr;
+	char *f, *p, *procname = NULL;
+	int code = 0;
 
 	if (command)
 	{
@@ -834,11 +834,11 @@ int code = 0;
 		*p = 0;
 
 	p = procname;
-	*p = toupper(*p);
+	*p = toupper((unsigned char)*p);
 	p++;
-	while (p && *p)
+	while (*p)
 	{
-		*p = tolower(*p);
+		*p = tolower((unsigned char)*p);
 		p++;
 	}
 
@@ -893,7 +893,7 @@ int code = 0;
 #else
 	if (!(proc1Ptr = (Irc_PackageInitProc *) dlsym(handle, (char *) procname)))
 #endif
-		bitchsay("UnSuccessful module load");
+		bitchsay("Unsuccessful module load [%s]", procname);
 	else
 		code = (proc1Ptr)(&dll_commands, global_table);
 
@@ -957,7 +957,7 @@ int code = 0;
 		if (code == INVALID_MODVERSION)
 			bitchsay("Error module version is wrong for [%s]", procname);
 		else
-			bitchsay("Error initiliziing module [%s:%d]", procname, code);
+			bitchsay("Error initializing module [%s:%d]", procname, code);
 		if (handle)
 #if defined(__EMX__)
 			DosFreeModule(handle);
