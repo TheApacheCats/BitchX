@@ -238,6 +238,8 @@ int ioctl (int, int, ...);
 #define strncasecmp strnicmp
 #endif
 
+/* We provide our own ltoa() rather than rely on the various non-standard ones
+ * that some platforms provide. */
 #define ltoa(a) my_ltoa(a)
 
 /*

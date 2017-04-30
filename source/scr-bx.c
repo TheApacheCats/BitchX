@@ -97,7 +97,7 @@ int get_int_var(int var)
 	return 1;
 }
 
-char *ltoa (long foo)
+char *my_ltoa(long foo)
 {
 	static char buffer[BIG_BUFFER_SIZE/8+1];
 	char *pos = buffer + BIG_BUFFER_SIZE/8-1;

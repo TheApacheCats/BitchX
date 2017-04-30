@@ -164,12 +164,7 @@ extern Function_ptr *global;
 #define plural (*(char * (*)(int))global[PLURAL])
 #define my_ctime (*(char * (*)(time_t))global[MY_CTIME])
 #define ccspan (*(size_t (*)(const char *, int))global[CCSPAN])
-
-/* If we are in a module, undefine the previous define from ltoa to my_ltoa */
-#ifdef ltoa
-#undef ltoa
-#endif
-#define ltoa (*(char *(*)(long ))global[LTOA])
+#define my_ltoa (*(char *(*)(long ))global[LTOA])
 #define strformat (*(char *(*)(char *, const char *, int , char ))global[STRFORMAT])
 #define MatchingBracket (*(char *(*)(char *, char , char ))global[MATCHINGBRACKET])
 #define parse_number (*(int (*)(char **))global[PARSE_NUMBER])
