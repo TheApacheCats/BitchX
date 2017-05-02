@@ -165,7 +165,6 @@ char	*invite_channel = NULL,		/* last channel of an INVITE */
 	realname[REALNAME_LEN + 1],	/* real name of user */
 	username[NAME_LEN + 1],		/* usernameof user */
 	attach_ttyname[500],		/* ttyname for this term */
-	socket_path[500],		/* ttyname for this term */
 	*forwardnick = NULL,		/* used for /forward */
 	*send_umode = NULL,		/* sent umode */
 	*args_str = NULL,		/* list of command line args */
@@ -1502,7 +1501,6 @@ int main(int argc, char *argv[], char *envp[])
 	
 	channel = parse_args(argv, argc, envp);
 	check_pid();
-	init_socketpath();
 
 #ifdef WANT_TCL
 	tcl_interp = Tcl_CreateInterp();

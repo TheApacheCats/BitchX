@@ -2871,38 +2871,16 @@ char *BX_stripdev(char *ttynam)
 	return ttynam;
 }
 
-
-void init_socketpath(void)
+const char *init_socketpath(void)
 {
-#if !defined(__EMX__) && !defined(WINNT)
-struct stat st;
-extern char socket_path[], attach_ttyname[];
+	static char socket_path[BIG_BUFFER_SIZE];
 
-	sprintf(socket_path, "%s/.BitchX/screens", my_path);
-	if (access(socket_path, F_OK))
-	{
-		if (mkdir(socket_path, 0700) != -1)
-			(void) chown(socket_path, getuid(), getgid());
-		else
-			return;
-	}
-	if (stat(socket_path, &st) != -1)
-	{
-		char host[BIG_BUFFER_SIZE+1];
-		char *ap;
-		if (!S_ISDIR(st.st_mode))
-			return;
-		gethostname(host, BIG_BUFFER_SIZE);
-		if ((ap = strchr(host, '.')))
-			*ap = 0;
-		ap = &socket_path[strlen(socket_path)];
-		sprintf(ap, "/%%d.%s.%s", stripdev(attach_ttyname), host);
-		ap++;
-		for ( ; *ap; ap++)
-			if (*ap == '/')
-				*ap = '-';
-	}	        
-#endif
+	snprintf(socket_path, sizeof socket_path, "%s/.BitchX/screens", my_path);
+
+	if (mkdir(socket_path, 0700) != -1)
+		(void)chown(socket_path, getuid(), getgid());
+
+	return socket_path;
 }
 
 /*

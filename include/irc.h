@@ -344,7 +344,7 @@ extern short ospeed;
 #endif
 
 void reattach_tty(char *, char *);
-void init_socketpath(void);
+const char *init_socketpath(void);
 void kill_attached_if_needed(int);
 void setup_pid();
 

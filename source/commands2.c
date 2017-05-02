@@ -2379,7 +2379,6 @@ extern HMQ hmq;
 
 #if !defined(__EMX__) && !defined(WINNT) && !defined(GUI) && defined(WANT_DETACH)
 #ifndef PUBLIC_ACCESS
-extern char socket_path[];
 extern char *old_pass;
 
 int displays = 0;
@@ -2531,11 +2530,12 @@ void make_cookie(void)
 
 static int create_ipc_socket(void)
 {
-	int	s = -1, u = -1;
+	int	s, u;
 	unsigned short port = 0;
-	char buf[BIG_BUFFER_SIZE+1];
-
-	init_socketpath();
+	char buf[BIG_BUFFER_SIZE];
+	char host[BIG_BUFFER_SIZE];
+	char *p;
+	const char *socket_path = init_socketpath();
 
 	if ((s = connect_by_number("127.0.0.1", &port, SERVICE_SERVER, PROTOCOL_TCP, 0)) < 0)
 	{
@@ -2543,19 +2543,33 @@ static int create_ipc_socket(void)
 		return 1;
 	}
 
-	sprintf(buf, socket_path, port);
-	if ((u = open(buf, O_CREAT|O_WRONLY, 0600)) != -1)
+	gethostname(host, sizeof host);
+	if ((p = strchr(host, '.')))
+		*p = 0;
+
+	snprintf(buf, sizeof buf, "%s/%u.%s.%s", socket_path, (unsigned)port, stripdev(attach_ttyname), host);
+
+	if (strlen(socket_path) + 1 < sizeof buf)
+		for (p = buf + strlen(socket_path) + 1; *p; p++)
+			if (*p == '/')
+				*p = '-';
+
+	if ((u = open(buf, O_CREAT|O_WRONLY, 0600)) < 0)
 	{
-		chmod(buf, SOCKMODE);
-		chown(buf, getuid(), getgid());
-		make_cookie();
-		write(u, connect_cookie, strlen(connect_cookie));
-		write(u, "\n", 1);
-		close(u);
+		bitchsay("Error creating IPC file: %s", strerror(errno));
+		new_close(s);
+		return 1;
 	}
 
+	fchmod(u, SOCKMODE);
+	fchown(u, getuid(), getgid());
+	make_cookie();
+	write(u, connect_cookie, strlen(connect_cookie));
+	write(u, "\n", 1);
+	close(u);
+
 	set_non_blocking(s);
-	add_socketread(s, port, 0, socket_path, handle_reconnect, NULL);
+	add_socketread(s, port, 0, NULL, handle_reconnect, NULL);
 	save_ipc = s;
 
 	return 0;

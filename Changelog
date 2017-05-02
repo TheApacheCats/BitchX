@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Simplify handling of /DETACH socket path. (caf)
+
 * Remove netfinger client code (no-one is running fingerd anymore) and
   repurpose /FINGER command to send a CTCP FINGER instead. (caf)
 
