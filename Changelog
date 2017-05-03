@@ -1,5 +1,8 @@
 [Changes 1.2.2]
 
+* Use the same compat.o and ircsig.o object files for the wserv and scr-bx
+  binaries as for the main binary. (caf)
+
 * Simplify handling of /DETACH socket path. (caf)
 
 * Remove netfinger client code (no-one is running fingerd anymore) and

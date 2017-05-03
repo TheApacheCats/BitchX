@@ -256,16 +256,16 @@ install_local: all local_installdirs installdll_local
 	$(INSTALL_DATA) $(top_srcdir)/BitchX.kill $(DEFAULT_CTOOLZ_DIR)/$(DEFAULT_BITCHX_KILL_FILE)
 
 wserv:
-	@cd source && $(MAKE) wserv
+	@cd source && $(MAKE) wserv$(EXEEXT)
 
 scr-bx:
-	@cd source && $(MAKE) scr-bx
+	@cd source && $(MAKE) scr-bx$(EXEEXT)
 
 installwserv: installdirs wserv
-	$(INSTALL) source/wserv $(DESTDIR)$(INSTALL_WSERV)
+	$(INSTALL) source/wserv$(EXEEXT) $(DESTDIR)$(INSTALL_WSERV)
 
 installscr-bx: installdirs scr-bx
-	$(INSTALL) source/scr-bx $(DESTDIR)$(INSTALL_SCRBX)
+	$(INSTALL) source/scr-bx$(EXEEXT) $(DESTDIR)$(INSTALL_SCRBX)
 
 installscript: installdirs
 	-@( \

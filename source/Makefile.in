@@ -169,9 +169,12 @@ OBJECTS = alias.o alist.o @ALLOCA@ array.o art.o banlist.o bot_link.o cdcc.o \
 	translat.o user.o userlist.o vars.o who.o whowas.o window.o words.o \
 	@X_O@
 
+WSERV_OBJECTS = wterm.o wnetwork.o ircsig.o compat.o wserv.o
+SCRBX_OBJECTS = sterm.o ircsig.o compat.o scr-bx.o
+
 SOURCES = $(OBJECTS:%.o=%.c) #$(TCL_SRCS)
 
-all: $(_VERSION_) wserv scr-bx
+all: $(_VERSION_) wserv$(EXEEXT) scr-bx$(EXEEXT)
 
 ../include/../.config.h:
 	touch $@
@@ -232,33 +235,27 @@ $(topdir)/source/compat.o: $(top_srcdir)/source/compat.c
 		-c $(top_srcdir)/source/compat.c
 
 # wserv
-bircsig.o: $(srcdir)/ircsig.c
-	$(CC) $(CPPFLAGS) $(CFLAGS) -DWTERM_C -c $(srcdir)/ircsig.c -o $@
-
-bcompat.o: $(srcdir)/compat.c
-	$(CC) $(CPPFLAGS) $(CFLAGS) -DWTERM_C -c $(srcdir)/compat.c -o $@
-
 wterm.o: $(srcdir)/term.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) -DWTERM_C -c $(srcdir)/term.c -o $@
 
 wnetwork.o: $(srcdir)/network.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) -DWTERM_C -c $(srcdir)/network.c -o $@
 
-wserv: wserv.o wterm.o wnetwork.o bircsig.o bcompat.o
-	$(CC) $(LDFLAGS) -o wserv$(EXEEXT) wserv.o wterm.o bircsig.o wnetwork.o bcompat.o $(LIBS)
+wserv$(EXEEXT): $(WSERV_OBJECTS)
+	$(CC) $(LDFLAGS) -o wserv$(EXEEXT) $(WSERV_OBJECTS) $(LIBS)
 
 clean::
-	-$(RM) wserv wserv.o wterm.o wnetwork.o wterm.c wnetwork.c
+	-$(RM) wserv$(EXEEXT)
 
 # scr-bx
 sterm.o: $(srcdir)/term.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) -DSTERM_C -c $(srcdir)/term.c -o $@
 
-scr-bx: sterm.o bircsig.o bcompat.o scr-bx.o
-	$(CC) $(LDFLAGS) -o scr-bx$(EXEEXT) scr-bx.o sterm.o bircsig.o bcompat.o $(LIBS)
+scr-bx$(EXEEXT): $(SCRBX_OBJECTS)
+	$(CC) $(LDFLAGS) -o scr-bx$(EXEEXT) $(SCRBX_OBJECTS) $(LIBS)
 
 clean::
-	-$(RM) scr-bx$(EXEEXT) scr-bx.o sterm.o sterm.c
+	-$(RM) scr-bx$(EXEEXT)
 
 depend: $(SOURCES)
 	cd $(top_srcdir)/source && \
