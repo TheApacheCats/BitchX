@@ -7161,8 +7161,7 @@ done
 
 
 
-
-for ac_func in socket gethostname gettimeofday strtoul strlcpy strlcat stpcpy vsnprintf snprintf setsid strerror uname getrusage sysconf getpgid killpg getlogin realpath fchdir getpass fpathconf getpwent setvbuf select mkstemp memmove scandir setenv
+for ac_func in socket gethostname gettimeofday strtoul strlcpy strlcat stpcpy vsnprintf snprintf setsid strerror uname getrusage sysconf getpgid killpg getlogin realpath fchdir getpass fpathconf getpwent setvbuf select mkstemp memmove setenv
 do
 as_ac_var=`echo "ac_cv_func_$ac_func" | $as_tr_sh`
 echo "$as_me:$LINENO: checking for $ac_func" >&5

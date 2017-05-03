@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Remove unused scandir() compat implementation. (caf)
+
 * Use the same compat.o and ircsig.o object files for the wserv and scr-bx
   binaries as for the main binary. (caf)
 
