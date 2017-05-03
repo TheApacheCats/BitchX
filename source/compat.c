@@ -1255,33 +1255,6 @@ int inet_aton(const char *cp, struct in_addr *addr)
 /* --- end of inet_aton.c --- */
 
 /* --- start of misc stuff --- */
-#if 0
-int vsnprintf (char *str, size_t size, const char *format, va_list ap)
-{
-	int ret = vsprintf(str, format, ap);
-
-	/* If the string ended up overflowing, just give up. */
-	if (ret == (int)str && strlen(str) > size)
-		ircpanic("Buffer overflow in vsnprintf");
-	if (ret != (int)str && ret > size)
-		ircpanic("Buffer overflow in vsnprintf");
-
-	return ret;
-}
-#endif
-
-#if 0
-int snprintf (char *str, size_t size, const char *format, ...)
-{
-	int ret;
-	va_list args;
-
-	va_start(args, format);
-	ret = vsnprintf(str, size, format, args);
-	va_end(args);
-	return ret;
-}
-#endif
 
 /*
 
