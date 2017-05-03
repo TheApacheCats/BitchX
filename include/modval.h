@@ -1,4 +1,5 @@
-#ifndef _MODVAL_
+#ifndef MODVAL_H_
+#define MODVAL_H_
 
 /* include this so we have the enum table just in case someone forgets. */
 
@@ -23,7 +24,6 @@
  * Copyright Colten Edwards July 1998.
  */
 
-#define _MODVAL_
 #ifndef BUILT_IN_DLL
 #define BUILT_IN_DLL(x) \
 	void x (IrcCommandDll *intp, char *command, char *args, char *subargs, char *helparg)
