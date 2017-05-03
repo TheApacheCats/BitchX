@@ -10,9 +10,6 @@
 #include "defs.h"
 #include "ircaux.h"
 #include "irc_std.h"
-#define MAIN_SOURCE
-#include "modval.h"
-
 
 /* --- start of tparm.c --- */
 #ifndef HAVE_TPARM
@@ -2338,16 +2335,17 @@ int uname(struct utsname *buf)
 	if (aulBuffer[0] == 20)
 	{
 		int i = (unsigned int)aulBuffer[1];
-		strcpy(buf->release, ltoa(i));
 		if (i > 20)
 		{
 			strcpy(buf->sysname,"Warp");
-			sprintf(buf->release, "%d.%d", (int)i/10, i-(((int)i/10)*10));
+			sprintf(buf->release, "%d.%d", i / 10, i % 10);
 		}
 		else if (i == 10)
 			strcpy(buf->release, "2.1");
 		else if (i == 0)
 			strcpy(buf->release, "2.0");
+		else
+			sprintf(buf->release, "%d", i);
 		strcpy(buf->machine, "i386");
 		if(getenv("HOSTNAME") != NULL)
 			strcpy(buf->nodename, getenv("HOSTNAME"));
