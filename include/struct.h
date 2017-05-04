@@ -7,15 +7,13 @@
  * Copyright(c) 1997
  *
  */
-
-#ifndef __struct_h_
-#define	__struct_h_
+#ifndef STRUCT_H_
+#define STRUCT_H_
 
 #ifdef WINNT
 #include <windows.h>
 #endif
 
-#include "alist.h"
 #include "hash.h"
 #include "config.h"
 #include "ssl.h"
@@ -1139,30 +1137,6 @@ typedef struct  AliasItemStru
 	ArgList *arglist;
 }	Alias;
 
-typedef	struct	notify_stru
-{
-	char	*nick;			/* Who are we watching? */
-	u_32int_t hash;
-	char 	*host;
-	char	*looking;
-	int	times;
-	time_t	lastseen;
-	time_t	period;
-	time_t	added;
-	int	flag;			/* Is the person on irc? */
-} NotifyItem;
-
-
-typedef struct notify_alist
-{
-	struct notify_stru	**list;
-	int			max;
-	int			max_alloc;
-	alist_func 		func;
-	hash_type		hash;
-	char *			ison;
-} NotifyList;
-
 typedef Window *(*window_func) (Window *, char **args, char *usage);
 
 typedef struct window_ops_T {
@@ -1226,4 +1200,4 @@ typedef struct _dcc_struct_type {
 	u_32int_t 	struct_type;
 } dcc_struct_type;
                        
-#endif /* __struct_h_ */
+#endif /* STRUCT_H_ */

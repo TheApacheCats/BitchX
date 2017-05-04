@@ -9,15 +9,15 @@
  *
  * @(#)$Id$
  */
-
-#ifndef __server_h_
-#define __server_h_
+#ifndef SERVER_H_
+#define SERVER_H_
   
 /* for ChannelList */
 #include "who.h"
 #include "names.h"
 #include "struct.h"
 #include "ssl.h"
+#include "notify.h"
 
 /*
  * type definition to distinguish different
@@ -373,7 +373,6 @@ void password_sendline (char *data, char *line);
 	int	get_server_local_port		(int);
 struct sockaddr_foobar	get_server_local_addr		(int);
 struct sockaddr_foobar	get_server_uh_addr		(int);
-NotifyItem	*get_server_notify_list		(int);
 	void	BX_send_msg_to_nicks		(ChannelList *, int, char *);        
 	void	BX_send_msg_to_channels		(int, const char *);        
 	int	BX_is_server_queue			(void);
@@ -428,4 +427,4 @@ extern const char *umodes;
 #define LLOOK_SPLIT 0
 #define CHAN_SPLIT 1
 
-#endif /* __server_h_ */
+#endif /* SERVER_H_ */
