@@ -7,8 +7,6 @@
  * going to hurt my feelings if you re-use this.
  */
 
-#include "defs.h"
-#include "ircaux.h"
 #include "irc_std.h"
 
 /* --- start of tparm.c --- */

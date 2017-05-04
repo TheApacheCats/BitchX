@@ -9,19 +9,16 @@
  *
  * @(#)$Id$
  */
-
-#ifndef _IRCAUX_H_
-#define _IRCAUX_H_
+#ifndef IRCAUX_H_
+#define IRCAUX_H_
 
 #include "irc.h"
 #include "irc_std.h"
-#include <stdio.h>
 
 typedef int comp_len_func (char *, char *, int);
 typedef int comp_func (char *, char *);
 
 extern unsigned char stricmp_table[];
-
 
 char *	BX_check_nickname 		(char *);
 char *	BX_next_arg 		(char *, char **);
@@ -53,13 +50,8 @@ char *	BX_m_sprintf 		(const char *, ...);
 int	BX_is_number 		(const char *);
 char *	BX_my_ctime 		(time_t);
 
-#if 0
-#define my_stricmp(x, y) strcasecmp(x, y) /* unable to use these for reasons of case sensitivity and finish */
-#define my_strnicmp(x, y, n) strncasecmp(x, y, n)
-#else
 int	BX_my_stricmp 	(const char *, const char *);
 int	BX_my_strnicmp	(const char *, const char *, size_t);
-#endif
 
 int	BX_my_strnstr 		(const char *, const char *, size_t);
 int	BX_scanstr 		(char *, char *);
@@ -252,45 +244,4 @@ char	*ulongcomma		(unsigned long);
 
 #define SAFE(x) (((x) && *(x)) ? (x) : empty_string)
 
-/* Used in compat.c */
-#ifndef HAVE_TPARM
-	char 	*tparm (const char *, ...);
-#endif
-
-#ifndef HAVE_STRTOUL
-	unsigned long 	strtoul (const char *, char **, int);
-#endif
-
-#ifndef HAVE_SETENV
-	char *	bsd_getenv (const char *);
-	int	bsd_putenv (const char *);
-	int	bsd_setenv (const char *, const char *, int);
-	void	bsd_unsetenv (const char *);
-#define setenv bsd_setenv
-#endif
-
-#ifndef HAVE_INET_ATON
-	int	inet_aton (const char *, struct in_addr *);
-#endif
-
-#ifndef HAVE_STRLCPY
-	size_t	strlcpy (char *, const char *, size_t);
-#endif
-
-#ifndef HAVE_STRLCAT
-	size_t	strlcat (char *, const char *, size_t);
-#endif
-
-#ifndef HAVE_VSNPRINTF
-	int	vsnprintf (char *, size_t, const char *, va_list);
-#endif
-
-#ifndef HAVE_SNPRINTF
-	int	snprintf (char *, size_t, const char *, ...);
-#endif
-
-#ifndef HAVE_SETSID
-	int	setsid (void);
-#endif
-
-#endif /* _IRCAUX_H_ */
+#endif /* IRCAUX_H_ */

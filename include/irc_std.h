@@ -9,9 +9,9 @@
  *
  * @(#)$Id$
  */
-
 #ifndef IRC_STD_H_
 #define IRC_STD_H_
+
 #include "defs.h"
 
 /*
@@ -259,4 +259,46 @@ int ioctl (int, int, ...);
 #if !HAVE_DECL_SYS_SIGLIST && HAVE_DECL__SYS_SIGLIST
 #define sys_siglist _sys_siglist
 #endif
-#endif /* __irc_std_h */
+
+/* Used in compat.c */
+#ifndef HAVE_TPARM
+	char 	*tparm (const char *, ...);
+#endif
+
+#ifndef HAVE_STRTOUL
+	unsigned long 	strtoul (const char *, char **, int);
+#endif
+
+#ifndef HAVE_SETENV
+	char *	bsd_getenv (const char *);
+	int	bsd_putenv (const char *);
+	int	bsd_setenv (const char *, const char *, int);
+	void	bsd_unsetenv (const char *);
+#define setenv bsd_setenv
+#endif
+
+#ifndef HAVE_INET_ATON
+	int	inet_aton (const char *, struct in_addr *);
+#endif
+
+#ifndef HAVE_STRLCPY
+	size_t	strlcpy (char *, const char *, size_t);
+#endif
+
+#ifndef HAVE_STRLCAT
+	size_t	strlcat (char *, const char *, size_t);
+#endif
+
+#ifndef HAVE_VSNPRINTF
+	int	vsnprintf (char *, size_t, const char *, va_list);
+#endif
+
+#ifndef HAVE_SNPRINTF
+	int	snprintf (char *, size_t, const char *, ...);
+#endif
+
+#ifndef HAVE_SETSID
+	int	setsid (void);
+#endif
+
+#endif /* IRC_STD_H_ */
