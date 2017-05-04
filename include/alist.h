@@ -2,11 +2,10 @@
  * alist.h -- resizeable arrays
  * Copyright 1997 EPIC Software Labs
  */
+#ifndef ALIST_H_
+#define ALIST_H_
 
-#ifndef __alist_h__
-#define __alist_h__
-
-#include "irc.h"
+#include "irc_std.h"
 #include "ircaux.h"
 
 /*
