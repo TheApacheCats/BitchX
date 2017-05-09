@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Update source file dependencies in Makefile.in. (caf)
+
 * Remove unused opendir.c. (caf)
 
 * Remove unused scandir() compat implementation. (caf)
