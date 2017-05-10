@@ -39,11 +39,8 @@
 #define ip_to_host(x) BX_ip_to_host(x)
 #define host_to_ip(x) BX_host_to_ip(x)
 #define connect_by_number(a, b, c, d, e) BX_connect_by_number(a, b, c, d, e)
-#ifndef __vars_h_
-enum VAR_TYPES { unused };
-#endif
-int  get_int_var (enum VAR_TYPES);
-void ircpanic (char *, ...);
+#define get_int_var(v) BX_get_int_var(v)
+#define ircpanic BX_ircpanic
 char *my_ltoa (long);
 #else
 

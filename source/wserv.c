@@ -22,6 +22,7 @@ static	char	rcsid[] = "@(#)$Id$";
 
 #include "ircterm.h"
 #include "ircaux.h"
+#include "vars.h"
 #define WTERM_C
 #include "modval.h"
 #include <errno.h>

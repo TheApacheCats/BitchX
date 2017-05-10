@@ -25,6 +25,9 @@
 #include "ircterm.h"
 #include "screen.h"
 #include "ircaux.h"
+#include "vars.h"
+#define STERM_C
+#include "modval.h"
 
 #include <sys/ioctl.h>
 
@@ -90,7 +93,7 @@ void ircpanic(char *string, ...)
 	return;
 }
 
-int get_int_var(int var)
+int get_int_var(enum VAR_TYPES var)
 {
 	return 1;
 }
