@@ -696,10 +696,7 @@ irc.o: irc.c ../include/irc.h ../include/defs.h ../include/config.h \
  ../include/newio.h ../include/timer.h ../include/whowas.h \
  ../include/misc.h ../include/gui.h ../include/cdns.h ../include/tcl_bx.h \
  ../include/ssl.h ../include/modval.h ../include/module.h
-ircsig.o: ircsig.c ../include/irc.h ../include/defs.h ../include/config.h \
- ../include/../.config.h ../include/color.h ../include/bsdglob.h \
- ../include/irc_std.h ../include/debug.h ../include/newio.h \
- ../include/ssl.h ../include/irc_std.h
+ircsig.o: ircsig.c ../include/irc_std.h ../include/defs.h
 keys.o: keys.c ../include/irc.h ../include/defs.h ../include/config.h \
  ../include/../.config.h ../include/color.h ../include/bsdglob.h \
  ../include/irc_std.h ../include/debug.h ../include/newio.h \

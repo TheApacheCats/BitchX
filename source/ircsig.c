@@ -7,8 +7,6 @@
  * in the unix environment' -mrg
  */
 
-
-#include "irc.h"
 #include "irc_std.h"
 
 sigfunc * my_signal(int sig_no, sigfunc *sig_handler, int misc_flags)
