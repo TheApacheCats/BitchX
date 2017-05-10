@@ -5,9 +5,8 @@
  * Copyright 1997 EPIC Software Labs
  * See the Copyright file for license information
  */
-
-#ifndef __exec_h__
-#define	__exec_h__
+#ifndef EXEC_H_
+#define EXEC_H_
 
 	void	execcmd 		(char *, char *, char *, char *);
 	void	do_processes		(fd_set *);
@@ -22,4 +21,4 @@
         int     logical_to_index        (const char *logical);
         void	kill_process		(int, int);
 
-#endif /* _EXEC_H_ */
+#endif /* EXEC_H_ */

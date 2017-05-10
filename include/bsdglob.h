@@ -36,9 +36,8 @@
  *	from: @(#)glob.h	8.1 (Berkeley) 6/2/93
  *	$Id$
  */
-
-#ifndef _GLOB_H_
-#define	_GLOB_H_
+#ifndef BSDGLOB_H_
+#define	BSDGLOB_H_
 
 struct stat;
 typedef struct {
@@ -83,4 +82,4 @@ typedef struct {
 int	BX_bsd_glob (const char *, int, int (*)(const char *, int), glob_t *);
 void	BX_bsd_globfree (glob_t *);
 
-#endif /* !_GLOB_H_ */
+#endif /* BSDGLOB_H_ */

@@ -1,5 +1,5 @@
 /*
- * crypt.h: header for crypt.c 
+ * encrypt.h: header for encrypt.c 
  *
  * Written By Michael Sandrof
  *
@@ -9,9 +9,8 @@
  *
  * @(#)$Id$
  */
-
-#ifndef __CRYPT_H_
-#define __CRYPT_H_
+#ifndef ENCRYPT_H_
+#define ENCRYPT_H_
 
 	char	*crypt_msg (char *, char *);
 	char	*decrypt_msg (char *, char *);
@@ -23,4 +22,4 @@
 #define CRYPT_HEADER ""
 #define CRYPT_HEADER_LEN 5
 
-#endif /* __crypt_h_ */
+#endif /* ENCRYPT_H_ */

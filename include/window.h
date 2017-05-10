@@ -9,9 +9,8 @@
  *
  * @(#)$Id$
  */
-
-#ifndef __window_h_
-#define __window_h_
+#ifndef WINDOW_H_
+#define WINDOW_H_
 
 #include "irc_std.h"
 #include "lastlog.h"
@@ -173,4 +172,4 @@ BUILT_IN_WINDOW(window_server);
 #define WINDOW_NOTIFY	((unsigned) 0x0001)
 #define WINDOW_NOTIFIED	((unsigned) 0x0002)
 
-#endif /* __window_h_ */
+#endif /* WINDOW_H_ */

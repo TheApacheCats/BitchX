@@ -7,10 +7,9 @@
  *
  * @(#)$Id$
  */
-
-#ifndef __queue_h
-# define __queue_h
+#ifndef QUEUE_H_
+#define QUEUE_H_
 
 	void	queuecmd (char *, char *, char *, char *);
 
-#endif /* __queue_h */
+#endif /* QUEUE_H_ */

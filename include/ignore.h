@@ -7,9 +7,8 @@
  *
  * See the COPYRIGHT file, or do a HELP IRCII COPYRIGHT 
  */
-
-#ifndef __ignore_h_
-#define __ignore_h_
+#ifndef IGNORE_H_
+#define IGNORE_H_
 
 /* Type of ignored nicks */
 #define IGNORE_MSGS	0x0001
@@ -65,4 +64,4 @@ char	*get_ignore_types (Ignore *tmp);
 char	*get_ignore_types_by_pattern (char *pattern);
 char	*get_ignore_patterns_by_type (char *ctype);
 
-#endif /* __ignore_h_ */
+#endif /* IGNORE_H_ */

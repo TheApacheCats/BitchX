@@ -1,6 +1,5 @@
-
-#ifndef _INC_COLOR
-#define _INC_COLOR
+#ifndef COLOR_H_
+#define COLOR_H_
 
 /*
  * DEFAULT_DOUBLE STATUS  can be defined as 0 or 1

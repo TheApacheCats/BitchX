@@ -9,9 +9,9 @@
  *
  * @(#)$Id$
  */
+#ifndef INPUT_H_
+#define INPUT_H_
 
-#ifndef __input_h_
-#define __input_h_
 	char	input_pause (char *);
 	void	BX_set_input (char *);
 	void	BX_set_input_prompt (Window *, char *, int);
@@ -178,4 +178,4 @@ extern	NickTab *autoreply_array;
 	void	wm_process(int param);
 #endif
 
-#endif /* __input_h_ */
+#endif /* INPUT_H_ */

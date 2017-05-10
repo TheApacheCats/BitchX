@@ -1,9 +1,9 @@
 /*
- * edit.h: header for edit.c 
+ * commands.h: header for commands.c 
  *
  */
-#ifndef __edit_h_
-#define __edit_h_
+#ifndef COMMANDS_H_
+#define COMMANDS_H_
 
 #include "irc_std.h"
 
@@ -298,4 +298,4 @@ extern        int     continue_exception;
 extern        int     return_exception;
 
 
-#endif /* __edit_h_ */
+#endif /* COMMANDS_H_ */

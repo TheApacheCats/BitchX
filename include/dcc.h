@@ -4,9 +4,8 @@
  * Copyright(c) 1998 Colten Edwards 
  *
  */
-
-#ifndef __dcc_h_
-#define __dcc_h_
+#ifndef DCC_H_
+#define DCC_H_
 
 #include "struct.h"
 
@@ -172,4 +171,4 @@ struct dcc_offer {
 	
 #define DCC_STRUCT_TYPE  0xdcc0dcc0
 
-#endif /* __dcc_h_ */
+#endif /* DCC_H_ */

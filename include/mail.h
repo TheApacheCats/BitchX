@@ -9,11 +9,10 @@
  *
  * @(#)$Id$
  */
-
-#ifndef __mail_h_
-#define __mail_h_
+#ifndef MAIL_H_
+#define MAIL_H_
 
 	char	*check_mail (void);
 	int	check_mail_status (void);
 
-#endif /* __mail_h_ */
+#endif /* MAIL_H_ */

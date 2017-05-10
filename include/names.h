@@ -9,9 +9,8 @@
  *
  * @(#)$Id$
  */
-
-#ifndef __names_h_
-#define __names_h_
+#ifndef NAMES_H_
+#define NAMES_H_
 
 #include "window.h"
 #include "irc.h"
@@ -97,4 +96,4 @@ int		BX_got_ops(int, ChannelList *);
 void		BX_flush_channel_stats (void);
 char		*BX_get_channel_bans(char *, int, int);
 
-#endif /* __names_h_ */
+#endif /* NAMES_H_ */

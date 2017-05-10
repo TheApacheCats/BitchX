@@ -1,18 +1,14 @@
- /* $Id$ */
- 
 /*
  * cdns.h: header for cdns.c
  */
-
-#ifndef _CDNS_H_
-#define _CDNS_H_
+#ifndef CDNS_H_
+#define CDNS_H_
 
 /* We gotta know about the fd_set type, so we gonna inclue this  */
 #include "irc.h"
 
 #include "struct.h"
 #include "newio.h"
-#endif
 
 #define MAXALIASES	35
 #define MAXADDRS	35
@@ -91,3 +87,4 @@ void freemyhostent(my_hostent *freeme);
 #define Q_NEXT(tmp) ((tmp)->next)
 #define Q_OPEN(headp, tailp) (*(headp) = *(tailp) = NULL)
 
+#endif

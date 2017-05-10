@@ -9,9 +9,8 @@
  *
  * @(#)$Id$
  */
-
-#ifndef __funny_h_
-#define __funny_h_
+#ifndef FUNNY_H_
+#define FUNNY_H_
 
 #define FUNNY_PUBLIC 1
 #define FUNNY_PRIVATE 2
@@ -32,4 +31,4 @@
 	void	funny_namreply (char *, char **);
 	void	update_user_mode (char *);
 
-#endif /* __funny_h_ */
+#endif /* FUNNY_H_ */

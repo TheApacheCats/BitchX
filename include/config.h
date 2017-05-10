@@ -13,9 +13,8 @@
  *
  * @(#)$Id$
  */
-
-#ifndef __config_h_
-#define __config_h_
+#ifndef CONFIG_H_
+#define CONFIG_H_
 
 #include "defs.h"
 
@@ -689,4 +688,4 @@
 
 #include "color.h"		/* all color options here. */
 
-#endif /* __config_h_ */
+#endif /* CONFIG_H_ */

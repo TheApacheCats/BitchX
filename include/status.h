@@ -9,9 +9,8 @@
  *
  * @(#)$Id$
  */
-
-#ifndef __status_h_
-#define __status_h_
+#ifndef STATUS_H_
+#define STATUS_H_
 
 	void	make_status (Window *);
 	void	set_alarm (Window *, char *, int);
@@ -23,4 +22,4 @@
 #define GET_TIME 1
 #define RESET_TIME 2
 
-#endif /* __status_h_ */
+#endif /* STATUS_H_ */

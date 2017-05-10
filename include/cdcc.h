@@ -1,5 +1,5 @@
-#ifndef _CDCC_H_
-#define _CDCC_H_
+#ifndef CDCC_H_
+#define CDCC_H_
 
 #include <sys/types.h>
 #include <sys/stat.h>

@@ -1,5 +1,5 @@
-#ifndef __cdrom_h_
-#define __cdrom_h_
+#ifndef CDROM_H_
+#define CDROM_H_
 
 #ifndef __FreeBSD__
 #include <mntent.h>
@@ -64,4 +64,4 @@ struct cdrom_etocentry
 #define CDROMVOLREAD CDIOCGETVOL
 #endif /* __FreeBSD__ */
 
-#endif /* cdrom.h */
+#endif /* CDROM_H_ */

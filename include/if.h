@@ -7,9 +7,8 @@
  *
  * @(#)$Id$
  */
-
-#ifndef __if_h
-# define __if_h
+#ifndef IF_H_
+#define IF_H_
 
 	void	ifcmd (char *, char *, char *, char *);
 	void	whilecmd (char *, char *, char *, char *);
@@ -23,4 +22,4 @@
 extern	char *  next_expr       	(char **, char);
 extern	char *  next_expr_failok        (char **, char);
   		
-#endif /* __if_h */
+#endif /* IF_H_ */

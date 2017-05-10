@@ -1,5 +1,5 @@
-#ifndef _GTK_BITCHX_
-#define _GTK_BITCHX_
+#ifndef GTKBITCHX_H_
+#define GTKBITCHX_H_
 
 #if defined(GUI)
 #ifdef __linux__

@@ -2,9 +2,8 @@
  * Copyright Colten Edwards 1997.
  * various miscellaneous routines needed for irc functions
  */
- 
-#ifndef _misc_h
-#define _misc_h
+#ifndef MISC_H_
+#define MISC_H_
 
 #define KICKLIST		0x01
 #define LEAVELIST		0x02

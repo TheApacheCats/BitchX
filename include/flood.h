@@ -3,9 +3,8 @@
  *
  * @(#)$Id$
  */
-
-#ifndef __flood_h_
-#define __flood_h_
+#ifndef FLOOD_H_
+#define FLOOD_H_
 
 enum flood_type {
 	MSG_FLOOD,
@@ -34,4 +33,4 @@ void clean_flood_list(void);
 #define FLOOD_HASHSIZE 31
 extern HashEntry no_flood_list[FLOOD_HASHSIZE];
 
-#endif /* __flood_h_ */
+#endif /* FLOOD_H_ */

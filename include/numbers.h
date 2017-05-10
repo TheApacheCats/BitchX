@@ -9,11 +9,10 @@
  *
  * @(#)$Id$
  */
-
-#ifndef __numbers_h_
-#define __numbers_h_
+#ifndef NUMBERS_H_
+#define NUMBERS_H_
 
 char *numeric_banner(void);
 void numbered_command(char *, int, char **);
 		
-#endif /* __numbers_h_ */
+#endif /* NUMBERS_H_ */

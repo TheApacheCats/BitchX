@@ -3,9 +3,8 @@
  * 
  *
  */
-
-#ifndef __chelp_h
-#define __chelp_h
+#ifndef CHELP_H_
+#define CHELP_H_
 
 extern void chelp (char *, char *, char *, char *);
 

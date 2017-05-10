@@ -6,9 +6,8 @@
  * See the COPYRIGHT file for copyright information
  *
  */
-
-#ifndef ARRAY_H
-#define ARRAY_H
+#ifndef ARRAY_H_
+#define ARRAY_H_
 
 #include "irc_std.h"
 

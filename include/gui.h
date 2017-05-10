@@ -1,6 +1,5 @@
-
-#ifndef _GUI_H_
-#define _GUI_H_
+#ifndef GUI_H_
+#define GUI_H_
 #ifdef GUI
 
 #define         GUISUBMENU             1

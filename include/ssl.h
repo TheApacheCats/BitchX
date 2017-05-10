@@ -1,7 +1,7 @@
-#if defined(HAVE_LIBSSL) && !defined(IN_MODULE)
+#ifndef SSL_H_
+#define SSL_H_
 
-#ifndef __ssl_h__
-#define __ssl_h__
+#if defined(HAVE_LIBSSL) && !defined(IN_MODULE)
 
 #include <openssl/crypto.h>
 #include <openssl/x509.h>

@@ -9,9 +9,8 @@
  *
  * @(#)$Id$
  */
-
-#ifndef _HASH2_H_
-#define _HASH2_H_
+#ifndef HASH2_H_
+#define HASH2_H_
 
 #include "struct.h"
 #include "whowas.h"

@@ -9,9 +9,8 @@
  *
  * @(#)$Id$
  */
-
-#ifndef __screen_h_
-#define __screen_h_
+#ifndef SCREEN_H_
+#define SCREEN_H_
 
 #include "window.h"
 
@@ -77,4 +76,4 @@ extern  Window	*debugging_window;
 
 extern	int	strip_ansi_never_xlate;
 
-#endif /* __screen_h_ */
+#endif /* SCREEN_H_ */

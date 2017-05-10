@@ -5,9 +5,8 @@
  *
  * @(#)$Id$
  */
-
-#ifndef __hook_h_
-# define __hook_h_
+#ifndef HOOK_H_
+#define HOOK_H_
 
 enum HOOK_TYPES {
 	ACTION_LIST,
@@ -182,4 +181,4 @@ enum HOOK_TYPES {
 	void	do_stack_on		(int, char *);
 extern	HookFunc hook_functions[];
 
-#endif /* __hook_h_ */
+#endif /* HOOK_H_ */

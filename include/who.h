@@ -2,9 +2,8 @@
  * who.h -- header info for the WHO, ISON, and USERHOST queues.
  * Copyright 1996 EPIC Software Labs
  */
-
-#ifndef __who_h__
-#define __who_h__
+#ifndef WHO_H_
+#define WHO_H_
 
 void clean_server_queues (int);
 

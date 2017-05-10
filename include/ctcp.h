@@ -9,9 +9,8 @@
  *
  * @(#)$Id$
  */
-
-#ifndef _CTCP_H_
-#define _CTCP_H_
+#ifndef CTCP_H_
+#define CTCP_H_
 
 #include "irc.h"
 #include "irc_std.h"
@@ -76,4 +75,4 @@ extern	int	get_ctcp_val (char *);
 
 void 	BX_split_CTCP (char *, char *, char *);
 
-#endif /* _CTCP_H_ */
+#endif /* CTCP_H_ */

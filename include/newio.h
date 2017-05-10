@@ -4,9 +4,8 @@
  * Copyright 1990, 1995 Michael Sandrof, Matthew Green
  * Copyright 1997 EPIC Software Labs
  */
-
-#ifndef __newio_h__
-#define __newio_h__
+#ifndef NEWIO_H_
+#define NEWIO_H_
 
 #include "ssl.h"
 

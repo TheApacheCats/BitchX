@@ -9,9 +9,8 @@
  *
  * @(#)$Id$
  */
-
-#ifndef __lastlog_h_
-#define __lastlog_h_
+#ifndef LASTLOG_H_
+#define LASTLOG_H_
 
 #define LOG_NONE	0x00000000
 #define LOG_CURRENT	0x00000000
@@ -88,4 +87,4 @@ void free_lastlog(Window *);
 int logmsg(unsigned long log_type, const char *from, int flag, const char *format, ...);
 void reset_hold_mode(Window *);
 		  				
-#endif /* __lastlog_h_ */
+#endif /* LASTLOG_H_ */

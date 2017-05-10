@@ -8,9 +8,9 @@
  *
  * @(#)$Id$
  */
+#ifndef IRC_H_
+#define IRC_H_
 
-#ifndef __irc_h
-#define __irc_h
 #define IRCII_COMMENT   "\002 Keep it to yourself!\002"
 #define BUG_EMAIL "<bitchx-devel@lists.sourceforge.net>"
 
@@ -353,4 +353,4 @@ void initsetproctitle(int, char **, char **);
 void setproctitle(const char *, ...);
 #endif
 
-#endif /* __irc_h */
+#endif /* IRC_H_ */

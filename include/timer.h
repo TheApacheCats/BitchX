@@ -2,9 +2,8 @@
  * timer.h: header for timer.c 
  * See the COPYRIGHT file, or do a HELP IRCII COPYRIGHT 
  */
-
-#ifndef _TIMER_H_
-#define _TIMER_H_
+#ifndef TIMER_H_
+#define TIMER_H_
 
 /* functions that may be called by others */
 extern	void	timercmd (char *, char *, char *, char *);
@@ -21,4 +20,4 @@ char		*tcl_add_timer (TimerList **, long, char *, unsigned long);
 int 		tcl_remove_timer (TimerList **, unsigned long);
 int		timer_callback_exists(void *);
 
-#endif /* _TIMER_H_ */
+#endif /* TIMER_H_ */

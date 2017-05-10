@@ -2,8 +2,8 @@
  * debug.h -- the runtime debug settings.  Can also be done on command line.
  */
 
-#ifndef __X_DEBUG_H__
-#define __X_DEBUG_H__
+#ifndef DEBUG_H_
+#define DEBUG_H_
 
 extern 	unsigned long x_debug;
 extern	unsigned long internal_debug;

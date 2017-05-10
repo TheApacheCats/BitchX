@@ -2,9 +2,8 @@
  * Module/dll handling code written by Colten Edwards.
  * Copyright 1997
  */
- 
-#ifndef _MODULE_H
-#define _MODULE_H
+#ifndef MODULE_H_
+#define MODULE_H_
 
 
 /*

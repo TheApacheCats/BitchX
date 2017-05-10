@@ -5,9 +5,8 @@
  *
  * @(#)$Id$
  */
-
-#ifndef __vars_h_
-#define __vars_h_
+#ifndef VARS_H_
+#define VARS_H_
 
 /* indexes for the irc_variable array */
 
@@ -426,4 +425,4 @@ extern	int	loading_global;
 
 int	parse_mangle	(char *, int, char **);
 
-#endif /* __vars_h_ */
+#endif /* VARS_H_ */

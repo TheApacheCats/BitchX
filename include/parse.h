@@ -6,9 +6,8 @@
  *
  * @(#)$Id$
  */
-
-#ifndef __parse_h_
-#define __parse_h_
+#ifndef PARSE_H_
+#define PARSE_H_
 
 typedef struct {
 	const char	*command;
@@ -48,4 +47,4 @@ extern	int	doing_privmsg;
 #define MAXPARA 15
 
 
-#endif /* __parse_h_ */
+#endif /* PARSE_H_ */

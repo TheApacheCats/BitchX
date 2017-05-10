@@ -9,9 +9,8 @@
  *
  * @(#)$Id$
  */
-
-#ifndef __list_h_
-#define __list_h_
+#ifndef LIST_H_
+#define LIST_H_
 
 	void	BX_add_to_list (List **, List *);
 	List	*BX_find_in_list (List **, char *, int);
@@ -27,4 +26,4 @@
 #define REMOVE_FROM_LIST 1
 #define USE_WILDCARDS 1
 
-#endif /* __list_h_ */
+#endif /* LIST_H_ */

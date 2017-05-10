@@ -1,6 +1,5 @@
-
-#ifndef _WhoWas_h
-#define _WhoWas_h
+#ifndef WHOWAS_H_
+#define WHOWAS_H_
 
 #define WHOWAS_USERLIST_MAX 300
 #define WHOWAS_REG_MAX 500

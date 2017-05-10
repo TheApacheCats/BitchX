@@ -9,9 +9,8 @@
  *
  * @(#)$Id$
  */
-
-#ifndef _ALIAS_H_
-#define _ALIAS_H_
+#ifndef ALIAS_H_
+#define ALIAS_H_
 
 #include "irc_std.h"
 
@@ -143,4 +142,4 @@ extern	void	do_stack_alias 		(int, char *, int);
 	char	*BX_next_unit		(char *, const char *, int *, int);
 	char	*BX_alias_special_char(char **buffer, char *ptr, const char *args, char *quote_em, int *args_flag);
 
-#endif /* _ALIAS_H_ */
+#endif /* ALIAS_H_ */

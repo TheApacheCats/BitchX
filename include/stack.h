@@ -7,9 +7,8 @@
  *
  * @(#)$Id$
  */
-
-#ifndef __stack_h_
-# define __stack_h_
+#ifndef STACK_H_
+#define STACK_H_
 
 #include "hook.h"
 #include "alias.h"
@@ -46,4 +45,4 @@ typedef	struct	aliasstacklist1
 	struct aliasstacklist1 *next;
 }	AliasStack1;
 
-#endif /* __stack_h_ */
+#endif /* STACK_H_ */

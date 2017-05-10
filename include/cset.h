@@ -1,9 +1,8 @@
 /*
  * cset.h: header for cset.c
  */
-
-#ifndef _CSET_H_
-#define _CSET_H_
+#ifndef CSET_H_
+#define CSET_H_
 
 #include "struct.h"
 /* This ensures we always have the offsetof() macro */
@@ -443,4 +442,4 @@ void		check_channel_limit(ChannelList *chan);
 void add_numeric_fset(char *name, int remove, char *args, int);
 char *find_numeric_fset(int numeric);
 
-#endif /* _CSETS_H_ */
+#endif /* CSET_H_ */

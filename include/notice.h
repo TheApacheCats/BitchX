@@ -1,6 +1,5 @@
-
-#ifndef _NOTICE_H
-#define _NOTICE_H
+#ifndef NOTICE_H_
+#define NOTICE_H_
 
 #ifdef WANT_OPERVIEW
 #undef NEWNET_IRCOP

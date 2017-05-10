@@ -5,9 +5,8 @@
  * Copyright 1997 EPIC Software Labs
  * See the COPYRIGHT file, or do a HELP IRCII COPYRIGHT 
  */
-
-#ifndef __keys_h__
-#define __keys_h__
+#ifndef KEYS_H_
+#define KEYS_H_
 
 /* I hate typedefs... */
 typedef void (*KeyBinding) (char, char *);
@@ -52,4 +51,4 @@ enum MOUSE_ACTIONS {
 };
 #endif
 
-#endif /* _KEYS_H_ */
+#endif /* KEYS_H_ */

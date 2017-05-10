@@ -9,9 +9,8 @@
  *
  * @(#)$Id$
  */
-
-#ifndef __output_h_
-#define __output_h_
+#ifndef OUTPUT_H_
+#define OUTPUT_H_
 
 	void	put_echo (char *);
 	void	BX_put_it (const char *, ...);
@@ -39,4 +38,4 @@
 	
 extern	FILE	*irclog_fp;
 
-#endif /* __output_h_ */
+#endif /* OUTPUT_H_ */

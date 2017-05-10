@@ -3,9 +3,8 @@
  * Copyright Colten Edwards 1996
  * 
  */
- 
-#ifndef _user_list_h
-#define _user_list_h
+#ifndef USERLIST_H_
+#define USERLIST_H_
 
 void add_shit (char *, char *, char *, char *);
 void add_user (char *, char *, char *, char *);
@@ -84,4 +83,3 @@ unsigned long convert_str_to_flags(char *);
 int change_pass(char *, char *);
 
 #endif
-

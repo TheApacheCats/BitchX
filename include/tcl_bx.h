@@ -3,9 +3,8 @@
  * CopyRight Colten Edwards Oct 96
  *
  */
-
-#ifndef _IRCTCL_H
-#define _IRCTCL_H
+#ifndef TCL_BX_H_
+#define TCL_BX_H_
 
 int handle_dcc_bot (int, char *);
 int handle_tcl_chan (int, char *, char *, char *);
