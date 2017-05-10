@@ -258,11 +258,14 @@ clean::
 	-$(RM) scr-bx$(EXEEXT)
 
 depend: $(SOURCES)
-	cd $(top_srcdir)/source && \
-	echo "Making dependencies. This takes a while." && \
-	sed -n '1,/^# Dont even THINK of deleting this line$$/p' < Makefile.in > tmp && \
-	$(MV) tmp Makefile.in && \
-	$(CC) -I../include $(CPPFLAGS) $(CFLAGS) -MM *.c >> Makefile.in || :
+	cd $(top_srcdir)/source
+	echo "Making dependencies. This takes a while."
+	sed -n '1,/^# Dont even THINK of deleting this line$$/p' < Makefile.in > tmp
+	$(CC) -I../include $(CPPFLAGS) $(CFLAGS) -MM *.c >> tmp
+	$(CC) -I../include $(CPPFLAGS) $(CFLAGS) -DWTERM_C -MM -MT wterm.o term.c >> tmp
+	$(CC) -I../include $(CPPFLAGS) $(CFLAGS) -DWTERM_C -MM -MT wnetwork.o network.c >> tmp
+	$(CC) -I../include $(CPPFLAGS) $(CFLAGS) -DSTERM_C -MM -MT sterm.o term.c >> tmp
+	$(MV) tmp Makefile.in
 
 # Dont even THINK of deleting this line
 alias.o: alias.c ../include/irc.h ../include/defs.h ../include/config.h \
@@ -933,7 +936,8 @@ scr-bx.o: scr-bx.c ../include/irc.h ../include/defs.h ../include/config.h \
  ../include/ssl.h ../include/struct.h ../include/hash.h \
  ../include/ircterm.h ../include/screen.h ../include/window.h \
  ../include/lastlog.h ../include/translat.h ../include/screen.h \
- ../include/ircaux.h ../include/irc.h
+ ../include/ircaux.h ../include/irc.h ../include/vars.h ../include/cset.h \
+ ../include/struct.h ../include/modval.h ../include/module.h
 screen.o: screen.c ../include/irc.h ../include/defs.h ../include/config.h \
  ../include/../.config.h ../include/color.h ../include/bsdglob.h \
  ../include/irc_std.h ../include/debug.h ../include/newio.h \
@@ -1160,5 +1164,32 @@ wserv.o: wserv.c ../include/defs.h ../include/config.h ../include/defs.h \
  ../include/struct.h ../include/hash.h ../include/ircterm.h \
  ../include/screen.h ../include/window.h ../include/lastlog.h \
  ../include/translat.h ../include/ircaux.h ../include/irc.h \
- ../include/modval.h ../include/module.h ../include/struct.h
+ ../include/vars.h ../include/cset.h ../include/struct.h \
+ ../include/modval.h ../include/module.h
 X.o: X.c
+wterm.o: term.c ../include/irc.h ../include/defs.h ../include/config.h \
+ ../include/../.config.h ../include/color.h ../include/bsdglob.h \
+ ../include/irc_std.h ../include/debug.h ../include/newio.h \
+ ../include/ssl.h ../include/struct.h ../include/hash.h \
+ ../include/screen.h ../include/window.h ../include/lastlog.h \
+ ../include/ircaux.h ../include/irc.h ../include/vars.h ../include/cset.h \
+ ../include/struct.h ../include/ircterm.h ../include/screen.h \
+ ../include/window.h ../include/output.h ../include/translat.h \
+ ../include/modval.h ../include/module.h
+wnetwork.o: network.c ../include/irc.h ../include/defs.h \
+ ../include/config.h ../include/../.config.h ../include/color.h \
+ ../include/bsdglob.h ../include/irc_std.h ../include/debug.h \
+ ../include/newio.h ../include/ssl.h ../include/struct.h \
+ ../include/hash.h ../include/ircterm.h ../include/screen.h \
+ ../include/window.h ../include/lastlog.h ../include/ircaux.h \
+ ../include/irc.h ../include/output.h ../include/vars.h ../include/cset.h \
+ ../include/struct.h ../include/modval.h ../include/module.h
+sterm.o: term.c ../include/irc.h ../include/defs.h ../include/config.h \
+ ../include/../.config.h ../include/color.h ../include/bsdglob.h \
+ ../include/irc_std.h ../include/debug.h ../include/newio.h \
+ ../include/ssl.h ../include/struct.h ../include/hash.h \
+ ../include/screen.h ../include/window.h ../include/lastlog.h \
+ ../include/ircaux.h ../include/irc.h ../include/vars.h ../include/cset.h \
+ ../include/struct.h ../include/ircterm.h ../include/screen.h \
+ ../include/translat.h ../include/window.h ../include/output.h \
+ ../include/translat.h ../include/modval.h ../include/module.h
