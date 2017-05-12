@@ -116,7 +116,7 @@ NCURSES_CONST
 
 struct	term_struct TIS;
 
-cap2info tcaps[] =
+static const cap2info tcaps[] =
 {
 	{ "auto_left_margin",		"bw",		"bw",	CAP_TYPE_BOOL,	(void *)&TIS.TI_bw },
 	{ "auto_right_margin",		"am",		"am",	CAP_TYPE_BOOL,	(void *)&TIS.TI_am },
@@ -617,8 +617,9 @@ cap2info tcaps[] =
 	{ "box_chars_1",		"box1",		"bx",	CAP_TYPE_STR,	&TIS.TI_box1 },
 };
 
+static const int numcaps = sizeof tcaps / sizeof tcaps[0];
+
 	struct	term_struct *current_term = &TIS;
-	int 	numcaps = sizeof(tcaps) / sizeof(cap2info);
 
 	int	meta_mode = 2;
 	int	can_color = 0;
@@ -1880,7 +1881,7 @@ char *get_term_capability(char *name, int querytype, int mangle)
 	static char retval[256];
 	const char *compare = empty_string;
 	int x;
-	cap2info *t;
+	const cap2info *t;
 
 	for (x = 0; x < numcaps; x++)
 	{
