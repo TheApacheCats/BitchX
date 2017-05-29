@@ -367,31 +367,27 @@ void do_notify(void)
 	return;
 }
 
-void check_auto_invite(char *nick, char *userhost)
+static void check_auto_invite(const char *nick, const char *userhost)
 {
 #ifdef WANT_USERLIST
-ChannelList *chan = NULL;
-UserList *tmp = NULL;
+	ChannelList *chan = NULL;
+
 	for (chan = get_server_channels(from_server); chan; chan = chan->next)
 	{
-		if ((tmp = lookup_userlevelc("*", userhost, chan->channel, NULL)))
+		if (chan->have_op && get_cset_int_var(chan->csets, AINV_CSET))
 		{
-			NickList *n = NULL;
-			n = find_nicklist_in_channellist(nick, chan, 0);
-			if (!n && chan->have_op && get_cset_int_var(chan->csets, AINV_CSET) && (tmp->flags & ADD_INVITE) && get_cset_int_var(chan->csets, AINV_CSET))
+			const UserList *ul = lookup_userlevelc("*", userhost, chan->channel, NULL);
+
+			if (ul && (ul->flags & ADD_INVITE) && !find_nicklist_in_channellist(nick, chan, 0))
 			{
 				bitchsay("Auto-inviting %s to %s", nick, chan->channel);
 				send_to_server("NOTICE %s :Auto-invite from %s", nick, get_server_nickname(from_server));
 				send_to_server("INVITE %s %s%s%s", nick, chan->channel, chan->key?space:empty_string, chan->key?chan->key:empty_string);
 			}
 		}
-		tmp = NULL;
 	}
 #endif
 }
-
-
-
 
 static char *batched_notify_userhosts = NULL;
 static int batched_notifies = 0;
