@@ -31,7 +31,7 @@ int	BX_remove_oldest_whowas_hashlist (WhowasWrapList *, time_t, int);
 
 WhowasList *BX_next_userhost(WhowasWrapList *, WhowasList *);
 
-NickList *BX_find_nicklist_in_channellist(char *, ChannelList *, int);
+NickList *BX_find_nicklist_in_channellist(const char *, ChannelList *, int);
 NickList *BX_next_nicklist(ChannelList *, NickList *);
 
 void	clear_nicklist_hashtable(ChannelList *);

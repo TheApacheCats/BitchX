@@ -431,7 +431,7 @@ extern Function_ptr *global;
 #define lookup_channel (*(ChannelList *(*)(const char *, int, int))global[LOOKUP_CHANNEL])
 
 /* hash.c */
-#define find_nicklist_in_channellist (*(NickList *(*)(char *, ChannelList *, int))global[FIND_NICKLIST_IN_CHANNELLIST])
+#define find_nicklist_in_channellist (*(NickList *(*)(const char *, ChannelList *, int))global[FIND_NICKLIST_IN_CHANNELLIST])
 #define add_nicklist_to_channellist (*(void (*)(NickList *, ChannelList *))global[ADD_NICKLIST_TO_CHANNELLIST])
 #define next_nicklist (*(NickList *(*)(ChannelList *, NickList *))global[NEXT_NICKLIST])
 #define next_namelist (*(List *(*)(HashEntry *, List *, unsigned int))global[NEXT_NAMELIST])
