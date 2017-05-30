@@ -336,21 +336,21 @@ BUILT_IN_COMMAND(notify)
  */
 void do_notify(void)
 {
-	int	old_from_server = from_server;
+	static time_t last_notify = 0;
+
+	const int old_from_server = from_server;
+	const int interval = get_int_var(NOTIFY_INTERVAL_VAR);
 	int	servnum;
-	static	time_t		last_notify = 0;
-	int		interval = get_int_var(NOTIFY_INTERVAL_VAR);
 	time_t current_time = time(NULL);
 
-	if (current_time < last_notify)
-		last_notify = current_time;
-	else if (!interval || interval > (current_time - last_notify))
+	if (!interval || !get_int_var(NOTIFY_VAR))
+		return;
+
+	if ((current_time > last_notify) && (interval > (current_time - last_notify)))
 		return;		/* Not yet */
 
 	last_notify = current_time;
 
-	if (!server_list_size() || !get_int_var(NOTIFY_VAR))
-		return;
 	for (servnum = 0; servnum < server_list_size(); servnum++)
 	{
 		if (is_server_connected(servnum) && !get_server_watch(servnum))
