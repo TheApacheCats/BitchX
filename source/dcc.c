@@ -763,15 +763,19 @@ void	(*func)(int) = process_dcc_chat;
 	reset_display_target();
 }
 
+/* Magic tags used to send CTCPs (except for ACTION) over DCC CHAT */
+#define DCC_CTCP_MESSAGE "CTCP_MESSAGE "
+#define DCC_CTCP_REPLY "CTCP_REPLY "
+
 static void process_dcc_chat(int s)
 {
-unsigned long	flags;
-char		tmp[BIG_BUFFER_SIZE+1];
-char		*bufptr;
-long		bytesread;
-char		*nick;
-int		type;
-SocketList 	*sl;
+	unsigned long flags;
+	char tmp[BIG_BUFFER_SIZE+1];
+	char *bufptr;
+	long bytesread;
+	char *nick;
+	int type;
+	SocketList *sl;
         
 	flags = get_socketflags(s);
 	nick =  get_socketserver(s);
@@ -852,31 +856,25 @@ SocketList 	*sl;
 				break;
 			}
 #endif			
-#undef CTCP_REPLY
-#define CTCP_MESSAGE "CTCP_MESSAGE "
-#define CTCP_MESSAGE_LEN strlen(CTCP_MESSAGE)
-#define CTCP_REPLY "CTCP_REPLY "
-#define CTCP_REPLY_LEN strlen(CTCP_REPLY)
-
 			equal_nickname = alloca(strlen(nick) + 10);
 			*equal_nickname = 0;
 			strmopencat(equal_nickname, strlen(nick)+4, "=", nick, NULL);
 
-
-			if (strbegins(tmp, CTCP_MESSAGE) ||
-				(*tmp == CTCP_DELIM_CHAR && strbegins(tmp+1, "ACTION")))
+			if (strbegins(tmp, DCC_CTCP_MESSAGE) || strbegins(tmp, CTCP_DELIM_STR "ACTION"))
 			{
-				char *tmp2;
-				tmp2 = LOCAL_COPY(tmp);
-				strcpy(tmp, do_ctcp(equal_nickname, get_server_nickname(from_server), stripansicodes((tmp2 + ((*tmp2 == CTCP_DELIM_CHAR) ? 0 : CTCP_MESSAGE_LEN)) ) ));
+				char *tmp2 = LOCAL_COPY(tmp);
+				if (*tmp2 != CTCP_DELIM_CHAR)
+					tmp2 += strlen(DCC_CTCP_MESSAGE);
+				strlcpy(tmp, do_ctcp(equal_nickname, get_server_nickname(from_server), stripansicodes(tmp2)), sizeof tmp);
 				if (!*tmp)
 					break;
 			}
-			else if (strbegins(tmp, CTCP_REPLY) || *tmp == CTCP_DELIM_CHAR)
+			else if (strbegins(tmp, DCC_CTCP_REPLY) || *tmp == CTCP_DELIM_CHAR)
 			{
-				char *tmp2;
-				tmp2 = LOCAL_COPY(tmp);
-				strcpy(tmp, do_notice_ctcp(equal_nickname, get_server_nickname(from_server), stripansicodes(tmp2  + (((*tmp2 == CTCP_DELIM_CHAR) ? 0 : CTCP_REPLY_LEN)))));
+				char *tmp2 = LOCAL_COPY(tmp);
+				if (*tmp2 != CTCP_DELIM_CHAR)
+					tmp2 += strlen(DCC_CTCP_REPLY);
+				strlcpy(tmp, do_notice_ctcp(equal_nickname, get_server_nickname(from_server), stripansicodes(tmp2)), sizeof tmp);
 				if (!*tmp)
 					break;
 			}
@@ -1003,9 +1001,9 @@ char		thing = 0;
 	if (cmd && *text == CTCP_DELIM_CHAR && !strbegins(text+1, "ACTION"))
 	{
 		if (!strcmp(cmd, "PRIVMSG"))
-			strlcpy(tmp, "CTCP_MESSAGE ", sizeof tmp);
+			strlcpy(tmp, DCC_CTCP_MESSAGE, sizeof tmp);
 		else
-			strlcpy(tmp, "CTCP_REPLY ", sizeof tmp);
+			strlcpy(tmp, DCC_CTCP_REPLY, sizeof tmp);
 	}
 
 	strmcat(tmp, text, n->blocksize-3);
