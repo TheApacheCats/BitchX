@@ -164,6 +164,7 @@ int			lame_resolv (const char *, struct sockaddr_foobar *);
 
 #define LOCAL_COPY(y) strcpy(alloca(strlen((y)) + 1), y)
 
+#define strbegins(a, b) (!strncmp((a), (b), strlen(b)))
 
 #define	_1KB	((double) 1000)
 #define _1MEG	(_1KB * _1KB)

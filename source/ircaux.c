@@ -2537,8 +2537,8 @@ int	BX_figure_out_address (char *nuh, char **nick, char **user, char **host, cha
 	 */
 	else if (fourthback && 
 			(firstback - secondback == 3) &&
-			!strncmp(thirdback, ".k12.", 5) &&
-			!strncmp(firstback, ".us", 3))
+			strbegins(thirdback, ".k12.") &&
+			strbegins(firstback, ".us"))
 	{
 		*host = myhost;
 		*domain = fourthback;
@@ -2551,8 +2551,8 @@ int	BX_figure_out_address (char *nuh, char **nick, char **user, char **host, cha
 	 */
 	else if (thirdback && !fourthback && 
 			(firstback - secondback == 3) &&
-			!strncmp(thirdback, ".k12.", 5) &&
-			!strncmp(firstback, ".us", 3))
+			strbegins(thirdback, ".k12.") &&
+			strbegins(firstback, ".us"))
 	{
 		*host = empty_string;
 		*domain = myhost;
@@ -2859,14 +2859,14 @@ char *BX_stripdev(char *ttynam)
 		return NULL;
 #ifdef SVR4
   /* unixware has /dev/pts012 as synonym for /dev/pts/12 */
-	if (!strncmp(ttynam, "/dev/pts", 8) && ttynam[8] >= '0' && ttynam[8] <= '9')
+	if (strbegins(ttynam, "/dev/pts") && ttynam[8] >= '0' && ttynam[8] <= '9')
 	{
 		static char b[13];
 		sprintf(b, "pts/%d", atoi(ttynam + 8));
 		return b;
 	}
 #endif /* SVR4 */
-	if (!strncmp(ttynam, "/dev/", 5))
+	if (strbegins(ttynam, "/dev/"))
 		return ttynam + 5;
 	return ttynam;
 }

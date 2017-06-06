@@ -666,7 +666,7 @@ static	void p_privmsg(char *from, char **Args)
 			if ((msgcdcc(from, to, ptr)) == NULL)
 				break;
 #endif
-			if (!strncmp(ptr, "PASS", 4) && change_pass(from, ptr))
+			if (strbegins(ptr, "PASS") && change_pass(from, ptr))
 				break;
 			if (forwardnick)
 				send_to_server("NOTICE %s :*%s* %s", forwardnick, from, ptr);
@@ -850,7 +850,7 @@ static	void p_pong(char *from, char **ArgList)
 	if (!is_server)
 		return;
 
-	if (!strncmp(ArgList[1], "LAG!", 4))
+	if (strbegins(ArgList[1], "LAG!"))
 	{
 		/* PONG for lag check */
 		char *p, *q;

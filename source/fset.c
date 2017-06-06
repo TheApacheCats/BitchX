@@ -915,7 +915,7 @@ char	*make_fstring_var(const char *var_name)
 	if ((var = find_ext_fset_var(tmp_var)))
 		return m_strdup(var->string);
 
-	if (!strncmp(tmp_var, "FORMAT_", 7))
+	if (strbegins(tmp_var, "FORMAT_"))
 		tmp_var += 7;
 	if ((find_fixed_array_item (fset_array, sizeof(IrcVariable), NUMBER_OF_FSET, tmp_var, &cnt, &msv_index) == NULL))
 	{

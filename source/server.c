@@ -2282,7 +2282,7 @@ int	BX_check_server_redirect (char *who)
 	if (!who || !server_list[from_server].redirect)
 		return 0;
 
-	if (!strncmp(who, "***", 3) && !strcmp(who+3, server_list[from_server].redirect))
+	if (strbegins(who, "***") && !strcmp(who+3, server_list[from_server].redirect))
 	{
 		set_server_redirect(from_server, NULL);
 		return 1;

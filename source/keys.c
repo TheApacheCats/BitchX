@@ -1200,7 +1200,7 @@ static int lookup_function(const char *orig_name, int *lf_index)
 	*lf_index = -1;
 
 	/* Handle "META" descriptions especially. */
-	if (!strncmp(name, "META", 4))
+	if (strbegins(name, "META"))
 	{
 		int meta = grok_meta(name, NULL);
 

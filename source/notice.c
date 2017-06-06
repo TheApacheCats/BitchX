@@ -69,11 +69,11 @@ static void handle_oper_vision(const char *from, const char *line)
 	int up_status = 0;
 	const unsigned long flags = get_server_ircop_flags(from_server);
 			
-	if (!strncmp(line, "*** Notice -- ", 13))
+	if (strbegins(line, "*** Notice --"))
 		line += 14;
-	else if (!strncmp(line, "*** \002Notice\002 --", 15))
+	else if (strbegins(line, "*** \002Notice\002 --"))
 		line += 16;
-	else if (!strncmp(line, "*** ", 4))
+	else if (strbegins(line, "*** "))
 		line += 4;
 
 /*
@@ -404,7 +404,7 @@ static void parse_server_notice(const char *from, char *line)
 	if (!f || !*f)
 		f = get_server_itsname(from_server);
 			
-	if (*line != '*'  && *line != '#' && strncmp(line, "MOTD ", 4))
+	if (*line != '*'  && *line != '#' && !strbegins(line, "MOTD"))
 		flag = 1;
 	else
 		flag = 0;

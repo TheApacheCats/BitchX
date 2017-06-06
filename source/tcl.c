@@ -1615,7 +1615,7 @@ char s[80];
 int tcl_killtimer STDVAR
 {
 	BADARGS(2,2," timerID");
-	if (strncmp(argv[1],"timer",5)!=0) 
+	if (!strbegins(argv[1],"timer")) 
 	{
 		Tcl_AppendResult(irp,"argument is not a timerID",NULL);
 		return TCL_ERROR;
@@ -1629,7 +1629,7 @@ int tcl_killtimer STDVAR
 int tcl_killutimer STDVAR
 {
 	BADARGS(2,2," timerID");
-	if (strncmp(argv[1],"timer",5)!=0) 
+	if (!strbegins(argv[1],"timer")) 
 	{
 		Tcl_AppendResult(irp,"argument is not a timerID",NULL);
 		return TCL_ERROR;

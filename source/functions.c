@@ -5825,10 +5825,10 @@ BUILT_IN_FUNCTION(function_deuhc, input)
 	if (!strchr(buf, '!') || !strchr(buf, '@'))
 		RETURN_EMPTY;
 
-	if (!strncmp(buf, "*!", 2))
+	if (strbegins(buf, "*!"))
 	{
 		buf += 2;
-		if (!strncmp(buf, "*@", 2))
+		if (strbegins(buf, "*@"))
 			buf += 2;
 	}
 

@@ -263,7 +263,7 @@ static  int	i = 0;
 						return NULL;
 
 					while (fgets(buffer, 254, mail))
-						if (!strncmp(MAIL_DELIMITER, buffer, 5))
+						if (strbegins(buffer, MAIL_DELIMITER))
 							count++;
 
 					fclose(mail);

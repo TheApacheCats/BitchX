@@ -863,8 +863,8 @@ SocketList 	*sl;
 			strmopencat(equal_nickname, strlen(nick)+4, "=", nick, NULL);
 
 
-			if (!strncmp(tmp, CTCP_MESSAGE, CTCP_MESSAGE_LEN) ||
-				(*tmp == CTCP_DELIM_CHAR && !strncmp(tmp+1, "ACTION", 6)))
+			if (strbegins(tmp, CTCP_MESSAGE) ||
+				(*tmp == CTCP_DELIM_CHAR && strbegins(tmp+1, "ACTION")))
 			{
 				char *tmp2;
 				tmp2 = LOCAL_COPY(tmp);
@@ -872,7 +872,7 @@ SocketList 	*sl;
 				if (!*tmp)
 					break;
 			}
-			else if (!strncmp(tmp, CTCP_REPLY, CTCP_REPLY_LEN) || *tmp == CTCP_DELIM_CHAR)
+			else if (strbegins(tmp, CTCP_REPLY) || *tmp == CTCP_DELIM_CHAR)
 			{
 				char *tmp2;
 				tmp2 = LOCAL_COPY(tmp);
@@ -1000,7 +1000,7 @@ char		thing = 0;
 	/*
 	 * Check for CTCPs... whee.
 	 */
-	if (cmd && *text == CTCP_DELIM_CHAR && strncmp(text+1, "ACTION", 6))
+	if (cmd && *text == CTCP_DELIM_CHAR && !strbegins(text+1, "ACTION"))
 	{
 		if (!strcmp(cmd, "PRIVMSG"))
 			strlcpy(tmp, "CTCP_MESSAGE ", sizeof tmp);

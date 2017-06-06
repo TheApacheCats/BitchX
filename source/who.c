@@ -209,7 +209,7 @@ void BX_whobase(char *args, void (*line) (WhoEntry *, char *, char **), void (*e
 				return;
 			}
 
-			if (!strncmp(arg, "line", 4))		/* LINE */
+			if (strbegins(arg, "line"))		/* LINE */
 			{
 				char *line;
 
@@ -218,7 +218,7 @@ void BX_whobase(char *args, void (*line) (WhoEntry *, char *, char **), void (*e
 				else
 					say("Need {...} argument for -LINE argument.");
 			}
-			else if (!strncmp(arg, "end", 3))	/* END */
+			else if (strbegins(arg, "end"))	/* END */
 			{
 				char *line;
 
@@ -227,22 +227,22 @@ void BX_whobase(char *args, void (*line) (WhoEntry *, char *, char **), void (*e
 				else
 					say("Need {...} argument for -END argument.");
 			}
-			else if (!strncmp(arg, "raw", 3))	/* RAW */
+			else if (strbegins(arg, "raw"))	/* RAW */
 			{
 				m_s3cat(&new_w->who_args, " ", args);
 				done = 1;
 			}
-			else if (!strncmp(arg, "o", 1))		/* OPS */
+			else if (strbegins(arg, "o"))		/* OPS */
 				new_w->who_mask |= WHO_OPS;
-			else if (!strncmp(arg, "lu", 2))	/* LUSERS */
+			else if (strbegins(arg, "lu"))	/* LUSERS */
 				new_w->who_mask |= WHO_LUSERS;
-			else if (!strncmp(arg, "ch", 2))	/* CHOPS */
+			else if (strbegins(arg, "ch"))	/* CHOPS */
 				new_w->who_mask |= WHO_CHOPS;
-			else if (!strncmp(arg, "no", 2))	/* NOCHOPS */
+			else if (strbegins(arg, "no"))	/* NOCHOPS */
 				new_w->who_mask |= WHO_NOCHOPS;
-			else if (!strncmp(arg, "u-i", 3))	/* INVISIBLE */
+			else if (strbegins(arg, "u-i"))	/* INVISIBLE */
 				new_w->who_mask |= WHO_INVISIBLE;
-			else if (!strncmp(arg, "ho", 2))	/* HOSTS */
+			else if (strbegins(arg, "ho"))	/* HOSTS */
 			{
 				if ((arg = next_arg(args, &args)) == NULL)
 				{
@@ -254,11 +254,11 @@ void BX_whobase(char *args, void (*line) (WhoEntry *, char *, char **), void (*e
 				malloc_strcpy(&new_w->who_host, arg);
 				channel = new_w->who_host;
 			}
-		 	else if (!strncmp(arg, "he", 2))	/* here */
+		 	else if (strbegins(arg, "he"))	/* here */
 				new_w->who_mask |= WHO_HERE;
-			else if (!strncmp(arg, "a", 1))		/* away */
+			else if (strbegins(arg, "a"))		/* away */
 				new_w->who_mask |= WHO_AWAY;
-			else if (!strncmp(arg, "s", 1)) 	/* servers */
+			else if (strbegins(arg, "s")) 	/* servers */
 			{
 				if ((arg = next_arg(args, &args)) == NULL)
 				{
@@ -270,7 +270,7 @@ void BX_whobase(char *args, void (*line) (WhoEntry *, char *, char **), void (*e
 				malloc_strcpy(&new_w->who_server, arg);
 				channel = new_w->who_server;
 			}
-			else if (!strncmp(arg, "na", 2))
+			else if (strbegins(arg, "na"))
 			{
 				if ((arg = next_arg(args, &args)) == NULL)
 				{
@@ -282,7 +282,7 @@ void BX_whobase(char *args, void (*line) (WhoEntry *, char *, char **), void (*e
 				malloc_strcpy(&new_w->who_name, arg);
 				channel = new_w->who_name;
 			}
-			else if (!strncmp(arg, "re", 2))
+			else if (strbegins(arg, "re"))
 			{
 				if ((arg = next_arg(args, &args)) == NULL)
 				{
@@ -294,7 +294,7 @@ void BX_whobase(char *args, void (*line) (WhoEntry *, char *, char **), void (*e
 				malloc_strcpy(&new_w->who_real, arg);
 				channel = new_w->who_real;
 			}
-			else if (!strncmp(arg, "ni", 2))
+			else if (strbegins(arg, "ni"))
 			{
 				if ((arg = next_arg(args, &args)) == NULL)
 				{
@@ -306,13 +306,13 @@ void BX_whobase(char *args, void (*line) (WhoEntry *, char *, char **), void (*e
 				malloc_strcpy(&new_w->who_nick, arg);
 				channel = new_w->who_nick;
 			}
-			else if (!strncmp(arg, "d", 1))
+			else if (strbegins(arg, "d"))
 			{
 				who_queue_list();
 				delete_who_item(new_w);
 				return;
 			}
-			else if (!strncmp(arg, "f", 1))
+			else if (strbegins(arg, "f"))
 			{
 				who_queue_flush();
 				delete_who_item(new_w);

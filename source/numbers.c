@@ -548,7 +548,7 @@ static void got_initial_version_28(char *server, char *sversion, char *channel_m
 		
 	if (sversion)
 	{
-		if (!strncmp(sversion, "2.8", 3))
+		if (strbegins(sversion, "2.8"))
 		{
 			if (strstr(sversion, "mu") || strstr(sversion, "me"))
 				set_server_version(from_server, Server_u2_8);
@@ -563,15 +563,15 @@ static void got_initial_version_28(char *server, char *sversion, char *channel_m
 			else
 				set_server_version(from_server, Server2_8);
 		}
-		else if (!strncmp(sversion, "2.9", 3))
+		else if (strbegins(sversion, "2.9"))
 		        set_server_version(from_server, Server2_9);
-		else if (!strncmp(sversion, "2.10", 4))
+		else if (strbegins(sversion, "2.10"))
 	        	set_server_version(from_server, Server2_10);
-		else if (!strncmp(sversion, "u2.9", 4))
+		else if (strbegins(sversion, "u2.9"))
 			set_server_version(from_server, Server_u2_9);
-		else if (!strncmp(sversion, "u2.10", 4))
+		else if (strbegins(sversion, "u2.10"))
 			set_server_version(from_server, Server_u2_10);
-		else if (!strncmp(sversion, "u3.0", 4))
+		else if (strbegins(sversion, "u3.0"))
 			set_server_version(from_server, Server_u3_0);
 		else
 			set_server_version(from_server, Server2_8);

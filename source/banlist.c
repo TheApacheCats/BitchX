@@ -658,12 +658,12 @@ BUILT_IN_COMMAND(masskick)
 	if (!(chan = prepare_command(&server, to, NEED_OP)))
 		return;
 
-	if (spec && !strncmp(spec, "-all", 4))
+	if (spec && strbegins(spec, "-all"))
 	{
 		all = 1;
 		spec = next_arg(args, &args);
 	}
-	if (spec && !strncmp(spec, "-ops", 4))
+	if (spec && strbegins(spec, "-ops"))
 	{
 		ops = 1;
 		spec = next_arg(args, &args);
@@ -733,7 +733,7 @@ BUILT_IN_COMMAND(mknu)
 	char *to = NULL, *rest;
 	int count = 0, kickops, server;
 	
-	if (args && (is_channel(args) || !strncmp(args, "* ", 2) || !strcmp(args, "*")))
+	if (args && (is_channel(args) || strbegins(args, "* ") || !strcmp(args, "*")))
 		to = next_arg(args, &args);
 	
 	if (!(chan = prepare_command(&server, to, NEED_OP)))
@@ -777,7 +777,7 @@ BUILT_IN_COMMAND(masskickban)
 
 	if (!spec && !(spec = next_arg(args, &args)))
 		return;
-	if (args && !strncmp(args, "-all", 4))
+	if (args && strbegins(args, "-all"))
 	{
 		all = 1;
 		next_arg(args, &args);
