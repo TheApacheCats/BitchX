@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Write correct length to terminal for unflash sequences. (caf)
+
 * Update source file dependencies in Makefile.in. (caf)
 
 * Remove unused opendir.c. (caf)
