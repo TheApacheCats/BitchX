@@ -393,7 +393,7 @@ static long divide_rounded(double a, double b)
 	return b != 0.0 ? (long)round(a / b) : 0;
 }
 
-int handle_server_stats(char *from, char **ArgList, int comm)
+static int handle_server_stats(char *from, char **ArgList, int comm)
 {
 static	int 	norm = 0, 
 		invisible = 0, 
@@ -407,6 +407,8 @@ static	int 	norm = 0,
 		services_flag = 0;
 	int	ret = 1;
 	char	*line;
+
+	/* ArgList[0] has been verified non-NULL by the caller. */
 
 	line = LOCAL_COPY(ArgList[0]);
 	switch(comm)
@@ -425,17 +427,13 @@ static	int 	norm = 0,
 			}
 			break;
 		case 252: /* number of ircops */
-			if (ArgList[0])
-				ircops = my_atol(ArgList[0]);
+			ircops = my_atol(ArgList[0]);
 			break;
 		case 253: /* number of unknown */
-			if (ArgList[0])
-				unknown = my_atol(ArgList[0]);
+			unknown = my_atol(ArgList[0]);
 			break;
-			
 		case 254: /* number of channels */
-			if (ArgList[0])
-				chans = my_atol(ArgList[0]);
+			chans = my_atol(ArgList[0]);
 			break;
 		case 255: /* number of local print it out */
 			BreakArgs(line, NULL, ArgList, 1);
