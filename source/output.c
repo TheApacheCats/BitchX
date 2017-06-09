@@ -44,12 +44,6 @@ extern	LastMsg	last_servermsg[];
 
 char three_stars[4] = "***";
 
-/* Write a string to the current target */
-static size_t writestr(const char *s)
-{
-	return fwrite(s, strlen(s), 1, current_ftarget);
-}
-
 /* unflash: sends a ^[c to the screen */
 /* Must be defined to be useful, cause some vt100s really *do* reset when
    sent this command. >;-) */
@@ -59,17 +53,17 @@ static size_t writestr(const char *s)
 
 void charset_ibmpc(void)
 {
-	writestr("\033(U");	/* switch to IBM code page 437 */
+	fputs("\033(U", current_ftarget);	/* switch to IBM code page 437 */
 }
 
 void charset_lat1(void)
 {
-	writestr("\033(B");	/* switch to Latin-1 (ISO 8859-1) */
+	fputs("\033(B", current_ftarget);	/* switch to Latin-1 (ISO 8859-1) */
 }
 
 void charset_cst(void)
 {
-	writestr("\033(K"); /* switch to user-defined */
+	fputs("\033(K", current_ftarget); /* switch to user-defined */
 }
 
 /* currently not used. */
@@ -81,9 +75,9 @@ void unflash (void)
 #if !defined(WINNT) && !defined(__EMX__)
 
 #if defined(HARD_UNFLASH) && !defined(CHARSET_CUSTOM)
-	writestr("\033c");		/* hard reset */
+	fputs("\033c", current_ftarget);		/* hard reset */
 #else
-	writestr("\033)0");		/* soft reset */
+	fputs("\033)0", current_ftarget);		/* soft reset */
 #endif
 
 #if defined(LATIN1)
