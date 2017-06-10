@@ -720,23 +720,18 @@ int t = 0;
 				chan->maxnicks = chan->totalnicks;
 				chan->maxnickstime = this_time;
 			}
-			if (!splitter)
+			if (!splitter && chan->have_op && is_other_flood(chan, nick, JOIN_FLOOD, &t) &&
+				get_cset_int_var(chan->csets, KICK_ON_JOINFLOOD_CSET) && !nick->sent_kick++)
 			{
-				if (chan->have_op && is_other_flood(chan, nick, JOIN_FLOOD, &t))
-				{
-					if (get_cset_int_var(chan->csets, JOINFLOOD_CSET) && get_cset_int_var(chan->csets, KICK_ON_JOINFLOOD_CSET) && !nick->kickcount++)
-					{
-						char *t1, *host, *banstr;
-						t1 = LOCAL_COPY(nick->host);
-						host = strchr(t1, '@');
-						*host++ = 0;
-						banstr = ban_it(nick->nick, t1, host, nick->ip);
-						send_to_server("MODE %s -o+b %s %s", chan->channel, nick->nick, banstr); 
-						send_to_server("KICK %s %s :\002Join flood\002 (%d joins in %dsecs of %dsecs)", chan->channel, nick->nick, get_cset_int_var(chan->csets, KICK_ON_JOINFLOOD_CSET)/*chan->set_kick_on_joinflood*/, t, get_cset_int_var(chan->csets, JOINFLOOD_TIME_CSET));
-						if (get_int_var(AUTO_UNBAN_VAR))
-							add_timer(0, empty_string, get_int_var(AUTO_UNBAN_VAR) * 1000, 1, timer_unban, m_sprintf("%d %s %s", from_server, chan->channel, banstr), NULL, current_window->refnum, "join-flood");
-					}
-				} 
+				char *t1, *host, *banstr;
+				t1 = LOCAL_COPY(nick->host);
+				host = strchr(t1, '@');
+				*host++ = 0;
+				banstr = ban_it(nick->nick, t1, host, nick->ip);
+				send_to_server("MODE %s -o+b %s %s", chan->channel, nick->nick, banstr); 
+				send_to_server("KICK %s %s :\002Join flood\002 (%d joins in %dsecs of %dsecs)", chan->channel, nick->nick, get_cset_int_var(chan->csets, KICK_ON_JOINFLOOD_CSET), t, get_cset_int_var(chan->csets, JOINFLOOD_TIME_CSET));
+				if (get_int_var(AUTO_UNBAN_VAR))
+					add_timer(0, empty_string, get_int_var(AUTO_UNBAN_VAR) * 1000, 1, timer_unban, m_sprintf("%d %s %s", from_server, chan->channel, banstr), NULL, current_window->refnum, "join-flood");
 			}
 			break;
 		}
