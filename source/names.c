@@ -372,7 +372,7 @@ ChannelList *BX_add_to_channel(char *channel, char *nick, int server, int oper, 
 					new->bancount = new->nickcount = 
 					new->dopcount = new->kickcount = 
 					new->floodcount = new->ip_count = 
-					new->sent_voice = 0;
+					new->sent_voice = new->sent_kick = 0;
 					new->flags = 0;
 					new->serverhops = server_hops;
 					new->next = NULL;
@@ -828,7 +828,7 @@ int in_join = 0;
 	else if (!add && add != channel->have_op && !in_join)
  	{
 		for(tmp = next_nicklist(channel, NULL); tmp; tmp = next_nicklist(channel, tmp))
-			tmp->sent_reop = tmp->sent_deop = tmp->sent_voice = 0;
+			tmp->sent_reop = tmp->sent_deop = tmp->sent_voice = tmp->sent_kick = 0;
 	}
 	return have_op;
 }

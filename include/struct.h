@@ -482,12 +482,15 @@ typedef struct nick_stru
 	unsigned stat_pub;		/* Total publics sent by user */
 	unsigned stat_topics;		/* Total topics set by user */
 
+	/* Tracking state changes for this client sent by us, so
+	 * we don't send them unnecessarily. */
 	unsigned sent_reop;
 	time_t sent_reop_time;
 	unsigned sent_voice;
 	time_t sent_voice_time;
 	unsigned sent_deop;
 	time_t sent_deop_time;
+	unsigned sent_kick;
 
 	unsigned need_userhost;		/* on join we send a userhost for this nick */	
 	unsigned check_clone;		/* added for builtin clone detect */

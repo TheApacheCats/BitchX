@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Add sent_nick flag to NickList struct, bump MODULE_VERSION. (caf)
+
 * Write correct length to terminal for unflash sequences. (caf)
 
 * Update source file dependencies in Makefile.in. (caf)
