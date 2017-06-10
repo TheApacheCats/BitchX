@@ -799,7 +799,7 @@ int t = 0;
 			{
 				if (get_cset_int_var(chan->csets, DEOP_ON_DEOPFLOOD_CSET) < get_cset_int_var(chan->csets, KICK_ON_DEOPFLOOD_CSET))
 					send_to_server("MODE %s -o %s", chan->channel, nick->nick);
-				else if (!nick->kickcount++)
+				else if (!nick->sent_kick++)
 					send_to_server("KICK %s %s :\002De-op flood\002 (%d de-ops in %dsecs of %dsecs)", chan->channel, nick->nick, get_cset_int_var(chan->csets, KICK_ON_DEOPFLOOD_CSET), t, get_cset_int_var(chan->csets, DEOPFLOOD_TIME_CSET)); 
 			} 
 			break;
