@@ -1649,30 +1649,24 @@ static void strip_modes (char *from, char *channel, char *line)
 
 static	void p_kick(char *from, char **ArgList)
 {
-	char	*channel,
-		*who,
-		*comment;
-	char	*chankey = NULL;
+	char *channel = ArgList[0];
+	char *target = ArgList[1];
+	char *comment = ArgList[2] ? ArgList[2] : "(no comment)";
+	char *chankey = NULL;
 	ChannelList *chan = NULL;
-	NickList *tmpnick = NULL;
+	NickList *from_nick = NULL;
 	int	t = 0;
 	
-
-	
-	channel = ArgList[0];
-	who = ArgList[1];
-	comment = ArgList[2] ? ArgList[2] : "(no comment)";
-
 	if ((chan = lookup_channel(channel, from_server, CHAN_NOUNLINK)))
-		tmpnick = find_nicklist_in_channellist(from, chan, 0);
+		from_nick = find_nicklist_in_channellist(from, chan, 0);
 	set_display_target(channel, LOG_CRAP);
-	if (channel && who && chan)
+	if (channel && target && chan)
 	{
-		update_stats(KICKLIST, tmpnick, chan, 0);
+		update_stats(KICKLIST, from_nick, chan, 0);
 #ifdef WANT_TCL
-		check_tcl_kick(from, FromUserHost, from, channel, who, comment);
+		check_tcl_kick(from, FromUserHost, from, channel, target, comment);
 #endif
-		if (!my_stricmp(who, get_server_nickname(from_server)))
+		if (!my_stricmp(target, get_server_nickname(from_server)))
 		{
 
 			Window *window = get_window_by_refnum(chan->refnum);/*chan->window;*/
@@ -1695,7 +1689,6 @@ static	void p_kick(char *from, char **ArgList)
 						if ((ptr = strchr(username, '@')))
 						{
 							*ptr = 0;
-							ptr = username;
 							ptr = clear_server_flags(username);
 						} else
 							ptr = username;
@@ -1713,32 +1706,32 @@ static	void p_kick(char *from, char **ArgList)
 						send_to_server("NICK %s", random_str(3,9));
 					break;
 			}
-			do_logchannel(LOG_KICK_USER, chan, "%s %s, %s %s %s", from, FromUserHost, who, channel, comment);
+			do_logchannel(LOG_KICK_USER, chan, "%s %s, %s %s %s", from, FromUserHost, target, channel, comment);
 			if (rejoin)
 				send_to_server("JOIN %s%s%s", channel, chankey? space : empty_string, chankey ? chankey: empty_string);
 			new_free(&chankey);
-			if (do_hook(KICK_LIST, "%s %s %s %s", who, from, channel, comment?comment:empty_string))
-				put_it("%s",convert_output_format(fget_string_var(FORMAT_KICK_USER_FSET),"%s %s %s %s %s",update_clock(GET_TIME),from, channel, who, comment));
+			if (do_hook(KICK_LIST, "%s %s %s %s", target, from, channel, comment?comment:empty_string))
+				put_it("%s",convert_output_format(fget_string_var(FORMAT_KICK_USER_FSET),"%s %s %s %s %s",update_clock(GET_TIME),from, channel, target, comment));
 			remove_channel(channel);
 			update_all_status(window ? window : current_window, NULL, 0);
 			update_input(UPDATE_ALL);
-			logmsg(LOG_KICK_USER, from, 0, "%s %s %s %s", FromUserHost, who, channel, comment);
+			logmsg(LOG_KICK_USER, from, 0, "%s %s %s %s", FromUserHost, target, channel, comment);
 			if (rejoin)
 				add_to_join_list(channel, from_server, window ? window->refnum : 0);
 		}
 		else
 		{
 			NickList *f_nick = NULL;
-			int itsme = !my_stricmp(get_server_nickname(from_server), from) ? 1: 0;
+			int itsme = !my_stricmp(get_server_nickname(from_server), from);
 
 			if ((check_ignore(from, FromUserHost, channel, IGNORE_KICKS, NULL) != IGNORED) && 
-			     do_hook(KICK_LIST, "%s %s %s %s", who, from, channel, comment))
-				put_it("%s",convert_output_format(fget_string_var(FORMAT_KICK_FSET),"%s %s %s %s %s",update_clock(GET_TIME),from, channel, who, comment));
+			     do_hook(KICK_LIST, "%s %s %s %s", target, from, channel, comment))
+				put_it("%s",convert_output_format(fget_string_var(FORMAT_KICK_FSET),"%s %s %s %s %s",update_clock(GET_TIME),from, channel, target, comment));
 			/* if it's me that's doing the kick don't flood check */
 			if (!itsme)
 			{
-				f_nick = find_nicklist_in_channellist(who, chan, 0);
-				if (chan->have_op && tmpnick && is_other_flood(chan, tmpnick, KICK_FLOOD, &t))
+				f_nick = find_nicklist_in_channellist(target, chan, 0);
+				if (chan->have_op && from_nick && is_other_flood(chan, from_nick, KICK_FLOOD, &t))
 				{
 					if (get_cset_int_var(chan->csets, KICK_ON_KICKFLOOD_CSET) > get_cset_int_var(chan->csets, DEOP_ON_KICKFLOOD_CSET))
 						send_to_server("MODE %s -o %s", chan->channel, from);
@@ -1746,12 +1739,12 @@ static	void p_kick(char *from, char **ArgList)
 						send_to_server("KICK %s %s :\002Mass kick detected - (%d kicks in %dsec%s)\002", chan->channel, from, get_cset_int_var(chan->csets, KICK_ON_KICKFLOOD_CSET), t, plural(t));
 				} 
 #ifdef WANT_USERLIST
-				check_prot(from, who, chan, NULL, f_nick);
+				check_prot(from, target, chan, NULL, f_nick);
 #endif
 			}
-			remove_from_channel(channel, who, from_server, 0, NULL);
-			logmsg(LOG_KICK, from, 0, "%s %s %s %s", FromUserHost, who, channel, comment);
-			do_logchannel(LOG_KICK, chan, "%s %s %s %s %s", from, FromUserHost, who, channel, comment);
+			remove_from_channel(channel, target, from_server, 0, NULL);
+			logmsg(LOG_KICK, from, 0, "%s %s %s %s", FromUserHost, target, channel, comment);
+			do_logchannel(LOG_KICK, chan, "%s %s %s %s %s", from, FromUserHost, target, channel, comment);
 		}
 
 	}
