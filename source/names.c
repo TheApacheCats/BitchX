@@ -1315,14 +1315,13 @@ void BX_remove_from_channel(char *channel, char *nick, int server, int netsplit,
 	}
 }
 
-void handle_nickflood(char *old_nick, char *new_nick, register NickList *nick, register ChannelList *chan, int flood_time)
+static void handle_nickflood(char *old_nick, char *new_nick, register NickList *nick, register ChannelList *chan, int flood_time)
 {
-time_t floodtime = now - nick->bantime;
-	if (isme(new_nick))
-		return;
+	time_t floodtime = now - nick->bantime;
+
 	if ((!nick->bancount) || (nick->bancount && (floodtime > 3)))
 	{
-		if (!nick->kickcount++ && ((nick->userlist && (nick->userlist->flags & ADD_FLOOD)) || !nick->userlist))
+		if (!nick->sent_kick++)
 			send_to_server("KICK %s %s :\002Niq flood (%d nicks in %dsecs of %dsecs)\002", chan->channel, new_nick, get_cset_int_var(chan->csets, KICK_ON_NICKFLOOD_CSET), flood_time, get_cset_int_var(chan->csets, NICKFLOOD_TIME_CSET));
 	}
 }
