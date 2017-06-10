@@ -1735,7 +1735,7 @@ static	void p_kick(char *from, char **ArgList)
 				{
 					if (get_cset_int_var(chan->csets, KICK_ON_KICKFLOOD_CSET) > get_cset_int_var(chan->csets, DEOP_ON_KICKFLOOD_CSET))
 						send_to_server("MODE %s -o %s", chan->channel, from);
-					else if (!f_nick->kickcount++)
+					else if (!from_nick->sent_kick++)
 						send_to_server("KICK %s %s :\002Mass kick detected - (%d kicks in %dsec%s)\002", chan->channel, from, get_cset_int_var(chan->csets, KICK_ON_KICKFLOOD_CSET), t, plural(t));
 				} 
 #ifdef WANT_USERLIST
