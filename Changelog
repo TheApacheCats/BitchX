@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Handle SED-encrypted CTCP replies properly. (caf)
+
 * Add sent_nick flag to NickList struct, bump MODULE_VERSION. (caf)
 
 * Write correct length to terminal for unflash sequences. (caf)

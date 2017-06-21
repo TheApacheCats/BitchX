@@ -61,35 +61,38 @@ CVS_REVISION(ctcp_c)
  * that will be inserted into the oringal message at the point of the ctcp.
  * if null is returned, nothing is added to the original message
  */
+#define CTCP_HANDLER(x) \
+	static char * x (CtcpEntry *ctcp, char *from, char *to, char *cmd)
 
 /* forward declarations for the built in CTCP functions */
-static	char	*do_sed 	(CtcpEntry *, char *, char *, char *);
-static	char	*do_version 	(CtcpEntry *, char *, char *, char *);
-static	char	*do_clientinfo 	(CtcpEntry *, char *, char *, char *);
-static	char	*do_ping 	(CtcpEntry *, char *, char *, char *);
-static	char	*do_echo 	(CtcpEntry *, char *, char *, char *);
-static	char	*do_userinfo 	(CtcpEntry *, char *, char *, char *);
-static	char	*do_finger 	(CtcpEntry *, char *, char *, char *);
-static	char	*do_time 	(CtcpEntry *, char *, char *, char *);
-static	char	*do_atmosphere 	(CtcpEntry *, char *, char *, char *);
-static	char	*do_dcc 	(CtcpEntry *, char *, char *, char *);
-static	char	*do_utc 	(CtcpEntry *, char *, char *, char *);
-static	char	*do_dcc_reply 	(CtcpEntry *, char *, char *, char *);
-static	char	*do_ping_reply 	(CtcpEntry *, char *, char *, char *);
-static	char	*do_bdcc 	(CtcpEntry *, char *, char *, char *);
-static	char	*do_cinvite 	(CtcpEntry *, char *, char *, char *);
-static	char	*do_whoami 	(CtcpEntry *, char *, char *, char *);
-static	char	*do_ctcpops 	(CtcpEntry *, char *, char *, char *);
-static	char	*do_ctcpunban 	(CtcpEntry *, char *, char *, char *);
-static	char	*do_botlink 	(CtcpEntry *, char *, char *, char *);
-static	char	*do_ctcp_uptime	(CtcpEntry *, char *, char *, char *);
-static	char	*do_ctcpident	(CtcpEntry *, char *, char *, char *);
+CTCP_HANDLER(do_sed);
+CTCP_HANDLER(do_sed_reply);
+CTCP_HANDLER(do_version);
+CTCP_HANDLER(do_clientinfo);
+CTCP_HANDLER(do_ping);
+CTCP_HANDLER(do_echo);
+CTCP_HANDLER(do_userinfo);
+CTCP_HANDLER(do_finger);
+CTCP_HANDLER(do_time);
+CTCP_HANDLER(do_atmosphere);
+CTCP_HANDLER(do_dcc);
+CTCP_HANDLER(do_utc);
+CTCP_HANDLER(do_dcc_reply);
+CTCP_HANDLER(do_ping_reply);
+CTCP_HANDLER(do_bdcc);
+CTCP_HANDLER(do_cinvite);
+CTCP_HANDLER(do_whoami);
+CTCP_HANDLER(do_ctcpops);
+CTCP_HANDLER(do_ctcpunban);
+CTCP_HANDLER(do_botlink);
+CTCP_HANDLER(do_ctcp_uptime);
+CTCP_HANDLER(do_ctcpident);
 
 static CtcpEntry ctcp_cmd[] =
 {
 	{ "SED",	CTCP_SED, 	CTCP_INLINE | CTCP_NOLIMIT,
 		"contains simple_encrypted_data",
-		do_sed, 	do_sed },
+		do_sed, 	do_sed_reply },
 	{ "UTC",	CTCP_UTC, 	CTCP_INLINE | CTCP_NOLIMIT,
 		"substitutes the local timezone",
 		do_utc, 	do_utc },
@@ -190,9 +193,6 @@ int     sed = 0;
  * CTCP REPLY 
  */
 int	in_ctcp_flag = 0;
-
-#define CTCP_HANDLER(x) \
-	static char * x (CtcpEntry *ctcp, char *from, char *to, char *cmd)
 
 /**************************** CTCP PARSERS ****************************/
 
@@ -606,7 +606,23 @@ int server;
 	return NULL;
 }
 
+static char *try_decrypt(char *from, char *to, char *msg)
+{
+	char *key;
+	char *crypt_who;
 
+	if (*from == '=' || !my_stricmp(to, get_server_nickname(from_server)))
+		crypt_who = from;
+	else
+		crypt_who = to;
+
+	key = is_crypted(crypt_who);
+
+	if (!key)
+		return NULL;
+
+	return decrypt_msg(msg, key);
+}
 
 /*
  * do_sed: Performs the Simple Encrypted Data trasfer for ctcp.  Returns in a
@@ -615,23 +631,12 @@ int server;
  */
 CTCP_HANDLER(do_sed)
 {
-	char	*key = NULL,
-		*crypt_who;
-	char	*ret = NULL, *ret2 = NULL;
+	char *ret;
+	char *ret2;
 
-	if (*from == '=')
-		crypt_who = from;
-	if (my_stricmp(to, get_server_nickname(from_server)))
-		crypt_who = to;
-	else
-		crypt_who = from;
+	ret = try_decrypt(from, to, cmd);
 
-	if ((key = is_crypted(crypt_who)))
-		ret = decrypt_msg(cmd, key);
-
-	if (!key || !ret)
-		malloc_strcpy(&ret2, "[ENCRYPTED MESSAGE]");
-	else
+	if (ret)
 	{
 		/* 
 		 * There might be a CTCP message in there,
@@ -639,6 +644,37 @@ CTCP_HANDLER(do_sed)
 		 */
 		ret2 = m_strdup(do_ctcp(from, to, ret));
 		sed = 1;
+	}
+	else
+	{
+		ret2 = m_strdup("[ENCRYPTED MESSAGE]");
+	}
+
+	new_free(&ret);
+	return ret2;
+}
+
+/* do_sed_reply: Same as do_sed, but CTCPs within the SED are handled as
+ * CTCP replies. */
+CTCP_HANDLER(do_sed_reply)
+{
+	char *ret;
+	char *ret2;
+
+	ret = try_decrypt(from, to, cmd);
+
+	if (ret)
+	{
+		/* 
+		 * There might be a CTCP reply in there,
+		 * so we see if we can find it.
+		 */
+		ret2 = m_strdup(do_notice_ctcp(from, to, ret));
+		sed = 1;
+	}
+	else
+	{
+		ret2 = m_strdup("[ENCRYPTED MESSAGE]");
 	}
 
 	new_free(&ret);
