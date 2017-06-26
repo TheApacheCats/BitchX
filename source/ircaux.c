@@ -1321,14 +1321,11 @@ int BX_end_strcmp (const char *one, const char *two, int bytes)
 /* beep_em: Not hard to figure this one out */
 void BX_beep_em (int beeps)
 {
-	int	cnt,
-		i;
+	int i;
 
-	for (cnt = beeps, i = 0; i < cnt; i++)
+	for (i = 0; i < beeps; i++)
 		term_beep();
 }
-
-
 
 FILE *open_compression (char *executable, char *filename, int hook)
 {
