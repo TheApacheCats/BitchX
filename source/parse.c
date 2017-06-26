@@ -477,32 +477,30 @@ static	void p_wallops(char *from, char **ArgList)
 	}
 }
 
-static	void p_privmsg(char *from, char **Args)
+static void p_privmsg(char *from, char **Args)
 {
-	int	level,
-		list_type,
-		flood_type,
-		log_type,
-		ar_true = 0,
-		no_flood = 1,
-		do_beep = 0;
-
-	unsigned char	ignore_type;
-
-	char	*ptr = NULL,
-		*to,
-		*high;
-
+	int level;
+	int list_type;
+	int flood_type;
+	int log_type;
+	int ar_true = 0;
+	int flooding = 0;
+	long ignore_type;
+	char *ptr;
+	char *to;
+	char *high;
 	ChannelList *channel = NULL;
 	NickList *tmpnick = NULL;
 	
 	if (!from)
 		return;
+
 	PasteArgs(Args, 1);
 	to = Args[0];
 	ptr = Args[1];
 	if (!to || !ptr)
 		{ fake(); return; }
+
 	doing_privmsg = 1;
 
 	ptr = do_ctcp(from, to, ptr);
@@ -570,32 +568,26 @@ static	void p_privmsg(char *from, char **Args)
 	}
 
 #ifdef WANT_TCL
+	switch (list_type)
 	{
-		int x = 0;
-		char *cmd = NULL;
-		switch(list_type)
-		{
-			case MSG_LIST:
-			case MSG_GROUP_LIST:
+		case MSG_LIST:
+		case MSG_GROUP_LIST:
 			{
-				char *ctcp_ptr;
-				ctcp_ptr = LOCAL_COPY(ptr);
-				cmd = next_arg(ctcp_ptr, &ctcp_ptr);
-				x = check_tcl_msg(cmd, from, FromUserHost, from, ctcp_ptr);
-				if (!x)
+				char *ctcp_ptr = LOCAL_COPY(ptr);
+				char *cmd = next_arg(ctcp_ptr, &ctcp_ptr);
+				if (!check_tcl_msg(cmd, from, FromUserHost, from, ctcp_ptr))
 					check_tcl_msgm(cmd, from, FromUserHost, from, ctcp_ptr);
 				break;
 			}
-			case PUBLIC_MSG_LIST:
-			case PUBLIC_LIST:
-			case PUBLIC_OTHER_LIST:
+
+		case PUBLIC_MSG_LIST:
+		case PUBLIC_LIST:
+		case PUBLIC_OTHER_LIST:
 			{
-				x = check_tcl_pub(from, FromUserHost, to, ptr);
-				if (!x)
+				if (!check_tcl_pub(from, FromUserHost, to, ptr))
 					check_tcl_pubm(from, FromUserHost, to, ptr);
 				break;
 			}
-		}
 	}
 #endif
 	update_stats(PUBLICLIST, tmpnick, channel, 0);
@@ -606,127 +598,112 @@ static	void p_privmsg(char *from, char **Args)
 		int blah = 0;
 		if (is_other_flood(channel, tmpnick, PUBLIC_FLOOD, &blah))
 		{
-			no_flood = 0;
+			flooding = 1;
 			flood_prot(tmpnick->nick, FromUserHost, flood_type, get_cset_int_var(channel->csets, PUBFLOOD_IGNORE_TIME_CSET), channel->channel);
 		}
 	}
 	else
-		no_flood = check_flooding(from, flood_type, ptr, NULL);
+		flooding = !check_flooding(from, flood_type, ptr, NULL);
 
+	if (list_type == PUBLIC_LIST || list_type == PUBLIC_OTHER_LIST || list_type == PUBLIC_MSG_LIST)
 	{
-		int added_to_tab = 0;
-		if (list_type == PUBLIC_LIST || list_type == PUBLIC_OTHER_LIST || list_type == PUBLIC_MSG_LIST)
+		if (check_auto_reply(ptr))
 		{
-			if (check_auto_reply(ptr))
-			{
-				addtabkey(from, "msg", 1);
-				ar_true = 1;
-				added_to_tab = 1;
-			}
+			addtabkey(from, "msg", 1);
+			ar_true = 1;
 		}
-		switch (list_type)
-		{
-		case PUBLIC_MSG_LIST:
-		{
-			if (!no_flood)
-				break;
-			if (do_hook(list_type, "%s %s %s", from, to, ptr))
-			{
-				logmsg(LOG_PUBLIC, from, 0, "%s %s", to, ptr);
-				put_it("%s",convert_output_format(fget_string_var(ar_true?FORMAT_PUBLIC_MSG_AR_FSET:FORMAT_PUBLIC_MSG_FSET), "%s %s %s %s %s", update_clock(GET_TIME), from, FromUserHost, to, ptr));
-				do_beep = 1;
-			}
-			break;
-		}
-		case MSG_GROUP_LIST:
-		{
-			if (!no_flood)
-				break;
-			if (do_hook(list_type, "%s %s %s", from, to, ptr))
-			{
-				logmsg(LOG_PUBLIC, from, 0,"%s %s", FromUserHost, ptr);
-				put_it("%s", convert_output_format(fget_string_var(FORMAT_MSG_GROUP_FSET), "%s %s %s %s", update_clock(GET_TIME), from, to, ptr));
-				do_beep = 1;
-			}
-			break;
-		}
-		case MSG_LIST:
-		{
-			if (!no_flood)
-				break;
-			set_server_recv_nick(from_server, from);
-#ifdef WANT_CDCC
-			if ((msgcdcc(from, to, ptr)) == NULL)
-				break;
-#endif
-			if (strbegins(ptr, "PASS") && change_pass(from, ptr))
-				break;
-			if (forwardnick)
-				send_to_server("NOTICE %s :*%s* %s", forwardnick, from, ptr);
-
-			if (do_hook(list_type, "%s %s", from, ptr))
-			{
-				if (get_server_away(from_server))
-				{
-					do_beep = 0;
-					beep_em(get_int_var(BEEP_WHEN_AWAY_VAR));
-					set_int_var(MSGCOUNT_VAR, get_int_var(MSGCOUNT_VAR)+1);
-				}
-				else
-					do_beep = 1;
-				put_it("%s", convert_output_format(fget_string_var(FORMAT_MSG_FSET), "%s %s %s %s", update_clock(GET_TIME), from, FromUserHost, ptr));
-				if (!added_to_tab)
-					addtabkey(from, "msg", 0);
-				logmsg(LOG_MSG, from,  0,"%s %s", FromUserHost, ptr);
-			}
-			add_last_type(&last_msg[0], MAX_LAST_MSG, from, FromUserHost, to, ptr);
-			if (get_server_away(from_server) && get_int_var(SEND_AWAY_MSG_VAR))
-			{
-				if (!check_last_type(&last_msg[0], MAX_LAST_MSG, from, FromUserHost))
-					my_send_to_server(from_server, "NOTICE %s :%s", from, stripansicodes(convert_output_format(fget_string_var(FORMAT_SEND_AWAY_FSET), "%l %l %s", now, get_server_awaytime(from_server), get_int_var(MSGLOG_VAR)?"On":"Off")));
-			}
-			break;
-		}
-		case PUBLIC_LIST:
-		{
-			if (!no_flood)
-				break;
-               		annoy_kicks(list_type, to, from, ptr, tmpnick);
-			if (ar_true)
-				list_type = PUBLIC_AR_LIST;
-			if (do_hook(list_type, "%s %s %s", from, to, ptr))
-			{
-				logmsg(LOG_PUBLIC, from, 0,"%s %s", to, ptr);
-				do_logchannel(LOG_PUBLIC, channel, "%s", convert_output_format(fget_string_var((list_type == PUBLIC_AR_LIST)? FORMAT_PUBLIC_AR_FSET:FORMAT_PUBLIC_FSET), "%s %s %s %s", update_clock(GET_TIME), from, to, ptr));
-				put_it("%s", convert_output_format(fget_string_var((list_type == PUBLIC_AR_LIST)? FORMAT_PUBLIC_AR_FSET:FORMAT_PUBLIC_FSET), "%s %s %s %s", update_clock(GET_TIME), from, to, ptr));
-				do_beep = 1;
-			}
-			break;
-		}
-		case PUBLIC_OTHER_LIST:
-		{
-			if (!no_flood)
-				break;
-                	annoy_kicks(list_type, to, from, ptr, tmpnick);
-			if (ar_true)
-				list_type = PUBLIC_OTHER_AR_LIST;
-			if (do_hook(list_type, "%s %s %s", from, to, ptr))
-			{
-				logmsg(LOG_PUBLIC, from, 0,"%s %s", to, ptr);
-				do_logchannel(LOG_PUBLIC, channel, "%s", convert_output_format(fget_string_var(list_type==PUBLIC_OTHER_AR_LIST?FORMAT_PUBLIC_OTHER_AR_FSET:FORMAT_PUBLIC_OTHER_FSET), "%s %s %s %s", update_clock(GET_TIME), from, to, ptr));
-				put_it("%s", convert_output_format(fget_string_var(list_type==PUBLIC_OTHER_AR_LIST?FORMAT_PUBLIC_OTHER_AR_FSET:FORMAT_PUBLIC_OTHER_FSET), "%s %s %s %s", update_clock(GET_TIME), from, to, ptr));
-				do_beep = 1;
-			}
-			break;
-		} /* case */
-		} /* switch */
 	}
 
-	if ((beep_on_level & log_type) && do_beep)
-		beep_em(1);
+	if (!flooding)
+	{
+		int do_beep = 0;
 
-	if (no_flood)
+		switch (list_type)
+		{
+			case PUBLIC_MSG_LIST:
+				if (do_hook(list_type, "%s %s %s", from, to, ptr))
+				{
+					logmsg(LOG_PUBLIC, from, 0, "%s %s", to, ptr);
+					put_it("%s",convert_output_format(fget_string_var(ar_true?FORMAT_PUBLIC_MSG_AR_FSET:FORMAT_PUBLIC_MSG_FSET), "%s %s %s %s %s", update_clock(GET_TIME), from, FromUserHost, to, ptr));
+					do_beep = 1;
+				}
+				break;
+
+			case MSG_GROUP_LIST:
+				if (do_hook(list_type, "%s %s %s", from, to, ptr))
+				{
+					logmsg(LOG_PUBLIC, from, 0,"%s %s", FromUserHost, ptr);
+					put_it("%s", convert_output_format(fget_string_var(FORMAT_MSG_GROUP_FSET), "%s %s %s %s", update_clock(GET_TIME), from, to, ptr));
+					do_beep = 1;
+				}
+				break;
+
+			case MSG_LIST:
+				set_server_recv_nick(from_server, from);
+#ifdef WANT_CDCC
+				if ((msgcdcc(from, to, ptr)) == NULL)
+					break;
+#endif
+				if (strbegins(ptr, "PASS") && change_pass(from, ptr))
+					break;
+				if (forwardnick)
+					send_to_server("NOTICE %s :*%s* %s", forwardnick, from, ptr);
+
+				if (do_hook(list_type, "%s %s", from, ptr))
+				{
+					if (get_server_away(from_server))
+					{
+						do_beep = 0;
+						beep_em(get_int_var(BEEP_WHEN_AWAY_VAR));
+						set_int_var(MSGCOUNT_VAR, get_int_var(MSGCOUNT_VAR)+1);
+					}
+					else
+						do_beep = 1;
+					put_it("%s", convert_output_format(fget_string_var(FORMAT_MSG_FSET), "%s %s %s %s", update_clock(GET_TIME), from, FromUserHost, ptr));
+					addtabkey(from, "msg", 0);
+					logmsg(LOG_MSG, from,  0,"%s %s", FromUserHost, ptr);
+				}
+				add_last_type(&last_msg[0], MAX_LAST_MSG, from, FromUserHost, to, ptr);
+				if (get_server_away(from_server) && get_int_var(SEND_AWAY_MSG_VAR))
+				{
+					if (!check_last_type(&last_msg[0], MAX_LAST_MSG, from, FromUserHost))
+						my_send_to_server(from_server, "NOTICE %s :%s", from, stripansicodes(convert_output_format(fget_string_var(FORMAT_SEND_AWAY_FSET), "%l %l %s", now, get_server_awaytime(from_server), get_int_var(MSGLOG_VAR)?"On":"Off")));
+				}
+				break;
+
+			case PUBLIC_LIST:
+				annoy_kicks(list_type, to, from, ptr, tmpnick);
+				if (ar_true)
+					list_type = PUBLIC_AR_LIST;
+				if (do_hook(list_type, "%s %s %s", from, to, ptr))
+				{
+					logmsg(LOG_PUBLIC, from, 0,"%s %s", to, ptr);
+					do_logchannel(LOG_PUBLIC, channel, "%s", convert_output_format(fget_string_var((list_type == PUBLIC_AR_LIST)? FORMAT_PUBLIC_AR_FSET:FORMAT_PUBLIC_FSET), "%s %s %s %s", update_clock(GET_TIME), from, to, ptr));
+					put_it("%s", convert_output_format(fget_string_var((list_type == PUBLIC_AR_LIST)? FORMAT_PUBLIC_AR_FSET:FORMAT_PUBLIC_FSET), "%s %s %s %s", update_clock(GET_TIME), from, to, ptr));
+					do_beep = 1;
+				}
+				break;
+
+			case PUBLIC_OTHER_LIST:
+				annoy_kicks(list_type, to, from, ptr, tmpnick);
+				if (ar_true)
+					list_type = PUBLIC_OTHER_AR_LIST;
+				if (do_hook(list_type, "%s %s %s", from, to, ptr))
+				{
+					logmsg(LOG_PUBLIC, from, 0,"%s %s", to, ptr);
+					do_logchannel(LOG_PUBLIC, channel, "%s", convert_output_format(fget_string_var(list_type==PUBLIC_OTHER_AR_LIST?FORMAT_PUBLIC_OTHER_AR_FSET:FORMAT_PUBLIC_OTHER_FSET), "%s %s %s %s", update_clock(GET_TIME), from, to, ptr));
+					put_it("%s", convert_output_format(fget_string_var(list_type==PUBLIC_OTHER_AR_LIST?FORMAT_PUBLIC_OTHER_AR_FSET:FORMAT_PUBLIC_OTHER_FSET), "%s %s %s %s", update_clock(GET_TIME), from, to, ptr));
+					do_beep = 1;
+				}
+				break;
+		} /* switch */
+
+		if ((beep_on_level & log_type) && do_beep)
+			beep_em(1);
+
 		grab_http(from, to, ptr);
+	}
+
 	set_lastlog_msg_level(level);
 	reset_display_target();
 	doing_privmsg = 0;
