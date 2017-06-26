@@ -55,7 +55,6 @@
 extern CtcpEntryDll *dll_ctcp;
 
 
-extern		int	sed;
 extern		int	in_ctcp_flag;
 
 #define CTCP_DELIM_CHAR '\001'

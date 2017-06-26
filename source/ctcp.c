@@ -184,9 +184,6 @@ static char	*ctcp_type[] =
 	"NOTICE"
 };
 
-/* This is set to one if we parsed an SED */
-int     sed = 0;
-
 /*
  * in_ctcp_flag is set to true when IRCII is handling a CTCP request.  This
  * is used by the ctcp() sending function to force NOTICEs to be used in any
@@ -632,7 +629,6 @@ static char *try_decrypt(char *from, char *to, char *msg)
 CTCP_HANDLER(do_sed)
 {
 	char *ret;
-	char *ret2;
 
 	ret = try_decrypt(from, to, cmd);
 
@@ -642,16 +638,17 @@ CTCP_HANDLER(do_sed)
 		 * There might be a CTCP message in there,
 		 * so we see if we can find it.
 		 */
-		ret2 = m_strdup(do_ctcp(from, to, ret));
-		sed = 1;
+		char *ptr = do_ctcp(from, to, ret);
+		if (*ptr && do_hook(ENCRYPTED_PRIVMSG_LIST, "%s %s %s", from, to, ptr))
+			put_it("%s",convert_output_format(fget_string_var(FORMAT_ENCRYPTED_PRIVMSG_FSET), "%s %s %s %s %s", update_clock(GET_TIME), from, FromUserHost, to, ptr));
+		*ret = 0;
 	}
 	else
 	{
-		ret2 = m_strdup("[ENCRYPTED MESSAGE]");
+		ret = m_strdup("[ENCRYPTED MESSAGE]");
 	}
 
-	new_free(&ret);
-	return ret2;
+	return ret;
 }
 
 /* do_sed_reply: Same as do_sed, but CTCPs within the SED are handled as
@@ -659,7 +656,6 @@ CTCP_HANDLER(do_sed)
 CTCP_HANDLER(do_sed_reply)
 {
 	char *ret;
-	char *ret2;
 
 	ret = try_decrypt(from, to, cmd);
 
@@ -669,16 +665,17 @@ CTCP_HANDLER(do_sed_reply)
 		 * There might be a CTCP reply in there,
 		 * so we see if we can find it.
 		 */
-		ret2 = m_strdup(do_notice_ctcp(from, to, ret));
-		sed = 1;
+		char *ptr = do_notice_ctcp(from, to, ret);
+		if (*ptr && do_hook(ENCRYPTED_NOTICE_LIST, "%s %s %s", from, to, ptr))
+			put_it("%s",convert_output_format(fget_string_var(FORMAT_ENCRYPTED_NOTICE_FSET), "%s %s %s %s %s", update_clock(GET_TIME), from, FromUserHost, to, ptr));
+		*ret = 0;
 	}
 	else
 	{
-		ret2 = m_strdup("[ENCRYPTED MESSAGE]");
+		ret = m_strdup("[ENCRYPTED MESSAGE]");
 	}
 
-	new_free(&ret);
-	return ret2;
+	return ret;
 }
 
 CTCP_HANDLER(do_utc)

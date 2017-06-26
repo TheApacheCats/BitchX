@@ -574,15 +574,6 @@ void parse_notice(char *from, char **Args)
 			goto notice_cleanup;
 	}
 		
-	if (sed && !do_hook(ENCRYPTED_NOTICE_LIST, "%s %s %s", from, to, line))
-	{
-#if 0
-		put_it("%s", convert_output_format(fget_string_var(FORMAT_ENCRYPTED_NOTICE_FSET), "%s %s %s %s", update_clock(GET_TIME), from, FromUserHost, line));
-#endif
-		sed = 0;
-		goto notice_cleanup;
-	}
-
 	if (!check_chanwall_notice(from, line, list_type))
 	{
 		char *s;

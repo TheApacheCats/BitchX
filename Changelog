@@ -1,5 +1,8 @@
 [Changes 1.2.2]
 
+* Move all handling of SED messages and notices into ctcp.c, re-enable
+  SED notices. (caf)
+
 * Handle SED-encrypted CTCP replies properly. (caf)
 
 * Add sent_nick flag to NickList struct, bump MODULE_VERSION. (caf)

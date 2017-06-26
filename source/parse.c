@@ -613,13 +613,6 @@ static	void p_privmsg(char *from, char **Args)
 	else
 		no_flood = check_flooding(from, flood_type, ptr, NULL);
 
-	if (sed == 1)
-	{
-		if (do_hook(ENCRYPTED_PRIVMSG_LIST,"%s %s %s",from, to, ptr))
-			put_it("%s",convert_output_format(fget_string_var(FORMAT_ENCRYPTED_PRIVMSG_FSET), "%s %s %s %s %s", update_clock(GET_TIME), from, FromUserHost, to, ptr));
-			sed = 0;
-	}
-	else
 	{
 		int added_to_tab = 0;
 		if (list_type == PUBLIC_LIST || list_type == PUBLIC_OTHER_LIST || list_type == PUBLIC_MSG_LIST)
