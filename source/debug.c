@@ -24,6 +24,7 @@ CVS_REVISION(debug_c)
 #include "vars.h"
 #define MAIN_SOURCE
 #include "modval.h"
+#include "color.h"
 
 unsigned long x_debug = 0;
 unsigned long internal_debug = 0;

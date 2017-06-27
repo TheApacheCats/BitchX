@@ -39,6 +39,7 @@ CVS_REVISION(vars_c)
 #include "cset.h"
 #include "module.h"
 #include "tcl_bx.h"
+#include "color.h"
 void add_tcl_vars(void);
 
 

@@ -686,6 +686,4 @@
 #undef OFF
 #undef ON
 
-#include "color.h"		/* all color options here. */
-
 #endif /* CONFIG_H_ */

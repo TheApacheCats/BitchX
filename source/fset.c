@@ -14,6 +14,7 @@ CVS_REVISION(fset_c)
 #include "tcl_bx.h"
 #define MAIN_SOURCE
 #include "modval.h"
+#include "color.h"
 
 extern void reinit_status (Window *, char *, int);
 
