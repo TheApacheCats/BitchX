@@ -3763,8 +3763,9 @@ struct target_type
 	char *command;
 	char *format;
 	unsigned long level;
-	char *output;
-	char *other_output;
+	const char *output;
+	const char *other_output;
+	const char *format_encrypted;
 };
 
 int current_target = 0;
@@ -3811,11 +3812,15 @@ struct target_type target[4] =
 	
 
 	target[0].output = fget_string_var(FORMAT_SEND_MSG_FSET);
+	target[0].format_encrypted = fget_string_var(FORMAT_SEND_ENCRYPTED_MSG_FSET);
 	target[1].output = fget_string_var(FORMAT_SEND_PUBLIC_FSET);
 	target[1].other_output = fget_string_var(FORMAT_SEND_PUBLIC_OTHER_FSET);
+	target[1].format_encrypted = fget_string_var(FORMAT_SEND_ENCRYPTED_PUBLIC_FSET);
 	target[2].output = fget_string_var(FORMAT_SEND_NOTICE_FSET);
+	target[2].format_encrypted = fget_string_var(FORMAT_SEND_ENCRYPTED_NOTICE_FSET);
 	target[3].output = fget_string_var(FORMAT_SEND_NOTICE_FSET);
 	target[3].other_output = fget_string_var(FORMAT_SEND_NOTICE_FSET);
+	target[3].format_encrypted = fget_string_var(FORMAT_SEND_ENCRYPTED_NOTICE_FSET);
 
 	if (sent_text_recursion)
 		hook = 0;
@@ -3916,8 +3921,8 @@ struct target_type target[4] =
 
 				line = crypt_msg(copy, key);
 				if (hook && do_hook(target[i].hook_type, "%s %s", current_nick, copy))
-					put_it("%s", convert_output_format(fget_string_var(target[i].hook_type == SEND_MSG_LIST?FORMAT_SEND_ENCRYPTED_MSG_FSET:FORMAT_SEND_ENCRYPTED_NOTICE_FSET),
-					"%s %s %s %s",update_clock(GET_TIME), current_nick, get_server_nickname(from_server), text));
+					put_it("%s", convert_output_format(target[i].format_encrypted,
+					"%s %s %s %s", update_clock(GET_TIME), current_nick, get_server_nickname(from_server), text));
 
 				send_to_server("%s %s :%s", target[i].command, current_nick, line);
 				new_free(&line);

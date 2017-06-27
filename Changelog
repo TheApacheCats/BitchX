@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Add /FSET SEND_ENCRYPTED_PUBLIC format. (caf)
+
 * Correct order of arguments to /FSET SEND_ENCRYPTED_MSG and
   SEND_ENCRYPTED_NOTICE and improve default formatting. (caf)
 
