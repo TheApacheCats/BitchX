@@ -3917,7 +3917,7 @@ struct target_type target[4] =
 				line = crypt_msg(copy, key);
 				if (hook && do_hook(target[i].hook_type, "%s %s", current_nick, copy))
 					put_it("%s", convert_output_format(fget_string_var(target[i].hook_type == SEND_MSG_LIST?FORMAT_SEND_ENCRYPTED_MSG_FSET:FORMAT_SEND_ENCRYPTED_NOTICE_FSET),
-					"%s %s %s %s",update_clock(GET_TIME), get_server_nickname(from_server),current_nick, text));
+					"%s %s %s %s",update_clock(GET_TIME), current_nick, get_server_nickname(from_server), text));
 
 				send_to_server("%s %s :%s", target[i].command, current_nick, line);
 				new_free(&line);

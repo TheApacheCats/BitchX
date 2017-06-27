@@ -217,8 +217,8 @@
 #define DEFAULT_FORMAT_SEND_AWAY_FSET "[Away ($strftime($1 %a %b %d %I:%M%p %Z))] [$tdiff2(${time() - u})] [BX-MsgLog $2]"
 #define DEFAULT_FORMAT_SEND_CTCP_FSET "%K[%rctcp%K(%R$1%K)] %n$2"
 #define DEFAULT_FORMAT_SEND_RCTCP_FSET "%K[%rrctcp%K(%R$1%K)] %n$2-"
-#define DEFAULT_FORMAT_SEND_ENCRYPTED_NOTICE_FSET "%K-%Y$1%K(%p$2%K)-%n $2-"
-#define DEFAULT_FORMAT_SEND_ENCRYPTED_MSG_FSET "%K[%Y$1%K(%p$2%K)]%n $2-"
+#define DEFAULT_FORMAT_SEND_ENCRYPTED_NOTICE_FSET "%K[%ynotice%K(%Y$1%K)] %n$3-"
+#define DEFAULT_FORMAT_SEND_ENCRYPTED_MSG_FSET "%K[%ymsg%K(%Y$1%K)] %n$3-"
 
 
 #define DEFAULT_FORMAT_SERVER_FSET "$G%n $1: $2-"
@@ -642,8 +642,8 @@
 #define DEFAULT_FORMAT_SEND_CTCP_FSET ansi?"%K[%rctcp%K(%R$1%K)] %n$2":"[ctcp($1)] $2"
 #define DEFAULT_FORMAT_SEND_RCTCP_FSET ansi?"%K[%rrctcp%K(%R$1%K)] %n$2-":"^B[rctcp(^B$1^B)]^B $2-"
 #define DEFAULT_FORMAT_SEND_DCC_CHAT_FSET ansi?"%K[%rdcc%K(%R$1%K)] %n$2-":"[dcc($1)] $2-"
-#define DEFAULT_FORMAT_SEND_ENCRYPTED_NOTICE_FSET "%K-%Y$1%K(%p$2%K)-%n $2-"
-#define DEFAULT_FORMAT_SEND_ENCRYPTED_MSG_FSET "%K[%Y$1%K(%p$2%K)]%n $2-"
+#define DEFAULT_FORMAT_SEND_ENCRYPTED_NOTICE_FSET "%K[%ynotice%K(%Y$1%K)] %n$3-"
+#define DEFAULT_FORMAT_SEND_ENCRYPTED_MSG_FSET "%K[%ymsg%K(%Y$1%K)] %n$3-"
 
 #define DEFAULT_FORMAT_SEND_MSG_FSET ansi?"%K[%rmsg%K(%R$1%K)] %n$3-":"[msg($1)] $3-"
 #define DEFAULT_FORMAT_SEND_NOTICE_FSET ansi?"%K[%rnotice%K(%R$1%K)] %n$3-":"[notice($1)] $3-"
