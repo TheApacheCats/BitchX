@@ -640,7 +640,12 @@ CTCP_HANDLER(do_sed)
 		 */
 		char *ptr = do_ctcp(from, to, ret);
 		if (*ptr && do_hook(ENCRYPTED_PRIVMSG_LIST, "%s %s %s", from, to, ptr))
-			put_it("%s",convert_output_format(fget_string_var(FORMAT_ENCRYPTED_PRIVMSG_FSET), "%s %s %s %s %s", update_clock(GET_TIME), from, FromUserHost, to, ptr));
+		{
+			if (is_channel(to))
+				put_it("%s",convert_output_format(fget_string_var(FORMAT_ENCRYPTED_PUBLIC_FSET), "%s %s %s %s %s", update_clock(GET_TIME), from, FromUserHost, to, ptr));
+			else
+				put_it("%s",convert_output_format(fget_string_var(FORMAT_ENCRYPTED_PRIVMSG_FSET), "%s %s %s %s", update_clock(GET_TIME), from, FromUserHost, ptr));
+		}
 		*ret = 0;
 	}
 	else
@@ -667,7 +672,12 @@ CTCP_HANDLER(do_sed_reply)
 		 */
 		char *ptr = do_notice_ctcp(from, to, ret);
 		if (*ptr && do_hook(ENCRYPTED_NOTICE_LIST, "%s %s %s", from, to, ptr))
-			put_it("%s",convert_output_format(fget_string_var(FORMAT_ENCRYPTED_NOTICE_FSET), "%s %s %s %s %s", update_clock(GET_TIME), from, FromUserHost, to, ptr));
+		{
+			if (is_channel(to))
+				put_it("%s",convert_output_format(fget_string_var(FORMAT_ENCRYPTED_PUBLIC_NOTICE_FSET), "%s %s %s %s %s", update_clock(GET_TIME), from, FromUserHost, to, ptr));
+			else
+				put_it("%s",convert_output_format(fget_string_var(FORMAT_ENCRYPTED_NOTICE_FSET), "%s %s %s %s", update_clock(GET_TIME), from, FromUserHost, ptr));
+		}
 		*ret = 0;
 	}
 	else

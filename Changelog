@@ -1,5 +1,9 @@
 [Changes 1.2.2]
 
+* Add /FSET ENCRYPTED_PUBLIC and ENCRYPTED_PUBLIC_NOTICE formats, and fix
+  use of ENCRYPTED_PRIVMSG and ENCRYPTED_NOTICE so they use the right number
+  of arguments. (caf)
+
 * Move all handling of SED messages and notices into ctcp.c, re-enable
   SED notices. (caf)
 
