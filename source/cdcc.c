@@ -22,7 +22,6 @@ CVS_REVISION(cdcc_c)
 #include "struct.h"
 #include "commands.h"
 #include "ignore.h"
-#include "ctcp.h"
 #include "hook.h"
 #include "dcc.h"
 #include "flood.h"

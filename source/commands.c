@@ -3877,7 +3877,7 @@ struct target_type target[4] =
 			{
 				char *breakage;
 				breakage = LOCAL_COPY(text);
-				line = crypt_msg(breakage, key);
+				line = sed_encrypt_msg(breakage, key);
 			}
 			else
 				line = m_strdup(text);
@@ -3920,7 +3920,7 @@ struct target_type target[4] =
 			{
 				set_display_target(current_nick, target[i].level);
 
-				line = crypt_msg(copy, key);
+				line = sed_encrypt_msg(copy, key);
 				if (hook && do_hook(target[i].hook_type, "%s %s", current_nick, copy))
 					put_it("%s", convert_output_format(target[i].format_encrypted,
 					"%s %s %s %s", update_clock(GET_TIME), current_nick, get_server_nickname(from_server), text));

@@ -12,7 +12,6 @@
 #include "server.h"
 #include "chelp.h"
 #include "commands.h"
-#include "encrypt.h"
 #include "vars.h"
 #include "ircaux.h"
 #include "lastlog.h"

@@ -34,7 +34,6 @@ CVS_REVISION(misc_c)
 #include "server.h"
 #include "dcc.h"
 #include "commands.h"
-#include "encrypt.h"
 #include "vars.h"
 #include "ircaux.h"
 #include "lastlog.h"

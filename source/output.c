@@ -27,7 +27,6 @@ CVS_REVISION(output_c)
 #include "screen.h"
 #include "server.h"
 #include "hook.h"
-#include "ctcp.h"
 #include "log.h"
 #include "misc.h"
 #define MAIN_SOURCE

@@ -603,6 +603,72 @@ int server;
 	return NULL;
 }
 
+/* Make this less than the trasmittable buffer */
+#define CRYPT_BUFFER_SIZE (IRCD_BUFFER_SIZE - 50)
+
+/*
+ * sed_encrypt_msg()
+ *
+ * Encrypts a message with my_encrypt() under the given key, and encapsulates it
+ * as a CTCP SED message ready to transmit.
+ */
+char *sed_encrypt_msg(char *str, const char *key)
+{
+	static const char sed_prefix[] = { CTCP_DELIM_CHAR, 'S', 'E', 'D', ' ', 0 };
+	const size_t len = strlen(str);
+	char buffer[CRYPT_BUFFER_SIZE];
+	char *ptr;
+
+	my_encrypt(str, len, key);
+	ptr = ctcp_quote_it(str, len);
+
+	if (ptr)
+	{
+		/* The - 1 terms here are to ensure that the trailing CTCP_DELIM_CHAR
+		 * always gets added. */
+		strlcpy(buffer, sed_prefix, sizeof buffer - 1);
+		strlcat(buffer, ptr, sizeof buffer - 1);
+		strlcat(buffer, CTCP_DELIM_STR, sizeof buffer);
+		new_free(&ptr);
+	}
+	else
+		strlcpy(buffer, str, sizeof buffer);
+
+	return (m_strdup(buffer));
+}
+
+/*
+ * sed_decrypt_msg()
+ *
+ * Given a CTCP SED argument 'str', it attempts to unscramble the text
+ * into something more sane.  If the 'key' is not the one used to scramble
+ * the text, the results are unpredictable.  This is probably the point.
+ *
+ * Note that the retval MUST be at least 'BIG_BUFFER_SIZE + 1'.  This is
+ * not an oversight -- the retval is passed is to do_ctcp() which requires
+ * a big buffer to scratch around (The decrypted text could be a CTCP UTC
+ * which could expand to a larger string of text.)
+ */ 
+char *sed_decrypt_msg(const char *str, const char *key)
+{
+	char *buffer = new_malloc(BIG_BUFFER_SIZE + 1);
+	char *ptr;
+	size_t len;
+
+	ptr = ctcp_unquote_it(str, &len);
+	my_decrypt(ptr, len, key);
+
+	if (ptr)
+	{
+		strlcpy(buffer, ptr, CRYPT_BUFFER_SIZE);
+		new_free(&ptr);
+	}
+	else
+		strlcat(buffer, str, CRYPT_BUFFER_SIZE);
+
+	return buffer;
+}
+
 static char *try_decrypt(char *from, char *to, const char *msg)
 {
 	const char *key;
@@ -618,7 +684,7 @@ static char *try_decrypt(char *from, char *to, const char *msg)
 	if (!key)
 		return NULL;
 
-	return decrypt_msg(msg, key);
+	return sed_decrypt_msg(msg, key);
 }
 
 /*

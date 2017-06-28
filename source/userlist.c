@@ -11,7 +11,6 @@ CVS_REVISION(userlist_c)
 
 #include "server.h"
 #include "commands.h"
-#include "encrypt.h"
 #include "vars.h"
 #include "ircaux.h"
 #include "lastlog.h"
@@ -26,7 +25,6 @@ CVS_REVISION(userlist_c)
 #include "alias.h"
 #include "history.h"
 #include "funny.h"
-#include "ctcp.h"
 #include "dcc.h"
 #include "output.h"
 #include "exec.h"

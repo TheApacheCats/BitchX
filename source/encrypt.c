@@ -18,7 +18,6 @@ CVS_REVISION(encrypt_c)
 #include "vars.h"
 #include "ircaux.h"
 #include "list.h"
-#include "ctcp.h"
 #include "output.h"
 #include "newio.h"
 #define MAIN_SOURCE
@@ -27,9 +26,6 @@ CVS_REVISION(encrypt_c)
 static	void	add_to_crypt (char *, char *);
 static	int	remove_crypt (char *);
 
-#define CRYPT_BUFFER_SIZE (IRCD_BUFFER_SIZE - 50)	/* Make this less than
-							 * the trasmittable
-							 * buffer */
 /*
  * Crypt: the crypt list structure,  consists of the nickname, and the
  * encryption key 
@@ -186,63 +182,3 @@ extern	void BX_my_decrypt(char *str, int len, const char *key)
 	str[i] = (char) 0;
 }
 
-/*
- * crypt_msg: Executes the encryption program on the given string with the
- * given key.  If flag is true, the string is encrypted and the returned
- * string is ready to be sent over irc.  If flag is false, the string is
- * decrypted and the returned string should be readable 
- */
-char *crypt_msg(char *str, const char *key)
-{
-	static const char sed_prefix[] = { CTCP_DELIM_CHAR, 'S', 'E', 'D', ' ', 0 };
-	const size_t len = strlen(str);
-	char buffer[CRYPT_BUFFER_SIZE];
-	char *ptr;
-
-	my_encrypt(str, len, key);
-	ptr = ctcp_quote_it(str, len);
-
-	if (ptr)
-	{
-		/* The - 1 terms here are to ensure that the trailing CTCP_DELIM_CHAR
-		 * always gets added. */
-		strlcpy(buffer, sed_prefix, sizeof buffer - 1);
-		strlcat(buffer, ptr, sizeof buffer - 1);
-		strlcat(buffer, CTCP_DELIM_STR, sizeof buffer);
-		new_free(&ptr);
-	}
-	else
-		strlcpy(buffer, str, sizeof buffer);
-
-	return (m_strdup(buffer));
-}
-
-/*
- * Given a CTCP SED argument 'str', it attempts to unscramble the text
- * into something more sane.  If the 'key' is not the one used to scramble
- * the text, the results are unpredictable.  This is probably the point.
- *
- * Note that the retval MUST be at least 'BIG_BUFFER_SIZE + 1'.  This is
- * not an oversight -- the retval is passed is to do_ctcp() which requires
- * a big buffer to scratch around (The decrypted text could be a CTCP UTC
- * which could expand to a larger string of text.)
- */ 
-char *decrypt_msg(const char *str, const char *key)
-{
-	char *buffer = new_malloc(BIG_BUFFER_SIZE + 1);
-	char *ptr;
-	size_t len;
-
-	ptr = ctcp_unquote_it(str, &len);
-	my_decrypt(ptr, len, key);
-
-	if (ptr)
-	{
-		strlcpy(buffer, ptr, CRYPT_BUFFER_SIZE);
-		new_free(&ptr);
-	}
-	else
-		strlcat(buffer, str, CRYPT_BUFFER_SIZE);
-
-	return buffer;
-}

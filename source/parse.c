@@ -28,7 +28,6 @@ CVS_REVISION(parse_c)
 #include "input.h"
 #include "ircaux.h"
 #include "funny.h"
-#include "encrypt.h"
 #include "input.h"
 #include "ircterm.h"
 #include "flood.h"

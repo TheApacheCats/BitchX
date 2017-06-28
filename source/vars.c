@@ -19,7 +19,6 @@ CVS_REVISION(vars_c)
 #include "window.h"
 #include "lastlog.h"
 #include "log.h"
-#include "encrypt.h"
 #include "history.h"
 #include "notify.h"
 #include "vars.h"

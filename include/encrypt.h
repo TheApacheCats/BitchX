@@ -12,8 +12,6 @@
 #ifndef ENCRYPT_H_
 #define ENCRYPT_H_
 
-char *crypt_msg(char *, const char *);
-char *decrypt_msg(const char *, const char *);
 void encrypt_cmd(char *, char *, char *, char *);
 const char *is_crypted(char *);
 void BX_my_decrypt(char *, int, const char *);
