@@ -3758,7 +3758,7 @@ static	int 	recursion = 0;
 struct target_type
 {
 	char *nick_list;
-	char *message;
+	const char *message;
 	int  hook_type;
 	char *command;
 	char *format;
@@ -3874,11 +3874,7 @@ struct target_type target[4] =
 				continue;
 			}
 			if ((key = is_crypted(current_nick)))
-			{
-				char *breakage;
-				breakage = LOCAL_COPY(text);
-				line = sed_encrypt_msg(breakage, key);
-			}
+				line = sed_encrypt_msg(text, key);
 			else
 				line = m_strdup(text);
 
@@ -3895,20 +3891,17 @@ struct target_type target[4] =
 			else 
 				dcc_raw_transmit(current_nick + 1, line, command);
 
-			add_last_type(&last_sent_dcc[0], MAX_LAST_MSG, NULL, NULL, current_nick+1, (char *)text);
+			add_last_type(&last_sent_dcc[0], MAX_LAST_MSG, NULL, NULL, current_nick+1, text);
 			from_server = old_server;
 			new_free(&line);
 		}
 		else
 		{
-			char *copy = NULL;
 			if (doing_notice)
 			{
 				say("You cannot send a message from within ON NOTICE");
 				continue;
 			}
-
-			copy = LOCAL_COPY(text);
 
 			if (!(i = is_channel(current_nick)) && hook)
 				addtabkey(current_nick, "msg", 0);
@@ -3920,8 +3913,8 @@ struct target_type target[4] =
 			{
 				set_display_target(current_nick, target[i].level);
 
-				line = sed_encrypt_msg(copy, key);
-				if (hook && do_hook(target[i].hook_type, "%s %s", current_nick, copy))
+				line = sed_encrypt_msg(text, key);
+				if (hook && do_hook(target[i].hook_type, "%s %s", current_nick, text))
 					put_it("%s", convert_output_format(target[i].format_encrypted,
 					"%s %s %s %s", update_clock(GET_TIME), current_nick, get_server_nickname(from_server), text));
 
@@ -3935,7 +3928,7 @@ struct target_type target[4] =
 					malloc_strcat(&target[i].nick_list, ",");
 				malloc_strcat(&target[i].nick_list, current_nick);
 				if (!target[i].message)
-					target[i].message = (char *)text;
+					target[i].message = text;
 			}
 		}
 	}

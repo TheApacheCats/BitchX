@@ -612,29 +612,26 @@ int server;
  * Encrypts a message with my_encrypt() under the given key, and encapsulates it
  * as a CTCP SED message ready to transmit.
  */
-char *sed_encrypt_msg(char *str, const char *key)
+char *sed_encrypt_msg(const char *str, const char *key)
 {
 	static const char sed_prefix[] = { CTCP_DELIM_CHAR, 'S', 'E', 'D', ' ', 0 };
 	const size_t len = strlen(str);
-	char buffer[CRYPT_BUFFER_SIZE];
+	char *str_encrypted = m_strdup(str);
+	char *buffer = new_malloc(CRYPT_BUFFER_SIZE);
 	char *ptr;
 
-	my_encrypt(str, len, key);
-	ptr = ctcp_quote_it(str, len);
+	my_encrypt(str_encrypted, len, key);
+	ptr = ctcp_quote_it(str_encrypted, len);
+	new_free(&str_encrypted);
 
-	if (ptr)
-	{
-		/* The - 1 terms here are to ensure that the trailing CTCP_DELIM_CHAR
-		 * always gets added. */
-		strlcpy(buffer, sed_prefix, sizeof buffer - 1);
-		strlcat(buffer, ptr, sizeof buffer - 1);
-		strlcat(buffer, CTCP_DELIM_STR, sizeof buffer);
-		new_free(&ptr);
-	}
-	else
-		strlcpy(buffer, str, sizeof buffer);
+	/* The - 1 terms here are to ensure that the trailing CTCP_DELIM_CHAR
+	 * always gets added. */
+	strlcpy(buffer, sed_prefix, CRYPT_BUFFER_SIZE - 1);
+	strlcat(buffer, ptr, CRYPT_BUFFER_SIZE - 1);
+	strlcat(buffer, CTCP_DELIM_STR, CRYPT_BUFFER_SIZE);
+	new_free(&ptr);
 
-	return (m_strdup(buffer));
+	return buffer;
 }
 
 /*
@@ -658,13 +655,8 @@ char *sed_decrypt_msg(const char *str, const char *key)
 	ptr = ctcp_unquote_it(str, &len);
 	my_decrypt(ptr, len, key);
 
-	if (ptr)
-	{
-		strlcpy(buffer, ptr, CRYPT_BUFFER_SIZE);
-		new_free(&ptr);
-	}
-	else
-		strlcat(buffer, str, CRYPT_BUFFER_SIZE);
+	strlcpy(buffer, ptr, CRYPT_BUFFER_SIZE);
+	new_free(&ptr);
 
 	return buffer;
 }

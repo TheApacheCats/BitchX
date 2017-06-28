@@ -71,7 +71,7 @@ extern	char *	do_notice_ctcp (char *, char *, char *);
 extern	int	in_ctcp (void);
 extern	void	send_ctcp (int, char *, int, char *, ...);
 extern	int	get_ctcp_val (char *);
-extern char *sed_encrypt_msg(char *, const char *);
+extern char *sed_encrypt_msg(const char *, const char *);
 extern char *sed_decrypt_msg(const char *, const char *);
 
 void 	BX_split_CTCP (char *, char *, char *);
