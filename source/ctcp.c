@@ -603,9 +603,9 @@ int server;
 	return NULL;
 }
 
-static char *try_decrypt(char *from, char *to, char *msg)
+static char *try_decrypt(char *from, char *to, const char *msg)
 {
-	char *key;
+	const char *key;
 	char *crypt_who;
 
 	if (*from == '=' || !my_stricmp(to, get_server_nickname(from_server)))
@@ -1536,13 +1536,12 @@ extern	void	send_ctcp (int type, char *to, int datatag, char *format, ...)
  * null terminated (it can contain nulls).  Returned is a malloced, null
  * terminated string.   
  */
-extern 	char	*ctcp_quote_it (char *str, int len)
+extern char *ctcp_quote_it(const char *str, size_t len)
 {
-	char	buffer[BIG_BUFFER_SIZE + 1];
-	char	*ptr;
-	int	i;
+	char *buffer = new_malloc(2 * len + 1);
+	char *ptr = buffer;
+	size_t i;
 
-	ptr = buffer;
 	for (i = 0; i < len; i++)
 	{
 		switch (str[i])
@@ -1567,7 +1566,8 @@ extern 	char	*ctcp_quote_it (char *str, int len)
 		}
 	}
 	*ptr = '\0';
-	return m_strdup(buffer);
+
+	return buffer;
 }
 
 /*
@@ -1577,50 +1577,46 @@ extern 	char	*ctcp_quote_it (char *str, int len)
  * convenied, but the returned data may contain nulls!.  The len is modified
  * to contain the size of the data returned. 
  */
-extern	char	*ctcp_unquote_it (char *str, int *len)
+extern char *ctcp_unquote_it(const char *str, size_t *output_len)
 {
-	char	*buffer;
-	char	*ptr;
-	char	c;
-	int	i,
-		new_size = 0;
+	char *buffer = new_malloc(strlen(str) + 1);
+	char *output_ptr = buffer;
+	char c;
 
-	buffer = (char *) new_malloc((sizeof(char) * *len) + 1);
-	ptr = buffer;
-	i = 0;
-	while (i < *len)
+	while ((c = *str++))
 	{
-		if ((c = str[i++]) == CTCP_QUOTE_CHAR)
+		if (c == CTCP_QUOTE_CHAR)
 		{
-			switch (c = str[i++])
+			if (!(c = *str++))
+				break;
+
+			switch (c)
 			{
-				case CTCP_QUOTE_CHAR:
-					*ptr++ = CTCP_QUOTE_CHAR;
-					break;
 				case 'a':
-					*ptr++ = CTCP_DELIM_CHAR;
+					c = CTCP_DELIM_CHAR;
 					break;
 				case 'n':
-					*ptr++ = '\n';
+					c = '\n';
 					break;
 				case 'r':
-					*ptr++ = '\r';
+					c = '\r';
 					break;
 				case '0':
-					*ptr++ = '\0';
+					c = '\0';
 					break;
+				case CTCP_QUOTE_CHAR:
 				default:
-					*ptr++ = c;
 					break;
 			}
 		}
-		else
-			*ptr++ = c;
-		new_size++;
+
+		*output_ptr++ = c;
 	}
-	*ptr = '\0';
-	*len = new_size;
-	return (buffer);
+
+	*output_ptr = '\0';
+	*output_len = output_ptr - buffer;
+
+	return buffer;
 }
 
 int get_ctcp_val (char *str)

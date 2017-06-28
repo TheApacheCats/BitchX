@@ -3789,6 +3789,8 @@ int current_target = 0;
  */
 void 	BX_send_text(const char *nick_list, const char *text, char *command, int hook, int log)
 {
+	static int sent_text_recursion = 0;
+
 	int	i, 
 		old_server,
 		not_done = 1,
@@ -3797,9 +3799,8 @@ void 	BX_send_text(const char *nick_list, const char *text, char *command, int h
 	char	*current_nick,
 		*next_nick,
 		*free_nick,
-		*line,
-		*key = NULL;
-static	int sent_text_recursion = 0;	
+		*line;
+	const char *key = NULL;
 	        
 struct target_type target[4] = 
 {	

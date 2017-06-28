@@ -249,8 +249,8 @@ extern Function_ptr *global;
 #define bsd_globfree (*(void (*)(glob_t *))global[BSD_GLOBFREE])
 
 /* misc commands */
-#define my_encrypt (*(void (*)(char *, int , char *))global[MY_ENCRYPT])
-#define my_decrypt (*(void (*)(char *, int , char *))global[MY_DECRYPT])
+#define my_encrypt (*(void (*)(char *, int , const char *))global[MY_ENCRYPT])
+#define my_decrypt (*(void (*)(char *, int , const char *))global[MY_DECRYPT])
 #define prepare_command (*(ChannelList *(*)(int *, char *, int))global[PREPARE_COMMAND])
 #define convert_output_format (*(char *(*)(const char *, const char *, ...))global[CONVERT_OUTPUT_FORMAT])
 #define userage (*(void (*)(char *, char *))global[USERAGE])

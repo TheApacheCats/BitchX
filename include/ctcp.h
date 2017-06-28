@@ -64,8 +64,8 @@ extern		int	in_ctcp_flag;
 #define CTCP_QUOTE_EM 	"\r\n\001\\"
 
 
-extern	char *	ctcp_quote_it (char *, int);
-extern	char *	ctcp_unquote_it (char *, int *);
+extern char *ctcp_quote_it(const char *, size_t);
+extern char *ctcp_unquote_it(const char *, size_t *);
 extern	char *	do_ctcp (char *, char *, char *);
 extern	char *	do_notice_ctcp (char *, char *, char *);
 extern	int	in_ctcp (void);

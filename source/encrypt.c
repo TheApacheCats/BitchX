@@ -26,7 +26,6 @@ CVS_REVISION(encrypt_c)
 
 static	void	add_to_crypt (char *, char *);
 static	int	remove_crypt (char *);
-static	char	*do_crypt (char *, char *, int);
 
 #define CRYPT_BUFFER_SIZE (IRCD_BUFFER_SIZE - 50)	/* Make this less than
 							 * the trasmittable
@@ -88,7 +87,7 @@ static	int remove_crypt(char *nick)
  * is_crypted: looks up nick in the crypt_list and returns the encryption key
  * if found in the list.  If not found in the crypt_list, null is returned. 
  */
-char	* is_crypted(char *nick)
+const char *is_crypted(char *nick)
 {
 	Crypt	*tmp;
 
@@ -138,7 +137,7 @@ BUILT_IN_COMMAND(encrypt_cmd)
 	}
 }
 
-extern	void BX_my_encrypt (char *str, int len, char *key)
+extern	void BX_my_encrypt (char *str, int len, const char *key)
 {
 	int	key_len,
 		key_pos,
@@ -162,7 +161,7 @@ extern	void BX_my_encrypt (char *str, int len, char *key)
 	str[i] = (char) 0;
 }
 
-extern	void BX_my_decrypt(char *str, int len, char *key)
+extern	void BX_my_decrypt(char *str, int len, const char *key)
 {
 	int	key_len,
 		key_pos,
@@ -187,38 +186,23 @@ extern	void BX_my_decrypt(char *str, int len, char *key)
 	str[i] = (char) 0;
 }
 
-static	char	*do_crypt(char *str, char *key, int flag)
-{
-	int	c;
-	char	*ptr = NULL;
-
-	c = strlen(str);
-	if (flag)
-	{
-		my_encrypt(str, c, key);
-		ptr = ctcp_quote_it(str, c);
-	}
-	else
-	{
-		ptr = ctcp_unquote_it(str, &c);
-		my_decrypt(ptr, c, key);
-	}
-	return (ptr);
-}
-
 /*
  * crypt_msg: Executes the encryption program on the given string with the
  * given key.  If flag is true, the string is encrypted and the returned
  * string is ready to be sent over irc.  If flag is false, the string is
  * decrypted and the returned string should be readable 
  */
-char	*crypt_msg(char *str, char *key)
+char *crypt_msg(char *str, const char *key)
 {
 	static const char sed_prefix[] = { CTCP_DELIM_CHAR, 'S', 'E', 'D', ' ', 0 };
+	const size_t len = strlen(str);
 	char buffer[CRYPT_BUFFER_SIZE];
 	char *ptr;
 
-	if ((ptr = do_crypt(str, key, 1)))
+	my_encrypt(str, len, key);
+	ptr = ctcp_quote_it(str, len);
+
+	if (ptr)
 	{
 		/* The - 1 terms here are to ensure that the trailing CTCP_DELIM_CHAR
 		 * always gets added. */
@@ -243,12 +227,16 @@ char	*crypt_msg(char *str, char *key)
  * a big buffer to scratch around (The decrypted text could be a CTCP UTC
  * which could expand to a larger string of text.)
  */ 
-char 	*decrypt_msg (char *str, char *key)
+char *decrypt_msg(const char *str, const char *key)
 {
-	char	*buffer = (char *)new_malloc(BIG_BUFFER_SIZE + 1);
-	char	*ptr;
+	char *buffer = new_malloc(BIG_BUFFER_SIZE + 1);
+	char *ptr;
+	size_t len;
 
-	if ((ptr = do_crypt(str, key, 0)) != NULL)
+	ptr = ctcp_unquote_it(str, &len);
+	my_decrypt(ptr, len, key);
+
+	if (ptr)
 	{
 		strlcpy(buffer, ptr, CRYPT_BUFFER_SIZE);
 		new_free(&ptr);
