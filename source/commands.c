@@ -3758,10 +3758,8 @@ static	int 	recursion = 0;
 struct target_type
 {
 	char *nick_list;
-	const char *message;
 	int  hook_type;
 	char *command;
-	char *format;
 	unsigned long level;
 	const char *output;
 	const char *other_output;
@@ -3802,15 +3800,13 @@ void 	BX_send_text(const char *nick_list, const char *text, char *command, int h
 		*line;
 	const char *key = NULL;
 	        
-struct target_type target[4] = 
-{	
-	{NULL, NULL, SEND_MSG_LIST,     "PRIVMSG", "*%s*> %s" , LOG_MSG, NULL, NULL },
-	{NULL, NULL, SEND_PUBLIC_LIST,  "PRIVMSG", "%s> %s"   , LOG_PUBLIC, NULL, NULL },
-	{NULL, NULL, SEND_NOTICE_LIST,  "NOTICE",  "-%s-> %s" , LOG_NOTICE, NULL, NULL }, 
-	{NULL, NULL, SEND_NOTICE_LIST,  "NOTICE",  "-%s-> %s" , LOG_NOTICE, NULL, NULL }
-};
-
-	
+	struct target_type target[4] = 
+	{	
+		{NULL, SEND_MSG_LIST,     "PRIVMSG", LOG_MSG, NULL, NULL },
+		{NULL, SEND_PUBLIC_LIST,  "PRIVMSG", LOG_PUBLIC, NULL, NULL },
+		{NULL, SEND_NOTICE_LIST,  "NOTICE",  LOG_NOTICE, NULL, NULL }, 
+		{NULL, SEND_NOTICE_LIST,  "NOTICE",  LOG_NOTICE, NULL, NULL }
+	};
 
 	target[0].output = fget_string_var(FORMAT_SEND_MSG_FSET);
 	target[0].format_encrypted = fget_string_var(FORMAT_SEND_ENCRYPTED_MSG_FSET);
@@ -3906,7 +3902,7 @@ struct target_type target[4] =
 			if (!(i = is_channel(current_nick)) && hook)
 				addtabkey(current_nick, "msg", 0);
 				
-			if (doing_notice || (command && !strcmp(command, "NOTICE")))
+			if (command && !strcmp(command, "NOTICE"))
 				i += 2;
 
 			if ((key = is_crypted(current_nick)))
@@ -3927,39 +3923,35 @@ struct target_type target[4] =
 				if (target[i].nick_list)
 					malloc_strcat(&target[i].nick_list, ",");
 				malloc_strcat(&target[i].nick_list, current_nick);
-				if (!target[i].message)
-					target[i].message = text;
 			}
 		}
 	}
 	
 	for (i = 0; i < 4; i++)
 	{
-		char *copy = NULL;
 		char *s = NULL;
 		ChannelList *chan = NULL;
 		const char *old_mf;
 		unsigned long old_ml;
 		int blah_hook = 0;
 				
-		if (!target[i].message)
+		if (!target[i].nick_list)
 			continue;
 
 		save_display_target(&old_mf, &old_ml);
 		set_display_target(target[i].nick_list, target[i].level);
-		copy = m_strdup(target[i].message);
 
 		/* do we forward this?*/
 
 		if (forwardnick && not_done)
 		{
-			send_to_server("NOTICE %s :-> *%s* %s", forwardnick, nick_list, copy);
+			send_to_server("NOTICE %s :-> *%s* %s", forwardnick, nick_list, text);
 			not_done = 0;
 		}
 
 		/* log it if logging on */
 		if (log)
-			logmsg(LOG_SEND_MSG, target[i].nick_list, 0, "%s", copy);
+			logmsg(LOG_SEND_MSG, target[i].nick_list, 0, "%s", text);
 		/* save this for /oops */
 	
 		if (i == 1 || i == 3)
@@ -3979,7 +3971,7 @@ struct target_type target[4] =
 		else
 			is_current = 1;
 
-		if (hook && (blah_hook = do_hook(target[i].hook_type, "%s %s", target[i].nick_list, copy)))
+		if (hook && (blah_hook = do_hook(target[i].hook_type, "%s %s", target[i].nick_list, text)))
 			;
 		/* supposedly if this is called before the do_hook
 		 * it can cause a problem with scripts.
@@ -3987,7 +3979,7 @@ struct target_type target[4] =
 		 
 		if (blah_hook || chan)
 			s = convert_output_format(is_current ? target[i].output : target[i].other_output,
-				"%s %s %s %s",update_clock(GET_TIME), target[i].nick_list, get_server_nickname(from_server), copy);
+				"%s %s %s %s",update_clock(GET_TIME), target[i].nick_list, get_server_nickname(from_server), text);
 		if (blah_hook)
 			put_it("%s", s);
 			
@@ -3997,16 +3989,14 @@ struct target_type target[4] =
 		if ((i == 0))
 		{
 			set_server_sent_nick(from_server, target[0].nick_list);
-			set_server_sent_body(from_server, copy);
-			add_last_type(&last_sent_msg[0], MAX_LAST_MSG, NULL, NULL, target[i].nick_list, copy);
+			set_server_sent_body(from_server, text);
+			add_last_type(&last_sent_msg[0], MAX_LAST_MSG, NULL, NULL, target[i].nick_list, text);
 		}
 		else if ((i == 2) || (i == 3))
-			add_last_type(&last_sent_notice[0], MAX_LAST_MSG, get_server_nickname(from_server), NULL, target[i].nick_list, copy);
+			add_last_type(&last_sent_notice[0], MAX_LAST_MSG, get_server_nickname(from_server), NULL, target[i].nick_list, text);
 
-		send_to_server("%s %s :%s", target[i].command, target[i].nick_list, copy);
-		new_free(&copy);
+		send_to_server("%s %s :%s", target[i].command, target[i].nick_list, text);
 		new_free(&target[i].nick_list);
-		target[i].message = NULL;
 		restore_display_target(old_mf, old_ml);
 	}
 	
