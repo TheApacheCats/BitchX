@@ -4632,48 +4632,38 @@ int BX_parse_command(char *line, int hist_flag, char *sub_args)
 				else if (!my_stricmp(com, get_server_nickname(from_server)))
 					me(NULL, rest, empty_string, NULL);
 #ifdef WANT_TCL
-				else
+				else if (tcl_interp)
 				{
-					
-					if (tcl_interp)
+					int err;
+					err = Tcl_Invoke(tcl_interp, cline, rest);
+					if (err == TCL_OK)
 					{
-						int err;
-						err = Tcl_Invoke(tcl_interp, cline, rest);
-						if (err == TCL_OK)
+						if (tcl_interp->result && *tcl_interp->result)
+							bitchsay("%s %s", *tcl_interp->result?empty_string:unknown, *tcl_interp->result?tcl_interp->result:empty_string);
+					}
+					else
+					{
+						if (alias_cnt + cmd_cnt > 1)
+							bitchsay("Ambiguous command: %s", cline);
+						else if (get_int_var(DISPATCH_UNKNOWN_COMMANDS_VAR))
+							send_to_server("%s %s", cline, rest);
+						else if (tcl_interp->result && *tcl_interp->result)
 						{
-							if (tcl_interp->result && *tcl_interp->result)
-								bitchsay("%s %s", *tcl_interp->result?empty_string:unknown, *tcl_interp->result?tcl_interp->result:empty_string);
+							if (check_help_bind(cline))
+								bitchsay("%s", tcl_interp->result);
 						}
 						else
-						{
-							if (alias_cnt + cmd_cnt > 1)
-								bitchsay("Ambiguous command: %s", cline);
-							else if (get_int_var(DISPATCH_UNKNOWN_COMMANDS_VAR))
-								send_to_server("%s %s", cline, rest);
-							else if (tcl_interp->result && *tcl_interp->result)
-							{
-								if (check_help_bind(cline))
-									bitchsay("%s", tcl_interp->result);
-							}
-							else
-								bitchsay("%s %s", unknown, cline);
-								
-						}
-					} else if (get_int_var(DISPATCH_UNKNOWN_COMMANDS_VAR))
-						send_to_server("%s %s", cline, rest);
-					else if (alias_cnt + cmd_cnt > 1)
-						bitchsay("Ambiguous command: %s", cline);
-					else
-						bitchsay("%s %s", unknown, cline);
+							bitchsay("%s %s", unknown, cline);
+
+					}
 				}
-#else
+#endif
 				else if (get_int_var(DISPATCH_UNKNOWN_COMMANDS_VAR))
 					send_to_server("%s %s", cline, rest);
 				else if (alias_cnt + cmd_cnt > 1)
 					bitchsay("Ambiguous command: %s", cline);
 				else
 					bitchsay("%s %s", unknown, cline);
-#endif
 			}
 			if (alias)
 				new_free(&alias_name);
