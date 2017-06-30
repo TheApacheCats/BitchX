@@ -1368,10 +1368,12 @@ int stk;
 
 int trigger_bind(char *proc, char *param, char *(*func)(char *, char *))
 {
-char *result = NULL;
+	char *result = NULL;
+	int err;
 	
 	if (internal_debug & DEBUG_TCL)
 		debugyell("Tcl exec [%s] with [%s]", proc, param);
+
 	if (func)
 	{
 		result = (*func)(proc, param);
@@ -1381,16 +1383,18 @@ char *result = NULL;
 			debugyell("Tcl return from [%s] with [%s]", proc, result);
 		return BIND_EXECUTED;
 	}
-	if (Tcl_VarEval(tcl_interp,proc,param,NULL)==TCL_ERROR) 
+
+	err = Tcl_VarEval(tcl_interp, proc, param, NULL);
+	result = Tcl_GetStringResult(tcl_interp);
+
+	if (internal_debug & DEBUG_TCL)
+		debugyell("Tcl return from [%s] with [%s]", proc, result);
+	if (err == TCL_ERROR) 
 	{
-		if (internal_debug & DEBUG_TCL)
-			debugyell("Tcl return from [%s] with [%s]", proc, tcl_interp->result);
-		putlog(LOG_ALL,"*","Tcl error [%s]: %s",proc,tcl_interp->result);
+		putlog(LOG_ALL,"*","Tcl error [%s]: %s", proc, result);
 		return BIND_EXECUTED;
 	}
-	if (internal_debug & DEBUG_TCL)
-		debugyell("Tcl return from [%s] with [%s]", proc, tcl_interp->result);
-	return (atoi(tcl_interp->result)>0)?BIND_EXEC_LOG:BIND_EXECUTED;
+	return (atoi(result)>0)?BIND_EXEC_LOG:BIND_EXECUTED;
 }
 
 void init_builtins()
@@ -1954,7 +1958,7 @@ char *check_tcl_alias(char *command, char *args)
 	
 	Tcl_SetVar(tcl_interp, "_a", args?args:empty_string, TCL_GLOBAL_ONLY);
 	if (check_tcl_bind(&H_functions, command, -1, " $_a", MATCH_MASK|BIND_STACKABLE, NULL))
-		return m_strdup(tcl_interp->result?tcl_interp->result:empty_string);
+		return m_strdup(Tcl_GetStringResult(tcl_interp));
 	return NULL;
 }
 
@@ -2325,7 +2329,8 @@ BUILT_IN_COMMAND(tcl_version)
 
 BUILT_IN_COMMAND(tcl_command)
 {
-int result = 0;
+	int result = 0;
+	const char *tcl_result;
 	
 	tcl_init();
 	if (args && *args)
@@ -2338,10 +2343,12 @@ int result = 0;
 				bla = next_arg(args, &args);
 				if (get_string_var(LOAD_PATH_VAR))
 					bla = path_search(args, get_string_var(LOAD_PATH_VAR));
-				if ((result = Tcl_EvalFile(tcl_interp, bla ? bla : args)) != TCL_OK)
-					put_it("Tcl:  [%s]",tcl_interp->result);
-				else if (tcl_echo && *tcl_interp->result)
-					put_it("Tcl:  [%s]", tcl_interp->result);
+
+				result = Tcl_EvalFile(tcl_interp, bla ? bla : args);
+				tcl_result = Tcl_GetStringResult(tcl_interp);
+
+				if ((result != TCL_OK) || (tcl_echo && *tcl_result))
+					put_it("Tcl: [%s]", tcl_result);
 			} 
 			else if (!my_strnicmp(args+1, "xecho", 4)) 
 			{
@@ -2354,10 +2361,12 @@ int result = 0;
 				put_it("Tcl: unknown cmd [%s]", args);
 			return;					
 		}
-		if ((result = Tcl_Eval(tcl_interp, args)) != TCL_OK)
-			put_it("Tcl: %s %s", args, tcl_interp->result);
-		else if (tcl_echo && *tcl_interp->result)
-			put_it("Tcl: [%s] %s", args, tcl_interp->result);
+
+		result = Tcl_Eval(tcl_interp, args);
+		tcl_result = Tcl_GetStringResult(tcl_interp);
+
+		if ((result != TCL_OK) || (tcl_echo && *tcl_result))
+			put_it("Tcl: [%s] %s", args, tcl_result);
 	} 
 	else
 	{
@@ -2392,7 +2401,7 @@ char *com;
 	Tcl_ResetResult(irp);
 	lower(com);
 	if (internal_debug & DEBUG_TCL)
-		debugyell("Invoking tcl [%s] with [%s]", com, rest);
+		debugyell("Invoking Tcl [%s] with [%s]", com, rest);
 	if (Tcl_GetCommandInfo(irp, com, &info) && info.proc)
 	{
 		result = (*info.proc)(info.clientData, irp, argc, ArgList);
@@ -2400,7 +2409,11 @@ char *com;
 			debugyell("Tcl returning with [%d]", result);
 	}
 	else
-		Tcl_AppendResult(irp, "Unknown command \"", com, "\"", NULL);
+	{
+		if (internal_debug & DEBUG_TCL)
+			debugyell("Tcl could not find command [%s]", com);
+	}
+
 	return result;
 }
 

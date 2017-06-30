@@ -743,9 +743,9 @@ int cmd_tcl(int idx, char *par)
 		return TCL_ERROR;
 	if ((Tcl_Eval(tcl_interp, par)) == TCL_OK)
 	{
-		dcc_printf(idx, "Tcl: %s\n", tcl_interp->result);
+		dcc_printf(idx, "Tcl: %s\n", Tcl_GetStringResult(tcl_interp));
 	} else 
-		dcc_printf(idx, "Tcl Error: %s\n", tcl_interp->result);
+		dcc_printf(idx, "Tcl Error: %s\n", Tcl_GetStringResult(tcl_interp));
 #else
 		dcc_printf(idx, "Not implemented in this client\n");
 #endif

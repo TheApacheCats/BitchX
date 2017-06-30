@@ -4579,8 +4579,6 @@ int BX_parse_command(char *line, int hist_flag, char *sub_args)
 			}
 			else
 			{
-				char unknown[] = "Unknown command:";
-				
 				if (hist_flag && add_to_hist && !oper_issued)
 					add_to_history(this_cmd);
 				command = find_command(cline, &cmd_cnt);
@@ -4635,25 +4633,28 @@ int BX_parse_command(char *line, int hist_flag, char *sub_args)
 				else if (tcl_interp)
 				{
 					int err;
+					const char *tcl_result;
+
 					err = Tcl_Invoke(tcl_interp, cline, rest);
+					tcl_result = Tcl_GetStringResult(tcl_interp);
+
 					if (err == TCL_OK)
 					{
-						if (tcl_interp->result && *tcl_interp->result)
-							bitchsay("%s %s", *tcl_interp->result?empty_string:unknown, *tcl_interp->result?tcl_interp->result:empty_string);
+						bitchsay("%s", tcl_result);
 					}
 					else
 					{
-						if (alias_cnt + cmd_cnt > 1)
-							bitchsay("Ambiguous command: %s", cline);
-						else if (get_int_var(DISPATCH_UNKNOWN_COMMANDS_VAR))
-							send_to_server("%s %s", cline, rest);
-						else if (tcl_interp->result && *tcl_interp->result)
+						if (*tcl_result)
 						{
 							if (check_help_bind(cline))
-								bitchsay("%s", tcl_interp->result);
+								bitchsay("%s", tcl_result);
 						}
+						else if (get_int_var(DISPATCH_UNKNOWN_COMMANDS_VAR))
+							send_to_server("%s %s", cline, rest);
+						else if (alias_cnt + cmd_cnt > 1)
+							bitchsay("Ambiguous command: %s", cline);
 						else
-							bitchsay("%s %s", unknown, cline);
+							bitchsay("Unknown command: %s", cline);
 
 					}
 				}
@@ -4663,7 +4664,7 @@ int BX_parse_command(char *line, int hist_flag, char *sub_args)
 				else if (alias_cnt + cmd_cnt > 1)
 					bitchsay("Ambiguous command: %s", cline);
 				else
-					bitchsay("%s %s", unknown, cline);
+					bitchsay("Unknown command: %s", cline);
 			}
 			if (alias)
 				new_free(&alias_name);
@@ -4803,7 +4804,7 @@ BUILT_IN_COMMAND(BX_load)
 		{
 #ifdef WANT_TCL
 			if (Tcl_EvalFile(tcl_interp, filename) != TCL_OK)
-				error("Unable to load filename %s[%s]", filename, tcl_interp->result);
+				error("Unable to load filename %s [%s]", filename, Tcl_GetStringResult(tcl_interp));
 #endif
 			continue;
 		}
@@ -5490,12 +5491,18 @@ int result = 0;
 	if ((filename = next_arg(args, &args)))
 	{
 		char *bla = NULL;
+		const char *tcl_result;
+
 		if (get_string_var(LOAD_PATH_VAR))
 			bla = path_search(filename, get_string_var(LOAD_PATH_VAR));
-		if ((result = Tcl_EvalFile(tcl_interp, bla?bla:filename)) != TCL_OK)
-			put_it("Tcl:  [%s]",tcl_interp->result);
-		else if (*tcl_interp->result)
-			put_it("Tcl:  [%s]", tcl_interp->result);
+
+		result = Tcl_EvalFile(tcl_interp, bla ? bla : filename);
+		tcl_result = Tcl_GetStringResult(tcl_interp);
+
+		if (result != TCL_OK)
+			put_it("Tcl Error: [%s]", tcl_result);
+		else if (*tcl_result)
+			put_it("Tcl: [%s]", tcl_result);
 	}
 }
 

@@ -41,8 +41,6 @@ cmd_t C_dcc[] =
 };
 
 #ifdef WANT_TCL
-#include <tcl.h>
-
 /* 
  * I wish to thank vore!vore@domination.ml.org for pushing me 
  * todo something like this, although by-Tor requested 
@@ -234,16 +232,16 @@ static int CompareKeyListField (tcl_interp, fieldName, field, valuePtr, valueSiz
     int   fieldNameSize, elementSize;
 
     if (field [0] == '\0') {
-        tcl_interp->result =
-            "invalid keyed list format: list contains an empty field entry";
+        Tcl_AppendResult(tcl_interp,
+            "invalid keyed list format: list contains an empty field entry", NULL);
         return TCL_ERROR;
     }
     if (TclFindElement (tcl_interp, (char *) field, &elementPtr, &nextPtr, 
                         &elementSize, NULL) != TCL_OK)
         return TCL_ERROR;
     if (elementSize == 0) {
-        tcl_interp->result =
-            "invalid keyed list format: list contains an empty field name";
+        Tcl_AppendResult(tcl_interp,
+            "invalid keyed list format: list contains an empty field name", NULL);
         return TCL_ERROR;
     }
     if (nextPtr[0] == '\0') {
@@ -310,7 +308,7 @@ static int SplitAndFindField (tcl_interp, fieldName, keyedList, fieldInfoPtr)
     int  idx, result, braced;
 
     if (fieldName == '\0') {
-        tcl_interp->result = "null key not allowed";
+        Tcl_AppendResult(tcl_interp, "null key not allowed", NULL);
         return TCL_ERROR;
     }
 
@@ -505,7 +503,7 @@ int Tcl_GetKeyedListField (tcl_interp, fieldName, keyedList, fieldValuePtr)
 
 	if (fieldName == '\0') 
 	{
-		tcl_interp->result = "null key not allowed";
+		Tcl_AppendResult(tcl_interp, "null key not allowed", NULL);
 		return TCL_ERROR;
 	}
 
@@ -862,7 +860,7 @@ int Tcl_KeylgetCmd (ClientData clientData, Tcl_Interp *tcl_interp, int argc, cha
      * Handle retrieving a value for a specified key.
      */
     if (argv [2] == '\0') {
-        tcl_interp->result = "null key not allowed";
+        Tcl_AppendResult(tcl_interp, "null key not allowed", NULL);
         return TCL_ERROR;
     }
     if ((argc == 4) && (argv [3][0] == '\0'))
@@ -884,7 +882,7 @@ int Tcl_KeylgetCmd (ClientData clientData, Tcl_Interp *tcl_interp, int argc, cha
                               "\" not found in keyed list", (char *) NULL);
             return TCL_ERROR;
         } else {
-            tcl_interp->result = zero;
+            Tcl_AppendResult(tcl_interp, zero, NULL);
             return TCL_OK;
         }
     }
@@ -901,7 +899,7 @@ int Tcl_KeylgetCmd (ClientData clientData, Tcl_Interp *tcl_interp, int argc, cha
      * Handle null return variable specified and key was found.
      */
     if (argv [3][0] == '\0') {
-        tcl_interp->result = one;
+        Tcl_AppendResult(tcl_interp, one, NULL);
         return TCL_OK;
     }
 
@@ -913,7 +911,7 @@ int Tcl_KeylgetCmd (ClientData clientData, Tcl_Interp *tcl_interp, int argc, cha
     else
         result = TCL_OK;
     ckfree (fieldValue);
-    tcl_interp->result = one;
+    Tcl_AppendResult(tcl_interp, one, NULL);
     return result;
 }
 
@@ -1199,7 +1197,7 @@ int Tcl_LemptyCmd (ClientData clientData, Tcl_Interp *tcl_interp, int argc, char
 	scanPtr = argv [1];
 	while ((*scanPtr != '\0') && (ISSPACE (*scanPtr)))
 		scanPtr++;
-	sprintf (tcl_interp->result, "%d", (*scanPtr == '\0'));
+	Tcl_AppendResult(tcl_interp, (*scanPtr == '\0') ? "1" : "0", NULL);
 	return TCL_OK;
 }
 
@@ -1430,7 +1428,7 @@ struct timeval now1;
 			int code;
 			Tcl_DStringInit(&ds);
 			if (Tcl_SplitList(tcl_interp,mark->command,&argc,&argv) != TCL_OK) 
-				putlog(LOG_CRAP,"*","(Timer) Error for '%s': %s", mark->command, tcl_interp->result);
+				putlog(LOG_CRAP,"*","(Timer) Error for '%s': %s", mark->command, Tcl_GetStringResult(tcl_interp));
 			else 
 			{
 				for (i=0; i<argc; i++) 
@@ -1440,7 +1438,7 @@ struct timeval now1;
 				/* code=Tcl_Eval(tcl_interp,mark->cmd); */
 				Tcl_DStringFree(&ds);
 				if (code!=TCL_OK)
-					putlog(LOG_CRAP,"*","(Timer) Error for '%s': %s", mark->command, tcl_interp->result);
+					putlog(LOG_CRAP,"*","(Timer) Error for '%s': %s", mark->command, Tcl_GetStringResult(tcl_interp));
 			}
 		}
 		else 

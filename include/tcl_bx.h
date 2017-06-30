@@ -28,6 +28,11 @@ void tcl_load (char *, char *, char *, char *);
 
 #define USE_NON_CONST
 #include <tcl.h>
+
+#if (TCL_MAJOR_VERSION < 8)
+#define Tcl_GetStringResult(interp) ((interp)->result)
+#endif
+
 extern Tcl_Interp *tcl_interp;
 void check_tcl_tand (char *, char *, char *);
 void check_tcl_msgm (char *, char *, char *, char *, char *);

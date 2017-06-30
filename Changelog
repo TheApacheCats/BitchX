@@ -1,5 +1,8 @@
 [Changes 1.2.2]
 
+* Update to build against modern libtcl (don't access tcl_interp->result
+  directly). (caf)
+
 * Add /FSET SEND_ENCRYPTED_PUBLIC format. (caf)
 
 * Correct order of arguments to /FSET SEND_ENCRYPTED_MSG and
