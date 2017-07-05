@@ -3752,8 +3752,91 @@ static	int 	recursion = 0;
 	from_server = old_from_server;
 }
 
+static int try_send_special_target(char *target, const char *text, char *command, int hook)
+{
+	/*
+	 * It is legal to send an empty line to a process, but not legal
+	 * to send an empty line anywhere else.
+	 */
+	switch (*target)
+	{
+		case '%':
+			{
+				int process_idx = get_process_index(&target);
 
+				if (process_idx == -1)
+					say("Invalid process specification");
+				else
+					text_to_process(process_idx, text, 1);
+			}
+			break;
 
+#ifdef WANT_FTP
+		case '-':
+			if (text && *text)
+				dcc_ftpcommand(target + 1, (char *)text);
+			break;
+#endif
+
+		case '"':
+			if (text && *text)
+				send_to_server("%s", text);
+			break;
+
+		case '/':
+			if (text && *text)
+			{
+				char *line = m_opendup(target, space, text, NULL);
+				parse_command(line, 0, empty_string);
+				new_free(&line);
+			}
+			break;
+
+		case '=':
+			if (text && *text)
+			{
+				const char *key;
+				int old_server;
+				char *line;
+
+				if (!is_number(target + 1) && 
+						!dcc_activechat(target + 1) && 
+						!dcc_activebot(target+1) && 
+						!dcc_activeraw(target+1))
+				{
+					yell("No DCC CHAT connection open to %s", target + 1);
+					break;
+				}
+				if ((key = is_crypted(target)))
+					line = sed_encrypt_msg(text, key);
+				else
+					line = m_strdup(text);
+
+				old_server = from_server;
+				from_server = -1;
+				if (dcc_activechat(target+1))
+				{
+					dcc_chat_transmit(target + 1, line, line, command, hook);
+					if (hook)
+						addtabkey(target, "msg", 0);
+				}
+				else if (dcc_activebot(target + 1))
+					dcc_bot_transmit(target + 1, line, command);
+				else 
+					dcc_raw_transmit(target + 1, line, command);
+
+				add_last_type(&last_sent_dcc[0], MAX_LAST_MSG, NULL, NULL, target+1, text);
+				from_server = old_server;
+				new_free(&line);
+			}
+			break;
+
+		default:
+			return 0;
+	}
+
+	return 1;
+}
 
 struct target_type
 {
@@ -3790,15 +3873,13 @@ void 	BX_send_text(const char *nick_list, const char *text, char *command, int h
 	static int sent_text_recursion = 0;
 
 	int	i, 
-		old_server,
-		not_done = 1,
+		done_forward = 0,
 		is_current = 0,
 		old_window_display = window_display;
 	char	*current_nick,
 		*next_nick,
 		*free_nick,
 		*line;
-	const char *key = NULL;
 	        
 	struct target_type target[4] = 
 	{	
@@ -3827,103 +3908,55 @@ void 	BX_send_text(const char *nick_list, const char *text, char *command, int h
 
 	while ((current_nick = next_nick))
 	{
+		const char *key;
+
 		if ((next_nick = strchr(current_nick, ',')))
 			*next_nick++ = 0;
 
 		if (!*current_nick)
 			continue;
 
-		if (*current_nick == '%')
-		{
-			if ((i = get_process_index(&current_nick)) == -1)
-				say("Invalid process specification");
-			else
-				text_to_process(i, text, 1);
-		}
+		if (try_send_special_target(current_nick, text, command, hook))
+			continue;
+
 		/*
 		 * This test has to be here because it is legal to
 		 * send an empty line to a process, but not legal
 		 * to send an empty line anywhere else.
 		 */
-		else if (!text || !*text)
-			;
-#ifdef WANT_FTP
-		else if (*current_nick == '-')
-			dcc_ftpcommand(current_nick+1, (char *)text);
-#endif
-		else if (*current_nick == '"')
-			send_to_server("%s", text);
-		else if (*current_nick == '/')
+		if (!text || !*text)
+			continue;
+
+		if (doing_notice)
 		{
-			line = m_opendup(current_nick, space, text, NULL);
-			parse_command(line, 0, empty_string);
-			new_free(&line);
+			say("You cannot send a message from within ON NOTICE");
+			continue;
 		}
-		else if (*current_nick == '=')
+
+		if (!(i = is_channel(current_nick)) && hook)
+			addtabkey(current_nick, "msg", 0);
+
+		if (command && !strcmp(command, "NOTICE"))
+			i += 2;
+
+		if ((key = is_crypted(current_nick)))
 		{
-			if (!is_number(current_nick + 1) && 
-				!dcc_activechat(current_nick + 1) && 
-				!dcc_activebot(current_nick+1) && 
-				!dcc_activeraw(current_nick+1))
-			{
-				yell("No DCC CHAT connection open to %s", current_nick + 1);
-				continue;
-			}
-			if ((key = is_crypted(current_nick)))
-				line = sed_encrypt_msg(text, key);
-			else
-				line = m_strdup(text);
+			set_display_target(current_nick, target[i].level);
 
-			old_server = from_server;
-			from_server = -1;
-			if (dcc_activechat(current_nick+1))
-			{
-				dcc_chat_transmit(current_nick + 1, line, line, command, hook);
-				if (hook)
-					addtabkey(current_nick, "msg", 0);
-			}
-			else if (dcc_activebot(current_nick + 1))
-				dcc_bot_transmit(current_nick + 1, line, command);
-			else 
-				dcc_raw_transmit(current_nick + 1, line, command);
+			line = sed_encrypt_msg(text, key);
+			if (hook && do_hook(target[i].hook_type, "%s %s", current_nick, text))
+				put_it("%s", convert_output_format(target[i].format_encrypted,
+							"%s %s %s %s", update_clock(GET_TIME), current_nick, get_server_nickname(from_server), text));
 
-			add_last_type(&last_sent_dcc[0], MAX_LAST_MSG, NULL, NULL, current_nick+1, text);
-			from_server = old_server;
+			send_to_server("%s %s :%s", target[i].command, current_nick, line);
 			new_free(&line);
+			reset_display_target();
 		}
 		else
 		{
-			if (doing_notice)
-			{
-				say("You cannot send a message from within ON NOTICE");
-				continue;
-			}
-
-			if (!(i = is_channel(current_nick)) && hook)
-				addtabkey(current_nick, "msg", 0);
-				
-			if (command && !strcmp(command, "NOTICE"))
-				i += 2;
-
-			if ((key = is_crypted(current_nick)))
-			{
-				set_display_target(current_nick, target[i].level);
-
-				line = sed_encrypt_msg(text, key);
-				if (hook && do_hook(target[i].hook_type, "%s %s", current_nick, text))
-					put_it("%s", convert_output_format(target[i].format_encrypted,
-					"%s %s %s %s", update_clock(GET_TIME), current_nick, get_server_nickname(from_server), text));
-
-				send_to_server("%s %s :%s", target[i].command, current_nick, line);
-				new_free(&line);
-				reset_display_target();
-			}
-			else
-			{
-				if (target[i].nick_list)
-					malloc_strcat(&target[i].nick_list, ",");
-				malloc_strcat(&target[i].nick_list, current_nick);
-			}
+			if (target[i].nick_list)
+				malloc_strcat(&target[i].nick_list, ",");
+			malloc_strcat(&target[i].nick_list, current_nick);
 		}
 	}
 	
@@ -3943,10 +3976,10 @@ void 	BX_send_text(const char *nick_list, const char *text, char *command, int h
 
 		/* do we forward this?*/
 
-		if (forwardnick && not_done)
+		if (forwardnick && !done_forward)
 		{
 			send_to_server("NOTICE %s :-> *%s* %s", forwardnick, nick_list, text);
-			not_done = 0;
+			done_forward = 1;
 		}
 
 		/* log it if logging on */
