@@ -955,9 +955,7 @@ SocketList *sl;
 }
 #endif
 
-/* flag == 1 means show it.  flag == 0 used by redirect (and /ctcp) */
-
-static void	new_dcc_message_transmit (char *user, char *text, char *text_display, int type, int flag, char *cmd, int check_host)
+static void	new_dcc_message_transmit (char *user, char *text, char *text_display, int type, unsigned stxt_flags, char *cmd, int check_host)
 {
 SocketList *s = NULL;
 DCC_int		*n = NULL;
@@ -1023,14 +1021,14 @@ char		thing = 0;
 		write(s->is_read, tmp, len);
 	n->bytes_sent += len;
 
-	if (flag && type != DCC_RAW)
+	if (!(stxt_flags & STXT_QUIET) && type != DCC_RAW)
 	{
 		if (do_hook(list, "%s %s", user, text_display ? text_display : text))
 			put_it("%s", convert_output_format(fget_string_var(FORMAT_SEND_DCC_CHAT_FSET), "%c %s %s", thing, user, text_display?text_display:text));
 	}
 }
 
-extern void	dcc_chat_transmit (char *user, char *text, char *orig, char *type, int noisy)
+extern void	dcc_chat_transmit (char *user, char *text, char *orig, char *type, unsigned stxt_flags)
 {
 	int	fd;
 
@@ -1058,23 +1056,23 @@ extern void	dcc_chat_transmit (char *user, char *text, char *orig, char *type, i
 		strcat(bogus, space);
 		strcat(bogus, text);
 
-		new_dcc_message_transmit(user, bogus, orig, DCC_RAW, noisy, type, 0);
+		new_dcc_message_transmit(user, bogus, orig, DCC_RAW, stxt_flags, type, 0);
 	}
 	else
-		new_dcc_message_transmit(user, text, orig, DCC_CHAT, noisy, type, 0);
+		new_dcc_message_transmit(user, text, orig, DCC_CHAT, stxt_flags, type, 0);
 	reset_display_target();
 }
 
 extern void	dcc_bot_transmit (char *user, char *text, char *type)
 {
 	set_display_target(user, LOG_DCC);
-	new_dcc_message_transmit(user, text, NULL, DCC_BOTMODE, 0, type, 1);
+	new_dcc_message_transmit(user, text, NULL, DCC_BOTMODE, STXT_QUIET, type, 1);
 	reset_display_target();
 }
 
 extern void dcc_chat_transmit_quiet (char *user, char *text, char *type)
 {
-	new_dcc_message_transmit(user, text, NULL, DCC_CHAT, 0, type, 0);
+	new_dcc_message_transmit(user, text, NULL, DCC_CHAT, STXT_QUIET, type, 0);
 }
 
 int dcc_activechat(char *user)

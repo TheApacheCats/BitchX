@@ -3752,7 +3752,7 @@ static	int 	recursion = 0;
 	from_server = old_from_server;
 }
 
-static int try_send_special_target(char *target, const char *text, char *command, int hook)
+static int try_send_special_target(char *target, const char *text, char *command, unsigned stxt_flags)
 {
 	/*
 	 * It is legal to send an empty line to a process, but not legal
@@ -3816,8 +3816,8 @@ static int try_send_special_target(char *target, const char *text, char *command
 				from_server = -1;
 				if (dcc_activechat(target+1))
 				{
-					dcc_chat_transmit(target + 1, line, line, command, hook);
-					if (hook)
+					dcc_chat_transmit(target + 1, line, line, command, stxt_flags);
+					if (!(stxt_flags & STXT_QUIET))
 						addtabkey(target, "msg", 0);
 				}
 				else if (dcc_activebot(target + 1))
@@ -3871,6 +3871,7 @@ int current_target = 0;
 void 	BX_send_text(const char *nick_list, const char *text, char *command, int hook, int log)
 {
 	static int sent_text_recursion = 0;
+	unsigned flags = hook ? 0 : STXT_QUIET;
 
 	int	i, 
 		done_forward = 0,
@@ -3901,9 +3902,10 @@ void 	BX_send_text(const char *nick_list, const char *text, char *command, int h
 	target[3].format_encrypted = fget_string_var(FORMAT_SEND_ENCRYPTED_NOTICE_FSET);
 
 	if (sent_text_recursion)
-		hook = 0;
-	window_display = hook;
+		flags |= STXT_QUIET;
 	sent_text_recursion++;
+
+	window_display = !(flags & STXT_QUIET);
 	free_nick = next_nick = m_strdup(nick_list);
 
 	while ((current_nick = next_nick))
@@ -3916,7 +3918,7 @@ void 	BX_send_text(const char *nick_list, const char *text, char *command, int h
 		if (!*current_nick)
 			continue;
 
-		if (try_send_special_target(current_nick, text, command, hook))
+		if (try_send_special_target(current_nick, text, command, flags))
 			continue;
 
 		/*
@@ -3933,7 +3935,7 @@ void 	BX_send_text(const char *nick_list, const char *text, char *command, int h
 			continue;
 		}
 
-		if (!(i = is_channel(current_nick)) && hook)
+		if (!(i = is_channel(current_nick)) && !(flags & STXT_QUIET))
 			addtabkey(current_nick, "msg", 0);
 
 		if (command && !strcmp(command, "NOTICE"))
@@ -3944,7 +3946,7 @@ void 	BX_send_text(const char *nick_list, const char *text, char *command, int h
 			set_display_target(current_nick, target[i].level);
 
 			line = sed_encrypt_msg(text, key);
-			if (hook && do_hook(target[i].hook_type, "%s %s", current_nick, text))
+			if (!(flags & STXT_QUIET) && do_hook(target[i].hook_type, "%s %s", current_nick, text))
 				put_it("%s", convert_output_format(target[i].format_encrypted,
 							"%s %s %s %s", update_clock(GET_TIME), current_nick, get_server_nickname(from_server), text));
 
@@ -4004,7 +4006,7 @@ void 	BX_send_text(const char *nick_list, const char *text, char *command, int h
 		else
 			is_current = 1;
 
-		if (hook && (blah_hook = do_hook(target[i].hook_type, "%s %s", target[i].nick_list, text)))
+		if (!(flags & STXT_QUIET) && (blah_hook = do_hook(target[i].hook_type, "%s %s", target[i].nick_list, text)))
 			;
 		/* supposedly if this is called before the do_hook
 		 * it can cause a problem with scripts.
@@ -4033,7 +4035,7 @@ void 	BX_send_text(const char *nick_list, const char *text, char *command, int h
 		restore_display_target(old_mf, old_ml);
 	}
 	
-	if (hook && get_server_away(from_server) && get_int_var(AUTO_UNMARK_AWAY_VAR))
+	if (!(flags & STXT_QUIET) && get_server_away(from_server) && get_int_var(AUTO_UNMARK_AWAY_VAR))
 		parse_line(NULL, "AWAY", empty_string, 0, 0, 1);
 
 	new_free(&free_nick);

@@ -141,7 +141,7 @@ struct dcc_offer {
 	int	dcc_activechat(char *);	/* identify all active chat dcc's */
 	int	dcc_activebot(char *);	/* identify all active bot's */
 	int	dcc_activeraw(char *);  /* identify all active raw connects */
-	void	dcc_chat_transmit(char *, char *, char *, char *, int);
+	void	dcc_chat_transmit(char *, char *, char *, char *, unsigned);
 	void	dcc_bot_transmit(char *, char *, char *);
 	void	dcc_raw_transmit(char *, char *, char *);
 

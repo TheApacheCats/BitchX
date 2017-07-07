@@ -165,6 +165,10 @@ extern char	thing_star[4];
 #define MAX(a,b) ((a > b) ? (a) : (b))
 #endif
 
+/* send_text flag values */
+#define STXT_NOTICE 0x0001U
+#define STXT_QUIET  0x0002U
+
 /* This section is for keeping track internally
  * the CVS revision info of the running client.
  * Since so many people are using CVS versions
