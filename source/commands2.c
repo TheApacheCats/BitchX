@@ -933,7 +933,7 @@ BUILT_IN_COMMAND(show_version)
 		nick = next_arg(args, &args);
 	else
 		nick = get_current_channel_by_refnum(0);
-	send_text(nick, version_buf, 0);
+	send_text(nick, version_buf, STXT_LOG);
 	new_free(&version_buf);
 }
 
@@ -1979,7 +1979,7 @@ BUILT_IN_COMMAND(pastecmd)
 		if (start_pos && start_pos->line)
 		{
 			if (do_hook(PASTE_LIST, "%s %s", channel, start_pos->line))
-				send_text(channel, convert_output_format(fget_string_var(FORMAT_PASTE_FSET),"%s %d %s", channel, line, start_pos->line), 0);
+				send_text(channel, convert_output_format(fget_string_var(FORMAT_PASTE_FSET),"%s %d %s", channel, line, start_pos->line), STXT_LOG);
 			start_pos = start_pos->next;
 		}
 		count--;

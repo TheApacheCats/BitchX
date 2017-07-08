@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Messages sent by /SV and /PASTE should be logged in the send log. (caf)
+
 * Change send_text() to combine command, hook and log arguments into one
   set of flags. (caf)
 
