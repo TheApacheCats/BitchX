@@ -955,7 +955,7 @@ SocketList *sl;
 }
 #endif
 
-static void	new_dcc_message_transmit (char *user, char *text, char *text_display, int type, unsigned stxt_flags, char *cmd, int check_host)
+static void	new_dcc_message_transmit (char *user, char *text, char *text_display, int type, unsigned stxt_flags, int check_host)
 {
 SocketList *s = NULL;
 DCC_int		*n = NULL;
@@ -996,12 +996,12 @@ char		thing = 0;
 	/*
 	 * Check for CTCPs... whee.
 	 */
-	if (cmd && *text == CTCP_DELIM_CHAR && !strbegins(text+1, "ACTION"))
+	if (*text == CTCP_DELIM_CHAR && !strbegins(text+1, "ACTION"))
 	{
-		if (!strcmp(cmd, "PRIVMSG"))
-			strlcpy(tmp, DCC_CTCP_MESSAGE, sizeof tmp);
-		else
+		if (stxt_flags & STXT_NOTICE)
 			strlcpy(tmp, DCC_CTCP_REPLY, sizeof tmp);
+		else
+			strlcpy(tmp, DCC_CTCP_MESSAGE, sizeof tmp);
 	}
 
 	strmcat(tmp, text, n->blocksize-3);
@@ -1028,7 +1028,7 @@ char		thing = 0;
 	}
 }
 
-extern void	dcc_chat_transmit (char *user, char *text, char *orig, char *type, unsigned stxt_flags)
+extern void	dcc_chat_transmit (char *user, char *text, char *orig, unsigned stxt_flags)
 {
 	int	fd;
 
@@ -1056,23 +1056,18 @@ extern void	dcc_chat_transmit (char *user, char *text, char *orig, char *type, u
 		strcat(bogus, space);
 		strcat(bogus, text);
 
-		new_dcc_message_transmit(user, bogus, orig, DCC_RAW, stxt_flags, type, 0);
+		new_dcc_message_transmit(user, bogus, orig, DCC_RAW, stxt_flags, 0);
 	}
 	else
-		new_dcc_message_transmit(user, text, orig, DCC_CHAT, stxt_flags, type, 0);
+		new_dcc_message_transmit(user, text, orig, DCC_CHAT, stxt_flags, 0);
 	reset_display_target();
 }
 
-extern void	dcc_bot_transmit (char *user, char *text, char *type)
+extern void	dcc_bot_transmit (char *user, char *text, unsigned stxt_flags)
 {
 	set_display_target(user, LOG_DCC);
-	new_dcc_message_transmit(user, text, NULL, DCC_BOTMODE, STXT_QUIET, type, 1);
+	new_dcc_message_transmit(user, text, NULL, DCC_BOTMODE, stxt_flags | STXT_QUIET, 1);
 	reset_display_target();
-}
-
-extern void dcc_chat_transmit_quiet (char *user, char *text, char *type)
-{
-	new_dcc_message_transmit(user, text, NULL, DCC_CHAT, STXT_QUIET, type, 0);
 }
 
 int dcc_activechat(char *user)
@@ -4353,7 +4348,7 @@ char *get_dcc_info(SocketList *s, DCC_int *n, int i)
 		n->filename, i, n->server);
 }
 
-void dcc_raw_transmit (char *user, char *text, char *type)
+void dcc_raw_transmit (char *user, char *text, unsigned stxt_flags)
 {
 	return;
 }

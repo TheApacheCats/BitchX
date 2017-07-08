@@ -3752,7 +3752,7 @@ static	int 	recursion = 0;
 	from_server = old_from_server;
 }
 
-static int try_send_special_target(char *target, const char *text, char *command, unsigned stxt_flags)
+static int try_send_special_target(char *target, const char *text, unsigned stxt_flags)
 {
 	/*
 	 * It is legal to send an empty line to a process, but not legal
@@ -3816,14 +3816,14 @@ static int try_send_special_target(char *target, const char *text, char *command
 				from_server = -1;
 				if (dcc_activechat(target+1))
 				{
-					dcc_chat_transmit(target + 1, line, line, command, stxt_flags);
+					dcc_chat_transmit(target + 1, line, line, stxt_flags);
 					if (!(stxt_flags & STXT_QUIET))
 						addtabkey(target, "msg", 0);
 				}
 				else if (dcc_activebot(target + 1))
-					dcc_bot_transmit(target + 1, line, command);
+					dcc_bot_transmit(target + 1, line, stxt_flags);
 				else 
-					dcc_raw_transmit(target + 1, line, command);
+					dcc_raw_transmit(target + 1, line, stxt_flags);
 
 				add_last_type(&last_sent_dcc[0], MAX_LAST_MSG, NULL, NULL, target+1, text);
 				from_server = old_server;
@@ -3906,6 +3906,10 @@ void 	BX_send_text(const char *nick_list, const char *text, char *command, int h
 	sent_text_recursion++;
 
 	window_display = !(flags & STXT_QUIET);
+
+	if (command && !strcmp(command, "NOTICE"))
+		flags |= STXT_NOTICE;
+
 	free_nick = next_nick = m_strdup(nick_list);
 
 	while ((current_nick = next_nick))
@@ -3918,7 +3922,7 @@ void 	BX_send_text(const char *nick_list, const char *text, char *command, int h
 		if (!*current_nick)
 			continue;
 
-		if (try_send_special_target(current_nick, text, command, flags))
+		if (try_send_special_target(current_nick, text, flags))
 			continue;
 
 		/*
@@ -3938,7 +3942,7 @@ void 	BX_send_text(const char *nick_list, const char *text, char *command, int h
 		if (!(i = is_channel(current_nick)) && !(flags & STXT_QUIET))
 			addtabkey(current_nick, "msg", 0);
 
-		if (command && !strcmp(command, "NOTICE"))
+		if (flags & STXT_NOTICE)
 			i += 2;
 
 		if ((key = is_crypted(current_nick)))

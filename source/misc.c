@@ -1250,7 +1250,7 @@ char *new_str;
 			else
 				put_it("%s", convert_output_format(fget_string_var(FORMAT_SEND_MSG_FSET), "%s %s %s %s", update_clock(GET_TIME), to, get_server_nickname(from_server), new_str));
 			if ((*to == '=') && dcc_activechat(to+1))
-				dcc_chat_transmit(to+2, new_str, new_str, "PRIVMSG", 0);
+				dcc_chat_transmit(to + 3, new_str, new_str, 0);
 			else
 				send_to_server("PRIVMSG %s :%s", to, new_str);
 			break;
