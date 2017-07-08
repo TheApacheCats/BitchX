@@ -4,6 +4,7 @@
  */
 
 #include "irc.h"
+#include "ircaux.h"
 #include "struct.h"
 #include "hook.h"
 #include "module.h"
