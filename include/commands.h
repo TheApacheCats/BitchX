@@ -11,7 +11,7 @@ extern	char	*sent_nick;
 extern	char	*sent_body;
 extern	char	*recv_nick;
 
-	void	BX_send_text (const char *, const char *, char *, int, int);
+	void	BX_send_text (const char *, const char *, unsigned);
 	void	eval_inputlist (char *, char *);
 	int	BX_parse_command (char *, int, char *);
 	void	BX_parse_line (const char *, char *, const char *, int, int, int);
@@ -27,7 +27,7 @@ extern	char	*recv_nick;
 	void	destroy_call_stack (void);
 	void	unwind_stack (void);
 	void	wind_stack (char *);
-	void	redirect_text (int, const char *, const char *, char *, int, int);
+	void	redirect_text (int, const char *, const char *, unsigned);
 	int	command_exist (char *);
 			
 

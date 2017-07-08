@@ -2832,13 +2832,13 @@ void gtk_main_paste (int refnum)
 					{
 						if(*current_window->query_nick && bit && *bit)
 							if (do_hook(PASTE_LIST, "%s %s", current_window->query_nick, bit))
-								send_text(current_window->query_nick, bit, NULL, 1, 0);
+								send_text(current_window->query_nick, bit, 0);
 					}
 					else
 					{
 						if(channel && *channel && bit && *bit)
 							if (do_hook(PASTE_LIST, "%s %s", channel, bit))
-								send_text(channel, bit, NULL, 1, 0);
+								send_text(channel, bit, 0);
 					}
 				} else
 				{
@@ -2905,13 +2905,13 @@ void gtk_main_paste (int refnum)
 						{
 							if(*current_window->query_nick && *smart)
 								if (do_hook(PASTE_LIST, "%s %s", current_window->query_nick, smart))
-									send_text(current_window->query_nick, smart, NULL, 1, 0);
+									send_text(current_window->query_nick, smart, 0);
 						}
 						else
 						{
 							if(channel && *channel && *smart)
 								if (do_hook(PASTE_LIST, "%s %s", channel, smart))
-									send_text(channel, smart, NULL, 1, 0);
+									send_text(channel, smart, 0);
 						}
 					}
 					else

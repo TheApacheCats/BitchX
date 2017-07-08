@@ -3248,12 +3248,12 @@ void gui_paste(char *args)
 						if(current_window->query_nick)
 						{
 							if (do_hook(PASTE_LIST, "%s %s", current_window->query_nick, bit))
-								send_text(current_window->query_nick, bit, NULL, 1, 0);
+								send_text(current_window->query_nick, bit, 0);
 						}
 						else
 						{
 							if (do_hook(PASTE_LIST, "%s %s", channel, bit))
-								send_text(channel, bit, NULL, 1, 0);
+								send_text(channel, bit, 0);
 						}
 					} else
 					{
@@ -3316,12 +3316,12 @@ void gui_paste(char *args)
 							if(current_window->query_nick)
 							{
 								if (do_hook(PASTE_LIST, "%s %s", current_window->query_nick, smart))
-									send_text(current_window->query_nick, smart, NULL, 1, 0);
+									send_text(current_window->query_nick, smart, 0);
 							}
 							else
 							{
 								if (do_hook(PASTE_LIST, "%s %s", channel, smart))
-									send_text(channel, smart, NULL, 1, 0);
+									send_text(channel, smart, 0);
 							}
 						}
 						else

@@ -421,7 +421,7 @@ int i;
 	}
 	for (i = 2; i < argc; i++)
 		m_s3cat(&buffer, space, argv[i]);
-	send_text(argv[1], buffer, !strcmp(argv[0], "notice")?"NOTICE":"PRIVMSG", 1, 1);
+	send_text(argv[1], buffer, (!strcmp(argv[0], "notice") ? STXT_NOTICE : 0) | STXT_LOG);
 	new_free(&buffer);
 	return TCL_OK;
 }
@@ -438,7 +438,7 @@ int i;
 	}
 	for (i = 1; i < argc; i++)
 		m_s3cat(&buffer, space, argv[i]);
-	send_text(get_current_channel_by_refnum(0), buffer, "PRIVMSG", 1, 1);
+	send_text(get_current_channel_by_refnum(0), buffer, STXT_LOG);
 	new_free(&buffer);
 	return TCL_OK;
 }

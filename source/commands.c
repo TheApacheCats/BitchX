@@ -3313,8 +3313,11 @@ BUILT_IN_COMMAND(e_wall)
  */
 BUILT_IN_COMMAND(e_privmsg)
 {
-	char	*nick;
+	unsigned stxt_flags = (window_display ? 0 : STXT_QUIET) | STXT_LOG;
+	char *nick;
 
+	if (command && !strcmp(command, "NOTICE"))
+		stxt_flags |= STXT_NOTICE;
 	
 	if ((nick = next_arg(args, &args)) != NULL)
 	{
@@ -3336,7 +3339,7 @@ BUILT_IN_COMMAND(e_privmsg)
 		}
 		else if (!strcmp(nick, "*") && (!(nick = get_current_channel_by_refnum(0))))
 				nick = zero;
-		send_text(nick, args, command, window_display, 1);
+		send_text(nick, args, stxt_flags);
 	}
 }
 
@@ -3732,7 +3735,7 @@ int	command_exist (char *command)
 	return 0;
 }
 
-void	redirect_text (int to_server, const char *nick_list, const char *text, char *command, int hook, int log)
+void redirect_text(int to_server, const char *nick_list, const char *text, unsigned flags)
 {
 static	int 	recursion = 0;
 	int 	old_from_server = from_server;
@@ -3746,7 +3749,7 @@ static	int 	recursion = 0;
 	 * Dont hook /ON REDIRECT if we're being called recursively
 	 */
 	if (allow)
-		send_text(nick_list, text, command, hook, log);
+		send_text(nick_list, text, flags);
 
 	recursion--;
 	from_server = old_from_server;
@@ -3868,10 +3871,9 @@ int current_target = 0;
  * end up in one of the above mentioned buckets get sent out all
  * at once.
  */
-void 	BX_send_text(const char *nick_list, const char *text, char *command, int hook, int log)
+void BX_send_text(const char *nick_list, const char *text, unsigned flags)
 {
 	static int sent_text_recursion = 0;
-	unsigned flags = (hook ? 0 : STXT_QUIET) | (log ? STXT_LOG : 0);
 
 	int	i, 
 		done_forward = 0,
@@ -3906,9 +3908,6 @@ void 	BX_send_text(const char *nick_list, const char *text, char *command, int h
 	sent_text_recursion++;
 
 	window_display = !(flags & STXT_QUIET);
-
-	if (command && !strcmp(command, "NOTICE"))
-		flags |= STXT_NOTICE;
 
 	free_nick = next_nick = m_strdup(nick_list);
 
@@ -4071,9 +4070,9 @@ BUILT_IN_COMMAND(do_send_text)
 		else 
 #endif
 		if (!my_stricmp(cmd, "SAY") || !my_stricmp(cmd, "PRIVMSG") || !my_stricmp(cmd, "MSG"))
-			send_text(tmp, text, NULL, 1, 1);
+			send_text(tmp, text, STXT_LOG);
 		else if (!my_stricmp(cmd, "NOTICE"))
-			send_text(tmp, text, "NOTICE", 1, 1);
+			send_text(tmp, text, STXT_NOTICE | STXT_LOG);
 		else if (!my_strnicmp(cmd, "WALLO", 5))
 			e_wall("WALLOPS", text, NULL, NULL);
 		else if (!my_strnicmp(cmd, "SWALLO", 6))
@@ -4087,10 +4086,10 @@ BUILT_IN_COMMAND(do_send_text)
 			cmsg(NULL, text, NULL, NULL);
 #endif
 		else
-			send_text(tmp, text, NULL, 1, 1);					
+			send_text(tmp, text, STXT_LOG);
 	}
 	else
-		send_text(tmp, text, NULL, 1, 1);
+		send_text(tmp, text, STXT_LOG);
 }
 
 BUILT_IN_COMMAND(do_msay)
@@ -4110,7 +4109,7 @@ BUILT_IN_COMMAND(do_msay)
 		}
 		from_server = i;
 		if (channels)
-			send_text(channels, args, NULL, 1, 1);
+			send_text(channels, args, STXT_LOG);
 		new_free(&channels);
 		from_server = old_from_server;
 	} else

@@ -206,8 +206,8 @@ void BX_add_to_window(Window *window, const char *str)
 
 	if (window->server >= 0 && get_server_redirect(window->server))
 		redirect_text(window->server, 
-			        get_server_redirect(window->server),
-				str, NULL, 0, 0);
+			        get_server_redirect(window->server), str, STXT_QUIET);
+
 	if (do_hook(WINDOW_LIST, "%u %s", window->refnum, str))
 	{
 		char **lines;

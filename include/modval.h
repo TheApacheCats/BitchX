@@ -254,7 +254,7 @@ extern Function_ptr *global;
 #define prepare_command (*(ChannelList *(*)(int *, char *, int))global[PREPARE_COMMAND])
 #define convert_output_format (*(char *(*)(const char *, const char *, ...))global[CONVERT_OUTPUT_FORMAT])
 #define userage (*(void (*)(char *, char *))global[USERAGE])
-#define send_text (*(void (*)(const char *, const char *, char *, int , int ))global[SEND_TEXT])
+#define send_text (*(void (*)(const char *, const char *, unsigned))global[SEND_TEXT])
 /* this needs to be worked out. it's passed in the IrcVariable * to _Init */
 #define load (*(void (*)(char *, char *, char *, char *))global[FUNC_LOAD])
 #define update_clock (*(char *(*)(int ))global[UPDATE_CLOCK])

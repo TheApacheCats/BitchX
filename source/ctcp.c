@@ -1584,7 +1584,7 @@ extern	void	send_ctcp (int type, char *to, int datatag, char *format, ...)
 
 	putbuf2[len - 2] = CTCP_DELIM_CHAR;
 	putbuf2[len - 1] = 0;
-	send_text(to, putbuf2, ctcp_type[type], 0, 0);
+	send_text(to, putbuf2, (type == CTCP_NOTICE ? STXT_NOTICE : 0) | STXT_QUIET);
 }
 
 

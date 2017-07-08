@@ -1,5 +1,8 @@
 [Changes 1.2.2]
 
+* Change send_text() to combine command, hook and log arguments into one
+  set of flags. (caf)
+
 * Update to build against modern libtcl (don't access tcl_interp->result
   directly). (caf)
 

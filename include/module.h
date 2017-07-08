@@ -10,7 +10,7 @@
  * if we change the table below, we change this module number to the 
  * current date (YYYYMMDDxx where xx is a serial number).
  */
-#define MODULE_VERSION 2017071001UL
+#define MODULE_VERSION 2017071002UL
 
 #include "struct.h"
 

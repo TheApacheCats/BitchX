@@ -74,7 +74,7 @@ static char *Pkga_newctcp (CtcpEntryDll *dll, char *from, char *to, char *args)
 {
 char putbuf[500];
 	sprintf(putbuf, "%c%s %s%c", CTCP_DELIM_CHAR, dll->name, my_ctime(time(NULL)), CTCP_DELIM_CHAR);
-	send_text(from, putbuf, "NOTICE", 0, 0);
+	send_text(from, putbuf, STXT_NOTICE | STXT_QUIET);
 	return NULL;
 }
 
@@ -82,7 +82,7 @@ static char *Pkga_ctcppage (CtcpEntryDll *dll, char *from, char *to, char *args)
 {
 char putbuf[500];
 	sprintf(putbuf, "%c%s %s%c", CTCP_DELIM_CHAR, dll->name, my_ctime(time(NULL)), CTCP_DELIM_CHAR);
-	send_text(from, putbuf, "NOTICE", 0, 0);
+	send_text(from, putbuf, STXT_NOTICE | STXT_QUIET);
 	put_it(" %s is paging you", from);
 	return NULL;
 }

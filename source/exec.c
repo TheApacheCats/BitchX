@@ -860,7 +860,7 @@ static void 	handle_filedesc (Process *proc, int *fd, int hook_nonl, int hook_nl
 
 			if (proc->redirect) 
 				redirect_text(proc->server, proc->who, 
-					exec_buffer, proc->redirect, 1, 0);
+					exec_buffer, !strcmp(proc->redirect, "NOTICE") ? STXT_NOTICE : 0);
 
 			if (hook_nl == EXEC_LIST && proc->stdoutc)
 				parse_line("EXEC", proc->stdoutc, exec_buffer, 0, 0, 1);

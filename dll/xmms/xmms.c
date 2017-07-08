@@ -280,7 +280,7 @@ BUILT_IN_DLL(xmms_cmd)
 				sprintf(putbuf, "%cACTION %s%c", 
 					CTCP_DELIM_CHAR, message, 
 					CTCP_DELIM_CHAR);
-				send_text(target, putbuf, "PRIVMSG", 0, 0);
+				send_text(target, putbuf, STXT_QUIET);
 				
 				if (do_hook(SEND_ACTION_LIST, "%s %s", target, message))
 				{

@@ -843,6 +843,8 @@ char *tmp = NULL;
 /* display the offerlist to current channel */
 int l_plist(char *args, char *rest)
 {
+	const unsigned stxt_flags = (do_notice_list ? STXT_NOTICE : 0) | (do_cdcc_echo ? 0 : STXT_QUIET);
+	const char * const type_msg = do_notice_list ? "NOTICE" : "PRIVMSG";
 	pack *ptr;
 	char *chan = NULL;
 	char size[20];
@@ -851,7 +853,6 @@ int l_plist(char *args, char *rest)
 	char bytes_out[30];
 	char bytes_in[30];
 	char speed_out[30];
-	char *type_msg;
 	int maxdccs, blocksize, maxqueue;
 	
 	if (!get_current_channel_by_refnum(0) || !cdcc_numpacks || (args && *args && !is_channel(args))) {
@@ -860,7 +861,6 @@ int l_plist(char *args, char *rest)
 				   "have no packs offered!");
 		return 0;
 	}
-	type_msg = (do_notice_list)? "NOTICE":"PRIVMSG";
 	
 	if (args && *args)
 		chan = LOCAL_COPY(args);
@@ -888,14 +888,14 @@ int l_plist(char *args, char *rest)
 		if (get_int_var(QUEUE_SENDS_VAR))
 		{
 			queue_send_to_server(from_server, "%s %s :%s", 
-				do_notice_list?"NOTICE":"PRIVMSG", chan, msg1);
+				type_msg, chan, msg1);
 			queue_send_to_server(from_server, "%s %s :%s", 
-				do_notice_list?"NOTICE":"PRIVMSG", chan, msg2);
+				type_msg, chan, msg2);
 		}
 		else
 		{
-			send_text(chan, msg1, do_notice_list?"NOTICE":NULL, do_cdcc_echo, 0);
-			send_text(chan, msg2, do_notice_list?"NOTICE":NULL, do_cdcc_echo, 0);
+			send_text(chan, msg1, stxt_flags);
+			send_text(chan, msg2, stxt_flags);
 		}
 		new_free(&msg1);
 		new_free(&msg2);
@@ -917,11 +917,11 @@ int l_plist(char *args, char *rest)
 			if (get_int_var(QUEUE_SENDS_VAR))
 			{
 				queue_send_to_server(from_server, "%s %s :%s", 
-					do_notice_list?"NOTICE":"PRIVMSG", chan, msg);
+					type_msg, chan, msg);
 			}
 			else
 			{
-				send_text(chan, msg, do_notice_list?"NOTICE":NULL, do_cdcc_echo, 0);
+				send_text(chan, msg, stxt_flags);
 			}
 			new_free(&msg);
 		}
@@ -930,9 +930,9 @@ int l_plist(char *args, char *rest)
 			char *msg = m_sprintf("\t%s", ptr->notes);
 			if (get_int_var(QUEUE_SENDS_VAR))
 				queue_send_to_server(from_server, "%s %s :%s", 
-					do_notice_list?"NOTICE":"PRIVMSG", chan, msg);
+					type_msg, chan, msg);
 			else
-				send_text(chan, msg, do_notice_list?"NOTICE":NULL, do_cdcc_echo, 0);
+				send_text(chan, msg, stxt_flags);
 			new_free(&msg);
 		}
 	}
@@ -981,7 +981,7 @@ static int l_notice(char *args, char *rest)
 		if (get_int_var(QUEUE_SENDS_VAR))
 			queue_send_to_server(from_server, "NOTICE %s :%s", chan, msg);
 		else
-			send_text(chan, msg, "NOTICE", do_cdcc_echo, 0);
+			send_text(chan, msg, STXT_NOTICE | (do_cdcc_echo ? 0 : STXT_QUIET));
 		new_free(&msg);	
 	}
 
