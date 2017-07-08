@@ -166,8 +166,9 @@ extern char	thing_star[4];
 #endif
 
 /* send_text flag values */
-#define STXT_NOTICE 0x0001U
-#define STXT_QUIET  0x0002U
+#define STXT_NOTICE 0x0001U /* Send as a NOTICE rather than PRIVMSG. */
+#define STXT_QUIET  0x0002U /* Do not run hooks or screen output. */
+#define STXT_LOG    0x0004U /* Add sent message to the log file. */
 
 /* This section is for keeping track internally
  * the CVS revision info of the running client.

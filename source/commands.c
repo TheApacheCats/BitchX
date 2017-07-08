@@ -3871,7 +3871,7 @@ int current_target = 0;
 void 	BX_send_text(const char *nick_list, const char *text, char *command, int hook, int log)
 {
 	static int sent_text_recursion = 0;
-	unsigned flags = hook ? 0 : STXT_QUIET;
+	unsigned flags = (hook ? 0 : STXT_QUIET) | (log ? STXT_LOG : 0);
 
 	int	i, 
 		done_forward = 0,
@@ -3989,7 +3989,7 @@ void 	BX_send_text(const char *nick_list, const char *text, char *command, int h
 		}
 
 		/* log it if logging on */
-		if (log)
+		if (flags & STXT_LOG)
 			logmsg(LOG_SEND_MSG, target[i].nick_list, 0, "%s", text);
 		/* save this for /oops */
 	
