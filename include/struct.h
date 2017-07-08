@@ -14,6 +14,7 @@
 #include <windows.h>
 #endif
 
+#include "irc.h"
 #include "hash.h"
 #include "config.h"
 #include "ssl.h"
