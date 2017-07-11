@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Fix memory leak in /QUEUE -FLUSH. (caf)
+
 * Messages sent by /SV and /PASTE should be logged in the send log. (caf)
 
 * Change send_text() to combine command, hook and log arguments into one

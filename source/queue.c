@@ -267,28 +267,27 @@ static int	delete_commands_from_queue (Queue *queue, int which)
 /* flush a queue, deallocate the memory, and return the next in line */
 static Queue	*remove_a_queue (Queue *queue)
 {
-	Queue *tmp;
-        tmp = queue->next;
+	Queue *next = queue->next;
+
 	flush_queue(queue);
-	new_free((char **)&queue);
-	return tmp;
+	new_free(&queue->name);
+	new_free(&queue);
+	return next;
 }
 
 /* walk through a queue, deallocating the entries */
 static void	flush_queue (Queue *queue)
 {
-	CmdList *tmp, *tmp2;
-	tmp = queue->first;
+	CmdList *cmd_list = queue->first;
 
-	while (tmp != NULL)
+	while (cmd_list != NULL)
 	{
-		tmp2 = tmp;
-		tmp = tmp2->next;
-                if (tmp2->what != NULL)
-		        new_free(&tmp2->what);
-                if (tmp2)
-	        	new_free((char **)&tmp2);
+		CmdList *next = cmd_list->next;
+		new_free(&cmd_list->what);
+		new_free(&cmd_list);
+		cmd_list = next;
 	}
+	queue->first = NULL;
 }
 
 /*------------------------------------------------------------------------*/
