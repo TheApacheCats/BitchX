@@ -74,14 +74,11 @@ static int in_read_log = 0;
 BUILT_IN_COMMAND(readlog)
 {
 	char *expand;
-	struct	stat	stat_buf;
-	char	*filename = NULL;
-	char buffer[BIG_BUFFER_SIZE + 1];
+	struct stat stat_buf;
+	char *filename = NULL;
 	
 	read_log_func = fgets;
-	if (!get_string_var(MSGLOGFILE_VAR))
-		if (!args || (args && !*args))
-			return;
+
 	if (msg_window)
 		return;
 	
@@ -93,36 +90,47 @@ BUILT_IN_COMMAND(readlog)
 			if (args && !my_strnicmp(args, "-resume", 2))
 			{
 				next_arg(args, &args);
-				read_log_func = (char *(*)(char *, int, FILE *))global[RFGETS];
+				read_log_func = &rfgets;
 			}
 		}
-	}		
+	}
+
 	if (args && *args)
+	{
 		malloc_sprintf(&filename, "%s", args);
+	}
 	else
+	{
+		const char *ctoolz_dir = get_string_var(CTOOLZ_DIR_VAR);
+		const char *msglogfile = get_string_var(MSGLOGFILE_VAR);
+
+		if (!ctoolz_dir || !msglogfile)
+			return;
+
 		malloc_sprintf(&filename, "%s/%s", get_string_var(CTOOLZ_DIR_VAR), get_string_var(MSGLOGFILE_VAR));
+
+	}
 
 	expand = expand_twiddle(filename);
 	new_free(&filename);
-	stat(expand, &stat_buf);
-	strcpy(buffer, expand);
-	
-	if (stat_buf.st_mode & S_IFDIR)
-		return;
 
-	if ((msg_fp = fopen(expand, "r")) == NULL)
+	if (stat(expand, &stat_buf) == 0 && !(stat_buf.st_mode & S_IFDIR))
+		msg_fp = fopen(expand, "r");
+
+	if (msg_fp == NULL)
 	{
 		log_put_it(expand, "%s Error Opening Log file %s", thing_ansi, expand);
 		new_free(&expand);
-		msg_fp = NULL;
 		return;
 	}
-	if (read_log_func == (char *(*)(char *, int, FILE *))global[RFGETS])
+
+	if (read_log_func == &rfgets)
 		fseek(msg_fp, 0, SEEK_END);
-	new_free(&expand);
+
 	msg_window = current_window;
 	msg_screen = current_window->screen;
-	log_prompt(buffer, NULL);
+	log_prompt(expand, NULL);
+	new_free(&expand);
 }
 
 /*

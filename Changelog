@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Improve error handling in /READLOG. (caf)
+
 * Fix memory leak in /QUEUE -FLUSH. (caf)
 
 * Messages sent by /SV and /PASTE should be logged in the send log. (caf)
