@@ -34,7 +34,6 @@ static  int     use_msg_window = 0;
 static	void log_prompt (char *name, char *line);
 static	void set_msg_screen (Screen *);
 static	char	*(*read_log_func) (char *, int, FILE *);
-	void	log_put_it(const char *topic, const char *format, ...);
 	
 BUILT_IN_COMMAND(remove_log)
 {
@@ -119,7 +118,7 @@ BUILT_IN_COMMAND(readlog)
 
 	if (msg_fp == NULL)
 	{
-		log_put_it(expand, "%s Error Opening Log file %s", thing_ansi, expand);
+		log_put_it("%s Error Opening Log file %s", thing_ansi, expand);
 		new_free(&expand);
 		return;
 	}
@@ -167,7 +166,7 @@ static	int show_log(Window *window, char *name)
 			if (get_int_var(HEBREW_TOGGLE_VAR))
 				hebrew_process(line);
 			#endif
-			log_put_it(name, "%s", line);
+			log_put_it("%s", line);
 		}
 		else
 		{

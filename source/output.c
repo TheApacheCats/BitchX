@@ -255,7 +255,7 @@ void	BX_yell(const char *format, ...)
 }
 
 
-void	log_put_it (const char *topic, const char *format, ...)
+void	log_put_it (const char *format, ...)
 {
 	if (format)
 	{

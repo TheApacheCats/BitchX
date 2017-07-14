@@ -14,6 +14,7 @@
 
 	void	put_echo (char *);
 	void	BX_put_it (const char *, ...);
+	void	log_put_it(const char *format, ...);
 
 	void	BX_send_to_server (const char *, ...);
 	void	BX_my_send_to_server (int, const char *, ...);
