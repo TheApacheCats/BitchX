@@ -32,8 +32,6 @@ CVS_REVISION(output_c)
 #define MAIN_SOURCE
 #include "modval.h"
 
-	int	in_help = 0;
-
 /* make this buffer *much* bigger than needed */
 
 #define LARGE_BIG_BUFFER_SIZE BIG_BUFFER_SIZE * 10
@@ -257,19 +255,16 @@ void	BX_yell(const char *format, ...)
 
 void	log_put_it (const char *format, ...)
 {
-	if (format)
+	if (window_display && format)
 	{
 		va_list args;
 		va_start (args, format);
 		vsnprintf(putbuf, LARGE_BIG_BUFFER_SIZE, format, args);
 		va_end(args);
 
-		in_help = 1;
 		set_display_target(NULL, LOG_CURRENT);
-		if (window_display)
-			put_echo(putbuf);
+		put_echo(putbuf);
 		reset_display_target();
-		in_help = 0;
 	}
 }
 
