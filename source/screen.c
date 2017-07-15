@@ -468,7 +468,7 @@ char **BX_prepare_display(const char *orig_str,
 
 				break; /* case '\a' */
 			}
-			case '\011':    /* TAB */
+			case '\t':    /* TAB */
 			{
 				tab_cnt++;
 				if ((tab_max > 0) && (tab_cnt > tab_max))
@@ -495,7 +495,7 @@ char **BX_prepare_display(const char *orig_str,
 							break;
 					}
 				}
-				break; /* case '\011' */
+				break; /* case '\t' */
 			}
 			case ND_SPACE:
 			{
@@ -2522,7 +2522,7 @@ char *BX_strip_ansi(const char *str)
 			 */
 			case ('P') :
 			{
-				while (((chr = next_char()) != 0) && chr != 033)
+				while (((chr = next_char()) != 0) && chr != '\033')
 					;
 				if (chr == 0)
 					put_back();
@@ -2619,7 +2619,7 @@ char *BX_strip_ansi(const char *str)
 				 * If we find a new ansi char, start all
 				 * over from the top and strip it out too
 				 */
-				if (this_char() == 033)
+				if (this_char() == '\033')
 					continue;
 
 				/*
