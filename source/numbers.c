@@ -503,7 +503,7 @@ char *t = NULL;
 	if (nick && (t = get_string_var(ALTNICK_VAR)))
 	{ 
 		if (!my_stricmp(t, nick))		
-			fudge_nickname(server, 0);
+			fudge_nickname(server);
 		else
 			change_server_nickname(server, t);
 	} else
@@ -513,7 +513,7 @@ char *t = NULL;
   		else
 			reset_nickname(from_server);
 #endif
-		fudge_nickname(server, 0);
+		fudge_nickname(server);
 }
 
 /*
@@ -1149,7 +1149,6 @@ void numbered_command(char *from, int comm, char **ArgList)
 	 * Sometimes the server doesn't catch the USER line, so
 	 * here we send a simplified version again  -lynx 
 	 */
-/*		fudge_nickname(from_server, 1);*/
 		register_server(from_server, NULL);
 
 		PasteArgs(ArgList, 0);

@@ -2798,8 +2798,8 @@ void	change_server_nickname (int ssn_index, char *nick)
 			reset_nickname(ssn_index);
 	}
 
-	if (server_list[ssn_index].s_nickname)
-		my_send_to_server(ssn_index, "NICK %s", server_list[ssn_index].s_nickname);
+	if (s->s_nickname && s->write > -1)
+		my_send_to_server(ssn_index, "NICK %s", s->s_nickname);
 }
 
 void	accept_server_nickname (int ssn_index, char *nick)
@@ -2847,15 +2847,11 @@ int	is_orignick_pending (int servnum)
  * out of guesses, and if it ever gets to that point, it will do the
  * manually-ask-you-for-a-new-nickname thing.
  */
-void BX_fudge_nickname (int servnum, int resend_only)
+void BX_fudge_nickname(int servnum)
 {
-	char l_nickname[BIG_BUFFER_SIZE + 1];
+	char l_nickname[NICKNAME_LEN];
 	Server *s = &server_list[from_server];
-	if (resend_only)
-	{
-		change_server_nickname(servnum, NULL);
-		return;
-	}
+
 	/*
 	 * If we got here because the user did a /NICK command, and
 	 * the nick they chose doesnt exist, then we just dont do anything,
@@ -2867,7 +2863,7 @@ void BX_fudge_nickname (int servnum, int resend_only)
 		return;
 	}
 
-	if ((s->orignick_pending) && (!s->nickname_pending) && (!resend_only))
+	if (s->orignick_pending)
 	{
 		new_free(&s->s_nickname);
 		say("orignick feature failed, sorry");
@@ -2914,14 +2910,8 @@ void BX_fudge_nickname (int servnum, int resend_only)
 	else
 	{
 		char tmp = l_nickname[8];
-		l_nickname[8] = l_nickname[7];
-		l_nickname[7] = l_nickname[6];
-		l_nickname[6] = l_nickname[5];
-		l_nickname[5] = l_nickname[4];
-		l_nickname[4] = l_nickname[3];
-		l_nickname[3] = l_nickname[2];
-		l_nickname[2] = l_nickname[1];
-		l_nickname[1] = l_nickname[0];
+
+		memmove(&l_nickname[1], &l_nickname[0], 8);
 		l_nickname[0] = tmp;
 	}
 	if (!strcmp(l_nickname, "_________"))

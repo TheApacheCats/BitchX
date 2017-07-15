@@ -1302,7 +1302,7 @@ static	void p_kill(char *from, char **ArgList)
 				ArgList[1] ? ArgList[1] : "(No Reason)"))
 			put_it("%s", convert_output_format(fget_string_var(FORMAT_KILL_FSET), "%s %s %s", update_clock(GET_TIME), from, ArgList[1]? ArgList[1] : "You have been Killed"));
 		if (get_int_var(CHANGE_NICK_ON_KILL_VAR))
-			fudge_nickname(from_server, 1);
+			fudge_nickname(from_server);
 		if (get_int_var(AUTO_RECONNECT_VAR))
 			servercmd (NULL, sc, empty_string, NULL);
 		logmsg(LOG_KILL, from, 0, "%s", ArgList[1]?ArgList[1]:"(No Reason)");

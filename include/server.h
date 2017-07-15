@@ -284,7 +284,7 @@ extern	SGroup	*server_group_list;
 		
 	void	change_server_nickname		(int, char *);
 	void	register_server			(int, char *);
-	void	BX_fudge_nickname			(int, int);
+	void	BX_fudge_nickname			(int);
 	char	*BX_get_pending_nickname		(int);
 	void	accept_server_nickname		(int, char *);
 	void	BX_reset_nickname			(int);

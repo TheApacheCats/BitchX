@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Fix CHANGE_NICK_ON_KILL feature. (caf)
+
 * Improve error handling in /READLOG. (caf)
 
 * Fix memory leak in /QUEUE -FLUSH. (caf)

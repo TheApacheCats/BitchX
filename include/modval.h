@@ -510,7 +510,7 @@ extern Function_ptr *global;
 #define set_server_redirect (*(void (*)(int , const char *))global[SET_SERVER_REDIRECT])
 #define get_server_redirect (*(char *(*)(int ))global[GET_SERVER_REDIRECT])
 #define check_server_redirect (*(int (*)(char *))global[CHECK_SERVER_REDIRECT])
-#define fudge_nickname (*(void (*)(int , int ))global[FUDGE_NICKNAME])
+#define fudge_nickname (*(void (*)(int))global[FUDGE_NICKNAME])
 #define reset_nickname (*(void (*)(int ))global[RESET_NICKNAME])
 
 #define set_server_cookie (*(void (*)(int , char *))global[SET_SERVER_COOKIE])
