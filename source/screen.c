@@ -1397,18 +1397,14 @@ int BX_is_cursor_in_display(Screen *screen)
  * If end_line is -1, then that means clear the display if any of it appears
  * after the end of the scrollback buffer.
  */
-void 	BX_repaint_window (Window *w, int start_line, int end_line)
+void 	BX_repaint_window (Window *window, int start_line, int end_line)
 {
-	Window *window = (Window *)w;
 	Display *curr_line;
 	int count;
 	int clean_display = 0;
 
 	if (dumb_mode || !window->visible)
 		return;
-
-	if (!window)
-		window = current_window;
 
 	if (end_line == -1)
 	{
