@@ -2618,32 +2618,6 @@ extern	void BX_close_all_server (void)
 	}
 }
 
-extern	char *BX_create_server_list (char *input)
-{
-	int	i;
-	int	do_read = 0;
-	char *value = NULL;
-
-	if (input && *input == '1')
-		do_read = 1;
-
-	for (i = 0; i < number_of_servers; i++)
-	{
-		if (do_read)
-		{
-			if (is_server_connected(i))
-				m_s3cat(&value, " ", ltoa(i));
-		}
-		else
-		{
-			if (is_server_open(i))
-				m_s3cat(&value, " ", get_server_itsname(i));
-		}
-	}
-
-	return value;
-}
-
 void BX_server_disconnect(int i, char *args)
 {
 char	*message;

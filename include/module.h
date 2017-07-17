@@ -10,7 +10,7 @@
  * if we change the table below, we change this module number to the 
  * current date (YYYYMMDDxx where xx is a serial number).
  */
-#define MODULE_VERSION 2017071002UL
+#define MODULE_VERSION 2017071701UL
 
 #include "struct.h"
 
@@ -253,7 +253,6 @@ enum FUNCTION_VALUE
 	ADD_TO_SERVER_LIST,
 	BUILD_SERVER_LIST,
 	DISPLAY_SERVER_LIST,
-	CREATE_SERVER_LIST,
 	PARSE_SERVER_INFO,
 	SERVER_LIST_SIZE,
 /* misc server/nickname functions */

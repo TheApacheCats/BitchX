@@ -216,7 +216,6 @@ extern	SGroup	*server_group_list;
 	char	*BX_get_server_itsname (int);
 	char	*get_server_pass (int);
 	int	BX_find_in_server_list (char *, int);
-	char	*BX_create_server_list (char *);
 	void	BX_set_server_motd (int, int);
 	int	BX_get_server_motd (int);
 	int	BX_get_server_operator (int);

@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Remove exported function create_server_list(). (caf)
+
 * Fix $myservers(1) to only return registered server refnums, so it now
   works the way EPIC does which was always the intention. (caf)
 

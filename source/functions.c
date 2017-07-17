@@ -1903,7 +1903,29 @@ BUILT_IN_FUNCTION(function_channels, input)
 
 BUILT_IN_FUNCTION(function_servers, input)
 {
-	RETURN_MSTR(create_server_list(input));		/* DONT USE RETURN_STR HERE! */
+	const int n_servers = server_list_size();
+	int	i;
+	int	do_read = 0;
+	char *value = NULL;
+
+	if (input && *input == '1')
+		do_read = 1;
+
+	for (i = 0; i < n_servers; i++)
+	{
+		if (do_read)
+		{
+			if (is_server_connected(i))
+				m_s3cat(&value, " ", ltoa(i));
+		}
+		else
+		{
+			if (is_server_open(i))
+				m_s3cat(&value, " ", get_server_itsname(i));
+		}
+	}
+
+	RETURN_MSTR(value);
 }
 
 BUILT_IN_FUNCTION(function_pid, input)

@@ -248,7 +248,6 @@ static int already_done = 0;
 	global_table[ADD_TO_SERVER_LIST]	= (Function_ptr) BX_add_to_server_list;
 	global_table[BUILD_SERVER_LIST]		= (Function_ptr) BX_build_server_list;
 	global_table[DISPLAY_SERVER_LIST]	= (Function_ptr) BX_display_server_list;
-	global_table[CREATE_SERVER_LIST]	= (Function_ptr) BX_create_server_list;
 	global_table[PARSE_SERVER_INFO]		= (Function_ptr) BX_parse_server_info;
 	global_table[SERVER_LIST_SIZE]		= (Function_ptr) BX_server_list_size;
 /* misc server/nickname functions */
