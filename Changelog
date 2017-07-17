@@ -1,5 +1,8 @@
 [Changes 1.2.2]
 
+* Fix $myservers(1) to only return registered server refnums, so it now
+  works the way EPIC does which was always the intention. (caf)
+
 * Fix CHANGE_NICK_ON_KILL feature. (caf)
 
 * Improve error handling in /READLOG. (caf)

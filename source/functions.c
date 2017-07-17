@@ -1903,7 +1903,7 @@ BUILT_IN_FUNCTION(function_channels, input)
 
 BUILT_IN_FUNCTION(function_servers, input)
 {
-	return create_server_list(input);		/* DONT USE RETURN_STR HERE! */
+	RETURN_MSTR(create_server_list(input));		/* DONT USE RETURN_STR HERE! */
 }
 
 BUILT_IN_FUNCTION(function_pid, input)

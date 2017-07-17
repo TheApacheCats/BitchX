@@ -2622,32 +2622,24 @@ extern	char *BX_create_server_list (char *input)
 {
 	int	i;
 	int	do_read = 0;
-	char	*value = NULL;
-	char buffer[BIG_BUFFER_SIZE + 1];
-	if (input && *input && *input == '1')
+	char *value = NULL;
+
+	if (input && *input == '1')
 		do_read = 1;
-	*buffer = '\0';
+
 	for (i = 0; i < number_of_servers; i++)
 	{
-		if (server_list[i].read != -1)
+		if (do_read)
 		{
-			if (do_read)
-			{
-				strncat(buffer, ltoa(i), BIG_BUFFER_SIZE);
-				strncat(buffer, space, BIG_BUFFER_SIZE);
-				continue;
-			}
-			if (server_list[i].itsname)
-			{
-				strncat(buffer, server_list[i].itsname, BIG_BUFFER_SIZE);
-				strncat(buffer, space, BIG_BUFFER_SIZE);
-			}
-			else
-				yell("Warning: server_list[%d].itsname is null and it shouldnt be", i);
-				
+			if (is_server_connected(i))
+				m_s3cat(&value, " ", ltoa(i));
+		}
+		else
+		{
+			if (is_server_open(i))
+				m_s3cat(&value, " ", get_server_itsname(i));
 		}
 	}
-	malloc_strcpy(&value, buffer);
 
 	return value;
 }
