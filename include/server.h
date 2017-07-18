@@ -415,9 +415,7 @@ struct sockaddr_foobar	get_server_uh_addr		(int);
 #define USER_MODE_Y	USER_MODE << 24
 #define USER_MODE_Z	USER_MODE << 25
 
-#define LOGGED_IN	USER_MODE << 29
-#define CLOSE_PENDING	USER_MODE << 30
-#define CLOSING_SERVER  USER_MODE << 31
+#define SF_LOGGED_IN	(USER_MODE << 29)
 extern const char *umodes;
 
 #define IMMED_SEND	0

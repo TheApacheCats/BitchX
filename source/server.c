@@ -266,7 +266,7 @@ void set_server_bits (fd_set *rd, fd_set *wr, struct timeval *wake_time)
 		if (server_list[i].read > -1)
 			FD_SET(server_list[i].read, rd);
 #ifdef NON_BLOCKING_CONNECTS
-		if (!(server_list[i].login_flags & (LOGGED_IN|CLOSE_PENDING)) &&
+		if (!(server_list[i].login_flags & SF_LOGGED_IN) &&
 		    server_list[i].write > -1)
 			FD_SET(server_list[i].write, wr);
 #endif
@@ -409,7 +409,7 @@ static void scan_nonblocking(void)
 	{
 		if (((server_list[i].read > -1) ||
 		     (server_list[i].write > -1)) &&
-		    !(server_list[i].login_flags & LOGGED_IN) &&
+		    !(server_list[i].login_flags & SF_LOGGED_IN) &&
 		    time_since(&server_list[i].connect_time) > connect_timeout) {
 			if (server_list[i].read > -1)
 				new_close(server_list[i].read);
@@ -491,7 +491,7 @@ void	do_server (fd_set *rd, fd_set *wr)
 	for (i = 0; i < number_of_servers; i++)
 	{
 #ifdef NON_BLOCKING_CONNECTS
-		if (((des = server_list[i].write) > -1) && FD_ISSET(des, wr) && !(server_list[i].login_flags & LOGGED_IN))
+		if (((des = server_list[i].write) > -1) && FD_ISSET(des, wr) && !(server_list[i].login_flags & SF_LOGGED_IN))
 		{
 			struct sockaddr_in sa;
 			socklen_t salen = sizeof(struct sockaddr_in);
@@ -526,7 +526,7 @@ void	do_server (fd_set *rd, fd_set *wr)
 				{
 #ifdef NON_BLOCKING_CONNECTS
 					/* If we get here before getting above we have problems. */
-					if(!(server_list[i].login_flags & LOGGED_IN))
+					if(!(server_list[i].login_flags & SF_LOGGED_IN))
 					{
 						if(!server_list[i].ctx || server_list[i].ssl_error == SSL_ERROR_WANT_READ)
 						{
@@ -2307,15 +2307,14 @@ void	register_server (int ssn_index, char *nick)
 
 	change_server_nickname(ssn_index, nick);
 
-	server_list[ssn_index].login_flags &= ~LOGGED_IN;
-	server_list[ssn_index].login_flags &= ~CLOSE_PENDING;
+	server_list[ssn_index].login_flags &= ~SF_LOGGED_IN;
 	server_list[ssn_index].last_msg = now;
 	server_list[ssn_index].eof = 0;
 /*	server_list[ssn_index].connected = 1; XXX: We aren't sure yet */
 	*server_list[ssn_index].umode = 0;
 	server_list[ssn_index].operator = 0;
 /*	set_umode(ssn_index); */
-	server_list[ssn_index].login_flags |= LOGGED_IN;
+	server_list[ssn_index].login_flags |= SF_LOGGED_IN;
 	server_list[ssn_index].lag_cookie = random_number(0);
 	from_server = old_from_server;
 	check_host();
