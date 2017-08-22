@@ -1,5 +1,8 @@
 [Changes 1.2.2]
 
+* Fix $statsparse() scripting function to handle right-justified status
+  formats correctly and improve efficiency of all status formatting. (caf)
+
 * Restore terminal settings after flushing output, not before. (caf)
 
 * Remove exported function create_server_list(). (caf)

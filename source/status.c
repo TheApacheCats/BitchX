@@ -446,182 +446,6 @@ static	char	*convert_format(Window *win, char *format, int k)
 	return m_strdup(buffer);
 }
 
-void fix_status_buffer(Window *win, char *buffer, int in_status)
-{
-	char rhs_buffer[3*BIG_BUFFER_SIZE + 1];
-	char lhs_buffer[3*BIG_BUFFER_SIZE + 1];
-	char lhs_fillchar[6],
-		rhs_fillchar[6],
-		*fillchar = lhs_fillchar,
-		*lhp = lhs_buffer,
-		*rhp = rhs_buffer,
-		*cp,
-		*start_rhs = 0,
-		*str = NULL, *ptr = NULL;
-	int in_rhs = 0,
-		pr_lhs = 0,
-		pr_rhs = 0,
-		*prc = &pr_lhs;
-
-	lhs_buffer[0] = 0;
-	rhs_buffer[0] = 0;
-	if (!buffer || !*buffer)
-		return;
-	if (get_int_var(STATUS_DOES_EXPANDOS_VAR))
-	{
-		int  af = 0;
-		char *stuff;
-		Window *old = current_window;
-		current_window = win;
-		stuff = expand_alias(buffer, empty_string, &af, NULL);
-		strlcpy(buffer, stuff, sizeof buffer);
-		new_free(&stuff);
-		current_window = old;
-	}
-	/*
-	 * This converts away any ansi codes in the status line
-	 * in accordance with the current settings.  This leaves us
-	 * with nothing but logical characters, which are then easy
-	 * to count. :-)
-	 */
-	str = strip_ansi(buffer);
-
-	/*
-	 * Count out the characters.
-	 * Walk the entire string, looking for nonprintable
-	 * characters.  We count all the printable characters
-	 * on both sides of the %> tag.
-	 */
-	ptr = str;
-	cp = lhp;
-	lhs_buffer[0] = rhs_buffer[0] = 0;
-	while (*ptr)
-	{
-		/*
-		 * The FIRST such %> tag is used.
-		 * Using multiple %>s is bogus.
-		 */
-		if (*ptr == '\f' && start_rhs == NULL)
-		{
-			ptr++;
-			start_rhs = ptr;
-			fillchar = rhs_fillchar;
-			in_rhs = 1;
-			*cp = 0;
-			cp = rhp;
-			prc = &pr_rhs;
-		}
-		/*
-		 * Skip over color attributes if we're not
-		 * doing color.
-		 */
-		else if (*ptr == COLOR_CHAR)
-		{
-			const char *end = skip_ctl_c_seq(ptr, NULL, NULL, 0);
-			while (ptr < end)
-				*cp++ = *ptr++;
-		}
-		/*
-		 * If we have a ROM character code here, we need to
-		 * copy it to the output buffer, as well as the fill
-		 * character, and increment the printable counter by
-		 * only 1.
-		 */
-		else if (*ptr == ROM_CHAR)
-		{
-			fillchar[0] = *cp++ = *ptr++;
-			fillchar[1] = *cp++ = *ptr++;
-			fillchar[2] = *cp++ = *ptr++;
-			fillchar[3] = *cp++ = *ptr++;
-			fillchar[4] = 0;
-			*prc += 1;
-		}
-		/*
-		 * Is it NOT a printable character?
-		 */
-		else if ((*ptr == REV_TOG) || (*ptr == UND_TOG) ||
-			 (*ptr == ALL_OFF) || (*ptr == BOLD_TOG) ||
-			 (*ptr == BLINK_TOG))
-				*cp++ = *ptr++;
-		/*
-		 * So it is a printable character.
-		 * Or maybe its a tab. ;-)
-		 */
-		else
-		{
-			*prc += 1;
-			fillchar[0] = *cp++ = *ptr++;
-			fillchar[1] = 0;
-		}
-		/*
-		 * Dont allow more than CO printable characters
-		 */
-		if (pr_lhs + pr_rhs >= win->screen->co)
-		{
-			*cp = 0;
-			break;
-		}
-	}
-	*cp = 0;
-	strcpy(buffer, lhs_buffer);
-	strlcat(buffer, rhs_buffer, sizeof buffer);
-	new_free(&str);
-}
-
-char	*stat_convert_format(Window *win, char *form)
-{
-	int map, key, i, pos = 0;
-	char *ptr = form;
-	char buffer[2 * BIG_BUFFER_SIZE + 1];
-
-	if (!form || !*form)
-		return m_strdup(empty_string);	
-
-	*buffer = 0;
-	while (*ptr && pos < (2 * BIG_BUFFER_SIZE) - 4)
-	{
-		if (*ptr != '%')
-		{
-			buffer[pos++] = *ptr++;
-			continue;
-		}
-
-		/* Its a % */
-		map = 0;
-
-		/* Find the map, if neccesary */
-		if (*++ptr == '{')
-		{
-			char	*endptr;
-
-			ptr++;
-			map = strtoul(ptr, &endptr, 10);
-			if (*endptr != '}')
-			{
-				/* Unrecognized */
-				continue;
-			}
-			ptr = endptr + 1;
-		}
-
-		key = *ptr++;
-
-		/* Choke once we get to the maximum number of expandos */
-		for (i = 0; i < NUMBER_OF_EXPANDOS; i++)
-		{
-			if (status_expandos[i].map != map || status_expandos[i].key != key)
-				continue;
-			strlcat(buffer, status_expandos[i].callback_function(win), sizeof buffer);
-			pos = strlen(buffer);
-			break;
-		}
-	}
-
-	buffer[pos] = 0;
-	fix_status_buffer(win, buffer, 0);
-	return m_strdup(buffer);
-}
-
 void BX_build_status(Window *win, char *format, int unused)
 {
 	int	i, k;
@@ -660,13 +484,136 @@ void BX_build_status(Window *win, char *format, int unused)
 	from_server = ofs;
 }
 
+/* Take a built status line and justify it to window size, handling the >% right-justify status format. */
+static void justify_status(Window *win, char *buffer, size_t buffer_size)
+{
+	char padding[BIG_BUFFER_SIZE + 1];
+	char *str;
+	char *rhs = NULL;
+	char *ptr;
+	int printable = 0;
+	const char *padchar = " ";
+	size_t padchar_len = 1;
+
+	/*
+	 * This converts away any ansi codes in the status line
+	 * in accordance with the current settings.  This leaves us
+	 * with nothing but logical characters, which are then easy
+	 * to count. :-)
+	 */
+	str = strip_ansi(buffer);
+
+	/*
+	 * Count out the characters.
+	 * Walk the entire string, looking for nonprintable
+	 * characters.  We count all the printable characters
+	 * on both sides of the %> tag.
+	 */
+	ptr = str;
+
+	while (*ptr)
+	{
+		/*
+		 * The FIRST such %> tag is used.
+		 * Using multiple %>s is bogus.
+		 */
+		if (*ptr == '\f' && !rhs)
+		{
+			*ptr++ = 0;
+			rhs = ptr;
+		}
+
+		/*
+		 * Skip over color attributes if we're not
+		 * doing color.
+		 */
+		else if (*ptr == COLOR_CHAR)
+		{
+			ptr = skip_ctl_c_seq(ptr, NULL, NULL, 0);
+		}
+
+		/*
+		 * If we have a ROM character code here, we need to
+		 * copy it to the output buffer, as well as the fill
+		 * character, and increment the printable counter by
+		 * only 1.
+		 */
+		else if (*ptr == ROM_CHAR)
+		{
+			if (!rhs)
+			{
+				padchar = ptr;
+				padchar_len = 4;
+			}
+			ptr += 4;
+			printable += 1;
+		}
+
+		/*
+		 * Is it NOT a printable character?
+		 */
+		else if ((*ptr == REV_TOG) || (*ptr == UND_TOG) ||
+				(*ptr == ALL_OFF) || (*ptr == BOLD_TOG) ||
+				(*ptr == BLINK_TOG))
+			ptr++;
+		/*
+		 * So it is a printable character.
+		 * Or maybe its a tab. ;-)
+		 */
+		else
+		{
+			if (!rhs)
+			{
+				padchar = ptr;
+				padchar_len = 1;
+			}
+			ptr += 1;
+			printable += 1;
+		}
+
+		/*
+		 * Dont allow more than CO printable characters
+		 */
+		if (printable >= win->screen->co)
+		{
+			*ptr = 0;
+			break;
+		}
+	}
+
+	/* What will we be filling with? */
+	if (get_int_var(STATUS_NO_REPEAT_VAR))
+	{
+		padchar = " ";
+		padchar_len = 1;
+	}
+
+	/*
+	 * Now if we have a rhs, or the user wants padding anyway, then we have to pad it.
+	 */
+	padding[0] = 0;
+	if (rhs || get_int_var(FULL_STATUS_LINE_VAR))
+	{
+		int chars = win->screen->co - printable - 1;
+		char * const endptr = &padding[sizeof padding - padchar_len];
+
+		ptr = padding;
+		while (chars-- >= 0 && ptr < endptr)
+		{
+			memcpy(ptr, padchar, padchar_len);
+			ptr += padchar_len;
+		}
+		*ptr = 0;
+	}
+
+	snprintf(buffer, buffer_size, "%s%s%s%s", str, padding, rhs ? rhs : "", ALL_OFF_STR);
+	new_free(&str);
+}
+
 void make_status(Window *win)
 {
 	char buffer[BIG_BUFFER_SIZE + 1];
-	char lhs_buffer[BIG_BUFFER_SIZE + 1];
-	char rhs_buffer[BIG_BUFFER_SIZE + 1];
 	char *func_value[MAX_FUNCTIONS+10] = {NULL};
-	char *ptr;
 	
 	int	len = 1,
 		status_line,
@@ -678,22 +625,9 @@ void make_status(Window *win)
 	 */
 	for (status_line = 0 ; status_line < 1+win->double_status + win->status_lines; status_line++)
 	{
-		char lhs_fillchar[6],
-			rhs_fillchar[6],
-			*fillchar = lhs_fillchar,
-			*lhp = lhs_buffer,
-			*rhp = rhs_buffer,
-			*cp,
-			*start_rhs = 0,
-			*str;
-		int	in_rhs = 0,
-			pr_lhs = 0,
-			pr_rhs = 0,
-			line = status_line,
-			*prc = &pr_lhs, 
-			i;
-
-		fillchar[0] = fillchar[1] = 0;
+		char *str;
+		int line = status_line;
+		int i;
 
 		if (!win->wset || !win->wset->status_format[line])
 			continue;
@@ -744,135 +678,7 @@ void make_status(Window *win)
 			new_free(&str);
 		}
 
-		/*
-		 * This converts away any ansi codes in the status line
-		 * in accordance with the current settings.  This leaves us
-		 * with nothing but logical characters, which are then easy
-		 * to count. :-)
-		 */
-		str = strip_ansi(buffer);
-
-		/*
-		 * Count out the characters.
-		 * Walk the entire string, looking for nonprintable
-		 * characters.  We count all the printable characters
-		 * on both sides of the %> tag.
-		 */
-		ptr = str;
-		cp = lhp;
-		lhs_buffer[0] = rhs_buffer[0] = 0;
-
-		while (*ptr)
-		{
-			/*
-			 * The FIRST such %> tag is used.
-			 * Using multiple %>s is bogus.
-			 */
-			if (*ptr == '\f' && start_rhs == NULL)
-			{
-				ptr++;
-				start_rhs = ptr;
-				fillchar = rhs_fillchar;
-				in_rhs = 1;
-				*cp = 0;
-				cp = rhp;
-				prc = &pr_rhs;
-			}
-
-			/*
-			 * Skip over color attributes if we're not
-			 * doing color.
-			 */
-			else if (*ptr == COLOR_CHAR)
-			{
-				const char *end = skip_ctl_c_seq(ptr, NULL, NULL, 0);
-				while (ptr < end)
-					*cp++ = *ptr++;
-			}
-
-			/*
-			 * If we have a ROM character code here, we need to
-			 * copy it to the output buffer, as well as the fill
-			 * character, and increment the printable counter by
-			 * only 1.
-			 */
-			else if (*ptr == ROM_CHAR)
-			{
-				fillchar[0] = *cp++ = *ptr++;
-				fillchar[1] = *cp++ = *ptr++;
-				fillchar[2] = *cp++ = *ptr++;
-				fillchar[3] = *cp++ = *ptr++;
-				fillchar[4] = 0;
-				*prc += 1;
-			}
-
-			/*
-			 * Is it NOT a printable character?
-			 */
-			else if ((*ptr == REV_TOG) || (*ptr == UND_TOG) ||
-				 (*ptr == ALL_OFF) || (*ptr == BOLD_TOG) ||
-				 (*ptr == BLINK_TOG))
-					*cp++ = *ptr++;
-			/*
-			 * So it is a printable character.
-			 * Or maybe its a tab. ;-)
-			 */
-			else
-			{
-				*prc += 1;
-				fillchar[0] = *cp++ = *ptr++;
-				fillchar[1] = 0;
-			}
-
-			/*
-			 * Dont allow more than CO printable characters
-			 */
-			if (pr_lhs + pr_rhs >= win->screen->co)
-			{
-				*cp = 0;
-				break;
-			}
-		}
-		*cp = 0;
-
-		/* What will we be filling with? */
-		if (get_int_var(STATUS_NO_REPEAT_VAR))
-		{
-			lhs_fillchar[0] = ' ';
-			lhs_fillchar[1] = 0;
-			rhs_fillchar[0] = ' ';
-			rhs_fillchar[1] = 0;
-		}
-
-		/*
-		 * Now if we have a rhs, then we have to adjust it.
-		 */
-		if (start_rhs)
-		{
-			int numf = 0;
-
-			numf = win->screen->co - pr_lhs - pr_rhs  -1;
-			while (numf-- >= 0)
-				strlcat(lhs_buffer, lhs_fillchar, 
-						sizeof lhs_buffer);
-		}
-
-		/*
-		 * No rhs?  If the user wants us to pad it out, do so.
-		 */
-		else if (get_int_var(FULL_STATUS_LINE_VAR))
-		{
-			int chars = win->screen->co - pr_lhs - 1;
-
-			while (chars-- >= 0)
-				strlcat(lhs_buffer, lhs_fillchar, 
-						sizeof lhs_buffer);
-		}
-
-		strcpy(buffer, lhs_buffer);
-		strlcat(buffer, rhs_buffer, sizeof buffer);
-		strlcat(buffer, ALL_OFF_STR, sizeof buffer);
-		new_free(&str);
+		justify_status(win, buffer, sizeof buffer);
 
 		do_hook(STATUS_UPDATE_LIST, "%d %d %s", 
 			win->refnum, 
@@ -909,6 +715,76 @@ void make_status(Window *win)
 	cursor_to_input();
 }
 
+/* Formats a status line in the context of the current window, 
+ * for the $statsparse() scripting function. */
+char *stat_convert_format(Window *win, char *form)
+{
+	int map, key, i, pos = 0;
+	char *ptr = form;
+	char buffer[2 * BIG_BUFFER_SIZE + 1];
+
+	if (!form || !*form)
+		return m_strdup(empty_string);	
+
+	*buffer = 0;
+	while (*ptr && pos < (2 * BIG_BUFFER_SIZE) - 4)
+	{
+		if (*ptr != '%')
+		{
+			buffer[pos++] = *ptr++;
+			continue;
+		}
+
+		/* Its a % */
+		map = 0;
+
+		/* Find the map, if neccesary */
+		if (*++ptr == '{')
+		{
+			char	*endptr;
+
+			ptr++;
+			map = strtoul(ptr, &endptr, 10);
+			if (*endptr != '}')
+			{
+				/* Unrecognized */
+				continue;
+			}
+			ptr = endptr + 1;
+		}
+
+		key = *ptr++;
+
+		/* Choke once we get to the maximum number of expandos */
+		for (i = 0; i < NUMBER_OF_EXPANDOS; i++)
+		{
+			if (status_expandos[i].map != map || status_expandos[i].key != key)
+				continue;
+			buffer[pos] = 0;
+			strlcat(buffer, status_expandos[i].callback_function(win), sizeof buffer);
+			pos = strlen(buffer);
+			break;
+		}
+	}
+
+	buffer[pos] = 0;
+
+	if (get_int_var(STATUS_DOES_EXPANDOS_VAR))
+	{
+		int  af = 0;
+		char *stuff;
+		Window *old = current_window;
+
+		current_window = win;
+		stuff = expand_alias(buffer, empty_string, &af, NULL);
+		strlcpy(buffer, stuff, sizeof buffer);
+		new_free(&stuff);
+		current_window = old;
+	}
+
+	justify_status(win, buffer, sizeof buffer);
+	return m_strdup(buffer);
+}
 
 /* Some useful macros */
 /*
