@@ -711,8 +711,6 @@ void	term_putchar (unsigned char c)
  */
 void term_reset (void)
 {
-	tcsetattr(tty_des, TCSADRAIN, &oldb);
-
 	if (current_term->TI_csr)
 		tputs_x(tparm2(current_term->TI_csr, 0, current_term->TI_lines - 1));
 	term_gotoxy(0, current_term->TI_lines - 1);
@@ -725,12 +723,13 @@ void term_reset (void)
 		tputs_x(current_term->TI_smam);
 #endif
 	term_flush();
+	tcsetattr(tty_des, TCSADRAIN, &oldb);
 }
 
 void term_reset2 (void)
 {
-	tcsetattr(tty_des, TCSADRAIN, &oldb);
 	term_flush();
+	tcsetattr(tty_des, TCSADRAIN, &oldb);
 }
 
 /*
