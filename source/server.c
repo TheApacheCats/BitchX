@@ -1982,33 +1982,34 @@ void	BX_set_server_flag (int ssf_index, int flag, int value)
 		ssf_index = primary_server;
 	else if (ssf_index >= number_of_servers)
 		return;
+
 	if (flag > 31)
 	{
 		if (value)
-			server_list[ssf_index].flags2 |= 0x1 << (flag - 32);
+			server_list[ssf_index].flags2 |= 0x1L << (flag - 32);
 		else
-			server_list[ssf_index].flags2 &= ~(0x1 << (flag - 32));
+			server_list[ssf_index].flags2 &= ~(0x1L << (flag - 32));
 	}
 	else
 	{
 		if (value)
-			server_list[ssf_index].flags |= 0x1 << flag;
+			server_list[ssf_index].flags |= 0x1L << flag;
 		else
-			server_list[ssf_index].flags &= ~(0x1 << flag);
+			server_list[ssf_index].flags &= ~(0x1L << flag);
 	}
 	set_umode(ssf_index);
 }
 
-int	BX_get_server_flag (int gsf_index, int value)
+int	BX_get_server_flag (int gsf_index, int flag)
 {
 	if (gsf_index == -1)
 		gsf_index = primary_server;
 	else if (gsf_index >= number_of_servers)
 		return 0;
-	if (value > 31)
-		return server_list[gsf_index].flags2 & (0x1 << (value - 32));
+	if (flag > 31)
+		return !!(server_list[gsf_index].flags2 & (0x1L << (flag - 32)));
 	else
-		return server_list[gsf_index].flags & (0x1 << value);
+		return !!(server_list[gsf_index].flags & (0x1L << flag));
 }
 
 /*
