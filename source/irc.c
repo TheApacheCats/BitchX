@@ -350,16 +350,14 @@ void reset_clock(Window *win, char *unused, int unused1)
 	update_all_status(win, NULL, 0);
 }
 
-
-
 /* sig_refresh_screen: the signal-callable version of refresh_screen */
-SIGNAL_HANDLER(sig_refresh_screen)
+static SIGNAL_HANDLER(sig_refresh_screen)
 {
 	refresh_screen(0, NULL);
 }
 
 /* irc_exit: cleans up and leaves */
-SIGNAL_HANDLER(irc_exit_old)
+static SIGNAL_HANDLER(irc_exit_old)
 {
 	irc_exit(1,NULL, NULL);
 }
@@ -377,7 +375,7 @@ SIGNAL_HANDLER(child_reap)
 #endif
 }
 
-SIGNAL_HANDLER(nothing)
+static SIGNAL_HANDLER(nothing)
 {
       /* nothing to do! */
 }
@@ -390,11 +388,11 @@ static int sigpipe_hit = 0;
 }
           
 #if 0
-SIGNAL_HANDLER(sigusr2)
+static SIGNAL_HANDLER(sigusr2)
 {
 	mtrace();
 }
-SIGNAL_HANDLER(sigusr3)
+static SIGNAL_HANDLER(sigusr3)
 {
 	muntrace();
 }
@@ -467,7 +465,7 @@ void BX_irc_exit (int really_quit, char *reason, char *format, ...)
 volatile int segv_recurse = 0;
 /* sigsegv: something to handle segfaults in a nice way */
 /* this needs to be changed to *NOT* use printf(). */
-SIGNAL_HANDLER(coredump)
+static SIGNAL_HANDLER(coredump)
 {
 #if defined(WINNT)
 extern char *sys_siglist[];
@@ -519,7 +517,7 @@ void irc_quit(char key, char * ptr)
  * cntl_c: emergency exit.... if somehow everything else freezes up, hitting
  * ^C five times should kill the program. 
  */
-SIGNAL_HANDLER(cntl_c)
+static SIGNAL_HANDLER(cntl_c)
 {
 
 	if (cntl_c_hit++ >= 4)
@@ -528,7 +526,7 @@ SIGNAL_HANDLER(cntl_c)
 		kill(getpid(), SIGALRM);
 }
 
-SIGNAL_HANDLER(sig_user1)
+static SIGNAL_HANDLER(sig_user1)
 {
 	bitchsay("Got SIGUSR1, closing DCC connections and EXECed processes");
 	close_all_dcc();
@@ -536,7 +534,7 @@ SIGNAL_HANDLER(sig_user1)
 }
 
 
-SIGNAL_HANDLER(sig_detach)
+static SIGNAL_HANDLER(sig_detach)
 {
 	detachcmd(NULL, NULL, NULL, NULL);
 }

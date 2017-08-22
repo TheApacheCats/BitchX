@@ -40,7 +40,6 @@
 	void	window_redirect (char *, int);
 	void	redraw_resized (Window *, ShrinkInfo, int);
 	void	close_all_screen (void);
-RETSIGTYPE	sig_refresh_screen (int);
 	int	check_screen_redirect (char *);
 	void	BX_kill_screen (Screen *);
 	ShrinkInfo	resize_display (Window *);

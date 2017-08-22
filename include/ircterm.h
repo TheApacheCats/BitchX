@@ -709,7 +709,7 @@ extern char default_pair[2];
 #endif
 #endif
 
-	RETSIGTYPE 	term_cont 		(int);
+SIGNAL_HANDLER(term_cont);
 	void 		term_beep 		(void);
 	int		term_echo 		(int);
 	int		term_init 		(char *);

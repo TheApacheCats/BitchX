@@ -160,11 +160,11 @@ typedef int socklen_t;
 
 #include <limits.h>
    
-typedef RETSIGTYPE sigfunc (int);
-sigfunc *my_signal (int, sigfunc *, int);
-
 #define SIGNAL_HANDLER(x) \
 	RETSIGTYPE x (int unused)
+
+typedef SIGNAL_HANDLER(sigfunc);
+sigfunc *my_signal (int, sigfunc *, int);
 
 #include <stdlib.h>
 #define index strchr
