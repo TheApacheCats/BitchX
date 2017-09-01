@@ -64,8 +64,6 @@ static	int		tty_des;		/* descriptor for the tty */
 
 static	struct	termios	oldb, newb;
 
-	char		my_PC, *BC, *UP;
-	int		BClen, UPlen;
 extern	int		already_detached;
 
 #if !defined(WTERM_C)
@@ -873,22 +871,6 @@ int term_init (char *term)
 			*(char **)tcaps[i].ptr = cval;
 		}
 	}
-
-	BC = current_term->TI_cub1;
-	UP = current_term->TI_cuu1;
-	if (current_term->TI_pad)
-		my_PC = current_term->TI_pad[0];
-	else
-		my_PC = 0;
-
-	if (BC)
-		BClen = strlen(BC);
-	else
-		BClen = 0;
-	if (UP)
-		UPlen = strlen(UP);
-	else
-		UPlen = 0;
 
 	li = current_term->TI_lines;
 	co = current_term->TI_cols;
