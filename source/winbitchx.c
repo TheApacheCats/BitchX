@@ -3174,8 +3174,8 @@ void winbx_init(void)
 	ShowWindow(HVTWin, SW_SHOWDEFAULT);
 	ChangeCaret();
 
-	current_term->TI_cols = co = 81;
-	current_term->TI_lines = li = 25;
+	current_term->co = current_term->TI_cols =  81;
+	current_term->li = current_term->TI_lines = 25;
 
 #if 0
 	while (GetMessage(&msg,NULL,0,0)) {
@@ -3325,7 +3325,7 @@ void gui_resize(Screen *this_screen)
 	/*cx = this_screen->co * this_screen->VIO_font_width;
 	cy = this_screen->li * this_screen->VIO_font_height;*/
 
-	co = this_screen->co; li = this_screen->li;
+	current_term->co = this_screen->co; current_term->li = this_screen->li;
 
 	/* Recalculate some stuff that was done in input.c previously */
 	this_screen->input_line = this_screen->li-1;

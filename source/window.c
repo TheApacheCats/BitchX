@@ -940,8 +940,8 @@ void BX_recalculate_windows (Screen *screen)
 	if (dumb_mode)
 		return;
 #ifdef GUI
-	current_term->TI_lines = screen->li;
-	current_term->TI_cols = screen->co;
+	current_term->li = screen->li;
+	current_term->co = screen->co;
 #endif
                 
 	if (!screen) /* it's a hidden window. ignore this */
@@ -951,10 +951,10 @@ void BX_recalculate_windows (Screen *screen)
 	 */
 	if (screen && !screen->current_window)
 	{
+		int display_size = current_term->li - 2 - screen->window_list->double_status;
 		screen->window_list->top = 0;
-		screen->window_list->display_size = current_term->TI_lines - 2 - screen->window_list->double_status;
-		screen->window_list->bottom = current_term->TI_lines - 2 - screen->window_list->double_status;
-		old_li = current_term->TI_lines;
+		screen->window_list->display_size = display_size;
+		screen->window_list->bottom = display_size;
 		return;
 	}
 
@@ -974,7 +974,7 @@ void BX_recalculate_windows (Screen *screen)
 			split += tmp->status_lines;
 	}
 
-	excess_li = current_term->TI_lines - old_li - split;
+	excess_li = current_term->li - old_li - split;
 
 	for (tmp = screen->window_list; tmp; tmp = tmp->next)
 	{

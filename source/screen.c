@@ -1500,8 +1500,8 @@ Screen	* BX_create_new_screen(void)
 	new->fdin = fileno(stdin);
 
 	new->alive = 1;
-	new->li = current_term->TI_lines;
-	new->co = current_term->TI_cols;
+	new->li = current_term->li;
+	new->co = current_term->co;
 	new->old_li = 0;
 	new->old_co = 0;
 	new->buffer_pos = new->buffer_min_pos = 0;
@@ -1651,7 +1651,7 @@ extern	Window	*BX_create_additional_screen (void)
 			}
 			else if (screen_type == ST_XTERM)
 			{
-				snprintf(geom, sizeof geom, "%dx%d", current_term->TI_cols, current_term->TI_lines);
+				snprintf(geom, sizeof geom, "%dx%d", current_term->co, current_term->li);
 				opts = LOCAL_COPY(get_string_var(XTERM_OPTIONS_VAR));
 				if (!(xterm = getenv("XTERM")))
 					if (!(xterm = get_string_var(XTERM_VAR)))

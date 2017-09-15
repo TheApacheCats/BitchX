@@ -623,8 +623,6 @@ static const int numcaps = sizeof tcaps / sizeof tcaps[0];
 	int	can_color = 0;
 	int	need_redraw = 0;
 static	int	term_echo_flag = 1;
-static	int	li;
-static	int	co;
 
 #if !defined(__EMX__) && !defined(WINNT) && !defined(GUI)
 #ifndef HAVE_TERMINFO
@@ -872,12 +870,13 @@ int term_init (char *term)
 		}
 	}
 
-	li = current_term->TI_lines;
-	co = current_term->TI_cols;
-	if (!co)
-		co = 79;
-	if (!li)
-		li = 24;
+	if (!current_term->TI_cols)
+		current_term->TI_cols = 79;
+	if (!current_term->TI_lines)
+		current_term->TI_lines = 24;
+
+	current_term->li = current_term->TI_lines;
+	current_term->co = current_term->TI_cols;
 
 	if (!current_term->TI_nel)
 		current_term->TI_nel = "\n";
@@ -901,7 +900,7 @@ int term_init (char *term)
 	}
 
 
-#else
+#else /* !defined(__EMX__) && !defined(WINNT) && !defined(GUI) */
 
 #if defined(WINNT) && !defined(GUI)
 	CONSOLE_SCREEN_BUFFER_INFO scrbuf;
@@ -929,13 +928,13 @@ int term_init (char *term)
 	GetConsoleCursorInfo(hinput, &gcursbuf);
 
 	GetConsoleScreenBufferInfo(ghstdout, &scrbuf);
-	li = scrbuf.srWindow.Bottom - scrbuf.srWindow.Top + 1;
-	co = scrbuf.srWindow.Right - scrbuf.srWindow.Left + 1;
+	current_term->TI_lines = scrbuf.srWindow.Bottom - scrbuf.srWindow.Top + 1;
+	current_term->TI_cols = scrbuf.srWindow.Right - scrbuf.srWindow.Left + 1;
 
 	memset(current_term, 0, sizeof(struct term_struct));
 
-	current_term->TI_lines = li;
-	current_term->TI_cols = co - 1;
+	current_term->li = current_term->TI_lines;
+	current_term->co = current_term->TI_cols - 1;
 #elif defined(GUI)
 
 	memset(current_term, 0, sizeof(struct term_struct));
@@ -950,8 +949,8 @@ int term_init (char *term)
 
 	current_term->TI_lines = vmode.row;
 	current_term->TI_cols = vmode.col;
-	li = current_term->TI_lines;
-	co = current_term->TI_cols;
+	current_term->li = current_term->TI_lines;
+	current_term->co = current_term->TI_cols;
 #endif
 
 	current_term->TI_cup = strdup("\e[%i%d;%dH");
@@ -1248,14 +1247,16 @@ void tty_dup(int tty)
 	dup2(tty, tty_des);
 }
 
+/* These force the default terminal size, and are used when reattached by scr-bx.
+   They are then used as the fallback by term_resize(). */
 void reset_lines(int nlines)
 {
-	li = nlines;
+	current_term->TI_lines = nlines;
 }
 
 void reset_cols(int cols)
 {
-	co = cols;
+	current_term->TI_cols = cols;
 }
 
 /*
@@ -1275,40 +1276,40 @@ int term_resize (void)
 
 		if (ioctl(tty_des, TIOCGWINSZ, &window) < 0)
 		{
-			current_term->TI_lines = li;
-			current_term->TI_cols = co;
+			current_term->li = current_term->TI_lines;
+			current_term->co = current_term->TI_cols;
 		}
 		else
 		{
-			if ((current_term->TI_lines = window.ws_row) == 0)
-				current_term->TI_lines = li;
-			if ((current_term->TI_cols = (window.ws_col)) == 0)
-				current_term->TI_cols = co;
+			if ((current_term->li = window.ws_row) == 0)
+				current_term->li = current_term->TI_lines;
+			if ((current_term->co = window.ws_col) == 0)
+				current_term->co = current_term->TI_cols;
 		}
 	}
 #	else
 	{
-		current_term->TI_lines = li;
-		current_term->TI_cols = co;
+		current_term->li = current_term->TI_lines;
+		current_term->co = current_term->TI_cols;
 	}
 #	endif
 
 #if use_automargins
 	if (!current_term->TI_am || !current_term->TI_rmam)
 	{
-		current_term->TI_cols--;
+		current_term->co--;
 	}
 #else
-	current_term->TI_cols--;
+	current_term->co--;
 #endif
-	if ((old_li != current_term->TI_lines) || (old_co != current_term->TI_cols))
+	if ((old_li != current_term->li) || (old_co != current_term->co))
 	{
-		old_li = current_term->TI_lines;
-		old_co = current_term->TI_cols;
+		old_li = current_term->li;
+		old_co = current_term->co;
 		if (main_screen)
 		{
-			main_screen->li = current_term->TI_lines;
-			main_screen->co = current_term->TI_cols;
+			main_screen->li = current_term->li;
+			main_screen->co = current_term->co;
 		}
 		return (1);
 	}

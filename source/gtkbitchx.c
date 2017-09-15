@@ -532,7 +532,7 @@ void gtk_label_set_color(GtkWidget *label, int color)
 /* This may be going away, it replaces code which is currently elsewhere in BitchX */
 void gtk_resize(Screen *this_screen)
 {
-	co = this_screen->co; li = this_screen->li;
+	current_term->co = this_screen->co; current_term->li = this_screen->li;
 
 	/* Recalculate some stuff that was done in input.c previously */
 	this_screen->input_line = this_screen->li-1;
@@ -2179,8 +2179,8 @@ void gui_init(void)
 {
 	current_term->TI_cols = 80;
 	current_term->TI_lines = 25;
-	li = current_term->TI_lines;
-	co = current_term->TI_cols;
+	current_term->li = current_term->TI_lines;
+	current_temr->co = current_term->TI_cols;
 
 	pthread_mutex_init(&evmutex, NULL);
 	pthread_cond_init(&evcond, NULL);
@@ -2544,7 +2544,7 @@ void gtk_new_window(Screen *gtknew, Window *win)
 	else
 		zvt_load_font("fixed", gtknew);
 
-	gtknew->co = co; gtknew->li = li;
+	gtknew->co = current_term->co; gtknew->li = current_term->li;
 	zvt_term_set_scrollback((ZvtTerm *)gtknew->viewport, 0);
 	zvt_term_set_blink((ZvtTerm *)gtknew->viewport, TRUE);
 	zvt_term_set_bell((ZvtTerm *)gtknew->viewport, TRUE);

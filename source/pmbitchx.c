@@ -447,11 +447,11 @@ MRESULT EXPENTRY FontDlgProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2)
 				changescreen->VIO_font_width = fonts[i].lAveCharWidth;
 				changescreen->VIO_font_height = fonts[i].lMaxBaselineExt;
 
-				co = changescreen->co;
-				li = changescreen->li;
+				current_term->co = changescreen->co;
+				current_term->li = changescreen->li;
 
-				cx = (co - 1) * changescreen->VIO_font_width;
-				cy = li * changescreen->VIO_font_height;
+				cx = (changescreen->co - 1) * changescreen->VIO_font_width;
+				cy = changescreen->li * changescreen->VIO_font_height;
 
 				maxX = WinQuerySysValue(HWND_DESKTOP, SV_CXSCREEN);
 				maxY = WinQuerySysValue(HWND_DESKTOP, SV_CYSCREEN);
@@ -464,8 +464,8 @@ MRESULT EXPENTRY FontDlgProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2)
 					changescreen->li = (maxY / changescreen->VIO_font_height) -1;
 
 				/* Recalculate in case we modified the values */
-				cx = (co - 1) * changescreen->VIO_font_width;
-				cy = li * changescreen->VIO_font_height;
+				cx = (changescreen->co - 1) * changescreen->VIO_font_width;
+				cy = changescreen->li * changescreen->VIO_font_height;
 
 				if(changescreen->nicklist)
 					cx += (changescreen->VIO_font_width * changescreen->nicklist) + cxvs;
@@ -937,7 +937,7 @@ void pm_resize(Screen *this_screen)
 	cx = this_screen->co * this_screen->VIO_font_width;
 	cy = this_screen->li * this_screen->VIO_font_height;
 
-	co = this_screen->co; li = this_screen->li;
+	current_term->co = this_screen->co; current_term->li = this_screen->li;
 
 	/* Recalculate some stuff that was done in input.c previously */
 	this_screen->input_line = this_screen->li-1;
@@ -1765,10 +1765,10 @@ void avio_init() {
 					 NULL);
 	hwndMenu=(HWND)NULL;
 
-	current_term->TI_cols = co = 81;
-	current_term->TI_lines = li = 25;
-	cx = (co+14) * VIO_font_width;
-	cy = li * VIO_font_height;
+	current_term->co = current_term->TI_cols = 81;
+	current_term->li = current_term->TI_lines = 25;
+	cx = (current_term->co+14) * VIO_font_width;
+	cy = current_term->li * VIO_font_height;
 
 	WinSetParent(MDIFrame, HWND_OBJECT, FALSE);
 	/* Setup main window */
@@ -1811,8 +1811,8 @@ void avio_init() {
 	WinSubclassWindow(hwndLeft, FrameWndProc);
 	WinSubclassWindow(hwndRight, FrameWndProc);
 
-	WinSendMsg(hwndnickscroll, SBM_SETSCROLLBAR, (MPARAM)0, MPFROM2SHORT(0, li));
-	WinSendMsg(hwndnickscroll, SBM_SETTHUMBSIZE, MPFROM2SHORT(li, 0), (MPARAM)NULL);
+	WinSendMsg(hwndnickscroll, SBM_SETSCROLLBAR, (MPARAM)0, MPFROM2SHORT(0, current_term->li));
+	WinSendMsg(hwndnickscroll, SBM_SETTHUMBSIZE, MPFROM2SHORT(current_term->li, 0), (MPARAM)NULL);
 
 	setmode(guiipc[0], O_BINARY);
 	setmode(guiipc[1], O_BINARY);
@@ -2662,8 +2662,8 @@ void gui_init(void)
 					  DC_SEM_SHARED,
 					  FALSE);
 
-	li = 25;
-	co = 80;
+	current_term->li = 25;
+	current_term->co = 80;
 
 #ifdef SOUND
 	if(DosLoadModule(NULL, 0, "MCIAPI", &hmod) == NO_ERROR)
