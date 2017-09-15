@@ -4208,8 +4208,7 @@ BUILT_IN_FUNCTION(function_channelmode, word)
 
 BUILT_IN_FUNCTION(function_geom, words)
 {
-	/* Erf. CO and LI are ints. (crowman) */
-	return m_sprintf("%d %d", current_term->co, current_term->li);
+	return m_sprintf("%d %d", current_window->screen->co, current_window->screen->li);
 }
 
 BUILT_IN_FUNCTION(function_pass, words)

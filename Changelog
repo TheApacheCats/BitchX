@@ -1,5 +1,8 @@
 [Changes 1.2.2]
 
+* Change $geom() to return current screen's geometry, not the original
+  terminal's. (caf)
+
 * Fix $statsparse() scripting function to handle right-justified status
   formats correctly and improve efficiency of all status formatting. (caf)
 
