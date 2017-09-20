@@ -164,18 +164,18 @@ static char *current_exec_timer = empty_string;
 extern	void ExecuteTimers (void)
 {
 	TimerList	*current;
-        static int parsingtimer = 0;
+	static int parsingtimer = 0;
 	int		old_from_server = from_server;
 	struct timeval	now1;
-		
-        /* We do NOT want to parse timers while waiting
-         * cause it gets icky recursive
-         */
-        if (!PendingTimers || parsingtimer)
-                return;
+
+	/* We do NOT want to parse timers while waiting
+	 * cause it gets icky recursive
+	 */
+	if (!PendingTimers || parsingtimer)
+		return;
 	get_time(&now1);
-	
-        parsingtimer = 1;
+
+	parsingtimer = 1;
 	while (PendingTimers && time_cmp(&now1, &PendingTimers->time) >= 0)
 	{
 		int old_refnum = current_window->refnum;
@@ -195,7 +195,7 @@ extern	void ExecuteTimers (void)
 			from_server = get_window_server(0);
 		else
 			from_server = -1;
-						
+
 		/* 
 		 * If a callback function was registered, then
 		 * we use it.  If no callback function was registered,
@@ -218,37 +218,26 @@ extern	void ExecuteTimers (void)
 		{
 			case 0:
 			case 1:
-			{
-				/* callback cleans up command */
-				if (!current->callback)
-					new_free(&current->command);
-				new_free(&current->subargs);
-				new_free(&current->whom);
-				new_free(&current);
-				break;
-			}
+				{
+					/* callback cleans up command */
+					if (!current->callback)
+						new_free(&current->command);
+					new_free(&current->subargs);
+					new_free(&current->whom);
+					new_free(&current);
+					break;
+				}
 			default:
 				current->events--;
 			case -1:
-			{
-#if 1
-				double milli, seconds;
-				milli = current->interval * 1000 * 1000 + current->time.tv_usec;
-				seconds = current->time.tv_sec + (milli / 1000000);
-				milli = ((unsigned long)current) % 1000000;
-				current->time.tv_sec = seconds;
-				current->time.tv_usec = milli;
-#else
-				current->time.tv_usec += (current->interval * 1000);
-				current->time.tv_sec += (current->time.tv_usec / 1000000);
-				current->time.tv_usec %= 1000000;
-#endif
-				schedule_timer(current);
-				break;	
-			}
+				{
+					time_offset(&current->time, current->interval);
+					schedule_timer(current);
+					break;	
+				}
 		}
 	}
-        parsingtimer = 0;
+	parsingtimer = 0;
 }
 
 /*
@@ -464,24 +453,11 @@ char *BX_add_timer(int update, char *refnum_want, double when, long events, int 
 {
 	TimerList	*ntimer, *otimer = NULL;
 	char		refnum_got[REFNUM_MAX+1] = "";
-	double		seconds = 0.0, milli = 0.0;	
-extern	double		fmod(double, double);
 	
 	ntimer = (TimerList *) new_malloc(sizeof(TimerList));
 
 	get_time(&ntimer->time);
-#if 1
-	milli = when * 1000 + ntimer->time.tv_usec;
-	seconds = ntimer->time.tv_sec + (milli / 1000000);
-
-	milli = ((unsigned long)milli) % 1000000;
-	ntimer->time.tv_sec = seconds;
-	ntimer->time.tv_usec = milli;
-#else
-	ntimer->time.tv_usec += (unsigned long)when;
-	ntimer->time.tv_sec += ((when + ntimer->time.tv_usec) / 1000);
-	ntimer->time.tv_usec %= 1000;
-#endif
+	time_offset(&ntimer->time, when / 1000.0);
 
 	ntimer->interval = when / 1000;
 	ntimer->events = events;

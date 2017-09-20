@@ -1747,6 +1747,26 @@ int time_cmp(const struct timeval *a, const struct timeval *b)
 		return (a->tv_sec > b->tv_sec) - (a->tv_sec < b->tv_sec);
 }
 
+/* Add an offset, in seconds, to a timeval */
+struct timeval *time_offset(struct timeval *tv, double offset)
+{
+	time_t seconds = offset;		/* Discards fractional part */
+
+	offset -= seconds;
+	if (offset < 0.0)
+	{
+		/* This ensures we never make tv_usec go negative, since it might be unsigned. */
+		offset += 1.0;
+		seconds -= 1;
+	}
+	tv->tv_usec += offset * 1000000.0;
+	seconds += tv->tv_usec / 1000000;
+	tv->tv_usec %= 1000000;
+	tv->tv_sec += seconds;
+
+	return tv;
+}
+
 int BX_time_to_next_minute (void)
 {
 	time_t now = time(NULL);
