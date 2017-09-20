@@ -1038,7 +1038,7 @@ typedef struct	timerlist_stru
 	struct	timerlist_stru *next;
 	char	ref[REFNUM_MAX + 1];
 	unsigned long refno;
-struct	timeval	time;
+	struct	timeval	time;
 	int	(*callback) (void *, char *);
 	char	*command;
 	char	*subargs;
@@ -1047,7 +1047,6 @@ struct	timeval	time;
 	int	server;
 	int	window;
 	char	*whom;
-	int	delete;
 }	TimerList;
 
 typedef struct nicktab_stru

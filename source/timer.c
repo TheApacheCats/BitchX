@@ -247,14 +247,6 @@ extern	void ExecuteTimers (void)
 				break;	
 			}
 		}
-		if (current && current->delete)
-		{
-			if (!current->callback)
-				new_free(&current->command);
-			new_free(&current->subargs);
-			new_free(&current->whom);
-			new_free(&current);
-		}
 	}
         parsingtimer = 0;
 }
@@ -374,34 +366,6 @@ extern int BX_delete_timer (char *ref)
 	}
 	say("TIMER: Can't delete %s, no such refnum", ref);
 	return -1;
-}
-
-int kill_timer(char *ref)
-{
-	TimerList	*tmp;
-	for (tmp = PendingTimers; tmp; tmp = tmp->next)
-	{
-		/* can only delete user created timers */
-		if (!my_stricmp(tmp->ref, ref))
-		{
-			tmp->delete = 1;
-			return 0;
-		}
-	}
-	return -1;
-}
-
-int get_delete_timer(char *ref)
-{
-	TimerList	*tmp;
-	for (tmp = PendingTimers; tmp; tmp = tmp->next)
-	{
-		/* can only delete user created timers */
-		if (!my_stricmp(tmp->ref, ref))
-			return tmp->delete;
-	}
-	return -1;
-
 }
 
 void BX_delete_all_timers (void)
