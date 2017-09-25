@@ -165,11 +165,11 @@ void put_echo (char *str)
  * put_it: the irc display routine.  Use this routine to display anything to
  * the main irc window.  It handles sending text to the display or stdout as
  * needed, add stuff to the lastlog and log file, etc.  Things NOT to do:
- * Dont send any text that contains \n, very unpredictable.  Tabs will also
+ * Don't send any text that contains \n, very unpredictable.  Tabs will also
  * screw things up.  The calling routing is responsible for not overwriting
  * the 1K buffer allocated.  
  *
- * For Ultrix machines, you can't call put_it() with floating point arguements.
+ * For Ultrix machines, you can't call put_it() with floating point arguments.
  * It just doesn't work.  - phone, jan 1993.
  */
 void BX_put_it(const char *format, ...)
@@ -316,7 +316,7 @@ void serversay(const char *from, const char *format, ...)
 	target_window = old_target_window;
 }
 /*
- * Error is exactly like yell, except that if the error occured while
+ * Error is exactly like yell, except that if the error occurred while
  * you were loading a script, it tells you where it happened.
  */
 void 	error (const char *format, ...)

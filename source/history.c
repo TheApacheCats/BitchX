@@ -105,7 +105,7 @@ static	char *history_match (char *match)
 /* shove_to_history: a key binding that saves the current line into
  * the history and then deletes the whole line.  Useful for when you
  * are in the middle of a big line and need to "get out" to do something
- * else quick for just a second, and you dont want to have to retype
+ * else quick for just a second, and you don't want to have to retype
  * everything all over again
  */
 extern void	shove_to_history (char unused, char *not_used)

@@ -4,8 +4,8 @@
  * When Chelp is called the help file is loaded from 
  * BitchX.help and saved. This file is never loaded from disk after this.
  * Information from the help file is loaded into an array as 0-Topic.
- * $help() also calls the same routines except this information is loaded 
- * differantly as 1-Topic. this allows us to distingush between them 
+ * $help() also calls the same routines except this information is loaded
+ * differently as 1-Topic. This allows us to distinguish between them
  * internally. 
  */
  

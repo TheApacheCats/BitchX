@@ -692,7 +692,7 @@ BUILT_IN_FUNCTION(function_setitem)
 }
 
 /*
- * function_getarrays() returns a string containg the names of all currently
+ * function_getarrays() returns a string containing the names of all currently
  * existing arrays separated by spaces
  */
 BUILT_IN_FUNCTION(function_getarrays)

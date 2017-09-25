@@ -1004,7 +1004,7 @@ void do_stack_set(int type, char *args)
 		int cnt = 0;
 		char *copy;
 		copy = LOCAL_COPY(args);
-		/* Dont need to unstub it, we're not actually using it. */
+		/* Don't need to unstub it, we're not actually using it. */
 		upper(copy);
 		find_fixed_array_item(irc_variable, sizeof(IrcVariable), NUMBER_OF_VARIABLES, copy, &cnt, (int *)&var_index);
 		if (cnt < 0 || cnt == 1)

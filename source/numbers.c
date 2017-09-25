@@ -518,11 +518,11 @@ char *t = NULL;
 
 /*
  * got_initial_version_28: this is called when ircii gets the serial
- * number 004 reply.  We do this becuase the 004 numeric gives us the
- * server name and version in a very easy to use fashion, and doesnt
+ * number 004 reply.  We do this because the 004 numeric gives us the
+ * server name and version in a very easy to use fashion, and doesn't
  * rely on the syntax or construction of the 002 numeric.
  *
- * Hacked as neccesary by jfn, May 1995
+ * Hacked as necessary by jfn, May 1995
  */
 static void get_nat_address(UserhostItem *stuff, char *nick, char *args)
 {

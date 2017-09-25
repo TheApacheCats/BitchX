@@ -73,7 +73,7 @@ void start_memdebug(void)
 /*
  * really_new_malloc is the general interface to the malloc(3) call.
  * It is only called by way of the ``new_malloc'' #define.
- * It wont ever return NULL.
+ * It won't ever return NULL.
  */
 
 /*
@@ -600,7 +600,7 @@ char	*BX_new_next_arg (char *str, char **new_ptr)
 }
 
 /*
- * This function is "safe" because it doesnt ever return NULL.
+ * This function is "safe" because it doesn't ever return NULL.
  * XXXX - this is an ugly kludge that needs to go away
  */
 char	*safe_new_next_arg (char *str, char **new_ptr)
@@ -791,9 +791,9 @@ char *BX_chop (char *stuff, int nchar)
 
 /*
  * strext: Makes a copy of the string delmited by two char pointers and
- * returns it in malloced memory.  Useful when you dont want to munge up
- * the original string with a null.  end must be one place beyond where
- * you want to copy, ie, its the first character you dont want to copy.
+ * returns it in malloced memory.  Useful when you don't want to munge up
+ * the original string with a null.  End must be one place beyond where
+ * you want to copy, ie, it's the first character you don't want to copy.
  */
 char *strext(char *start, char *end)
 {
@@ -1028,7 +1028,7 @@ char	*BX_expand_twiddle (char *str)
 	else
 		strlcpy(buffer, str, sizeof buffer);
 
-	/* This isnt legal! */
+	/* This isn't legal! */
 	str2 = NULL;
 	malloc_strcpy(&str2, buffer);
 #ifdef __EMX__
@@ -1069,7 +1069,7 @@ char	*BX_check_nickname (char *nick)
 /*
  * sindex: much like index(), but it looks for a match of any character in
  * the group, and returns that position.  If the first character is a ^, then
- * this will match the first occurence not in that group.
+ * this will match the first occurrence not in that group.
  */
 char	*BX_sindex (register char *string, char *group)
 {
@@ -1108,7 +1108,7 @@ char	*BX_sindex (register char *string, char *group)
 /*
  * rsindex: much like rindex(), but it looks for a match of any character in
  * the group, and returns that position.  If the first character is a ^, then
- * this will match the first occurence not in that group.
+ * this will match the first occurrence not in that group.
  */
 char	*BX_rsindex (register char *string, char *start, char *group, int howmany)
 {
@@ -1301,7 +1301,7 @@ void	BX_ircpanic (char *format, ...)
 		va_end(arglist);
 	}
 
-	yell("An unrecoverable logic error has occured.");
+	yell("An unrecoverable logic error has occurred.");
 	yell("Please email " BUG_EMAIL " and include the following message:");
 
 	yell("Panic: [%s:%s %s]", irc_version, buffer, cx_function);
@@ -1432,7 +1432,7 @@ FILE *BX_uzfopen (char **filename, char *path, int hook)
 	}
 
 	/* It is allowed to pass to this function either a true filename
-	   with the compression extention, or to pass it the base name of
+	   with the compression extension, or to pass it the base name of
 	   the filename, and this will look to see if there is a compressed
 	   file that matches the base name */
 
@@ -1493,7 +1493,7 @@ FILE *BX_uzfopen (char **filename, char *path, int hook)
 			return NULL;
 		}
 	}
-	/* Right now it doesnt look like the file is a full compressed fn */
+	/* Right now it doesn't look like the file is a full compressed fn */
 	else
 	{
 		struct stat file_info;
@@ -1501,7 +1501,7 @@ FILE *BX_uzfopen (char **filename, char *path, int hook)
 		/* Trivially, see if the file we were passed exists */
 		filename_path = path_search (filename_trying, path);
 
-		/* Nope. it doesnt exist. */
+		/* Nope. it doesn't exist. */
 		if (!filename_path)
 		{
 			/* Is there a "filename.gz"? */
@@ -1611,7 +1611,7 @@ FILE *BX_uzfopen (char **filename, char *path, int hook)
 	if ((doh = fopen(filename_path, "r")) != NULL)
 		return doh;
 
-	/* nope.. we just cant seem to open this file... */
+	/* nope.. we just can't seem to open this file... */
 	if (hook)
 		yell("Cannot open file %s: %s", filename_path, strerror(errno));
 	new_free(filename);
@@ -1641,7 +1641,7 @@ extern int lw_strcmp(comp_func *compar, char *one, char *two)
 {
 	char *pos = one + strlen(one) - 1;
 
-	if (pos > one)			/* cant do pos[-1] if pos == one */
+	if (pos > one)			/* can't do pos[-1] if pos == one */
 		while (!my_isspace(pos[-1]) && (pos > one))
 			pos--;
 	else
@@ -1678,7 +1678,7 @@ off_t file_size (char *filename)
 		return -1;
 }
 
-/* Gets the time in second/usecond if you can,  second/0 if you cant. */
+/* Gets the time in second/usecond if you can,  second/0 if you can't. */
 struct timeval BX_get_time(struct timeval *timer)
 {
 	static struct timeval timer2;
@@ -2094,8 +2094,8 @@ char *strmccat(char *str, char c, int howmany)
 
 /*
  * Pull a substring out of a larger string
- * If the ending delimiter doesnt occur, then we dont pass
- * anything (by definition).  This is because we dont want
+ * If the ending delimiter doesn't occur, then we don't pass
+ * anything (by definition).  This is because we don't want
  * to introduce a back door into CTCP handlers.
  */
 extern char *BX_pullstr (char *source_string, char *dest_string)
@@ -2459,7 +2459,7 @@ int	BX_figure_out_address (char *nuh, char **nick, char **user, char **host, cha
 	char 	*bang, *at, *myhost = star, *endstring;
 	int	number;
 
-	/* Dont bother with channels, theyre ok. */
+	/* Don't bother with channels, they're OK. */
 	if (*nuh == '#' || *nuh == '&')
 		return -1;
 
@@ -2903,7 +2903,7 @@ const char *init_socketpath(void)
 /*
  * This mangles up 'incoming' corresponding to the current values of
  * /set mangle_inbound or /set mangle_outbound.  
- * 'incoming' needs to be at _least_ thrice as big as neccesary 
+ * 'incoming' needs to be at _least_ thrice as big as necessary 
  * (ie, sizeof(incoming) >= strlen(incoming) * 3 + 1)
  */
 size_t	BX_mangle_line	(char *incoming, int how, size_t how_much)
@@ -3105,7 +3105,7 @@ int i = 0, j = 0, len;
 	return buff;
 }
 
-/* XXXX this doesnt belong here. im not sure where it goes, though. */
+/* XXXX this doesn't belong here. I'm not sure where it goes, though. */
 char *	get_userhost (void)
 {
 	strlcpy(userhost, username, sizeof userhost);
@@ -3118,9 +3118,9 @@ char *	get_userhost (void)
 
 /* RANDOM NUMBERS */
 /*
- * Random number generator #1 -- psuedo-random sequence
+ * Random number generator #1 -- pseudo-random sequence
  * If you do not have /dev/random and do not want to use gettimeofday(), then
- * you can use the psuedo-random number generator.  Its performance varies
+ * you can use the pseudo-random number generator.  Its performance varies
  * from weak to moderate.  It is a predictable mathematical sequence that
  * varies depending on the seed, and it provides very little repetition,
  * but with 4 or 5 samples, it should be trivial for an outside person to
@@ -3202,7 +3202,7 @@ unsigned long randt(unsigned long l)
  * Random number generator #3 -- /dev/urandom.
  * If you have the /dev/urandom device, then we will use it.  Its performance
  * varies from moderate to very strong.  At best, it is a source of pretty
- * substantial unpredictable numbers.  At worst, it is mathematical psuedo-
+ * substantial unpredictable numbers.  At worst, it is mathematical pseudo-
  * random sequence (which randm() is).
  */
 unsigned long randd(unsigned long l)

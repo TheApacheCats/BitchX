@@ -78,7 +78,7 @@ static 	void 	cleanup_dead_processes 	(void);
 static 	void 	ignore_process 		(int index);
  	void 	kill_process 		(int, int);
 static 	void 	kill_all_processes 	(int signo);
-static 	int 	valid_process_index 	(int proccess);
+static 	int 	valid_process_index 	(int process);
 static 	int 	is_logical_unique 	(char *logical);
 	int 	logical_to_index 	(const char *logical);
 extern  int	dead_children_processes;
@@ -213,7 +213,7 @@ BUILT_IN_COMMAND(execcmd)
 
 		/*
 		 * /EXEC -NAME gives the /exec a logical name that can be
-		 * refered to as %name 
+		 * referred to as %name
 		 */
 		else if (my_strnicmp(flag, "NAME", len) == 0)
 		{
@@ -680,7 +680,7 @@ BUILT_IN_COMMAND(execcmd)
 				new_close(p2[1]);
 
 				/*
-				 * Init the proc list if neccesary
+				 * Init the proc list if necessary
 				 */
 				if (!process_list)
 				{
@@ -898,7 +898,7 @@ static void 	handle_filedesc (Process *proc, int *fd, int hook_nonl, int hook_nl
  * we reach a specific wanted sub-process.
  *
  * If you want to stop reaping children when a specific subprocess is 
- * reached, specify the process in 'wanted'.  If all youre doing is cleaning
+ * reached, specify the process in 'wanted'.  If all you're doing is cleaning
  * up after zombies and /exec's, then 'wanted' should be -1.
  */
 
@@ -984,7 +984,7 @@ int get_child_exit (pid_t wanted)
 
 /*
  * clean_up_processes: In effect, we want to tell all of our sub processes
- * that we're going away.  We cant be 100% sure that theyre all dead by
+ * that we're going away.  We can't be 100% sure that they're all dead by
  * the time this function returns, but we can be 100% sure that they will
  * be killed off next time they come up to run.  This is the only thing that
  * can be guaranteed, and is in fact all we really need to know.
@@ -1080,10 +1080,10 @@ void 		add_process_wait (int proc_index, const char *cmd)
  *	   have closed stdin and stderr already (handled by do_processes)
  *	2) The process must have died (handled by get_child_exit)
  *
- * The reason why both must happen is becuase the process can die (and
+ * The reason why both must happen is because the process can die (and
  * we would get an async signal) before we read all of its output on the
  * pipe, and if we simply deleted the process when it dies, we could lose
- * some of its output.  The reason why we cant delete a process that has
+ * some of its output.  The reason why we can't delete a process that has
  * asserted EOF on its output is because it could still be running (duh! ;-)
  * So we wait for both to happen.
  */
@@ -1371,7 +1371,7 @@ static int 	is_logical_unique (char *logical)
 
 
 /*
- * logical_to_index: converts a logical process name to it's approriate index
+ * logical_to_index: converts a logical process name to its approriate index
  * in the process list, or -1 if not found 
  */
 int 	logical_to_index (const char *logical)

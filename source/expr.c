@@ -23,7 +23,7 @@ char *alias_string = NULL;
 
 /************************** EXPRESSION MODE PARSER ***********************/
 /* canon_number: canonicalizes number to something relevant */
-/* If FLOATING_POINT_MATH isnt set, it truncates it to an integer */
+/* If FLOATING_POINT_MATH isn't set, it truncates it to an integer */
 static char *canon_number (char *input)
 {
 	int end = strlen(input);
@@ -60,7 +60,7 @@ static char *canon_number (char *input)
 /* Given a pointer to an operator, find the last operator in the string */
 static char	*lastop (char *ptr)
 {
-	/* dont ask why i put the space in there. */
+	/* don't ask why I put the space in there. */
 	while (ptr[1] && strchr("!=<>&^|#+/%,-* ", ptr[1]))
 		ptr++;
 	return ptr;
@@ -220,7 +220,7 @@ union
 
 
 /*
- * This sets up a type-independant section of code for doing an
+ * This sets up a type-independent section of code for doing an
  * operation when the X and X= forms are both valid.
  */
 #define SETUP(var1, var2, func, STAGE)					\
@@ -326,7 +326,7 @@ union
 			 * If we're not in NU_UNIT, then we have a paren-set
 			 * that (probably) is still an left-operand for some
 			 * binary op.  Anyhow, we just immediately parse the
-			 * paren-set, as thats the general idea of parens.
+			 * paren-set, as that's the general idea of parens.
 			 */
 			if (stage != NU_UNIT || ptr == str)
 			{
@@ -378,7 +378,7 @@ union
 			 *
 			 *	/eval echo ${foobar() ## 4 + 3}
 			 *
-			 * Dont depend on this behavior.
+			 * Don't depend on this behavior.
 			 */
 			if (ptr && *ptr)
 			{
@@ -395,7 +395,7 @@ union
 		 * Braces are used for anonymous functions:
 		 * @ condition : {some code} : {some more code}
 		 *
-		 * Dont yell at me if you dont think its useful.  Im just
+		 * Don't yell at me if you don't think it's useful.  I'm just
 		 * supporting it because it makes sense.  And it saves you
 		 * from having to declare aliases to do the parts.
 		 */
@@ -570,7 +570,7 @@ union
 				 *
 				 * If $foobar.onetwo is "999"
 				 * then ${foobar[one]two + 3} is "1002"
-				 * Dont depend on this behavior.
+				 * Don't depend on this behavior.
 				 */
 				if (ptr && *ptr)
 				{
@@ -589,7 +589,7 @@ union
 			 *
 			 * If $onetwo is "testing",
 			 * /eval echo ${[one]two} returns "testing".
-			 * Dont depend on this behavior.
+			 * Don't depend on this behavior.
 			 */ 
 			else if (ptr && *ptr)
 			{
@@ -1569,9 +1569,9 @@ register unsigned char	c;
 		 * actually the same as $(bar), which is actually $bar.
 		 * Got it?
 		 *
-		 * epic4pre1.049 -- I changed this somewhat.  I dont know if
-		 * itll get me in trouble.  It will continue to expand the
-		 * inside of the parens until the first character isnt a $.
+		 * epic4pre1.049 -- I changed this somewhat.  I don't know if
+		 * it'll get me in trouble.  It will continue to expand the
+		 * inside of the parens until the first character isn't a $.
 		 * since by all accounts the result of the expansion is
 		 * SUPPOSED to be an rvalue, obviously a leading $ precludes
 		 * this.  However, there are definitely some cases where you
@@ -1593,7 +1593,7 @@ register unsigned char	c;
 				debugyell("Unmatched ( (continuing anyways)");
 
 			/*
-			 * Keep expanding as long as neccesary.
+			 * Keep expanding as long as necessary.
 			 */
 			do
 			{

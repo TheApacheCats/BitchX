@@ -673,7 +673,7 @@ extern	int	BX_find_in_server_list (char *server, int port)
 		MATCH_WITH_COMPLETION(server, server_list[i].itsname);
 #endif
 		/*
-		 * Try to avoid unneccessary string compares. Only compare
+		 * Try to avoid unnecessary string compares. Only compare
 		 * the first part of the string if there's not already a
 		 * possible match set in "hintfound". This enables us to
 		 * search for an exact match even if there's already a
@@ -1697,7 +1697,7 @@ BUILT_IN_COMMAND(servercmd)
 			say("Need server number for -DELETE");
 	}
 	/*
-	 * Add a server, but dont connect
+	 * Add a server, but don't connect
 	 */
 	else if (strlen(server) > 1 && !my_strnicmp(server, "-SEND", strlen(server)))
 	{
@@ -2207,7 +2207,7 @@ char	*BX_get_server_nickname (int gsn_index)
 
 /* 
  * set_server2_8 - set the server as a 2.8 server 
- * This is used if we get a 001 numeric so that we dont bite on
+ * This is used if we get a 001 numeric so that we don't bite on
  * the "kludge" that ircd has for older clients
  */
 void 	BX_set_server2_8 (int ss2_index, int value)
@@ -2430,7 +2430,7 @@ char	*get_server_userhost (int gsu_index)
 }
 
 /*
- * got_my_userhost -- callback function, XXXX doesnt belong here
+ * got_my_userhost -- callback function, XXXX doesn't belong here
  */
 void 	got_my_userhost (UserhostItem *item, char *nick, char *stuff)
 {
@@ -2732,7 +2732,7 @@ char *get_server_orignick(int server)
 /*
  * This is the function to attempt to make a nickname change.  You
  * cannot send the NICK command directly to the server: you must call
- * this function.  This function makes sure that the neccesary variables
+ * this function.  This function makes sure that the necessary variables
  * are set so that if the NICK command fails, a sane action can be taken.
  *
  * If ``nick'' is NULL, then this function just tells the server what
@@ -2820,7 +2820,7 @@ void BX_fudge_nickname(int servnum)
 
 	/*
 	 * If we got here because the user did a /NICK command, and
-	 * the nick they chose doesnt exist, then we just dont do anything,
+	 * the nick they chose doesn't exist, then we just don't do anything,
 	 * we just cancel the pending action and give up.
 	 */
 	if (s->nickname_pending)
@@ -3662,7 +3662,7 @@ void BX_send_msg_to_channels(int server, const char *msg)
 	ChannelList *chan = NULL;
 	int count;
 	/* 
-	 * Because of hybrid and it's removal of , targets 
+	 * Because of hybrid and its removal of , targets 
 	 * we need to detect this and get around it..
 	 */
 	if (get_server_version(server) == Server2_8hybrid6)
@@ -3697,7 +3697,7 @@ char *p = NULL;
 NickList *n = NULL;
 int count;
 	/* 
-	 * Because of hybrid and it's removal of , targets 
+	 * Because of hybrid and its removal of , targets 
 	 * we need to detect this and get around it..
 	 */
 	serv_version = get_server_version(server);

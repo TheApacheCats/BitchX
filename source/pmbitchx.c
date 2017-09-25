@@ -582,7 +582,7 @@ HWND newsubmenu(MenuStruct *menutoadd, HWND location, int pulldown)
 							  NULL,
 							  NULL);
 
-	/* Go through all menuitems adding items and submenus (and subitems) as neccessary */
+	/* Go through all menuitems adding items and submenus (and subitems) as necessary */
 
 	tmp = menutoadd->menuorigin;
 	while(tmp!=NULL)
@@ -3038,7 +3038,7 @@ BUILT_IN_FUNCTION(fencode)
 	}
 	result[i] = '\0';
 
-	return result;		/* DONT USE RETURN_STR HERE! */
+	return result;		/* DON'T USE RETURN_STR HERE! */
 }
 
 void pm_file_dialog(char *data[7])

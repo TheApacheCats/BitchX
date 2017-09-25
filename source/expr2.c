@@ -59,21 +59,21 @@ static char *alias_special_char(char **, char *, const char *, char *, int *);
 
 /*
  * One thing of note is that while the original did only ints, we really
- * only do strings.  We convert to and from ints as neccesary.  Icky,
- * but given the semantics we require its the only way.
+ * only do strings.  We convert to and from ints as necessary.  Icky,
+ * but given the semantics we require it's the only way.
  */
 /*
  * All the information for each expression is stored in a struct.  This
- * is done so that there are no global variables in use (theyre all collected
+ * is done so that there are no global variables in use (they're all collected
  * making them easier to handle), and makes re-entrancy much easier since 
- * i dont have to ask myself "have i accounted for the old state of all the
+ * I don't have to ask myself "have I accounted for the old state of all the
  * global variables?"
  */
 
 /*
  * When we want to refer symbolically to a token, we just sling around
  * the integer index to the token table.  This serves two purposes:  We
- * dont have to worry about whether something is malloced or not, or who
+ * don't have to worry about whether something is malloced or not, or who
  * is resopnsible to free, or anything like that.  If you want to keep 
  * something around, you tokenize() it and that returns a "handle" to the
  * token and then you pass that handle around.  So the pair (context,handle)
@@ -84,7 +84,7 @@ typedef int	TOKEN;
 /*
  * This sets up whether we do floating point math or integer math
  */
-#ifdef FLOATING_POINT_MATH			/* XXXX This doesnt work yet */
+#ifdef FLOATING_POINT_MATH			/* XXXX This doesn't work yet */
   typedef	double		NUMBER;
   typedef 	long		BooL;
 # define STON atof
@@ -256,13 +256,13 @@ enum LEX {
 /*
  * Precedence table:  Operators with a lower precedence VALUE have a higher
  * precedence.  The theory behind infix notation (algebraic notation) is that
- * you have a sequence of operands seperated by (typically binary) operators.
+ * you have a sequence of operands separated by (typically binary) operators.
  * The problem of precedence is that each operand is surrounded by two
  * operators, so it is ambiguous which operator the operand "binds" to.  This
  * is resolved by "precedence rules" which state that given two operators,
  * which one is allowed to "reduce" (operate on) the operand.  For a simple
  * explanation, take the expression  (3+4*5).  Now the middle operand is a
- * '4', but we dont know if it should be reduced via the plus, or via the
+ * '4', but we don't know if it should be reduced via the plus, or via the
  * multiply.  If we look up both operators in the prec table, we see that
  * multiply has the lower value -- therefore the 4 is reduced via the multiply
  * and then the result of the multiply is reduced by the addition.
@@ -303,10 +303,10 @@ static	int	prec[TOKCOUNT] =
 
 
 /*
- * Associativity table: But precedence isnt enough.  What happens when you
+ * Associativity table: But precedence isn't enough.  What happens when you
  * have two identical operations to determine between?  Well, the easy way
  * is to say that the first operation is always done first.  But some
- * operators dont work that way (like the assignment operator) and always
+ * operators don't work that way (like the assignment operator) and always
  * reduce the LAST (or rightmost) operation first.  For example:
  *	(3+4+5)	    ((4+3)+5)    (7+5)    (12)
  *      (v1=v2=3)   (v1=(v2=3))  (v1=3)   (3)
@@ -472,7 +472,7 @@ static	char *	getsval2 (expr_info *c, TOKEN s)
 				return extract2(c->args, j, EOS);
 			}
 
-			/* Anything else we dont grok */
+			/* Anything else we don't grok */
 			else
 				return expand_alias(t, c->args, 
 							c->args_flag, NULL);
@@ -564,7 +564,7 @@ __inline static  BooL	getbval (expr_info *c, TOKEN s)
  * When you have an lvalue (left hand side of an assignment) that needs to
  * be assigned to, then you can call these functions to assign to it the
  * appropriate type.  The basic operation is to assign and rvalue token
- * to an lvalue token.  But some times you dont always have a tokenized
+ * to an lvalue token.  But some times you don't always have a tokenized
  * rvalue, so you can just pass in a raw value and we will tokenize it for
  * you and go from there.  Note that the "result" of an assignment is the
  * rvalue token.  This is then pushed back onto the stack.
@@ -665,7 +665,7 @@ __inline static	TOKEN	pop (expr_info *c)
 	{
 		/* 
 		 * Attempting to pop more operands than are available
-		 * Yeilds empty values.  Thats probably the most reasonable
+		 * yields empty values.  That's probably the most reasonable
 		 * course of action.
 		 */
 		error("Cannot pop operand: no more operands");
@@ -808,7 +808,7 @@ __inline static	void	pop3 (expr_info *c, NUMBER *a, TOKEN *v, TOKEN *w)
 
 /*
  * This is the reducer.  It takes the relevant arguments off the argument
- * stack and then performs the neccesary operation on them.
+ * stack and then performs the necessary operation on them.
  */
 void	op (expr_info *cx, int what)
 {
@@ -826,7 +826,7 @@ void	op (expr_info *cx, int what)
 	}
 
 	if (cx->errflag)
-		return;		/* Dont parse on an error */
+		return;		/* Don't parse on an error */
 
 #define BINARY(x) \
 	{ \
@@ -993,7 +993,7 @@ void	op (expr_info *cx, int what)
 				*tmp;
 
 			if (top(cx) == MAGIC_TOKEN)
-				break;		/* Dont do anything */
+				break;		/* Don't do anything */
 
 			s = pops(cx);
 			tmp = expand_alias(s, cx->args, cx->args_flag, NULL);
@@ -1145,7 +1145,7 @@ void	op (expr_info *cx, int what)
 		case GEQ:	COMPARE(a >= b, my_stricmp(s, t) >= 0)
 
 
-		/* Miscelaneous operators */
+		/* Miscellaneous operators */
 		case QUEST:
 			pop3(cx, &a, &v, &w);
 			if (x_debug & DEBUG_NEW_MATH_DEBUG)
@@ -1263,7 +1263,7 @@ static int	zzlex (expr_info *c)
 		case ')':
 			/*
 			 * If we get a close paren and the lexer is expecting
-			 * an operand, then obviously thats a syntax error.
+			 * an operand, then obviously that's a syntax error.
 			 * But we gently just insert the empty value as the
 			 * rhs for the last operand and hope it all works out.
 			 */
@@ -1481,11 +1481,11 @@ static int	zzlex (expr_info *c)
 			return QUEST;
 		case ':':
 			/*
-			 * I dont want to hear anything from you anti-goto
+			 * I don't want to hear anything from you anti-goto
 			 * bigots out there. ;-)  If you can't figure out
 			 * what this does, you ought to give up programming.
 			 * And a big old :p to everyone who insisted that
-			 * i support this horrid hack.
+			 * I support this horrid hack.
 			 */
 			if (c->operand)
 				goto handle_expando;
@@ -1605,7 +1605,7 @@ static void	mathparse (expr_info *c, int pc)
 		onoeval;
 
 	/*
-	 * Drop out of parsing if an error has occured
+	 * Drop out of parsing if an error has occurred
 	 */
 	if (c->errflag)
 		return;
@@ -1620,7 +1620,7 @@ static void	mathparse (expr_info *c, int pc)
 	 */
 	while (prec[c->mtok] <= pc) 
 	{
-		/* Drop out if an error has occured */
+		/* Drop out if an error has occurred */
 		if (c->errflag)
 			return;
 
@@ -1757,7 +1757,7 @@ static void	mathparse (expr_info *c, int pc)
  * This is the new math parser.  It sets up an execution context, which
  * contains sundry information like all the extracted tokens, intermediate
  * tokens, shifted tokens, and the like.  The expression context is passed
- * around from function to function, each function is totaly independant
+ * around from function to function, each function is totally independent
  * of state information stored in global variables.  Therefore, this math
  * parser is re-entrant safe.
  */

@@ -39,8 +39,8 @@ static	TimerList *get_timer (char *ref);
 
 /*
  * timercmd: the bit that handles the TIMER command.  If there are no
- * arguements, then just list the currently pending timers, if we are
- * give a -DELETE flag, attempt to delete the timer from the list.  Else
+ * arguments, then just list the currently pending timers; if we are
+ * given a -DELETE flag, attempt to delete the timer from the list.  Else
  * consider it to be a timer to add, and add it.
  */
 BUILT_IN_COMMAND(timercmd)
@@ -106,7 +106,7 @@ BUILT_IN_COMMAND(timercmd)
 
 			if (winref == -1 && my_stricmp(na, "-1"))
 			{
-				say("%s: That window doesnt exist!", command);
+				say("%s: That window doesn't exist!", command);
 				return;
 			}
 		}
@@ -145,7 +145,7 @@ BUILT_IN_COMMAND(timercmd)
 }
 
 /*
- * This is put here on purpose -- we dont want any of the above functions
+ * This is put here on purpose -- we don't want any of the above functions
  * to have any knowledge of this struct.
  */
 static TimerList *PendingTimers;
@@ -291,7 +291,7 @@ static	int	create_timer_ref (char *refnum_want, char *refnum_gets)
 	if (strlen(refnum_want) > REFNUM_MAX)
 		refnum_want[REFNUM_MAX] = 0;
 
-	/* If the user doesnt care */
+	/* If the user doesn't care */
 	if (!strcmp(refnum_want, empty_string))
 	{
 		/* Find the lowest refnum available */
@@ -431,10 +431,10 @@ char *function_timer(char *n, char *args)
  * You call this to register a timer callback.
  *
  * The arguments:
- *  refnum_want: The refnUm requested.  This should only be sepcified
+ *  refnum_want: The refnum requested.  This should only be specified
  *		 by the user, functions wanting callbacks should specify
- *		 the value -1 which means "dont care".
- * The rest of the arguments are dependant upon the value of "callback"
+ *		 the value -1 which means "don't care".
+ * The rest of the arguments are dependent upon the value of "callback"
  *	-- if "callback" is NULL then:
  *  callback:	 NULL
  *  what:	 some ircII commands to run when the timer goes off

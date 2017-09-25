@@ -284,7 +284,7 @@ static int CompareKeyListField (tcl_interp, fieldName, field, valuePtr, valueSiz
  *   o tcl_interp (I/O) - Error message will be return in result if there is an
  *     error.
  *   o fieldName (I) - The name of the field to find.  Will validate that the
- *     name is not empty.  If the name has a sub-name (seperated by "."),
+ *     name is not empty.  If the name has a sub-name (separated by "."),
  *     search for the top level name.
  *   o fieldInfoPtr (O) - The following fields are filled in:
  *       o argc - The number of elements in the keyed list.
@@ -368,7 +368,7 @@ errorExit:
  * Returns:
  *   TCL_OK - If the field was found.
  *   TCL_BREAK - If the field was not found.
- *   TCL_ERROR - If an error occured.
+ *   TCL_ERROR - If an error occurred.
  *-----------------------------------------------------------------------------
  */
 int
@@ -480,7 +480,7 @@ Tcl_GetKeyedListKeys (tcl_interp, subFieldName, keyedList, keysArgcPtr,
  *   o tcl_interp (I/O) - Error message will be return in result if there is an
  *     error.
  *   o fieldName (I) - The name of the field to extract.  Will recusively
- *     process sub-field names seperated by `.'.
+ *     process sub-field names separated by `.'.
  *   o keyedList (I) - The list to search for the field.
  *   o fieldValuePtr (O) - If the field is found, a pointer to a dynamicly
  *     allocated string containing the value is returned here.  If NULL is
@@ -489,7 +489,7 @@ Tcl_GetKeyedListKeys (tcl_interp, subFieldName, keyedList, keysArgcPtr,
  * Returns:
  *   TCL_OK - If the field was found.
  *   TCL_BREAK - If the field was not found.
- *   TCL_ERROR - If an error occured.
+ *   TCL_ERROR - If an error occurred.
  *-----------------------------------------------------------------------------
  */
 int Tcl_GetKeyedListField (tcl_interp, fieldName, keyedList, fieldValuePtr)
@@ -517,7 +517,7 @@ int Tcl_GetKeyedListField (tcl_interp, fieldName, keyedList, fieldValuePtr)
 			break;
 
     /*
-     * Check for sub-names, temporarly delimit the top name with a '\0'.
+     * Check for sub-names, temporarily delimit the top name with a '\0'.
      */
 	nameSeparPtr = strchr ((char *) fieldName, '.');
 	if (nameSeparPtr != NULL)
@@ -600,13 +600,13 @@ exitPoint:
  *   o tcl_interp (I/O) - Error message will be return in result if there is an
  *     error.
  *   o fieldName (I) - The name of the field to extract.  Will recusively
- *     process sub-field names seperated by `.'.
+ *     process sub-field names separated by `.'.
  *   o fieldValue (I) - The value to set for the field.
  *   o keyedList (I) - The keyed list to set a field value in, may be an
  *     NULL or an empty list to create a new keyed list.
  * Returns:
  *   A pointer to a dynamically allocated string, or NULL if an error
- *   occured.
+ *   occurred.
  *-----------------------------------------------------------------------------
  */
 char * Tcl_SetKeyedListField (tcl_interp, fieldName, fieldValue, keyedList)
@@ -629,7 +629,7 @@ char * Tcl_SetKeyedListField (tcl_interp, fieldName, fieldValue, keyedList)
         keyedList = empty_string;
 
     /*
-     * Check for sub-names, temporarly delimit the top name with a '\0'.
+     * Check for sub-names, temporarily delimit the top name with a '\0'.
      */
     nameSeparPtr = strchr ((char *) fieldName, '.');
     if (nameSeparPtr != NULL)
@@ -702,12 +702,12 @@ errorExit:
  *   o tcl_interp (I/O) - Error message will be return in result if there is an
  *     error.
  *   o fieldName (I) - The name of the field to extract.  Will recusively
- *     process sub-field names seperated by `.'.
+ *     process sub-field names separated by `.'.
  *   o fieldValue (I) - The value to set for the field.
  *   o keyedList (I) - The keyed list to delete the field from.
  * Returns:
  *   A pointer to a dynamically allocated string containing the new list, or
- *   NULL if an error occured.
+ *   NULL if an error occurred.
  *-----------------------------------------------------------------------------
  */
 char *Tcl_DeleteKeyedListField (Tcl_Interp *tcl_interp, char *fieldName, char *keyedList)
@@ -719,7 +719,7 @@ char *Tcl_DeleteKeyedListField (Tcl_Interp *tcl_interp, char *fieldName, char *k
     char        *elemArgv [2];
     char        *newElement;
     /*
-     * Check for sub-names, temporarly delimit the top name with a '\0'.
+     * Check for sub-names, temporarily delimit the top name with a '\0'.
      */
     nameSeparPtr = strchr ((char *) fieldName, '.');
     if (nameSeparPtr != NULL)

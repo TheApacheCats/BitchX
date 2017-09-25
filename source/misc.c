@@ -1791,7 +1791,7 @@ struct in_addr ip;
 	return;
 }
 
-void print_ns_succede(struct reslist *rptr)
+static void print_ns_succeed(struct reslist *rptr)
 {
 char *u, *n, *h;
 char buffer[BIG_BUFFER_SIZE];
@@ -1877,7 +1877,7 @@ void cdns_generic_callback(DNS_QUEUE *dns)
 	if(info->func)
 		info->func(info);
 	else if(dns->out)
-		print_ns_succede(info);
+		print_ns_succeed(info);
 	else
 		print_ns_fail(info);
 
@@ -2602,7 +2602,7 @@ static int ar_procanswer(struct reslist *rptr, HEADER *hptr, unsigned char *buf,
 		cp += dn_skipname(cp, eob) + QFIXEDSZ;
 #endif
 	/*
-	 * proccess each answer sent to us. blech.
+	 * process each answer sent to us. blech.
 	 */
 	while (hptr->ancount-- > 0 && cp < eob) {
 		n = dn_expand(buf, eob, cp, ar_hostbuf, sizeof(ar_hostbuf)-1);
@@ -2746,7 +2746,7 @@ struct	hostent	*ar_answer(char *reip, int size, void (*func)(struct reslist *) )
 		}
 		ar_reinfo.re_errors++;
 		/*
-		** If a bad error was returned, we stop here and dont send
+		** If a bad error was returned, we stop here and don't send
 		** send any more (no retries granted).
 		*/
 		if (h_errno != TRY_AGAIN)
@@ -2933,7 +2933,7 @@ int s;
 			ar_lookup--;
 		return when;
 	}
-	if ((hp = ar_answer((char *)&ar_del, sizeof(ar_del), print_ns_succede)))
+	if ((hp = ar_answer((char *)&ar_del, sizeof(ar_del), print_ns_succeed)))
 	{
 		char **s;
 		ar_lookup--;
@@ -3040,7 +3040,7 @@ BUILT_IN_COMMAND(nslookup)
 			if (host && !my_stricmp(host, "cmd"))
 			{
 				if (!(cmd = next_expr(&args, '{')))
-					bitchsay("Need {...} for -CMD arguement");
+					bitchsay("Need {...} for -CMD argument");
 				else
 					host = next_arg(args, &args);
 			}

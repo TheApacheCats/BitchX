@@ -1166,7 +1166,7 @@ static int check_collision(char *nick, const char *description, int type)
 		  		dcc_chat(NULL, nick);
 				return 0;
 		  	}
-			send_ctcp(CTCP_NOTICE, nick, CTCP_DCC, "DCC %s collision occured while connecting to %s (%s)", type, nickname, description);
+			send_ctcp(CTCP_NOTICE, nick, CTCP_DCC, "DCC %s collision occurred while connecting to %s (%s)", type, nickname, description);
 			erase_dcc_info(s->is_read, 1, "%s", convert_output_format("$G %RDCC%n $0 collision for $1:$2", "%s %s %s", type, nick, description));
 			close_socketread(s->is_read);
 			return 0;
@@ -1567,8 +1567,8 @@ void handle_dcc_offer(struct dcc_offer *offer)
 	else if (!my_stricmp(offer->type, "RESUME"))
 		
 		/* 
-		 * Dont be deceieved by the arguments we're passing it.
-		 * The arguments are "out of order" because MIRC doesnt
+		 * Don't be deceived by the arguments we're passing it.
+		 * The arguments are "out of order" because MIRC doesn't
 		 * send them in the traditional order.  Ugh. Comments
 		 * borrowed from epic.
 		 */
@@ -1749,7 +1749,7 @@ void close_dcc_file(int snum)
 		xtime = 1.0;
 	temp = xfer / xtime;
 	sprintf(lame_ultrix, "%2.4g %s", _GMKv(temp), _GMKs(temp));
-	/* Cant pass %g to put_it (lame ultrix/dgux), fix suggested by sheik. */
+	/* Can't pass %g to put_it (lame ultrix/dgux), fix suggested by sheik. */
 	sprintf(lame_ultrix2, "%2.4g%s", _GMKv(xfer), _GMKs(xfer));
 	sprintf(lame_ultrix3, "%2.4g", xtime);
 
@@ -3130,7 +3130,7 @@ int dcc_exempt_save(FILE *fptr)
 
 /*
  * This is a callback.  When we want to do a CTCP DCC REJECT, we do
- * a WHOIS to make sure theyre still on irc, no sense sending it to
+ * a WHOIS to make sure they're still on irc, no sense sending it to
  * nobody in particular.  When this gets called back, that means the
  * peer is indeed on irc, so we send them the REJECT.
  */
@@ -3143,7 +3143,7 @@ static	void 	output_reject_ctcp (UserhostItem *stuff, char *nick, char *args)
 	if (!strcmp(stuff->user, "<UNKNOWN>"))
 		return;
 	/*
-	 * XXX This is, of course, a monsterous hack.
+	 * XXX This is, of course, a monstrous hack.
 	 */
 	next_arg(args, &args);
 	type = next_arg(args, &args);
@@ -3640,14 +3640,14 @@ int		blocksize = 0;
 		if (!(fullname = expand_twiddle(tmp)))
 			malloc_strcpy(&fullname, tmp);
 		/*
-		 * This has to be done by hand, we cant use send_ctcp,
+		 * This has to be done by hand, we can't use send_ctcp,
 		 * because this violates the protocol, and send_ctcp checks
 		 * for that.  Ugh.
 		 */
 
 		if (stat(fullname, &sb) == -1)
 		{
-			/* File doesnt exist.  Sheesh. */
+			/* File doesn't exist.  Sheesh. */
 			put_it("%s", convert_output_format("$G %RDCC%n Cannot use DCC RESUME if the file doesn't exist [$0|$1-]", "%s %s", fullname, strerror(errno)));
 			continue;
 		}
@@ -3686,14 +3686,14 @@ DCC_dllcommands *dcc_comm = NULL;
 		upper(comm);
 		if ((dcc_comm = (DCC_dllcommands *)find_in_list((List **)&dcc_dllcommands, comm, 0)))
 		{
-			put_it("%s", convert_output_format("$G Usage: %W/%R$0%n $1 %K-%n $2-", "DCC %s %s", dcc_comm->name, dcc_comm->help?dcc_comm->help:"No help availble yet"));
+			put_it("%s", convert_output_format("$G Usage: %W/%R$0%n $1 %K-%n $2-", "DCC %s %s", dcc_comm->name, dcc_comm->help?dcc_comm->help:"No help available yet"));
 			return;
 		}
 		for (i = 0; dcc_commands[i].name != NULL; i++)
 		{
 			if (!strncmp(comm, dcc_commands[i].name, strlen(comm)))
 			{
-				put_it("%s", convert_output_format("$G Usage: %W/%R$0%n $1 %K-%n $2-", "DCC %s %s", dcc_commands[i].name, dcc_commands[i].help?dcc_commands[i].help:"No help availble yet"));
+				put_it("%s", convert_output_format("$G Usage: %W/%R$0%n $1 %K-%n $2-", "DCC %s %s", dcc_commands[i].name, dcc_commands[i].help?dcc_commands[i].help:"No help available yet"));
 				return;
 			}
 		}

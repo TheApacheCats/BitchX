@@ -130,13 +130,13 @@ const char *dgets_strerror(int dgets_errno)
  *
  * Return values:
  *
- *	-1 -- something really died.  Either a read error occured, the
- *	      fildesc wasnt really ready for reading, or the input buffer
+ *	-1 -- something really died.  Either a read error occurred, the
+ *	      fildesc wasn't really ready for reading, or the input buffer
  *	      for the filedesc filled up (8192 bytes)
  *	 0 -- If the data read in from the file descriptor did not form a 
  *	      complete line, then zero is always returned.  This should be
  *	      considered a stopping condition.  Do not call dgets() again
- *	      after it returns 0, because unless more data is avaiable on
+ *	      after it returns 0, because unless more data is available on
  *	      the fd, it will return -1, which you would misinterpret as an
  *	      error condition.
  *	      If "buffer" is 0, then whatever we have available will be 
@@ -183,7 +183,7 @@ int BX_dgets (char *str, int des, int buffer, int buffersize, void *ssl_fd)
 		}
 
 		/*
-		 * Dont try to read into a full buffer.
+		 * Don't try to read into a full buffer.
 		 */
 		if (ioe->write_pos >= ioe->buffer_size)
 		{
@@ -193,8 +193,8 @@ int BX_dgets (char *str, int des, int buffer, int buffersize, void *ssl_fd)
 		}
 		/*
 		 * Check to see if any bytes are ready.  If this fails,
-		 * then its almost always due to the filedesc being 
-		 * bogus.  Thats a fatal error.
+		 * then it's almost always due to the filedesc being 
+		 * bogus.  That's a fatal error.
 		 */
 		if (ioctl(des, FIONREAD, &nbytes) == -1)
 		{
@@ -284,7 +284,7 @@ int BX_dgets (char *str, int des, int buffer, int buffersize, void *ssl_fd)
 		else
 		{
 			/*
-			 * At this point nbytes is 0, and it doesnt
+			 * At this point nbytes is 0, and it doesn't
 			 * appear the socket is at EOF or ready to read.
 			 * Very little to do at this point but force the
 			 * issue and figure out what the heck went wrong.
@@ -305,11 +305,11 @@ int BX_dgets (char *str, int des, int buffer, int buffersize, void *ssl_fd)
 				}
 				case 0:
 				{
-					yell("des [%d] passed to dgets(), but it isnt ready.", des);
+					yell("des [%d] passed to dgets(), but it isn't ready.", des);
 					if (ioe->write_pos == 0)
 					{
 						yell("X*X*X*X*X*X*X*X*X ABANDON SHIP! X*X*X*X*X*X*X*X*X*X");
-						ircpanic("write_pos is zero when it cant be.");
+						ircpanic("write_pos is zero when it can't be.");
 					}
 					else
 					{

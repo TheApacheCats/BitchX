@@ -1138,7 +1138,7 @@ CTCP_HANDLER(do_ping_reply)
 	time_t tsec = 0, tusec = 0, orig;
 
 	if (!cmd || !*cmd)
-		return NULL;		/* This is a fake -- cant happen. */
+		return NULL;		/* This is a fake -- can't happen. */
 
 	orig = my_atol(cmd);
 	
@@ -1219,9 +1219,9 @@ extern 	char *do_ctcp (char *from, char *to, char *str)
 		/*
 		 * Yes, this intentionally ignores "unlimited" CTCPs like
 		 * UTC and SED.  Ultimately, we have to make sure that
-		 * CTCP expansions dont overrun any buffers that might
+		 * CTCP expansions don't overrun any buffers that might
 		 * contain this string down the road.  So by allowing up to
-		 * 4 CTCPs, we know we cant overflow -- but if we have more
+		 * 4 CTCPs, we know we can't overflow -- but if we have more
 		 * than 40, it might overflow, and its probably a spam, so
 		 * no need to shed tears over ignoring them.  Also makes
 		 * the sanity checking much simpler.
@@ -1690,8 +1690,8 @@ int get_ctcp_val (char *str)
 	 * calls this function is edit.c:ctcp(), and it immediately
 	 * calls send_ctcp().  So the pointer that is being passed
 	 * to us is globally allocated at a level higher then ctcp().
-	 * so it wont be bogus until some time after ctcp() returns,
-	 * but at that point, we dont care any more.
+	 * so it won't be bogus until some time after ctcp() returns,
+	 * but at that point, we don't care any more.
 	 */
 	ctcp_cmd[CTCP_CUSTOM].name = str;
 	return CTCP_CUSTOM;
@@ -1717,7 +1717,7 @@ void BX_split_CTCP(char *raw_message, char *ctcp_dest, char *after_ctcp)
 	if (!ctcp_end)
 	{
 		*--ctcp_start = CTCP_DELIM_CHAR;
-		return;		/* Thats _not_ a CTCP. */
+		return;		/* That's _not_ a CTCP. */
 	}
 
 	*ctcp_end++ = 0;

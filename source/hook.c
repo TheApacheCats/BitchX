@@ -796,7 +796,7 @@ static int show_list (int which)
 	Hook	*list;
 	int	cnt = 0;
 
-	/* Less garbage when issueing /on without args. (lynx) */
+	/* Less garbage when issuing /on without args. (lynx) */
 	for (list = hook_functions[which].list; list; list = list->next, cnt++)
 		show_hook(list, hook_functions[which].name);
 	return (cnt);
@@ -862,7 +862,7 @@ int 	BX_do_hook (int which, char *format, ...)
 		/*
 		 * If we're already executing the type, and we're
 		 * specifically not supposed to allow recursion, then
-		 * dont allow recursion. ;-)
+		 * don't allow recursion. ;-)
 		 */
 		if (hook_functions[which].mark && 
 		    (hook_functions[which].flags & HF_NORECURSE))
@@ -881,7 +881,7 @@ int 	BX_do_hook (int which, char *format, ...)
 
 	/*
 	 * Press the buffer using the specified format string and args
-	 * We do this here so that we dont waste time doing the vsnprintf
+	 * We do this here so that we don't waste time doing the vsnprintf
 	 * if we're not going to do any matching.  So for types where the
 	 * user has no hooks, its a cheapie call.
 	 */
@@ -917,7 +917,7 @@ int 	BX_do_hook (int which, char *format, ...)
 		hook_functions[which].mark++;
 
 
-	/* not attached, so dont "fix" it */
+	/* not attached, so don't "fix" it */
 	{
 		int 	currser 	= 0, 
 			oldser 		= INT_MIN,
@@ -985,7 +985,7 @@ int 	BX_do_hook (int which, char *format, ...)
 		}
 
 		/*
-		 * Ok. we've walked the list.  If the last hook had a best
+		 * OK. We've walked the list.  If the last hook had a best
 		 * match, use that one too. =)
 		 */
 		if (bestmatch)
@@ -1012,7 +1012,7 @@ int 	BX_do_hook (int which, char *format, ...)
 			ircpanic("hook_array[%d] is null", i);
 			
 		/* 
-		 * Check to see if this hook is supposed to supress the
+		 * Check to see if this hook is supposed to suppress the
 		 * default action for the event.
 		 */
 
@@ -1022,8 +1022,8 @@ hook_next:
 		else if (tmp->noisy == UNKNOWN && tmp->sernum == 0)
 			retval = RESULT_PENDING;
 		/*
-		 * If this is a negated event, or there isnt anything to be
-		 * executed, then we dont bother.  Just go on to the next one
+		 * If this is a negated event, or there isn't anything to be
+		 * executed, then we don't bother.  Just go on to the next one
 		 */
 		if (tmp->not || !tmp->stuff || !*tmp->stuff)
 		{
@@ -1066,7 +1066,7 @@ hook_next:
 		else
 		{
 			/*
-			 * Ok.  Go and run the code.  It is imperitive to note
+			 * OK.  Go and run the code.  It is imperative to note
 			 * that "tmp" may be deleted by the code executed here,
 			 * so it is absolutely forbidden to reference "tmp" after
 			 * this point.
@@ -1123,7 +1123,7 @@ hook_next:
 }
 
 /* 
- * shook: the SHOOK command -- this probably doesnt belong here,
+ * shook: the SHOOK command -- this probably doesn't belong here,
  * and shook is probably a stupid name.  It simply asserts a fake
  * hook event for a given type.  Fraught with peril!
  */
@@ -1174,7 +1174,7 @@ BUILT_IN_COMMAND(shookcmd)
  * specifying a character at the beginning of the "type" argument.  If you
  * want to schedule an event at a serial number, then the first character
  * must be a hash (#).  The argument immediately FOLLOWING the "type"
- * argument, and immediately PRECEEDING the "nick" argument must be an 
+ * argument, and immediately PRECEDING the "nick" argument must be an 
  * integer number, and is used for the serial number for this event.
  *
  * The "verbosity" of the event may also be modified by specifying at most
@@ -1262,7 +1262,7 @@ BUILT_IN_COMMAND(oncmd)
 		if ((which = find_hook(func, &first)) == INVALID_HOOKNUM)
 		{
 			/*
-			 * Ok.  So either the user specified an invalid type
+			 * OK.  So either the user specified an invalid type
 			 * or they specified an ambiguous type.  Either way,
 			 * we're not going to be going anywhere.  So we have
 			 * free reign to mangle 'args' at this point.
@@ -1286,7 +1286,7 @@ BUILT_IN_COMMAND(oncmd)
 				return;
 
 			/*
-			 * Ok.  So they probably want a listing.
+			 * OK.  So they probably want a listing.
 			 */
 			say("ON listings:");
 			len = strlen(func);
@@ -1362,7 +1362,7 @@ BUILT_IN_COMMAND(oncmd)
 
 			
 			/*
-			 * If this is a negative event, then we dont want
+			 * If this is a negative event, then we don't want
 			 * to take any action for it.
 			 */
 			if (not)

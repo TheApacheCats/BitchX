@@ -104,17 +104,17 @@ int new_match (const char *pattern, const char *string)
 
 		/*
 		 * If the last character in the pattern was a *, then
-		 * we walk the string until we find the next instance int
-		 * string, of the character that was after the *.
+		 * we walk the string until we find the next instance in
+		 * the string, of the character that was after the *.
 		 * If we get to the end of string, then obviously there
 		 * is no match.  A * at the end of the pattern is handled
-		 * especially, so we dont need to consider that.
+		 * especially, so we don't need to consider that.
 		 */
 		if (asterisk)
 		{
 			/*
 			 * More pattern, no source.  Obviously this
-			 * asterisk isnt going to cut it.  Try again.
+			 * asterisk isn't going to cut it.  Try again.
 			 * This replaces an 'always failure' case. 
 			 * In 99% of the cases, we will try again and it
 			 * will fail anyhow, but 1% of the cases it would
@@ -137,12 +137,12 @@ int new_match (const char *pattern, const char *string)
 			 * If the character in the pattern immediately
 			 * following the asterisk is a qmark, then we
 			 * save where we're at and we allow the ? to be
-			 * matched.  If we find it doesnt work later on,
+			 * matched.  If we find it doesn't work later on,
 			 * then we will come back to here and try again.
 			 *     OR 
 			 * We've found the character we're looking for!
 			 * Save some state information about how to recover
-			 * if we dont match
+			 * if we don't match
 			 */
 			else if (*pattern == '?' || 
 				(tolower((unsigned char)*string) == tolower((unsigned char)*pattern)))

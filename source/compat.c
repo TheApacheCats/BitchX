@@ -1,9 +1,9 @@
 /*
- * Everything that im not directly responsible for i put in here.  Almost
+ * Everything that I'm not directly responsible for I put in here.  Almost
  * all of this stuff is either borrowed from somewhere else (for those poor
- * saps that dont have something you need), or i wrote (and put into the 
+ * saps that don't have something you need), or I wrote (and put into the 
  * public domain) in order to make epic compile on some of the more painful
- * systems.  None of this is part of EPIC-proper, so dont feel that youre 
+ * systems.  None of this is part of EPIC-proper, so don't feel that you're 
  * going to hurt my feelings if you re-use this.
  */
 
@@ -183,7 +183,7 @@ static int termcap;
 	%c	output pop as a char
 	%'c'	push character constant c.
 	%{n}	push decimal constant n.
-	%p[1-9] push paramter [1-9]
+	%p[1-9] push parameter [1-9]
 	%g[a-z] push variable [a-z]
 	%P[a-z] put pop in variable [a-z]
 	%l	push the length of pop (a string)
@@ -221,7 +221,7 @@ static int termcap;
 (UW)	%sx	subtract parameter FROM the character x
 	%>xy	if parameter > character x then add character y to parameter
 	%B	convert to BCD (parameter = (parameter/10)*16 + parameter%16)
-	%D	Delta Data encode (parameter = parameter - 2*(paramter%16))
+	%D	Delta Data encode (parameter = parameter - 2*(parameter%16))
 	%i	increment the first two parameters by one
 	%n	xor the first two parameters by 0140
 (GNU)	%m	xor the first two parameters by 0177
@@ -229,7 +229,7 @@ static int termcap;
 (GNU)	%b	backup to previous parameter
 (GNU)	%f	skip this parameter
 
-  Note the two definitions of %a, the GNU defintion is used if the characters
+  Note the two definitions of %a, the GNU definition is used if the characters
   after the 'a' are valid, otherwise the UW definition is used.
 
   (GNU) used by GNU Emacs termcap libraries
@@ -329,8 +329,8 @@ char *tparm(const char *str, ...) {
 					return OOPS;
 				if ((sp[1] == 'p' || sp[1] == 'c')
 			            && sp[2] != '\0' && fmt == NULL) {
-					/* GNU aritmitic parameter, what they
-					   realy need is terminfo.	      */
+					/* GNU arithmetic parameter, what they
+					   really need is terminfo.	      */
 					int val, lc;
 					if (sp[1] == 'p'
 					    && getarg(termcap - 1 + sp[2] - '@',
@@ -339,7 +339,7 @@ char *tparm(const char *str, ...) {
 					if (sp[1] == 'c') {
 						lc = cvtchar(sp + 2, &c) + 2;
 					/* Mask out 8th bit so \200 can be
-					   used for \0 as per GNU doc's    */
+					   used for \0 as per GNU docs    */
 						val = c & 0177;
 					} else
 						lc = 2;
@@ -879,7 +879,7 @@ unsigned long strtoul (const char *nptr, char **endptr, int base)
 /*
  * Copyright (c) 1987, 1988, 1993
  *	The Regents of the University of California.  All rights reserved.
- * See above for the neccesary list of conditions on use.
+ * See above for the necessary list of conditions on use.
  */
 
 #include <stdlib.h>
@@ -1026,7 +1026,7 @@ void bsd_unsetenv(const char *name)
  * Copyright (c) 1983, 1990, 1993
  *    The Regents of the University of California.  All rights reserved.
  * Portions Copyright (c) 1993 by Digital Equipment Corporation.
- * See above for the neccesary list of conditions on use.
+ * See above for the necessary list of conditions on use.
  */
 
 /* 

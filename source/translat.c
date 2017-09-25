@@ -199,7 +199,7 @@ void set_translation(Window *win, char *tablename, int unused)
 	 * x) despite the 0x being defined as optionally existing on input,
 	 * and others zero out all the output variables if there is trailing
 	 * non white space in the format string which doesn't appear on the
-	 * input. Overall, the standard I/O libraries have a tendancy not
+	 * input. Overall, the standard I/O libraries have a tendency not
 	 * to be very standard.
 	 */
 

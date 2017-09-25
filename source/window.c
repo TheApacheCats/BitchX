@@ -508,8 +508,8 @@ void BX_remove_window_from_screen(Window *window)
 		ircpanic("This window is not on a screen");
 
 	/*
-	 * We  used to go to greath lengths to figure out how to fill
-	 * in the space vacated by this window.  Now we dont sweat that.
+	 * We used to go to greath lengths to figure out how to fill
+	 * in the space vacated by this window.  Now we don't sweat that.
 	 * we just blow away the window and then recalculate the entire
 	 * screen.
 	 */
@@ -1071,7 +1071,7 @@ void BX_goto_window(Screen *s, int which)
 }
 
 /*
- * hide_window: sets the given window to invisible and recalculates remaing
+ * hide_window: sets the given window to invisible and recalculates remaining
  * windows to fill the entire screen 
  */
 void BX_hide_window(Window *window)
@@ -1196,8 +1196,8 @@ Window *w = NULL;
 /*
  * get_window_by_refnum: Given a reference number to a window, this returns a
  * pointer to that window if a window exists with that refnum, null is
- * returned otherwise.  The "safe" way to reference a window is throught the
- * refnum, since a window might be delete behind your back and and Window
+ * returned otherwise.  The "safe" way to reference a window is through the
+ * refnum, since a window might be deleted behind your back and and Window
  * pointers might become invalid.  
  */
 Window	* BX_get_window_by_refnum(unsigned int refnum)
@@ -1577,7 +1577,7 @@ int BX_is_current_channel(const char *channel, int server, int delete)
 
 /*
  * set_current_channel_by_refnum: This sets the current channel for the current
- * window. It returns the current channel as it's value.  If channel is null,
+ * window. It returns the current channel as its value.  If channel is null,
  * the * current channel is not changed, but simply reported by the function
  * result.  This treats as a special case setting the current channel to
  * channel "0".  This frees the current_channel for the
@@ -2154,7 +2154,7 @@ void 	BX_set_display_target (const char *who, unsigned long level)
 
 		/*
 		 * We'd better check to see if this should go to a
-		 * specific window (i dont agree with this, though)
+		 * specific window (I don't agree with this, though)
 		 */
 		if (is_channel((char *)who_from) && from_server > -1)
 		{
@@ -2705,7 +2705,7 @@ static Window *window_balance (Window *window, char **args, char *usage)
 
 /*
  * /WINDOW BEEP_ALWAYS ON|OFF
- * Indicates that when this window is HIDDEN (sorry, thats not what it seems
+ * Indicates that when this window is HIDDEN (sorry, that's not what it seems
  * like it should do, but that is what it does), beeps to this window should
  * not be suppressed like they normally are for hidden windows.  The beep
  * occurs EVEN IF /set beep is OFF.
@@ -2770,7 +2770,7 @@ static Window *window_bind (Window *window, char **args, char *usage)
 #endif
 
 		/*
-		 * So we know this window doesnt have a current channel.
+		 * So we know this window doesn't have a current channel.
 		 * So we have to find the window where it IS the current
 		 * channel (if it is at all)
 		 */
@@ -2920,7 +2920,7 @@ void win_create(int var, int test)
  * This directs the client to open up a new physical screen and create a
  * new window in it.  This feature depends on the external "wserv" utility
  * and requires a multi-processing system, since it actually runs the new
- * screen in a seperate process.  Please note that the external screen is
+ * screen in a separate process.  Please note that the external screen is
  * not actually controlled by the client, but rather by "wserv" which acts
  * as a pass-through filter on behalf of the client.
  *
@@ -3299,7 +3299,7 @@ static Window *window_last (Window *window, char **args, char *usage)
  * /WINDOW LASTLOG <size>
  * This changes the size of the window's lastlog buffer.  The default value
  * foR a window's lastlog is the value of /set LASTLOG, but each window may
- * be independantly tweaked with this command.
+ * be independently tweaked with this command.
  */
 static Window *window_lastlog (Window *window, char **args, char *usage)
 {
@@ -3377,7 +3377,7 @@ static Window *window_level (Window *window, char **args, char *usage)
 
 /*
  * /WINDOW LIST
- * This lists all of the windows known to the client, and a breif summary
+ * This lists all of the windows known to the client, and a brief summary
  * of their current state.
  */
 Window *window_list (Window *window, char **args, char *usage)
@@ -4276,7 +4276,7 @@ static window_ops options [] = {
 	{ "NOTIFY",		window_notify, 		"[on|off|toggle]\n- Turns notification on/off/toggle for the current window." },
 	{ "NOTIFY_LEVEL",	window_notify_level, 	"[level]\n- Set's current window notification level to [level]" },
 	{ "NUMBER",		window_number, 		"[number]\n- Set's the current windows refnum to #" },
-	{ "POP",		window_pop, 		"\n- Pops the top window off the window stack. if hidden it's made visible" },
+	{ "POP",		window_pop, 		"\n- Pops the top window off the window stack. If hidden it's made visible" },
 	{ "PREVIOUS",		window_previous, 	"\n- Sets the current window to the previous numbered windows" },
 	{ "PROMPT",		window_prompt, 		"[text]\n- Sets the current input prompt to [text]" },
 	{ "PUSH",		window_push, 		"[refnum]\n- Places the current window or specified window on the window stack" },
@@ -4424,7 +4424,7 @@ BUILT_IN_COMMAND(windowcmd)
 
 /* * * * * * * * * * * SCROLLBACK BUFFER * * * * * * * * * * * * * * */
 /* 
- * XXXX Dont you DARE touch this XXXX 
+ * XXXX Don't you DARE touch this XXXX 
  *
  * Most of the time, a delete_display_line() is followed somewhat
  * immediately by a new_display_line().  So most of the time we just

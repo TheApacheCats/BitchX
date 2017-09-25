@@ -351,11 +351,11 @@ char **BX_split_up_line(const char *str, int max_cols)
  *
  * It may be a good idea to allow users to control this behaviour, possibly
  * by introducing a new variable, DISPLAY_MODE. 0 is the traditional way
- * and 1 is the quick way. Anyway, we dont care at this level, as we are
+ * and 1 is the quick way. Anyway, we don't care at this level, as we are
  * simply preparing the strings here.
  *
  * Errm ... oh yes, and since this caught me by surprise and caused many a
- * minutes worth of hair pulling, dont forget we need to keep count of
+ * minutes worth of hair pulling, don't forget we need to keep count of
  * PRINTED Characters not buffer positions :-)
  */
 #define SPLIT_EXTENT 40
@@ -408,7 +408,7 @@ char **BX_prepare_display(const char *orig_str,
 
 	buffer[0] = 0;
 
-	/* Handle blank or non-existant lines */
+	/* Handle blank or non-existent lines */
 	if (!orig_str || !orig_str[0])
 		orig_str = space;
 
@@ -596,7 +596,7 @@ char **BX_prepare_display(const char *orig_str,
 		} /* End of switch (*ptr) */
 
 		/*
-		 * Must check for cols >= maxcols+1 becuase we can have a 
+		 * Must check for cols >= maxcols+1 because we can have a 
 		 * character on the extreme screen edge, and we would still 
 		 * want to treat this exactly as 1 line, and cols has already 
 		 * been incremented.
@@ -615,7 +615,7 @@ char **BX_prepare_display(const char *orig_str,
 			 *
 			 * Due to some ... interesting design considerations,
 			 * if you have /set indent on and your first line has
-			 * exactly one word seperation in it, then obviously
+			 * exactly one word separation in it, then obviously
 			 * there is a really long "word" to the right of the 
 			 * first word.  Normally, we would just break the 
 			 * line after the first word and then plop the really 
@@ -637,7 +637,7 @@ char **BX_prepare_display(const char *orig_str,
 			/*
 			 * If we are approaching the number of lines that
 			 * we have space for, then resize the master line
-			 * buffer so we dont run out.
+			 * buffer so we don't run out.
 			 */
 
 			if (line >= output_size - 3)
@@ -813,7 +813,7 @@ static int add_to_display_list(Window *window, const char *str)
 	window->distance_from_display++;
 	
 	/*
-	 * Only output the line if hold mode isnt activated
+	 * Only output the line if hold mode isn't activated
 	 */
 	if (((window->distance_from_display > window->display_size) &&
 						window->scrollback_point) ||
@@ -937,8 +937,8 @@ int BX_output_line(const char *str)
 /*
  * NOTE: When we output colors, we explicitly turn off bold and reverse,
  * as they can affect the display of the colors. We turn them back on
- * afterwards, though. We dont need to worry about blinking or underline
- * as they dont affect the colors. But reverse and bold do, so we need to
+ * afterwards, though. We don't need to worry about blinking or underline
+ * as they don't affect the colors. But reverse and bold do, so we need to
  * make sure that the color sequence has preference, rather than the previous
  * IRC-II formatting colors.
  *
@@ -1116,7 +1116,7 @@ int BX_output_with_count(const char *str, int clreol, int output)
 			beep++;
 			break;
 		}
-		/* Dont ask */
+		/* Don't ask */
 		case '\f':
 		{
 			if (output)
@@ -1628,14 +1628,14 @@ extern	Window	*BX_create_additional_screen (void)
 			/*
 			 * Make sure that no inhereted file descriptors
 			 * are left over past the exec.  xterm will reopen
-			 * any fd's that it is interested in.
+			 * any fds that it is interested in.
 			 */
 			for (i = 3; i < 256; i++)
 				close(i);
 
 			/*
 			 * Try to restore some sanity to the signal
-			 * handlers, since theyre not really appropriate here
+			 * handlers, since they're not really appropriate here
 			 */
 			my_signal(SIGINT,  SIG_IGN, 0);
 			my_signal(SIGSEGV, SIG_DFL, 0);
@@ -2040,7 +2040,7 @@ char *BX_skip_ctl_c_seq(const char *start, int *lhs, int *rhs, int proper)
 	int	lv1, rv1;
 
 	/*
-	 * For our sanity, just use a placeholder if the caller doesnt
+	 * For our sanity, just use a placeholder if the caller doesn't
 	 * care where the end of the ^C code is.
 	 */
 	if (!lhs)
@@ -2051,7 +2051,7 @@ char *BX_skip_ctl_c_seq(const char *start, int *lhs, int *rhs, int proper)
 	*lhs = *rhs = -1;
 
 	/*
-	 * If we're passed a non ^C code, dont do anything.
+	 * If we're passed a non ^C code, don't do anything.
 	 */
 	if (*after != COLOR_CHAR)
 		return (char *)after;
@@ -2088,7 +2088,7 @@ char *BX_skip_ctl_c_seq(const char *start, int *lhs, int *rhs, int proper)
 
 
 		/*
-		 * Code certainly cant have moRe than two chars in it
+		 * Code certainly can't have more than two chars in it
 		 */
 		c1 = after[0];
 		c2 = after[1];
@@ -2210,7 +2210,7 @@ char *BX_skip_ctl_c_seq(const char *start, int *lhs, int *rhs, int proper)
 char *BX_strip_ansi(const char *str)
 {
 	/*
-	 * Used as a translation table when we cant display graphics characters
+	 * Used as a translation table when we can't display graphics characters
 	 * or we have been told to do translation.  A no-brainer, with little attempt
 	 * at being smart.
 	 * (JKJ: perhaps we should allow a user to /set this?)
@@ -2354,7 +2354,7 @@ char *BX_strip_ansi(const char *str)
 			int my_gcmode = gcmode;
 			/*
 			 * This is a very paranoid check to make sure that
-			 * the 8-bit escape code doesnt elude us.
+			 * the 8-bit escape code doesn't elude us.
 			 */
 			if (chr == '\x9b')
 			{
@@ -2418,8 +2418,8 @@ char *BX_strip_ansi(const char *str)
 
 				/*
 				 * gcmode 1 is "accept or reverse mangle"
-				 * If youre doing 8-bit, it accepts eight
-				 * bit characters.  If youre not doing 8 bit
+				 * If you're doing 8-bit, it accepts eight
+				 * bit characters.  If you're not doing 8 bit
 				 * then it converts the char into something
 				 * printable and then reverses it.
 				 */
@@ -2497,7 +2497,7 @@ char *BX_strip_ansi(const char *str)
 /* { */			case ('o') : case ('|') : case ('}') :
 			case ('~') : case ('c') :
 			{
-				break;		/* Dont do anything */
+				break;		/* Don't do anything */
 			}
 
 			/*
@@ -2598,7 +2598,7 @@ char *BX_strip_ansi(const char *str)
 
 					/*
 					 * If we run out of code here, 
-					 * then we're totaly confused.
+					 * then we're totally confused.
 					 * just back out with whatever
 					 * we have...
 					 */
@@ -2783,8 +2783,8 @@ char *BX_strip_ansi(const char *str)
 
 
 	        /*
-	         * Skip over ^C codes, theyre already normalized
-	         * well, thats not totaly true.  We do some mangling
+	         * Skip over ^C codes, they're already normalized
+	         * well, that's not totally true.  We do some mangling
 	         * in order to make it work better
 	         */
 		case 3:
@@ -2804,7 +2804,7 @@ char *BX_strip_ansi(const char *str)
 			 * 131 is encountered when eight bit chars is OFF.
 			 * We see a character 3 (131 with the 8th bit off)
 			 * and so we ask skip_ctl_c_seq where the end of 
-			 * that sequence is.  But since it isnt a ^c sequence
+			 * that sequence is.  But since it isn't a ^c sequence
 			 * it just shrugs its shoulders and returns the
 			 * pointer as-is.  So we sit asking it where the end
 			 * is and it says "its right here".  So there is a 
@@ -2816,7 +2816,7 @@ char *BX_strip_ansi(const char *str)
 			 */
 			if (end == str)
 			{
-				/* Turn on reverse if neccesary */
+				/* Turn on reverse if necessary */
 				if (reverse == 0)
 					output[pos++] = REV_TOG;
 				output[pos++] = ' ';

@@ -1,5 +1,5 @@
 /*
- * debug.c -- controll the values of x_debug.
+ * debug.c -- control the values of x_debug.
  *
  * Written by Jeremy Nelson
  * Copyright 1997 EPIC Software Labs

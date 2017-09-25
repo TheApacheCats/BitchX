@@ -53,7 +53,7 @@ CVS_REVISION(who_c)
 
 #define WHO_INVISIBLE	0x2000
 /*
- * This is tricky -- this doesnt get the LAST one, it gets the
+ * This is tricky -- this doesn't get the LAST one, it gets the
  * next to the last one.  Why?  Because the LAST one is the one
  * asking, and they want to know who is LAST (before them)
  * So it sucks.  Sue me.
@@ -262,7 +262,7 @@ void BX_whobase(char *args, void (*line) (WhoEntry *, char *, char **), void (*e
 			{
 				if ((arg = next_arg(args, &args)) == NULL)
 				{
-					say("WHO -SERVER: missing arguement");
+					say("WHO -SERVER: missing argument");
 					return;
 				}
 
@@ -274,7 +274,7 @@ void BX_whobase(char *args, void (*line) (WhoEntry *, char *, char **), void (*e
 			{
 				if ((arg = next_arg(args, &args)) == NULL)
 				{
-					say("WHO -NAME: missing arguement");
+					say("WHO -NAME: missing argument");
 					return;
 				}
 
@@ -286,7 +286,7 @@ void BX_whobase(char *args, void (*line) (WhoEntry *, char *, char **), void (*e
 			{
 				if ((arg = next_arg(args, &args)) == NULL)
 				{
-					say("WHO -REALNAME: missing arguement");
+					say("WHO -REALNAME: missing argument");
 					return;
 				}
 
@@ -298,7 +298,7 @@ void BX_whobase(char *args, void (*line) (WhoEntry *, char *, char **), void (*e
 			{
 				if ((arg = next_arg(args, &args)) == NULL)
 				{
-					say("WHO -NICK: missing arguement");
+					say("WHO -NICK: missing argument");
 					return;
 				}
 
@@ -382,7 +382,7 @@ void BX_whobase(char *args, void (*line) (WhoEntry *, char *, char **), void (*e
 
 void quote_whine(char *type)
 {
-	yell("### Please dont do /QUOTE %s. Use /%s instead", type, type);
+	yell("### Please don't do /QUOTE %s. Use /%s instead", type, type);
 	return;
 }
 
@@ -443,7 +443,7 @@ do
 	 */
 	new_w->dirty = 1;
 	/*
-	 * We dont always want to use this function.
+	 * We don't always want to use this function.
 	 * If another function is supposed to do the work for us,
 	 * we yield to them.
 	 */
@@ -557,7 +557,7 @@ void who_end (char *from, char **ArgList)
 	do
 	{
 		/*
-		 * Defer to another function, if neccesary.
+		 * Defer to another function, if necessary.
 		 */
 		if (new_w->end)
 		{
@@ -979,7 +979,7 @@ void	userhost_returned (char *from, char **ArgList)
 			/*
 			 * Otherwise, the user just did /userhost,
 			 * so we offer the numeric, and if the user
-			 * doesnt bite, we output to the screen.
+			 * doesn't bite, we output to the screen.
 			 */
 			else if (do_hook(current_numeric, "%s %s %s %s %s", 
 						item.nick,
@@ -993,10 +993,10 @@ void	userhost_returned (char *from, char **ArgList)
 		}
 
 		/*
-		 * If ArgList isnt the current nick, then the current nick
+		 * If ArgList isn't the current nick, then the current nick
 		 * must not be on irc.  So we whip up a dummy UserhostItem
 		 * and send it on its way.  We DO NOT HOOK the 302 numeric
-		 * with this bogus entry, because thats the historical
+		 * with this bogus entry, because that's the historical
 		 * behavior.  This can cause a problem if you do a USERHOST
 		 * and wait on the 302 numeric.  I think waiting on the 302
 		 * numeric is stupid, anyhow.
@@ -1007,7 +1007,7 @@ void	userhost_returned (char *from, char **ArgList)
 			 * Of course, only if the user asked for a callback
 			 * via /userhost -cmd or a direct call to userhostbase.
 			 * If the user just did /userhost, and the nicks arent
-			 * on, then we just dont display anything.
+			 * on, then we just don't display anything.
 			 */
 			if (top->func)
 			{

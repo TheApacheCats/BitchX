@@ -1235,9 +1235,9 @@ static	char	*alias_server_version  (void)
  * you consistently use these macros to do the dirty work for you, you
  * will never have to do bounds checking as the macros do that for you. >;-) 
  *
- * Yes, i realize it makes the code slightly less efficient, but i feel that 
- * the cost is minimal compared to how much time i have spent over the last 
- * year debugging these functions and the fact i wont have to again. ;-)
+ * Yes, I realize it makes the code slightly less efficient, but I feel that
+ * the cost is minimal compared to how much time I have spent over the last
+ * year debugging these functions and the fact I won't have to again. ;-)
  */
 
 #define EMPTY empty_string
@@ -1465,7 +1465,7 @@ BUILT_IN_FUNCTION(function_tdiff, input)
 		/*
 		 * If we have a decmial point, and is_number() returns 1,
 		 * then we know that we have a real, authentic number AFTER
-		 * the decmial point.  As long as it isnt zero, we want it.
+		 * the decmial point.  As long as it isn't zero, we want it.
 		 */
 		if (*after == '.')
 			number = atol(after + 1);
@@ -1509,7 +1509,7 @@ BUILT_IN_FUNCTION(function_index, input)
 /*
  * Usage: $rindex(characters text)
  * Returns: The number of leading characters in <text> that occur before the
- *          *last* occurance of any of the characters in the <characters> 
+ *          *last* occurrence of any of the characters in the <characters>
  *          argument.
  * Example: $rindex(f three fine frogs) returns 12 (the 'f' in 'frogs')
  *          $rindex(frg three fine frogs) returns 15 (the 'g' in 'froGs')
@@ -1518,7 +1518,7 @@ BUILT_IN_FUNCTION(function_rindex, word)
 {
 	char	*chars, *last;
 
-	/* need to find out why ^x doesnt work */
+	/* need to find out why ^x doesn't work */
 	GET_STR_ARG(chars, word);
 	last = rsindex(word + strlen(word) - 1, word, chars, 1);
 	RETURN_INT(last ? last - word : -1);
@@ -1618,7 +1618,7 @@ BUILT_IN_FUNCTION(function_userhost, input)
 			else
 				m_s3cat(&retval, space, unknown_userhost);
 		}
-		return retval;		/* DONT USE RETURN_STR HERE! */
+		return retval;		/* DON'T USE RETURN_STR HERE! */
 	}
 	RETURN_STR(FromUserHost);
 }
@@ -1655,7 +1655,7 @@ BUILT_IN_FUNCTION(function_strip, input)
 	}
 	*dp = '\0';
 
-	return result;		/* DONT USE RETURN_STR HERE! */
+	return result;		/* DON'T USE RETURN_STR HERE! */
 }
 
 /*
@@ -1681,7 +1681,7 @@ BUILT_IN_FUNCTION(function_encode, input)
 	}
 	result[i] = '\0';
 
-	return result;		/* DONT USE RETURN_STR HERE! */
+	return result;		/* DON'T USE RETURN_STR HERE! */
 }
 
 
@@ -1708,14 +1708,14 @@ BUILT_IN_FUNCTION(function_decode, input)
 
 	while (input[0] && input[1])
 	{
-		/* oops, this isnt quite right. */
+		/* oops, this isn't quite right. */
 		result[i] = ((input[0] - 'A') << 4) | (input[1] - 'A');
 		input += 2;
 		i++;
 	}
 	result[i] = '\0';
 
-	return (char *)result;		/* DONT USE RETURN_STR HERE! */
+	return (char *)result;		/* DON'T USE RETURN_STR HERE! */
 }
 
 
@@ -1846,7 +1846,7 @@ BUILT_IN_FUNCTION(function_connect, input)
 	GET_STR_ARG(host, input);
 	GET_INT_ARG(port, input);
 
-	return dcc_raw_connect(host, port);	/* DONT USE RETURN_STR HERE! */
+	return dcc_raw_connect(host, port);	/* DON'T USE RETURN_STR HERE! */
 }
 
 
@@ -1868,7 +1868,7 @@ BUILT_IN_FUNCTION(function_listen, input)
 	}
 
 	result = dcc_raw_listen(port);
-	RETURN_STR(result);			/* DONT REMOVE RESULT! */
+	RETURN_STR(result);			/* DON'T REMOVE RESULT! */
 }
 
 BUILT_IN_FUNCTION(function_toupper, input)
@@ -1898,7 +1898,7 @@ BUILT_IN_FUNCTION(function_channels, input)
 	}
 	if (window->server <= -1)
 		RETURN_EMPTY;
-	return create_channel_list(window);	/* DONT USE RETURN_STR HERE! */
+	return create_channel_list(window);	/* DON'T USE RETURN_STR HERE! */
 }
 
 BUILT_IN_FUNCTION(function_servers, input)
@@ -1988,7 +1988,7 @@ BUILT_IN_FUNCTION(function_before, word)
 	char	*tmp;
 	long	numint;
 
-	GET_STR_ARG(tmp, word);			/* DONT DELETE TMP! */
+	GET_STR_ARG(tmp, word);			/* DON'T DELETE TMP! */
 	numint = atol(tmp);
 
 	if (numint)
@@ -2059,7 +2059,7 @@ BUILT_IN_FUNCTION(function_leftw, word)
 	if (value < 1)
 		RETURN_EMPTY;
 
-	return (extract(word, 0, value-1));	/* DONT USE RETURN_STR HERE! */
+	return (extract(word, 0, value-1));	/* DON'T USE RETURN_STR HERE! */
 }
 
 /* $rightw(num string of text)
@@ -2126,7 +2126,7 @@ BUILT_IN_FUNCTION(function_notw, word)
 	else /* where == 0 */
 		booya = extract(word, 1, EOS);
 
-	return booya;				/* DONT USE RETURN_STR HERE! */
+	return booya;				/* DON'T USE RETURN_STR HERE! */
 }
 
 /* $restw(num string of text)
@@ -2232,7 +2232,7 @@ BUILT_IN_FUNCTION(function_insertw, word)
 		new_free(&str2);
 	}
 
-	return booya;				/* DONT USE RETURN_STR HERE! */
+	return booya;				/* DON'T USE RETURN_STR HERE! */
 }
 
 /* $chngw(num word string of text)
@@ -2270,7 +2270,7 @@ BUILT_IN_FUNCTION(function_chngw, word)
 
 
 /* $common (string of text / string of text)
- * Given two sets of words seperated by a forward-slash '/', returns
+ * Given two sets of words separated by a forward-slash '/', returns
  * all words that are found in both sets.
  * EX: $common(one two three / buckle my two shoe one) returns "one two"
  * NOTE: returned in order found in first string.
@@ -2306,11 +2306,11 @@ BUILT_IN_FUNCTION(function_common, word)
 	if (!booya)
 		RETURN_EMPTY;
 
-	return (booya);				/* DONT USE RETURN_STR HERE! */
+	return (booya);				/* DON'T USE RETURN_STR HERE! */
 }
 
 /* $diff(string of text / string of text)
- * given two sets of words, seperated by a forward-slash '/', returns
+ * given two sets of words, separated by a forward-slash '/', returns
  * all words that are not found in both sets
  * EX: $diff(one two three / buckle my two shoe)
  * returns "one two three buckle my shoe"
@@ -3069,7 +3069,7 @@ char	*function_pop(char *n, char *word)
 	if (!(pointer = strrchr(value, ' ')))
 	{
 		window_display = 0;
-		add_var_alias(var, empty_string); /* dont forget this! */
+		add_var_alias(var, empty_string); /* don't forget this! */
 		window_display = old_display;
 		return value;	/* one word -- return it */
 	}
@@ -3080,7 +3080,7 @@ char	*function_pop(char *n, char *word)
 	window_display = old_display;
 
 	/* because pointer points to value, we *must* make a copy of it
-	 * *before* we free value! (And we cant forget to free value, either) 
+	 * *before* we free value! (And we can't forget to free value, either) 
 	 */
 	blech = m_strdup(pointer);
 	new_free(&value);
@@ -3797,12 +3797,12 @@ BUILT_IN_FUNCTION(function_truncate, words)
 
 
 /*
- * Apprantly, this was lifted from a CS client.  I reserve the right
+ * Apparently, this was lifted from a CS client.  I reserve the right
  * to replace this code in future versions. (hop)
  */
 /*
 	I added this little function so that I can have stuff formatted
-	into days, hours, minutes, seconds; but with d, h, m, s abreviations.
+	into days, hours, minutes, seconds; but with d, h, m, s abbreviations.
 		-Taner
 */
 
@@ -3850,7 +3850,7 @@ BUILT_IN_FUNCTION(function_tdiff2, input)
 
 
 /* 
- * Apparantly, this was lifted from a CS client.  I reserve the right 
+ * Apparently, this was lifted from a CS client.  I reserve the right
  * to replace this code in a future release.
  */
 BUILT_IN_FUNCTION(function_utime, input)
@@ -4015,13 +4015,13 @@ BUILT_IN_FUNCTION(function_strlen, input)
 }
 
 /* 
- * Next two contributed by Scott H Kilau (sheik), who for some reason doesnt 
+ * Next two contributed by Scott H Kilau (sheik), who for some reason doesn't 
  * want to take credit for them. *shrug* >;-)
  *
- * Deciding not to be controversial, im keeping the original (contributed)
+ * Deciding not to be controversial, I'm keeping the original (contributed)
  * semantics of these two functions, which is to return 1 on success and
- * -1 on error.  If you dont like it, then tough. =)  I didnt write it, and
- * im not going to second guess any useful contributions. >;-)
+ * -1 on error.  If you don't like it, then tough. =)  I didnt write it, and
+ * I'm not going to second guess any useful contributions. >;-)
  */
 BUILT_IN_FUNCTION(function_fexist, words)
 {
@@ -4122,7 +4122,7 @@ BUILT_IN_FUNCTION(function_fsize, words)
  * Contributed by CrowMan
  * I changed two instances of "RETURN_INT(result)"
  * (where result was a null pointer) to RETURN_STR(empty_string)
- * because i dont think he meant to return a null pointer as an int value.
+ * because I don't think he meant to return a null pointer as an int value.
  */
 /*
  * $crypt(password seed)
@@ -4166,7 +4166,7 @@ BUILT_IN_FUNCTION(function_info, words)
 	else
 */
 		return m_sprintf("%s+%s", version, compile_time_options);
-	/* more to be added as neccesary */
+	/* more to be added as necessary */
 }
 
 /*
@@ -4519,7 +4519,7 @@ BUILT_IN_FUNCTION(function_sort, words)
 
 	wordc = splitw(words, &wordl);
 	qsort((void *)wordl, wordc, sizeof(char *), sort_it);
-	return unsplitw(&wordl, wordc);	/* DONT USE RETURN_STR() HERE */
+	return unsplitw(&wordl, wordc);	/* DON'T USE RETURN_STR() HERE */
 }
 
 BUILT_IN_FUNCTION(function_notify, words)
@@ -4562,7 +4562,7 @@ BUILT_IN_FUNCTION(function_notify, words)
 		}
 	}
  
-	/* dont use RETURN_STR() here. */
+	/* don't use RETURN_STR() here. */
 	return ret ? ret : get_notify_nicks(showserver, showon, NULL, 0);
 }
 
@@ -4606,7 +4606,7 @@ BUILT_IN_FUNCTION(function_watch, words)
 		}
 	}
  
-	/* dont use RETURN_STR() here. */
+	/* don't use RETURN_STR() here. */
 	return ret ? ret : get_watch_nicks(showserver, showon, NULL, 0);
 }
 
@@ -4644,7 +4644,7 @@ BUILT_IN_FUNCTION(function_numsort, words)
 	wordc = splitw(words, &wordl);
 	qsort((void *)wordl, wordc, sizeof(char *), num_sort_it);
 
-	return unsplitw(&wordl, wordc);	/* DONT USE RETURN_STR() HERE */
+	return unsplitw(&wordl, wordc);	/* DON'T USE RETURN_STR() HERE */
 }
 
 #ifdef NEED_GLOB
@@ -4781,24 +4781,24 @@ register ShitList *Shit;
 }
 
 /*
-$pad(N string of text goes here)
-if N is negative, it'll pad to the right 
-if N is positive, it'll pad to the left
-
-so something like: $pad(20 letters) would output:
-            letters
-and $pad(20 some string) would be:
-        some string
-GREAT way to allign shit, and if you use $curpos() can can add that and
-figure out the indent :p
-hohoho, aren't we ingenious, better yet, you can do a strlen() on the
-string youw anna output, then - the curpos, and if its over, grab all
-words to the right of that position and output them [so its on one line]
-then indent, grab the next section of words( and then the next and then
-next
-
-   Jordy (jordy@thirdwave.net) 19960622 
-*/
+ * $pad(N string of text goes here)
+ * if N is negative, it'll pad to the right 
+ * if N is positive, it'll pad to the left
+ * 
+ * so something like: $pad(20 letters) would output:
+ * "             letters"
+ * and $pad(20 some string) would be:
+ * "         some string"
+ * GREAT way to align shit, and if you use $curpos() you can add that and
+ * figure out the indent :p
+ * hohoho, aren't we ingenious, better yet, you can do a strlen() on the
+ * string you wanna output, then - the curpos, and if it's over, grab all
+ * words to the right of that position and output them [so it's on one line]
+ * then indent, grab the next section of words (and then the next and then
+ * next).
+ * 
+ *    Jordy (jordy@thirdwave.net) 19960622 
+ */
 
 BUILT_IN_FUNCTION(function_pad, word)
 {
@@ -5618,7 +5618,7 @@ BUILT_IN_FUNCTION(function_regexec, input)
 			new_free((char **)&preg);
 		}
 	}
-	RETURN_INT(retval);		/* DONT PASS FUNC CALL TO RETURN_INT */
+	RETURN_INT(retval);		/* DON'T PASS FUNC CALL TO RETURN_INT */
 }
 
 BUILT_IN_FUNCTION(function_regerror, input)
@@ -5672,7 +5672,7 @@ BUILT_IN_FUNCTION(function_regfree, input)  { RETURN_EMPTY; }
  */
 BUILT_IN_FUNCTION(function_igmask, input)
 {
-	return get_ignores_by_pattern(input, 0);	/* DONT MALLOC THIS */
+	return get_ignores_by_pattern(input, 0);	/* DON'T MALLOC THIS */
 }
 
 /*
@@ -5683,7 +5683,7 @@ BUILT_IN_FUNCTION(function_igmask, input)
  */
 BUILT_IN_FUNCTION(function_rigmask, input)
 {
-	return get_ignores_by_pattern(input, 1);	/* DONT MALLOC THIS */
+	return get_ignores_by_pattern(input, 1);	/* DON'T MALLOC THIS */
 }
 
 BUILT_IN_FUNCTION(function_count, input)
@@ -5808,7 +5808,7 @@ BUILT_IN_FUNCTION(function_winrefs, args)
 	while (traverse_all_windows(&w))
 		m_s3cat(&retval, space, ltoa(w->refnum));
 
-	return retval;		/* DONT MALLOC THIS! */
+	return retval;		/* DON'T MALLOC THIS! */
 }
 
 
@@ -5917,7 +5917,7 @@ BUILT_IN_FUNCTION(function_mask, args)
 	if (strchr("~^-+=", *user))
 		user++;
 
-	/* Make sure 'user' isnt too long for a ban... */
+	/* Make sure 'user' isn't too long for a ban... */
 	if (strlen(user) > 7)
 	{
 		user[7] = '*';
@@ -6030,7 +6030,7 @@ BUILT_IN_FUNCTION(function_remws, word)
 	if (!booya)
 		RETURN_EMPTY;
 
-	return (booya);				/* DONT USE RETURN_STR HERE! */
+	return (booya);				/* DON'T USE RETURN_STR HERE! */
 }
 
 BUILT_IN_FUNCTION(function_stripansicodes, input)
@@ -6049,7 +6049,7 @@ BUILT_IN_FUNCTION(function_igtype, input)
 
 BUILT_IN_FUNCTION(function_rigtype, input)
 {
-	 return get_ignore_patterns_by_type(input);	/* DONT MALLOC! */
+	 return get_ignore_patterns_by_type(input);	/* DON'T MALLOC! */
 }
 
 BUILT_IN_FUNCTION(function_getuid, input)
@@ -6238,7 +6238,7 @@ BUILT_IN_FUNCTION(function_rest, input)
 }
 
 /*
- * take a servername and return it's refnum or -1 
+ * take a servername and return its refnum or -1 
  */
 BUILT_IN_FUNCTION(function_servref, input)
 {
@@ -6341,7 +6341,7 @@ BUILT_IN_FUNCTION(function_stripcrap, input)
 	output = new_malloc(strlen(input) * 2 + 1);
 	strcpy(output, input);
 	mangle_line(output, mangle, strlen(input) * 2);
-	return output;			/* DONT MALLOC THIS */
+	return output;			/* DON'T MALLOC THIS */
 }
 
 
@@ -7118,7 +7118,7 @@ BUILT_IN_FUNCTION(function_prefix, input)
 		 * characters with words[0] (which is chosen arbitrarily).
 		 * As long as all words start with the same leading chars,
 		 * we march along trying longer and longer substrings,
-		 * until one of them doesnt work, and then we exit right
+		 * until one of them doesn't work, and then we exit right
 		 * there.
 		 */
 		if (my_strnicmp(words[0], words[word_index], len_index))
@@ -7178,7 +7178,7 @@ BUILT_IN_FUNCTION(function_functioncall, input)
  * word-number would be used, such as $chngw().  The empty value is returned
  * if a syntax error returns.
  *
- * DONT ASK ME to support 'position' less than 0 to indicate a position
+ * DON'T ASK ME to support 'position' less than 0 to indicate a position
  * from the end of the string.  Either that can be supported, or you can 
  * directly use $index() as the first argument; you can't do both.  I chose
  * the latter intentionally.  If you really want to calculate from the end of
@@ -7201,7 +7201,7 @@ BUILT_IN_FUNCTION(function_indextoword, input)
 	if (pos > len)
 		RETURN_EMPTY;
 
-	/* Truncate the string if neccesary */
+	/* Truncate the string if necessary */
 	if (pos + 1 < len)
 		input[pos + 1] = 0;
 
@@ -7254,7 +7254,7 @@ BUILT_IN_FUNCTION(function_insert, word)
 
 	m_3cat(&result, inserted, word + where);
 
-	return result;				/* DONT USE RETURN_STR HERE! */
+	return result;				/* DON'T USE RETURN_STR HERE! */
 }
 
 BUILT_IN_FUNCTION(function_stat, input)

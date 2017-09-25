@@ -762,7 +762,7 @@ char * fencode (unsigned char * input)
 	}
 	result[i] = '\0';
 
-	return result;		/* DONT USE RETURN_STR HERE! */
+	return result;		/* DON'T USE RETURN_STR HERE! */
 }
 
 typedef struct _gtkparam {
@@ -2259,7 +2259,7 @@ GtkWidget *newsubmenu(MenuStruct *menutoadd)
 			 menus in GTK */
 			if(tmp->refnum > 0)
 			{
-				/* If we already have an entry defined, use it's info */
+				/* If we already have an entry defined, use its info */
 				MenuRef *tmpref = find_menuref(menutoadd->root, tmp->refnum);
 				if(tmpref)
 				{

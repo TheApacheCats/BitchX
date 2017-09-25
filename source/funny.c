@@ -234,8 +234,8 @@ void print_funny_names(char *line)
                     fget_string_var(FORMAT_NAMES_BANNER_FSET), NULL, NULL), 
                     sizeof buffer);
 
-            /* Seperate the nick and the possible status presets that might 
-             * preceede it. */
+            /* Separate the nick and the possible status presets that might
+             * precede it. */
             nick = t + strspn(t, "@%+~-");
             nick_format = fget_string_var(isme(nick) ? 
                 FORMAT_NAMES_NICK_ME_FSET : FORMAT_NAMES_NICK_FSET);

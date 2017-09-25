@@ -12,8 +12,8 @@
 /* Version 0.2 22/07/97 written by IceBreak (ice_break@hotmail.com) */
 /* 0.2: Finnally I rewrote the playing method inside the cdrom player to work
  *      with msf instead of lba, and frames instead of tracks, this should fix
- *      all the compability problems that the cdroms player had with some
- *      cdroms. I also fixed some bugs and better problem messages.
+ *      all the compatibility problems that the cdrom player had with some
+ *      cdroms. I also fixed some bugs and improved problem messages.
  * FreeBSD support added by Eric A. Griff aka setjmp!eagriff@*.global2000.net
  *
 */
@@ -101,7 +101,7 @@ int i, pos;
 	if (((drive = open(dev, 0)) < 0))
 	{
 		if (errno == EACCES)
-			put_it("%s: you dont have access to the cdrom driver",cparse(cdrom_prompt));
+			put_it("%s: you don't have access to the cdrom driver",cparse(cdrom_prompt));
 		return (-1);
 	}
 
@@ -195,7 +195,7 @@ void set_cd_device(Window *win, char *str, int blah)
 
 	if (cd_init(str) < 0)
 	{
-		put_it("%s: ERROR: Could not initalize the CDROM, check if a disk is inside",cparse(cdrom_prompt));
+		put_it("%s: ERROR: Could not initialize the CDROM, check if a disk is inside",cparse(cdrom_prompt));
 		set_string_var(CD_DEVICE_VAR,NULL);
 		return;
 	}

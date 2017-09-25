@@ -55,13 +55,13 @@ extern char	*BX_move_to_abs_word (const register char *start, char **mark, int w
 	register int counter = word;
 
 	/* This fixes a bug that counted leading spaces as
-	 * a word, when theyre really not a word.... 
+	 * a word, when they're really not a word.... 
 	 * (found by Genesis K.)
 	 *
 	 * The stock client strips leading spaces on both
 	 * the cases $0 and $-0.  I personally think this
-	 * is not the best choice, but im not going to stick
-	 * my foot in this one... im just going to go with
+	 * is not the best choice, but I'm not going to stick
+	 * my foot in this one... I'm just going to go with
 	 * what the stock client does...
 	 */
 	 while (pointer && *pointer && my_isspace(*pointer))
@@ -92,7 +92,7 @@ extern char	*BX_move_word_rel (const register char *start, char **mark, int word
 
 	/* 
 	 * XXXX - this is utterly pointless at best, and
-	 * totaly wrong at worst.
+	 * totally wrong at worst.
  	 */
 
 	if (counter > 0)
@@ -133,9 +133,9 @@ extern char	*BX_move_word_rel (const register char *start, char **mark, int word
  * Note that because of a lot of flak, if you do an expando that is
  * a "range" of words, unless you #define STRIP_EXTRANEOUS_SPACES,
  * the "n"th word will be backed up to the first character after the
- * first space after the "n-1"th word.  That apparantly is what everyone
- * wants, so thats whatll be the default.  Those of us who may not like
- * that behavior or are at ambivelent can just #define it.
+ * first space after the "n-1"th word.  That apparently is what everyone
+ * wants, so that will be the default.  Those of us who may not like
+ * that behavior or are at ambivalent can just #define it.
  */
 #undef STRIP_EXTRANEOUS_SPACES
 extern char	*BX_extract2(const char *start, int firstword, int lastword)
@@ -155,7 +155,7 @@ extern char	*BX_extract2(const char *start, int firstword, int lastword)
 		/* 
 		 * Really. the only case where firstword == EOS is
 		 * when the user wants $~, in which case we really
-		 * dont need to do all the following crud.  Of
+		 * don't need to do all the following crud.  Of
 		 * course, if there ever comes a time that the
 		 * user would want to start from the EOS (when??)
 		 * we couldnt make this assumption.
@@ -251,9 +251,9 @@ extern char	*BX_extract2(const char *start, int firstword, int lastword)
 }
 
 /*
- * extract is a simpler version of extract2, it is used when we dont
+ * extract is a simpler version of extract2, it is used when we don't
  * want special treatment of "firstword" if it is negative.  This is
- * typically used by the word/list functions, which also dont care if
+ * typically used by the word/list functions, which also don't care if
  * we strip out or leave in any whitespace, we just do what is the
  * fastest.
  */
@@ -275,7 +275,7 @@ extern char	*BX_extract(char *start, int firstword, int lastword)
 	 *
 	 * ITS OK TO TAKE OUT SPACES HERE, AS THE USER SHOULDNT EXPECT
 	 * THAT THE WORD FUNCTIONS WOULD RETAIN ANY SPACES. (That is
-	 * to say that since the word/list functions dont pay attention
+	 * to say that since the word/list functions don't pay attention
 	 * to the whitespace anyhow, noone should have any problem with
 	 * those ops removing bothersome whitespace when needed.)
 	 */
@@ -310,14 +310,14 @@ extern char	*BX_extract(char *start, int firstword, int lastword)
 		if (lastword >= 0)
 			move_to_abs_word(start, &mark2, lastword+1);
 		else
-			/* its negative -- thats not valid */
+			/* it's negative -- that's not valid */
 			return m_strdup(empty_string);
 
 		while (mark2 > start && my_isspace(mark2[-1]))
 			mark2--;
 	}
 
-	/* Ok.. now if we get to here, then lastword is positive, so
+	/* OK.. now if we get to here, then lastword is positive, so
 	 * we sanity check firstword.
 	 */
 	if (firstword < 0)

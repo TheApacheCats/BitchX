@@ -65,7 +65,7 @@ char *mouse_actions[] =
 
 /*
  * Yet again we've changed how the key maps are held.  This time, hopefully
- * its the second to last time, as we've made the entire things independant
+ * it's the second to last time, as we've made the entire things independent
  * of the number of meta keymaps that are available (it can change.)  The
  * only thing i see left to be done is to encapsulate all this data inside
  * a class so that different contexts can have different bindings sets.  
@@ -95,7 +95,7 @@ char *mouse_actions[] =
  * not strictly sorted.  The first two bindings are special and are hardcoded,
  * and you must not change them.  Entry 0 must always be "NOTHING", and 
  * entry 1 must always be "SELF_INSERT".  The enum that was in keys.h
- * is now totaly obsolete -- we no longer use the symbolic names, but instead
+ * is now totally obsolete -- we no longer use the symbolic names, but instead
  * always use the full string name for the binding.  This makes it much 
  * easier to add new key bindings, as there is only one place to manage.
  *
@@ -120,17 +120,17 @@ char *mouse_actions[] =
  *
  *	typedef MetaMap KeyTable[MAX_META];
  *
- * but then again, many of those MetaMaps are going to be totaly empty.
- * Why should we allocate 1k to something that isnt going to be used? 
+ * but then again, many of those MetaMaps are going to be totally empty.
+ * Why should we allocate 1k to something that isn't going to be used? 
  * So instead we should keep pointers to the maps and allocate them as
- * neccesary at runtime...
+ * necessary at runtime...
  *
  *	typedef	MetaMap	*KeyTable[MAX_META];	(better)
  *
  * Which is what we had before.  This works out fine, except, that the
  * number of meta maps is hardcoded into the client at compile time.  
  * Wouldn't it be nice to be able to determine at runtime how many maps
- * we want and be able to change them as neccesary?  We can do this by
+ * we want and be able to change them as necessary?  We can do this by
  * having a pointer to the set of pointers of MetaMaps...
  *
  *	typedef MetaMap **KeyTable;		(dyanmic now)
@@ -329,7 +329,7 @@ void	resize_metamap (int new_size)
 	if (old_size < new_size)
 	{
 		/*
-		 * Realloc and copy if neccesary
+		 * Realloc and copy if necessary
 		 */
 		if (new_size > max_keys_size)
 		{
@@ -349,7 +349,7 @@ void	resize_metamap (int new_size)
 
 	/*
 	 * If we're shrinking the meta table, just garbage collect all
-	 * the old bindings, dont actually bother resizing the table.
+	 * the old bindings, don't actually bother resizing the table.
 	 */
 	else
 	{
@@ -364,7 +364,7 @@ void	resize_metamap (int new_size)
 		 * to either meaningless, or bogus data, and either cause
 		 * undefined behavior or a total program crash.  So we walk
 		 * all of the remaining states and garbage collect any 
-		 * meta transisions that are out of bounds.
+		 * meta transitions that are out of bounds.
 		 */
 		for (i = 0; i < new_size; i++)
 		{
@@ -582,10 +582,10 @@ void 	save_bindings (FILE *fp, int do_all)
 }
 
 /*
- * This is a function used by edit_char to retreive the details for a
+ * This is a function used by edit_char to retrieve the details for a
  * specific key binding.  This function provides the only external access
  * to the key bindings.  The arguments are the meta state and the character
- * whose information you want to retreive.  That information is stored into
+ * whose information you want to retrieve.  That information is stored into
  * the 'func' and 'name' pointers you pass in.
  *
  * The function will return 0 if the binding you request is a "normal" one.
@@ -1043,7 +1043,7 @@ static int parse_key(const char *sequence, char *term)
 	return return_meta;
 
 #if 0
-	/* The rest of this isnt finished, hense is unsupported */
+	/* The rest of this isn't finished, hence is unsupported */
 	say("The bind cannot occur because the character sequence to bind contains a leading substring that is bound to something else.");
 	return -1;
 #endif
@@ -1107,7 +1107,7 @@ BUILT_IN_COMMAND(bindcmd)
 
 	/*
 	 * Grok the key argument and see what we can make of it
-	 * If there is an error at this point, dont continue.
+	 * If there is an error at this point, don't continue.
 	 * Most of the work is done here.
 	 */
 	
@@ -1165,7 +1165,7 @@ BUILT_IN_COMMAND(bindcmd)
 /*
  * lookup_function:  When you want to convert a "binding" name (such as
  * BACKSPACE or SELF_INSERT) over to its offset in the binding lookup table,
- * you must call this function to retreive that offset.  The first argument
+ * you must call this function to retrieve that offset.  The first argument
  * is the name you want to look up, and the second argument is where the
  * offset is to be stored.  
  *
@@ -1229,13 +1229,13 @@ static int lookup_function(const char *orig_name, int *lf_index)
 }
 
 
-/* I dont know where this belongs. */
+/* I don't know where this belongs. */
 /*
  * display_key: Given a (possibly unprintable) unsigned character 'c', 
  * convert that character into a printable string.  For characters less
  * than 32, and the character 127, they will be converted into the "control"
  * sequence by having a prepended caret ('^').  Other characters will be
- * left alone.  The return value belongs to the function -- dont mangle it.
+ * left alone.  The return value belongs to the function -- don't mangle it.
  */
 static char *display_key(char c)
 {
@@ -1293,7 +1293,7 @@ static char keyloc[80];
 /* * * * * * * * * * * * * * * * * * INITIALIZATION * * * * * * * * * * * */
 /* 
  * This is where you put all the default key bindings.  This is a lot
- * simpler, just defining those you need, instead of all of them, isnt
+ * simpler, just defining those you need, instead of all of them, isn't
  * it?  And it takes up so much less memory, too...
  */
 void 	init_keys (void)
@@ -1352,7 +1352,7 @@ void 	init_keys (void)
 	snew_key(0, 127, "BACKSPACE");			/* ^? (delete) */
 
 	/* 
-	 * european keyboards (and probably others) use the eigth bit
+	 * european keyboards (and probably others) use the eighth bit
 	 * for extended characters.  Having these keys bound by default
 	 * causes them lots of grief, so unless you really want to use
 	 * these, they are commented out.

@@ -380,7 +380,7 @@ BUILT_IN_COMMAND(lastlog)
 				/*
 				 * Which can be combined with -ALL, which 
 				 * turns on all levels.  Use --MSGS or
-				 * whatever to turn off ones you dont want.
+				 * whatever to turn off ones you don't want.
 				 */
 				if (!my_strnicmp(arg, "ALL", len))
 				{
@@ -458,7 +458,7 @@ BUILT_IN_COMMAND(lastlog)
 	} else
 		start_pos = current_window->lastlog_head;
 		
-	/* Let's not get confused here, display a seperator.. -lynx */
+	/* Let's not get confused here, display a separator.. -lynx */
 	strip_ansi_in_echo = 0;
 	if (header && !fp)
 		say("Lastlog:");

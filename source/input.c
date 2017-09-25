@@ -315,7 +315,7 @@ extern void	BX_update_input (int update)
 		 *	The number of characters since the origin of the input buffer
 		 *	is the number of printable chars in the input prompt plus the
 		 *	current position in the input buffer.  We subtract from that
-		 * 	the WIDTH delta to take off the first delta, which doesnt
+		 * 	the WIDTH delta to take off the first delta, which doesn't
 		 *	count towards the width of the zone.  Then we divide that by
 		 * 	the size of the zone, to get an integer, then we multiply it
 		 * 	back.  This gives us the first character on the screen.  We
@@ -1332,7 +1332,7 @@ void edit_char(char key)
 #ifdef TIOCSTI
 		ioctl(0, TIOCSTI, &key);
 #else
-		say("Sorry, your system doesnt support 'faking' user input...");
+		say("Sorry, your system doesn't support 'faking' user input...");
 #endif
 		return;
 	}

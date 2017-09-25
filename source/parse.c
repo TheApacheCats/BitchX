@@ -313,7 +313,7 @@ char	* BX_PasteArgs(char **Args, int StartPoint)
 
 /*
  * BreakArgs: breaks up the line from the server, in to where its from,
- * setting FromUserHost if it should be, and returns all the arguements
+ * setting FromUserHost if it should be, and returns all the arguments
  * that are there.   Re-written by phone, dec 1992.
  */
 int BX_BreakArgs(char *Input, char **Sender, char **OutPut, int ig_sender)
@@ -1920,7 +1920,7 @@ void parse_server(char *orig_line)
 	strncpy(copy, line, BIG_BUFFER_SIZE);
 	BreakArgs(line, &from, ArgList, 0);
 
-	/* XXXX - i dont think 'from' can be null here.  */
+	/* XXXX - I don't think 'from' can be null here.  */
 	if (!(comm = (*ArgList++)) || !from || !*ArgList)
 		return;		/* Serious protocol violation -- ByeBye  */
 

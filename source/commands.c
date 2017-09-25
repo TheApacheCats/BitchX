@@ -157,15 +157,7 @@ char	wait_nick[] = "***W***";
 	IrcCommandDll *dll_commands = NULL;
 #endif
 
-
 AJoinList *ajoin_list = NULL;
-
-/*
- * irc_command: all the availble irc commands:  Note that the first entry has
- * a zero length string name and a null server command... this little trick
- * makes "/ blah blah blah" to always be sent to a channel, bypassing queries,
- * etc.  Neato.  This list MUST be sorted.
- */
 
 BUILT_IN_COMMAND(obits);
 BUILT_IN_COMMAND(debug_user);
@@ -208,6 +200,12 @@ BUILT_IN_COMMAND(pmcodepage);
 BUILT_IN_COMMAND(detachcmd);
 #endif
 
+/*
+ * irc_command: all the available IRC commands.  Note that the first entry has
+ * a zero length string name and a null server command... this little trick
+ * makes "/ blah blah blah" to always be sent to a channel, bypassing queries,
+ * etc.  Neato.  This list MUST be sorted.
+ */
 
 char relay_help[] = "%R[%n-list|-kick|-wall|-wallop|-msg|-notice|-topic|-kboot|-ansi|-kill|-help%R]%n %Y<%n#|channel|nick%Y> <%nchannel|nick%Y>";
 char scripting_command[] = "- Scripting command";
@@ -484,7 +482,7 @@ IrcCommand irc_command[] =
 	{ "NOTE",	"NOTE",		send_comm,		SERVERREQ,	NULL },
 	{ "NOTICE",	"NOTICE",	e_privmsg,		0,	"%Y<%Cnick%G|%Bchannel%Y> %Y<%ntext%Y>%n\n- Sends a notice to %Y<%Cnick%G|%Bchannel%Y> with %Y<%ntext%Y>%n" },
 	{ "NOTIFY",	NULL,		notify,			0,	"%Y<%Cnick|+|-nick%Y>%n\n- Adds/displays/removes %Y<%Cnick%Y>%n to notify list" },
-	{ "NSLOOKUP",	"NSLookup",	nslookup,		0,	"%Y<%nhostname%Y>%n\n- Returns the IP adress and IP number for %Y<%nhostname%Y>%n" },
+	{ "NSLOOKUP",	"NSLookup",	nslookup,		0,	"%Y<%nhostname%Y>%n\n- Looks up the IP addresses for %Y<%nhostname%Y>%n" },
 	{ "NWHOIS",	NULL,		nwhois,			0,	"%Y<%Cnick|channel%Y>%n\n- Shows internal statistics for %Y<%Cnick%Y>%n" },
 	{ "NWHOWAS",	NULL,		whowas,			0,	"- Displays internal whowas info for all channels. This information expires after 20 minutes for users on internal list, 10 minutes for others" },
 	{ "OBITS",	NULL,		obits,			0,	"- Displays obituaries for some BitchX friends who have left us" },
@@ -517,7 +515,7 @@ IrcCommand irc_command[] =
 #endif
 	{ "PRETEND",	NULL,		pretend_cmd,		0,	scripting_command },
 #ifdef GUI
-        { "PROPERTIES", NULL,           pmprop,                 0,      "GUI - Properies Dialog" },
+        { "PROPERTIES", NULL,           pmprop,                 0,      "GUI - Properties Dialog" },
 #endif
 	{ "PS",		"ps",		exec_cmd,		0,	"- Displays process table" },
 	{ "PURGE",	NULL,		purge,			0,	"<variable>\n- Removes all traces of variable(s) specified"},
@@ -1137,7 +1135,7 @@ BUILT_IN_COMMAND(my_clear)
 	
 	while ((arg = next_arg(args, &args)) != NULL)
 	{
-	/* -ALL and ALL here becuase the help files used to be wrong */
+	/* -ALL and ALL here because the help files used to be wrong */
 		if (!my_strnicmp(arg, "A", 1) || !my_strnicmp(arg+1, "A", 1))
 			all = 1;
 	/* UNHOLD */
@@ -1924,8 +1922,8 @@ BUILT_IN_COMMAND(funny_stuff)
 }
 
 /*
-   This isnt a command, its used by the wait command.  Since its extern,
-   and it doesnt use anything static in this file, im sure it doesnt
+   This isn't a command, it's used by the wait command.  Since it's extern,
+   and it doesn't use anything static in this file, I'm sure it doesn't
    belong here.
  */
 void oh_my_wait (int servnum)
@@ -2631,7 +2629,7 @@ BUILT_IN_COMMAND(e_channel)
 				   right here we want to check to see if the
 				   channel is bound to this window.  if it is,
 				   we set it as the default channel.  If it
-				   is not, we warn the user that we cant do it
+				   is not, we warn the user that we can't do it
 				 */
 				if (is_bound_anywhere(buffer) &&
 				    !(is_bound_to_window(current_window, buffer)))
@@ -3746,7 +3744,7 @@ static	int 	recursion = 0;
 		allow = do_hook(REDIRECT_LIST, "%s %s", nick_list, text);
 
 	/* 
-	 * Dont hook /ON REDIRECT if we're being called recursively
+	 * Don't hook /ON REDIRECT if we're being called recursively
 	 */
 	if (allow)
 		send_text(nick_list, text, flags);
@@ -3867,7 +3865,7 @@ int current_target = 0;
  * Bucket 3 -- Unencrypted NOTICEs to channels
  *
  * All other messages (encrypted, and DCC CHATs) are dispatched 
- * immediately, and seperately from all others.  All messages that
+ * immediately, and separately from all others.  All messages that
  * end up in one of the above mentioned buckets get sent out all
  * at once.
  */
@@ -4347,7 +4345,7 @@ static int oper_issued = 0;
  * Other than these two conventions the line is left basically untouched.
  */
 /* Ideas on parsing: Why should the calling function be responsible
- *  for removing {} blocks?  Why cant this parser cope with and {}s
+ *  for removing {} blocks?  Why can't this parser cope with and {}s
  *  that come up?
  */
 void BX_parse_line (const char *name, char *org_line, const char *args, int hist_flag, int append_flag, int handle_local)
@@ -4773,9 +4771,9 @@ int	current_line (void)
 /*
  * load: the /LOAD command.  Reads the named file, parsing each line as
  * though it were typed in (passes each line to parse_command). 
-	Right now, this is broken, as it doesnt handle the passing of
+	Right now, this is broken, as it doesn't handle the passing of
 	the '-' flag, which is meant to force expansion of expandos
-	with the arguments after the '-' flag.  I think its a lame
+	with the arguments after the '-' flag.  I think it's a lame
 	feature, anyhow.  *sigh*.
  */
 
@@ -4856,7 +4854,7 @@ BUILT_IN_COMMAND(BX_load)
 		{
 			int owc = window_display;
 			/* uzfopen emits an error if the file
-			 * is not found, so we dont have to. */
+			 * is not found, so we don't have to. */
 			window_display = 1;
 #ifdef WANT_DLL
 			if (expanded)
@@ -4883,7 +4881,7 @@ BUILT_IN_COMMAND(BX_load)
 			continue;
 		}
 /* Reformatted by jfn */
-/* *_NOT_* attached, so dont "fix" it */
+/* *_NOT_* attached, so don't "fix" it */
 		{
 		int	in_comment 	= 0;
 		int	comment_line 	= -1;
@@ -4912,9 +4910,9 @@ BUILT_IN_COMMAND(BX_load)
 			 * this line from stargazer to allow \'s in scripts for continued
 			 * lines <spz@specklec.mpifr-bonn.mpg.de>
 			 *  If we have \\ at the end of the line, that
-			 *  should indicate that we DONT want the slash to 
+			 *  should indicate that we DON'T want the slash to 
 			 *  escape the newline (hop)
-			 *  We cant just do start[len-2] because we cant say
+			 *  We can't just do start[len-2] because we can't say
 			 *  what will happen if len = 1... (a blank line)
 			 *  SO.... 
 			 *  If the line ends in a newline, and
@@ -4922,7 +4920,7 @@ BUILT_IN_COMMAND(BX_load)
 			 *  and the 2nd to the last one is a \ and,
 			 *  If there are EITHER 2 characters on the line or
 			 *  the 3rd to the last character is NOT a \ and,
-			 *  If the line isnt too big yet and,
+			 *  If the line isn't too big yet and,
 			 *  If we can read more from the file,
 			 *  THEN -- adjust the length of the string
 			 */
@@ -4983,11 +4981,11 @@ BUILT_IN_COMMAND(BX_load)
 		/* switch statement tabbed back */
 case '/' :
 {
-	/* If we're in a comment, any slashes that arent preceeded by
-	   a star is just ignored (cause its in a comment, after all >;) */
+	/* If we're in a comment, any slashes that aren't preceded by
+	   a star are just ignored. */
 	if (in_comment)
 	{
-		/* ooops! cant do ptr[-1] if ptr == optr... doh! */
+		/* ooops! can't do ptr[-1] if ptr == optr... doh! */
 		if ((ptr > start) && (ptr[-1] == '*'))
 		{
 			in_comment = 0;
@@ -5331,7 +5329,7 @@ BUILT_IN_COMMAND(evalcmd)
 }
 
 /*
- * inputcmd:  the INPUT command.   Takes a couple of arguements...
+ * inputcmd:  the INPUT command.   Takes a couple of arguments...
  * the first surrounded in double quotes, and the rest makes up
  * a normal ircII command.  The command is evalutated, with $*
  * being the line that you input.  Used add_wait_prompt() to prompt
@@ -5469,7 +5467,7 @@ BUILT_IN_COMMAND(pretend_cmd)
  * io event, so that might also start adding up.  Oh well, TIOLI.
  *
  * Without an argument, it waits for the user to press a key.  Any key.
- * and the key is accepted.  Thats probably not right, ill work on that.
+ * and the key is accepted.  That's probably not right, I'll work on that.
  */
 static        int     e_pause_cb_throw = 0;
 static        void    e_pause_cb (char *u1, char *u2) { e_pause_cb_throw--; }
@@ -5499,7 +5497,7 @@ struct timeval start;
 	start.tv_usec %= 1000000;
 
 	/* 
-	 * I use comment here simply becuase its not going to mess
+	 * I use comment here simply because it's not going to mess
 	 * with the arguments.
 	 */
 	add_timer(0, empty_string, milliseconds, 1, (int (*)(void *, char *))comment, NULL, NULL, get_current_winref(), "pause");

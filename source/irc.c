@@ -96,7 +96,7 @@ int	irc_port = IRC_PORT,			/* port of ircd */
 	waiting_out = 0,				/* used by /WAIT command */
 	waiting_in = 0,				/* used by /WAIT command */
 	who_mask = 0,				/* keeps track of which /who
-						 * switchs are set */
+						 * switches are set */
 	dead	   = 0, 
 	inhibit_logging = 0,
 #ifndef ONLY_STD_CHARS
@@ -364,8 +364,8 @@ static SIGNAL_HANDLER(irc_exit_old)
 
 volatile int dead_children_processes;
 
-/* This is needed so that the fork()s we do to read compressed files dont
- * sit out there as zombies and chew up our fd's while we read more.
+/* This is needed so that the fork()s we do to read compressed files don't
+ * sit out there as zombies and chew up our fds while we read more.
  */
 SIGNAL_HANDLER(child_reap)
 {
@@ -596,8 +596,8 @@ int old_strip_ansi = strip_ansi_in_echo;
  * major rewrite 12/22/94 -jfn
  *
  *
- * Im going to break backwards compatability here:  I think that im 
- * safer in doing this becuase there are a lot less shell script with
+ * I'm going to break backwards compatibility here:  I think that I'm
+ * safer in doing this because there are a lot less shell scripts with
  * the command line flags then there are ircII scripts with old commands/
  * syntax that would be a nasty thing to break..
  *
@@ -611,12 +611,12 @@ int old_strip_ansi = strip_ansi_in_echo;
  *   Each flag may or may not have a space between the flag and the argument.
  *   		-lfoo  is the same as -l foo
  *   Anything surrounded by quotation marks is honored as one word.
- *   The -c, -p, -L, -l, -s, -z flags all take arguments.  If no argumenTs
+ *   The -c, -p, -L, -l, -s, -z flags all take arguments.  If no arguments
  *		are given between the flag and the next flag, an error
  * 		message is printed and the program is halted.
- *		Exception: the -s flag will be accepted without a argument.
- *		(ick: backwards compatability sucks. ;-)
- *   Arguments occuring after a flag that does not take an argument
+ *		Exception: the -s flag will be accepted without an argument.
+ *		(ick: backwards compatibility sucks. ;-)
+ *   Arguments occurring after a flag that does not take an argument
  * 		will be parsed in the following way: the first instance
  *		will be an assumed nickname, and the second instance will
  *		will be an assumed server. (some semblance of back compat.)
@@ -627,7 +627,7 @@ int old_strip_ansi = strip_ansi_in_echo;
  *   The -n flag means "nickname"
  *
  * Bugs:
- *   The -s flag is hard to use without an argument unless youre careful.
+ *   The -s flag is hard to use without an argument unless you're careful.
  */
 #ifdef CLOAKED
 extern char **Argv;
@@ -721,7 +721,7 @@ static	char	*parse_args (char *argv[], int argc, char **envp)
 				break;
 			}
 
-			case 'F': /* dont use flow control */
+			case 'F': /* don't use flow control */
 			{
 				use_flow_control = 0;
 				if (argv[ac][2])
@@ -1055,7 +1055,7 @@ static	char	*parse_args (char *argv[], int argc, char **envp)
 				strlcat(realname, ptr + 1, sizeof realname);
 
 				/* Make the first character of the username uppercase, if
-				   it's preceeded by a space */
+				   it's preceded by a space */
 				if (len < sizeof realname && *(entry->pw_name) && 
 				   (len == 0 || isspace((unsigned char)realname[len - 1])))
 				{
@@ -1168,7 +1168,7 @@ static	char	*parse_args (char *argv[], int argc, char **envp)
  * dcc, ttys, notify, the whole ball o wax, but it does NOT iterate!
  * 
  * You should usually NOT call io() unless you are specifically waiting
- * for something from a file descriptor.  It doesnt look like bad things
+ * for something from a file descriptor.  It doesn't look like bad things
  * will happen if you call this elsewhere, but its long time behavior has
  * not been observed.  It *does* however, appear to be much more reliable
  * then the old irc_io, and i even know how this works. >;-)

@@ -753,10 +753,10 @@ void set_highlight_char(Window *win, char *s, int unused)
 }
 
 /* check_ignore -- replaces the old double_ignore
- *   Why did i change the name?
- *      * double_ignore isnt really applicable any more becuase it doesnt
+ *   Why did I change the name?
+ *      * double_ignore isn't really applicable any more because it doesn't
  *        do two ignore lookups, it only does one.
- *      * This function doesnt look anything like the old double_ignore
+ *      * This function doesn't look anything like the old double_ignore
  *      * This function works for the new *!*@* patterns stored by
  *        ignore instead of the old nick and userhost patterns.
  * (jfn may 1995)
@@ -1029,7 +1029,7 @@ char	*get_ignore_patterns_by_type (char *ctype)
 
 	/*
 	 * Convert the user's input into something we can use.
-	 * If the user doesnt specify anything useful, then we
+	 * If the user doesn't specify anything useful, then we
 	 * just punt right here.
 	 */
 	upper(ctype);

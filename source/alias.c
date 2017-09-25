@@ -474,7 +474,7 @@ BUILT_IN_COMMAND(stubcmd)
 
 	/*
 	 * Now we iterate over the item names we were given.  For each
-	 * item name, seperated from the next by a comma, stub that item
+	 * item name, separated from the next by a comma, stub that item
 	 * to the given filename(s) specified as the arguments.
 	 */
 	while (name && *name)
@@ -651,7 +651,7 @@ BUILT_IN_COMMAND(dumpcmd)
  * QUAL   := NUM "words"
  *
  * In English:
- *   An argument list is a comma seperated list of variable descriptors (TERM)
+ *   An argument list is a comma separated list of variable descriptors (TERM)
  *   enclosed in a parenthesis set.  Each variable descriptor may contain any
  *   valid alias name followed by an action qualifier, or may be the "..."
  *   literal string, or may be the "void" literal string.  If a variable
@@ -981,8 +981,8 @@ void	add_local_alias	(char *name, char *stuff)
 	}
 	/*
 	 * Now we see if this local variable exists anywhere
-	 * within our view.  If it is, we dont care where.
-	 * If it doesnt, then we add it to the current frame,
+	 * within our view.  If it is, we don't care where.
+	 * If it doesn't, then we add it to the current frame,
 	 * where it will be reaped later.
 	 */
 	if (!(tmp = find_local_alias (name, &list)))
@@ -1270,7 +1270,7 @@ static void unstub_alias (Alias *item)
 	 * we are un-stubbing this alias
 	 * because we are loading a file
 	 * that presumably it must be in.
-	 * So we dont load it again (duh).
+	 * So we don't load it again (duh).
 	 */
 	if (already_looking)
 		return;
@@ -1311,7 +1311,7 @@ static Alias *	find_local_alias (char *name, AliasSet **list)
 	 * Search our current local variable stack, and wind our way
 	 * backwards until we find a NAMED stack -- that is the enclosing
 	 * alias or ON call.  If we find a variable in one of those enclosing
-	 * stacks, then we use it.  If we dont, we progress.
+	 * stacks, then we use it.  If we don't, we progress.
 	 *
 	 * This needs to be optimized for the degenerate case, when there
 	 * is no local variable available...  It will be true 99.999% of
@@ -1657,7 +1657,7 @@ static  char	*get_variable_with_args (const char *str, const char *args, int *ar
 		copy = 1, ret = getenv(str);
 
 	if (x_debug & DEBUG_UNKNOWN && ret == NULL)
-		debugyell("Variable lookup to non-existant assign [%s]", name);
+		debugyell("Variable lookup to non-existent assign [%s]", name);
 	if ((internal_debug & DEBUG_VARIABLE) && alias_debug && !in_debug_yell)
 		debugyell("%3d \t@%s == %s", debug_count++, str, ret ? ret : empty_string); 
 	new_free(&freep);
@@ -1940,7 +1940,7 @@ char *	parse_line_with_return (char *name, char *what, char *args, int d1, int d
 /*
  * call_user_function: Executes a user alias (by way of parse_command.
  * The actual function ends up being routed through execute_alias (below)
- * and we just keep track of the retval and stuff.  I dont know that anyone
+ * and we just keep track of the retval and stuff.  I don't know that anyone
  * depends on command completion with functions, so we can save a lot of
  * CPU time by just calling execute_alias() directly.
  */
@@ -1955,7 +1955,7 @@ char 	*call_user_function	(char *alias_name, char *args)
 	if (cnt < 0)
 		result = parse_line_alias_special(alias_name, sub_buffer, args, 0, 1, arglist, 1);
 	else if (x_debug & DEBUG_UNKNOWN)
-		debugyell("Function call to non-existant alias [%s]", alias_name);
+		debugyell("Function call to non-existent alias [%s]", alias_name);
 
 	if (!result)
 		result = m_strdup(empty_string);
@@ -2186,11 +2186,11 @@ void 	panic_dump_call_stack 	(void)
 
 
 /*
- * You may NOT call this unless youre about to exit.
- * If you do (call this when youre not about to exit), and you do it
- * very often, max_wind will get absurdly large.  So dont do it.
+ * You may NOT call this unless you're about to exit.
+ * If you do (call this when you're not about to exit), and you do it
+ * very often, max_wind will get absurdly large.  So don't do it.
  *
- * XXXX - this doesnt clean up everything -- but do i care?
+ * XXXX - this doesn't clean up everything -- but do I care?
  */
 void 	destroy_call_stack 	(void)
 {

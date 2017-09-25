@@ -369,7 +369,7 @@ int handle_socks(int fd, struct sockaddr_in addr, char *host, int portnum)
  * we now take four arguments:
  *
  *	- hostname - name of the host (pathname) to connect to (if applicable)
- *	- portnum - port number to connect to or listen on (0 if you dont care)
+ *	- portnum - port number to connect to or listen on (0 if you don't care)
  *	- service -	0 - set up a listening socket
  *			1 - set up a connecting socket
  *	- protocol - 	0 - use the TCP protocol

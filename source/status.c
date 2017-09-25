@@ -275,10 +275,10 @@ void *default_status_output_function = make_status;
 /*
  * convert_sub_format: This is used to convert the formats of the
  * sub-portions of the status line to a format statement specially designed
- * for that sub-portion.  convert_sub_format looks for occurences of %c
+ * for that sub-portion.  convert_sub_format looks for occurrences of %c
  * (where c is passed to the function); when found, it is replaced by %s
  * for use in an sprintf.  Only the first 'args' instances are replaced.
- * All other occurences of % are replaced by %%.  The string returned by 
+ * All other occurrences of % are replaced by %%.  The string returned by 
  * this function must be freed.
  */
 static char *convert_sub_format(const char *format, int args, char c, const char *padded)
@@ -378,7 +378,7 @@ static	char	*convert_format(Window *win, char *format, int k)
 		/* Its a % */
 		map = 0;
 
-		/* Find the map, if neccesary */
+		/* Find the map, if necessary */
 		if (*++format == '{')
 		{
 			char	*endptr;
@@ -572,7 +572,7 @@ static void justify_status(Window *win, char *buffer, size_t buffer_size)
 		}
 
 		/*
-		 * Dont allow more than CO printable characters
+		 * Don't allow more than CO printable characters
 		 */
 		if (printable >= win->screen->co)
 		{
@@ -738,7 +738,7 @@ char *stat_convert_format(Window *win, char *form)
 		/* Its a % */
 		map = 0;
 
-		/* Find the map, if neccesary */
+		/* Find the map, if necessary */
 		if (*++ptr == '{')
 		{
 			char	*endptr;

@@ -2320,7 +2320,7 @@ void MoveCursor(int Xnew, int Ynew)
 }
 
 void MoveRight()
-/* move cursor right, but dont update screen.
+/* move cursor right, but don't update screen.
  this procedure must be called from DispChar&DispKanji only */
 {
 	CursorX++;
@@ -2328,7 +2328,7 @@ void MoveRight()
 }
 
 void MoveLeft()
-/* move cursor right, but dont update screen.
+/* move cursor right, but don't update screen.
  this procedure must be called from DispChar&DispKanji only */
 {
 	CursorX--;

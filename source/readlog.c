@@ -133,10 +133,12 @@ BUILT_IN_COMMAND(readlog)
 }
 
 /*
- * show_help:  show's either a page of text from a help_fp, or the whole
+ * show_log:  Shows either a page of text from a msg_fp, or the whole
  * thing, depending on the value of HELP_PAGER_VAR.  If it gets to the end,
- * (in either case it will eventally), it closes the file, and returns 0
+ * (in either case it will eventually), it closes the file, and returns 0
  * to indicate this.
+ *
+ * Based on show_help()
  */ 
 static	int show_log(Window *window, char *name)
 {

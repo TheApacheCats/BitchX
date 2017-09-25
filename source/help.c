@@ -79,9 +79,9 @@ static	int	use_help_window = 0;
 
 
 /* 
- * show_help:  show's either a page of text from a help_fp, or the whole
+ * show_help:  Shows either a page of text from a help_fp, or the whole
  * thing, depending on the value of HELP_PAGER_VAR.  If it gets to the end,
- * (in either case it will eventally), it closes the file, and returns 0
+ * (in either case it will eventually), it closes the file, and returns 0
  * to indicate this.
  */ 
 static	int	show_help (Window *window, char *name)
@@ -109,7 +109,7 @@ static	int	show_help (Window *window, char *name)
 			*(line + strlen(line) - 1) = (char) 0;
 			
 		/*
-		 * This is for compatability with ircII-4.4
+		 * This is for compatibility with ircII-4.4
 		 */
 		if (*line == '!' || *line == '#')
 			continue;
@@ -232,7 +232,7 @@ static	void	help_topic (char *path, char *name)
 	/* let uzfopen have all the fun */
 	if ((help_fp = uzfopen (&filename, path, 0)))
 	{
-		/* Isnt this a heck of a lot better then the kludge you were using? */
+		/* Isn't this a heck of a lot better then the kludge you were using? */
 		help_put_it(name, "*** Help on %s", name);
 		help_prompt(name, NULL);
 	}
@@ -301,7 +301,7 @@ static	void	help_show_paused_topic (char *name, char *line)
 	}
 
 	/* 
-	 * This cant be an else of the previous if because 'i' can 
+	 * This can't be an else of the previous if because 'i' can 
 	 * change in the previous if and we need to test it again
 	 */
 	if (i >= help_paused_lines)
@@ -398,7 +398,7 @@ static	void	help_me (char *topics, char *args)
 	/*
 	 * This is just a bogus while loop which is intended to allow
 	 * the user to do '/help alias expressions' without having to
-	 * include a slash inbetween the topic and subtopic.
+	 * include a slash between the topic and subtopic.
 	 *
 	 * If all goes well, we 'break' at the bottom of the loop.
 	 */

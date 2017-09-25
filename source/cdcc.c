@@ -1454,7 +1454,7 @@ int BX_add_to_queue(char *nick, char *command, pack *sendpack)
 		
 	if (!sendpack || !sendpack->file)
 	{
-		put_it("%s: ERROR occured in cdcc add to queue", cparse(get_string_var(CDCC_PROMPT_VAR)));
+		put_it("%s: ERROR occurred in cdcc add to queue", cparse(get_string_var(CDCC_PROMPT_VAR)));
 		return 0;
 	}
 	if (queuelist) 

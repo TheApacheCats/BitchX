@@ -68,7 +68,7 @@ extern	int		already_detached;
 
 #if !defined(WTERM_C)
 
-/* Systems cant seem to agree where to put these... */
+/* Systems can't seem to agree where to put these... */
 #ifdef HAVE_TERMINFO
 #define Tgetstr(x, y) 	((void)&(y), tigetstr((x).iname))
 #define Tgetnum(x) 	tigetnum(x.iname);
@@ -633,7 +633,7 @@ static	char	termcap2[2048];	/* bigger than we need, just in case */
 
 /* 
  * Any GUI system modules must be included here to make the GUI support
- *  routines accessable to the rest of BitchX. 
+ *  routines accessible to the rest of BitchX. 
  */
 #ifndef WTERM_C
 #ifdef __EMXPM__
@@ -660,7 +660,7 @@ int	term_echo (int flag)
 
 /*
  * term_putchar: puts a character to the screen, and displays control
- * characters as inverse video uppercase letters.  NOTE:  Dont use this to
+ * characters as inverse video uppercase letters.  NOTE:  Don't use this to
  * display termcap control sequences!  It won't work! 
  *
  * Um... well, it will work if DISPLAY_ANSI_VAR is set to on... (hop)
@@ -1054,7 +1054,7 @@ int term_init (char *term)
 	 * we have many ways of doing the same thing.
 	 * To keep the set of tests easier, we set up a bitfield integer
 	 * which will have the desired capabilities added to it. If after
-	 * all the checks we dont have the desired mask, we dont have a
+	 * all the checks we don't have the desired mask, we don't have a
 	 * capable enough terminal.
 	 */
 	desired = TERM_CAN_CUP | TERM_CAN_CLEAR | TERM_CAN_CLREOL |

@@ -348,9 +348,9 @@ BUILT_IN_COMMAND(foreach)
  * FE: replaces recursion
  *
  * The thing about it is that you can nest variables, as this command calls
- * expand_alias until the list doesnt change.  So you can nest lists in
+ * expand_alias until the list doesn't change.  So you can nest lists in
  * lists, and hopefully that will work.  However, it also makes it 
- * impossible to have $s anywhere in the list.  Maybe ill change that
+ * impossible to have $s anywhere in the list.  Maybe I'll change that
  * some day.
  */
 
@@ -504,15 +504,15 @@ BUILT_IN_COMMAND(fe)
  * in the same style of C's for, the for loop is just a specific
  * type of WHILE loop.
  *
- * IMPORTANT: Since ircII uses ; as a delimeter between commands,
+ * IMPORTANT: Since ircII uses ; as a delimiter between commands,
  * commas were chosen to be the delimiter between expressions,
  * so that semicolons may be used in the expressions (think of this
- * as the reverse as C, where commas seperate commands in expressions,
+ * as the reverse as C, where commas separate commands in expressions,
  * and semicolons end expressions.
  */
 /*  I suppose someone could make a case that since the
- *  foreach_handler() routine weeds out any for command that doesnt have
- *  two commans, that checking for those 2 commas is a waste.  I suppose.
+ *  foreach_handler() routine weeds out any for command that doesn't have
+ *  two commas, that checking for those 2 commas is a waste.  I suppose.
  */
 BUILT_IN_COMMAND(forcmd)
 {
@@ -598,7 +598,7 @@ BUILT_IN_COMMAND(forcmd)
 			break;
 		}
 		if (continue_exception)
-			continue_exception = 0;	/* Dont continue here! */
+			continue_exception = 0;	/* Don't continue here! */
 		if (return_exception)
 			break;
 		parse_line(NULL, iteration, sa, 0, 0, 0);
