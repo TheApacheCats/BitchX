@@ -1043,7 +1043,7 @@ typedef struct	timerlist_stru
 	char	*command;
 	char	*subargs;
 	int	events;
-	time_t	interval;
+	double interval;
 	int	server;
 	int	window;
 	char	*whom;

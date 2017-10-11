@@ -421,8 +421,8 @@ char *function_timer(char *n, char *args)
 	if (time_left < 0)
 		time_left = 0.0;
 
-	return m_sprintf("%s %d %d %ld %d %0.3f %s%s", t->ref, t->server,
-		t->window, (long)t->interval, t->events, time_left, 
+	return m_sprintf("%s %d %d %.16g %d %0.3f %s%s", t->ref, t->server,
+		t->window, t->interval, t->events, time_left, 
 		t->callback ? "(internal callback) " : t->command,
 		t->whom ? t->whom : "");
 }

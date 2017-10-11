@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Support fractional-second intervals on recurring timers. (caf)
+
 * Change $geom() to return current screen's geometry, not the original
   terminal's. (caf)
 
