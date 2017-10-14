@@ -388,7 +388,7 @@ static	unsigned char my_getarg(char **args)
 	unsigned char *arg;
 
 	arg = (unsigned char *)next_arg(*args, args);
-	if (!args || !*args || !arg)
+	if (!*args || !arg)
 		return '\0';
 	/* Don't trust isdigit() with 8 bits. */
 	if ((*arg <= '9') && (*arg >= '0'))
