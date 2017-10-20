@@ -1199,9 +1199,6 @@ char *ban;
 	return nicklist;
 }
 
-
-
-
 /*
  *  Protection levels
  *  1 Reop if de-oped
@@ -1211,11 +1208,12 @@ char *ban;
  */
 int check_prot(char *from, char *person, ChannelList *chan, BanList *thisban, NickList *n)
 {
-NickList *tmp = NULL;
-NickList *kicker;
-char *tmp_ban = NULL;
-char *nick = NULL, *userhost = NULL, *p;
-
+	NickList *tmp = NULL;
+	NickList *kicker;
+	char *tmp_ban = NULL;
+	char *nick = NULL;
+	char *userhost = NULL;
+	char *p;
 	
 	if (!from || !*from || !person || !*person || !chan)
 		return 0;
@@ -1255,7 +1253,7 @@ char *nick = NULL, *userhost = NULL, *p;
 			user = n->userlist;
 		else
 			user = tmp->userlist;
-		if (!user || (user && !check_channel_match(user->channels, chan->channel)))
+		if (!user || !check_channel_match(user->channels, chan->channel))
 			return 0;
 		if (!(kicker = find_nicklist_in_channellist(from, chan, 0)))
 			return 0;
@@ -1266,8 +1264,7 @@ char *nick = NULL, *userhost = NULL, *p;
 			{
 				if (!kicker->sent_deop)
 				{
-					if (!kicker->userlist || 
-						(kicker->userlist && !(kicker->userlist->flags & PROT_DEOP)))
+					if (!kicker->userlist || !(kicker->userlist->flags & PROT_DEOP))
 						send_to_server("MODE %s -o %s", chan->channel, from);
 					kicker->sent_deop++;
 				}
@@ -1303,26 +1300,20 @@ char *nick = NULL, *userhost = NULL, *p;
 			}
 			if (user->flags & PROT_KICK)
 			{
-				if (kicker && (!kicker->userlist || (kicker->userlist && !(kicker->userlist->flags & PROT_KICK))))
+				if (!kicker->userlist || !(kicker->userlist->flags & PROT_KICK))
 					send_to_server("KICK %s %s :\002BitchX\002 Protected User", chan->channel, kicker->nick);
 			}
 			if ((user->flags & PROT_REOP) || do_reop)
 			{
 				/* added by Sergs serg@gamma.niimm.spb.su */
-			        if (thisban)
+				if (thisban)
 				{
-					if (thisban->sent_unban_time - current > 30)
+					if ((thisban->sent_unban_time - current > 30) || (thisban->sent_unban < 3))
 					{
 						thisban->sent_unban++;
 						thisban->sent_unban_time = current;
 						send_to_server("MODE %s -b %s", chan->channel, thisban->ban);
 					} 
-					else if (thisban->sent_unban < 3)
-					{
-						thisban->sent_unban++;
-						thisban->sent_unban_time = current;
-						send_to_server("MODE %s -b %s", chan->channel, thisban->ban);
-					}
 				}
 				if (n && (!n->sent_reop || (n->sent_reop_time && (current - n->sent_reop_time > 60))))
 				{
@@ -1492,7 +1483,7 @@ int	flag;
 		return;
 		
 #ifdef WANT_USERLIST
-	if ( !userptr || (userptr && !check_channel_match(userptr->channels, channel->channel)) ||
+	if (!userptr || !check_channel_match(userptr->channels, channel->channel) ||
 		(shitptr && check_channel_match(shitptr->channels, channel->channel)))
 #endif
 	{
