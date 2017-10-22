@@ -1,5 +1,8 @@
 [Changes 1.2.2]
 
+* Shitlist level 3/4 should kick regardless of /CSET KICK_IF_BANNED. 
+  Reported by Ancient. (caf)
+
 * Correct spelling of some client messages. (gdinit)
 
 * Support fractional-second intervals on recurring timers. (caf)

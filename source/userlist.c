@@ -1049,12 +1049,10 @@ void run_user_flag(char *name, char *what, NickList *user, NickList *kicker)
 
 NickList *check_auto(char *channel, NickList *nicklist, ChannelList *chan)
 {
-
-ShitList *shitptr = NULL;
-UserList *userptr = NULL;
-ChannelList *chan_ptr =  NULL;
-char *ban;
-
+	ShitList *shitptr = NULL;
+	UserList *userptr = NULL;
+	ChannelList *chan_ptr =  NULL;
+	char *ban;
 	
 	if (!channel || !*channel || !nicklist)
 		return NULL;
@@ -1075,7 +1073,6 @@ char *ban;
 	userptr = nicklist->userlist;
 	shitptr = nicklist->shitlist;
 
-
 	if (userptr && !check_channel_match(userptr->channels, channel))
 		userptr = NULL;
 	if (shitptr && (!check_channel_match(shitptr->channels, channel) || isme(nicklist->nick)))
@@ -1083,10 +1080,9 @@ char *ban;
 		
 	if (get_cset_int_var(chan_ptr->csets, SHITLIST_CSET) && shitptr != NULL && userptr == NULL)
 	{
-		char *theshit;
-		time_t current = now;
-		theshit = get_string_var(SHITLIST_REASON_VAR);
-		switch(shitptr->level)
+		char *reason = shitptr->reason ? shitptr->reason : get_string_var(SHITLIST_REASON_VAR);
+
+		switch (shitptr->level)
 		{
 		
 			case 0:
@@ -1097,25 +1093,23 @@ char *ban;
 				{
 					add_mode(chan_ptr, "o", 0, nicklist->nick, NULL, get_int_var(NUM_OPMODES_VAR));
 					nicklist->sent_deop++;
-					nicklist->sent_deop_time = current;
+					nicklist->sent_deop_time = now;
 				}
 				break;				
 			case 2: /* Auto Kick  offender */
-				add_mode(chan_ptr, NULL, 0, nicklist->nick, shitptr->reason?shitptr->reason:theshit, 0);
+				add_mode(chan_ptr, NULL, 0, nicklist->nick, reason, 0);
 				break;
 			case 3: /* kick ban the offender */
 			case 4:	/* perm ban on offender */
-				if (nicklist->sent_deop  < 4 || (nicklist->sent_deop < 4 && shitptr->level == 4))
+				if (nicklist->sent_deop < 4)
 				{
 					send_to_server("MODE %s -o+b %s %s", channel, nicklist->nick, shitptr->filter);
 					nicklist->sent_deop++;
-					nicklist->sent_deop_time = current;
+					nicklist->sent_deop_time = now;
 					if (get_int_var(AUTO_UNBAN_VAR) && shitptr->level != 4)
 						add_timer(0, empty_string, get_int_var(AUTO_UNBAN_VAR) * 1000, 1, timer_unban, m_sprintf("%d %s %s", from_server, channel, shitptr->filter), NULL, -1, "auto-unban");
 				}
-				if (get_cset_int_var(chan_ptr->csets, KICK_IF_BANNED_CSET))
-					send_to_server("KICK %s %s :%s", channel,
-						nicklist->nick, (shitptr->reason && *shitptr->reason) ? shitptr->reason : theshit);
+				add_mode(chan_ptr, NULL, 0, nicklist->nick, reason, 0);
 			default:
 				break;
 		}
