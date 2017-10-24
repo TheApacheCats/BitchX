@@ -1452,15 +1452,15 @@ void toggle_reverse_status(Window *win, char *unused, int value)
 }
 
 #ifdef WANT_TCL
-char *ircii_rem_str(ClientData *cd, Tcl_Interp *intp, char *name1, char *name2, int flags)
+static char *ircii_rem_str(ClientData cd, Tcl_Interp *intp, char *name1, char *name2, int flags)
 {
-char *s;
-IrcVariable *n;
-	n = (IrcVariable *)cd;
-	if ((s = Tcl_GetVar(intp, name1, TCL_GLOBAL_ONLY)))
+	char *s = Tcl_GetVar(intp, name1, TCL_GLOBAL_ONLY);
+	IrcVariable *n = (IrcVariable *)cd;
+
+	if (s)
 	{
 		Tcl_UnlinkVar(intp, name1);
-		if (s && *s)
+		if (*s)
 			malloc_strcpy(&n->string, s);
 		else
 			new_free(&n->string);
@@ -1499,7 +1499,7 @@ int i = 0;
 			type_of);
 		if (irc_variable[i].type == STR_TYPE_VAR)
 			Tcl_TraceVar(tcl_interp, varname, TCL_TRACE_WRITES,
-				(Tcl_VarTraceProc *)ircii_rem_str, 
+				&ircii_rem_str, 
 				(ClientData)&irc_variable[i]);
 	}
 }

@@ -1337,7 +1337,6 @@ TclVars tcl_vars[] =
 	{ NULL,		NULL,		0,		0}
 };
 
-extern char *ircii_rem_str(ClientData *, Tcl_Interp *, char *, char *, int);
 void init_public_var(Tcl_Interp *intp)
 {
 int i;
