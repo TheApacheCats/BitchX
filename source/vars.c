@@ -1417,13 +1417,6 @@ static void set_away_time(Window *win, char *unused, int value)
 		set_int_var(AUTO_AWAY_TIME_VAR, value);
 }
 
-void clear_sets(void)
-{
-int i = 0;
-	for(i = 0; irc_variable[i].name; i++)
-		new_free(&irc_variable->string);
-}
-
 static void reinit_screen(Window *win, char *unused, int value)
 {
 	set_input_prompt(current_window, NULL, 0);

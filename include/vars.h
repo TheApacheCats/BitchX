@@ -387,8 +387,6 @@ extern	char	*var_settings[];
 extern	int	loading_global;
 	void	savebitchx_variables (FILE *);
 	void	reinit_autoresponse (Window *, char *, int);
-	void	clear_sets (void);
-	void	clear_bindings (void);
 	int	window_set_var (Window *, char *);
 	void	init_window_variables (Window *);
 
