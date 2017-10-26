@@ -404,7 +404,8 @@ extern	int	loading_global;
 #define STR_TYPE_VAR	3
 #define SET_TYPE_VAR	4
 
-#define VF_EXPAND_PATH	0x0002
+#define VF_NO_SAVE     0x0001U
+#define VF_EXPAND_PATH 0x0002U
 
 #define VIF_CHANGED	0x01
 #define VIF_GLOBAL	0x02

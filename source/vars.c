@@ -160,7 +160,7 @@ static	IrcVariable irc_variable[] =
 	{ "CHANMODE",0,			STR_TYPE_VAR,	0, NULL, NULL, 0, VIF_BITCHX },
 	{ "CHANNEL_NAME_WIDTH",0,	INT_TYPE_VAR,	DEFAULT_CHANNEL_NAME_WIDTH, NULL, BX_update_all_status, 0, 0 },
 	{ "CHECK_BEEP_USERS",0,		BOOL_TYPE_VAR,  0, NULL, NULL, 0, 0 },
-	{ "CLIENT_INFORMATION",0,	STR_TYPE_VAR,	0, NULL, NULL, 0, 0 },
+	{ "CLIENT_INFORMATION",0,	STR_TYPE_VAR,	0, NULL, NULL, 0, VF_NO_SAVE },
 	{ "CLOAK",0,			INT_TYPE_VAR,	DEFAULT_CLOAK, NULL, BX_update_all_status, 0, VIF_BITCHX },
 	{ "CLOCK",0,			BOOL_TYPE_VAR,	DEFAULT_CLOCK, NULL, BX_update_all_status, 0, 0 },
 	{ "CLOCK_24HOUR",0,		BOOL_TYPE_VAR,	DEFAULT_CLOCK_24HOUR, NULL, reset_clock, 0, VIF_BITCHX },
@@ -213,7 +213,7 @@ static	IrcVariable irc_variable[] =
 	{ "DEOP_ON_KICKFLOOD",0,	INT_TYPE_VAR,	DEFAULT_DEOP_ON_KICKFLOOD, NULL, NULL, 0, VIF_BITCHX },
 	{ "DETACH_ON_HUP",0,		BOOL_TYPE_VAR,	DEFAULT_DETACH_ON_HUP, NULL, set_detach_on_hup, 0, 0 },
 	{ "DISPATCH_UNKNOWN_COMMANDS",0,BOOL_TYPE_VAR,	DEFAULT_DISPATCH_UNKNOWN_COMMANDS, NULL, NULL, 0, 0 },
-	{ "DISPLAY",0,			BOOL_TYPE_VAR,	DEFAULT_DISPLAY, NULL, NULL, 0, 0 },
+	{ "DISPLAY",0,			BOOL_TYPE_VAR,	DEFAULT_DISPLAY, NULL, NULL, 0, VF_NO_SAVE },
 	{ "DISPLAY_ANSI",0,		BOOL_TYPE_VAR,	DEFAULT_DISPLAY_ANSI, NULL, toggle_reverse_status, 0, 0 },
 	{ "DISPLAY_PC_CHARACTERS",0,	INT_TYPE_VAR,	DEFAULT_DISPLAY_PC_CHARACTERS, NULL, reinit_screen, 0, VIF_BITCHX },
 	{ "DOUBLE_STATUS_LINE",0,	INT_TYPE_VAR,	DEFAULT_DOUBLE_STATUS_LINE, NULL, NULL, 0, VIF_BITCHX },
@@ -1224,10 +1224,10 @@ void save_variables(FILE *fp, int do_all)
 	{
 		if (!(var->int_flags & VIF_CHANGED))
 			continue;
+		if (var->flags & VF_NO_SAVE)
+			continue;
 		if ((do_all == 1) || !(var->int_flags & VIF_GLOBAL))
 		{
-			if (strcmp(var->name, "DISPLAY") == 0 || strcmp(var->name, "CLIENT_INFORMATION") == 0)
-				continue;
 			fprintf(fp, "SET ");
 			switch (var->type)
 			{
