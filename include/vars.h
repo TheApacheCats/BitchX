@@ -406,10 +406,10 @@ extern	int	loading_global;
 
 #define VF_NO_SAVE     0x0001U
 #define VF_EXPAND_PATH 0x0002U
+#define VF_BITCHX      0x0004U
 
 #define VIF_CHANGED	0x01
 #define VIF_GLOBAL	0x02
-#define VIF_BITCHX	0x04
 #define VIF_PENDING	0x08
 
 #define	DEBUG_COMMANDS		0x0001
