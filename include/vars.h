@@ -404,7 +404,6 @@ extern	int	loading_global;
 #define STR_TYPE_VAR	3
 #define SET_TYPE_VAR	4
 
-#define	VF_NODAEMON	0x0001
 #define VF_EXPAND_PATH	0x0002
 
 #define VIF_CHANGED	0x01
