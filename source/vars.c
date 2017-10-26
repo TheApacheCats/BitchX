@@ -1212,78 +1212,73 @@ enum VAR_TYPES	var_index = 0;
 	}
 }
 
-/*
- * save_variables: this writes all of the IRCII variables to the given FILE
- * pointer in such a way that they can be loaded in using LOAD or the -l switch 
+/* save_vars_by_flags()
+ *
+ * Helper function to save a set of variables that match the given flags to
+ * a file that can be later /LOADed.
+ *
+ * int_flags_mask and flags_mask give the masks of the flags we care about,
+ * and int_flags and flags give the required values of those flags.
  */
-void save_variables(FILE *fp, int do_all)
-{
-	IrcVariable *var;
-
-	for (var = irc_variable; var->name; var++)
-	{
-		if (!(var->int_flags & VIF_CHANGED))
-			continue;
-		if (var->flags & VF_NO_SAVE)
-			continue;
-		if ((do_all == 1) || !(var->int_flags & VIF_GLOBAL))
-		{
-			fprintf(fp, "SET ");
-			switch (var->type)
-			{
-			case BOOL_TYPE_VAR:
-				fprintf(fp, "%s %s\n", var->name, var->integer ?
-					var_settings[ON] : var_settings[OFF]);
-				break;
-			case CHAR_TYPE_VAR:
-				fprintf(fp, "%s %c\n", var->name, var->integer);
-				break;
-			case INT_TYPE_VAR:
-				fprintf(fp, "%s %u\n", var->name, var->integer);
-				break;
-			case STR_TYPE_VAR:
-				if (var->string)
-					fprintf(fp, "%s %s\n", var->name,
-						var->string);
-				else
-					fprintf(fp, "-%s\n", var->name);
-				break;
-			}
-		}
-	}
-}
-
-void savebitchx_variables(FILE *fp)
+static int save_vars_by_flags(FILE *fp, char int_flags_mask, char int_flags, unsigned short flags_mask, unsigned short flags)
 {
 	IrcVariable *var;
 	int count = 0;
+
 	for (var = irc_variable; var->name; var++)
 	{
-		if (!(var->flags & VIF_BITCHX))
+		if ((var->int_flags & int_flags_mask) != int_flags)
 			continue;
+		if ((var->flags & flags_mask) != flags)
+			continue;
+
 		count++;
-		fprintf(fp, "SET ");
 		switch (var->type)
 		{
 		case BOOL_TYPE_VAR:
-			fprintf(fp, "%s %s\n", var->name, var->integer ?
+			fprintf(fp, "SET %s %s\n", var->name, var->integer ?
 				var_settings[ON] : var_settings[OFF]);
 			break;
 		case CHAR_TYPE_VAR:
-			fprintf(fp, "%s %c\n", var->name, var->integer);
+			fprintf(fp, "SET %s %c\n", var->name, var->integer);
 			break;
 		case INT_TYPE_VAR:
-			fprintf(fp, "%s %u\n", var->name, var->integer);
+			fprintf(fp, "SET %s %d\n", var->name, var->integer);
 			break;
 		case STR_TYPE_VAR:
 			if (var->string)
-				fprintf(fp, "%s %s\n", var->name,
-					var->string);
+				fprintf(fp, "SET %s %s\n", var->name, var->string);
 			else
-				fprintf(fp, "-%s\n", var->name);
+				fprintf(fp, "SET -%s\n", var->name);
 			break;
 		}
 	}
+
+	return count;
+}
+
+/* save_variables()
+ *
+ * Save all of the IRCII variables that have been changed from the defaults
+ * to a file.
+ */
+void save_variables(FILE *fp, int do_all)
+{
+	/* Save only VIF_CHANGED variables.  If do_all is not set, 
+     * don't save VIF_GLOBAL variables. */
+	char int_flags_mask = VIF_CHANGED | (do_all ? 0 : VIF_GLOBAL);
+
+	save_vars_by_flags(fp, int_flags_mask, VIF_CHANGED, VF_NO_SAVE, 0);
+}
+
+/* savebitchx_variables()
+ *
+ * Save all the BitchX-specific variables to a file.
+ */
+void savebitchx_variables(FILE *fp)
+{
+	/* Save all VIF_BITCHX variables. */
+	int count = save_vars_by_flags(fp, 0, 0, VIF_BITCHX | VF_NO_SAVE, VIF_BITCHX);
 	bitchsay("Saved %d variables", count);
 }
 
