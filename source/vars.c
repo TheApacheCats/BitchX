@@ -935,11 +935,9 @@ void set_var_value(int var_index, char *value, IrcVariableDll *dll)
 					else
 						say("SET: no such user");
 				}
-				if ((!var->int_flags & VIF_CHANGED))
+				if (!(var->int_flags & VIF_CHANGED))
 				{
-					if ((var->string && ! value) ||
-					    (! var->string && value) ||
-					    my_stricmp(var->string, value))
+					if (!var->string || my_stricmp(var->string, value))
 						var->int_flags |= VIF_CHANGED;
 				}
 				if (loading_global)
