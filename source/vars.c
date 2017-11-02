@@ -796,39 +796,21 @@ int do_boolean(char *str, int *value)
 	return (0);
 }
 
-/*
- * set_var_value: Given the variable structure and the string representation
- * of the value, this sets the value in the most verbose and error checking
- * of manors.  It displays the results of the set and executes the function
- * defined in the var structure 
+/* set_ircvariable()
+ *
+ * Set the IrcVariable to the provided string value.
  */
-
-void set_var_value(int var_index, char *value, IrcVariableDll *dll)
+static void set_ircvariable(IrcVariable *var, char *value)
 {
 	char	*rest;
-	IrcVariable *var;
-	int	old;
-#ifdef WANT_DLL
-	if (dll)
-	{
-		var = (IrcVariable *) new_malloc(sizeof(IrcVariable));
-		var->type = dll->type;
-		var->string = dll->string;
-		var->integer = dll->integer;
-		var->int_flags = dll->int_flags;
-		var->flags = dll->flags;
-		var->name = dll->name;
-		var->func = dll->func;
-	}
-	else
-#endif
-		var = &(irc_variable[var_index]);
+
 	switch (var->type)
 	{
 	case BOOL_TYPE_VAR:
 		if (value && *value && (value = next_arg(value, &rest)))
 		{
-			old = var->integer;
+			int	old = var->integer;
+
 			if (do_boolean(value, &(var->integer)))
 			{
 				say("Value must be either ON, OFF, or TOGGLE");
@@ -949,11 +931,7 @@ void set_var_value(int var_index, char *value, IrcVariableDll *dll)
 			else
 			{
 				put_it("%s", convert_output_format(fget_string_var(var->string?FORMAT_SET_FSET:FORMAT_SET_NOVALUE_FSET), "%s %s", var->name, var->string));
-#ifdef WANT_DLL
-				goto got_dll;
-#else
-				return;
-#endif
+				break;
 			}
 		}
 		else
@@ -968,20 +946,45 @@ void set_var_value(int var_index, char *value, IrcVariableDll *dll)
 			var->string : "<EMPTY>");
 		break;
 	}
+}
+
+/*
+ * set_var_value()
+ *
+ * Given the variable index and the string representation of the
+ * value, this sets the value with full verbosity and error-checking.
+ * It displays the results of the set and executes the function
+ * defined in the var structure.
+ */
+void set_var_value(int var_index, char *value, IrcVariableDll *dll)
+{
+	IrcVariable *var;
 #ifdef WANT_DLL
-got_dll:
+	if (dll)
+	{
+		var = (IrcVariable *) new_malloc(sizeof(IrcVariable));
+		var->type = dll->type;
+		var->string = dll->string;
+		var->integer = dll->integer;
+		var->int_flags = dll->int_flags;
+		var->flags = dll->flags;
+		var->name = dll->name;
+		var->func = dll->func;
+	}
+	else
+#endif
+		var = &irc_variable[var_index];
+
+	set_ircvariable(var, value);
+
+#ifdef WANT_DLL
 	if (dll)
 	{
 		dll->integer = var->integer;
-		if (var->string)
-			dll->string = m_strdup(var->string);
-		else
-			dll->string = NULL;
-		new_free(&var->string);
-		new_free((char **)&var);
+		dll->string = var->string;
+		new_free(&var);
 	}
 #endif
-
 }
 
 extern AliasStack1 *set_stack;
