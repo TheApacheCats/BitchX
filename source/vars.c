@@ -71,6 +71,7 @@ extern	int	use_nat_address;
 
 int	loading_global = 0;
 
+static void set_var_value(int var_index, char *value);
 
 enum VAR_TYPES	find_variable (char *, int *);
 static	void	exec_warning (Window *, char *, int);
@@ -706,7 +707,7 @@ void init_variables()
 
 	set_beep_on_msg(current_window, DEFAULT_BEEP_ON_MSG, 0);
 
-	set_var_value(SWATCH_VAR, DEFAULT_SWATCH, NULL);
+	set_var_value(SWATCH_VAR, DEFAULT_SWATCH);
 	set_string_var(CLIENTINFO_VAR, IRCII_COMMENT);
 	set_string_var(FAKE_SPLIT_PATS_VAR, "*fuck* *shit* *suck* *dick* *penis* *cunt* *haha* *fake* *split* *hehe* *bogus* *yawn* *leet* *blow* *screw* *dumb* *fbi* *l33t* *gov");
 	set_string_var(CHANMODE_VAR, DEFAULT_CHANMODE);
@@ -948,6 +949,24 @@ static void set_ircvariable(IrcVariable *var, char *value)
 	}
 }
 
+static void set_var_value_dll(IrcVariableDll *dll, char *value)
+{
+	IrcVariable var;
+
+	var.type = dll->type;
+	var.string = dll->string;
+	var.integer = dll->integer;
+	var.int_flags = dll->int_flags;
+	var.flags = dll->flags;
+	var.name = dll->name;
+	var.func = dll->func;
+
+	set_ircvariable(&var, value);
+
+	dll->integer = var.integer;
+	dll->string = var.string;
+}
+
 /*
  * set_var_value()
  *
@@ -956,35 +975,9 @@ static void set_ircvariable(IrcVariable *var, char *value)
  * It displays the results of the set and executes the function
  * defined in the var structure.
  */
-void set_var_value(int var_index, char *value, IrcVariableDll *dll)
+static void set_var_value(int var_index, char *value)
 {
-	IrcVariable *var;
-#ifdef WANT_DLL
-	if (dll)
-	{
-		var = (IrcVariable *) new_malloc(sizeof(IrcVariable));
-		var->type = dll->type;
-		var->string = dll->string;
-		var->integer = dll->integer;
-		var->int_flags = dll->int_flags;
-		var->flags = dll->flags;
-		var->name = dll->name;
-		var->func = dll->func;
-	}
-	else
-#endif
-		var = &irc_variable[var_index];
-
-	set_ircvariable(var, value);
-
-#ifdef WANT_DLL
-	if (dll)
-	{
-		dll->integer = var->integer;
-		dll->string = var->string;
-		new_free(&var);
-	}
-#endif
+	set_ircvariable(&irc_variable[var_index], value);
 }
 
 extern AliasStack1 *set_stack;
@@ -1165,7 +1158,12 @@ enum VAR_TYPES	var_index = 0;
 		if (hook)
 		{
 			if (cnt < 0)
-				set_var_value(var_index, args, dll);
+			{
+				if (dll)
+					set_var_value_dll(dll, args);
+				else
+					set_var_value(var_index, args);
+			}
 			else if (cnt == 0)
 			{
 				if (!dll)
@@ -1174,7 +1172,7 @@ enum VAR_TYPES	var_index = 0;
 						say("No such variable \"%s\"", var);
 				}
 				else
-					set_var_value(-1, args, dll);
+					set_var_value_dll(dll, args);
 			}
 			else
 			{
@@ -1187,7 +1185,7 @@ enum VAR_TYPES	var_index = 0;
 						for (tmp = dll; tmp; tmp = tmp->next)
 						{
 							if (!my_strnicmp(tmp->name, var, strlen(var)))
-								set_var_value(-1, empty_string, tmp);
+								set_var_value_dll(tmp, empty_string);
 							else
 								break;
 						}
@@ -1195,7 +1193,7 @@ enum VAR_TYPES	var_index = 0;
 					else
 					{
 						for (cnt += var_index; var_index < cnt; var_index++)
-							set_var_value(var_index, empty_string, dll);
+							set_var_value(var_index, empty_string);
 					}
 				}
 			}	
@@ -1205,10 +1203,10 @@ enum VAR_TYPES	var_index = 0;
         {
 		int var_index;
 		for (var_index = 0; var_index < NUMBER_OF_VARIABLES; var_index++)
-			set_var_value(var_index, empty_string, NULL);
+			set_var_value(var_index, empty_string);
 #ifdef WANT_DLL
 		for (dll = dll_variable; dll; dll = dll->next)
-			set_var_value(-1, empty_string, dll);
+			set_var_value_dll(dll, empty_string);
 #endif
 	}
 }

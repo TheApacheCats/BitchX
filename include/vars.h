@@ -380,7 +380,6 @@ NUMBER_OF_VARIABLES
 	void	set_highlight_char (Window *, char *, int);
 	int	charset_size (void);
 	void	save_variables (FILE *, int);
-	void	set_var_value (int, char *, IrcVariableDll *);
 	void    save_set (FILE *);
 
 extern	char	*var_settings[];
