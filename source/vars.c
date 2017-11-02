@@ -1166,13 +1166,8 @@ enum VAR_TYPES	var_index = 0;
 			}
 			else if (cnt == 0)
 			{
-				if (!dll)
-				{
-					if (do_hook(SET_LIST, "set-error No such variable \"%s\"", var))
-						say("No such variable \"%s\"", var);
-				}
-				else
-					set_var_value_dll(dll, args);
+				if (do_hook(SET_LIST, "set-error No such variable \"%s\"", var))
+					say("No such variable \"%s\"", var);
 			}
 			else
 			{
