@@ -714,32 +714,34 @@ int BX_check_module_version(unsigned long number)
 }
 
 #ifdef WANT_DLL
-char *BX_get_dllstring_var(char *typestr)
+static IrcVariableDll *lookup_dllvar(char *name)
 {
-IrcVariableDll *dll = NULL;
-	if (typestr)
-		dll = (IrcVariableDll *) find_in_list((List **)&dll_variable, typestr, 0);
-	return (dll?dll->string:NULL);
+	IrcVariableDll *dll = NULL;
+
+	if (name)
+		dll = (IrcVariableDll *)find_in_list((List **)&dll_variable, name, 0);
+
+	return dll;
 }
 
+char *BX_get_dllstring_var(char *typestr)
+{
+	IrcVariableDll *dll = lookup_dllvar(typestr);
+	return dll ? dll->string : NULL;
+}
 
 int BX_get_dllint_var(char *typestr)
 {
-IrcVariableDll *dll = NULL;
-	if (typestr)
-		dll = (IrcVariableDll *) find_in_list((List **)&dll_variable, typestr, 0);
-	return (dll?dll->integer:-1);
+	IrcVariableDll *dll = lookup_dllvar(typestr);
+	return dll ? dll->integer : -1;
 }
 
 void BX_set_dllstring_var(char *typestr, char *string)
 {
-	if (typestr)
+	IrcVariableDll *dll = lookup_dllvar(typestr);
+
+	if (dll)
 	{
-		IrcVariableDll *dll = NULL;
-		if (typestr)
-			dll = (IrcVariableDll *) find_in_list((List **)&dll_variable, typestr, 0);
-		if (!dll)
-			return;
 		if (string)
 			malloc_strcpy(&dll->string, string);
 		else
@@ -749,13 +751,10 @@ void BX_set_dllstring_var(char *typestr, char *string)
 
 void BX_set_dllint_var(char *typestr, unsigned int value)
 {
-	if (typestr)
+	IrcVariableDll *dll = lookup_dllvar(typestr);
+
+	if (dll)
 	{
-		IrcVariableDll *dll = NULL;
-		if (typestr)
-			dll = (IrcVariableDll *) find_in_list((List **)&dll_variable, typestr, 0);
-		if (!dll)
-			return;
 		dll->integer = value;
 	}
 }
