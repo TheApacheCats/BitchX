@@ -71,7 +71,7 @@ extern	int	use_nat_address;
 
 int	loading_global = 0;
 
-static void set_var_value(int var_index, char *value);
+static void set_var_value(enum VAR_TYPES var_index, char *value);
 
 enum VAR_TYPES	find_variable (char *, int *);
 static	void	exec_warning (Window *, char *, int);
@@ -975,7 +975,7 @@ static void set_var_value_dll(IrcVariableDll *dll, char *value)
  * It displays the results of the set and executes the function
  * defined in the var structure.
  */
-static void set_var_value(int var_index, char *value)
+static void set_var_value(enum VAR_TYPES var_index, char *value)
 {
 	set_ircvariable(&irc_variable[var_index], value);
 }
