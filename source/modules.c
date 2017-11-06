@@ -660,18 +660,8 @@ static int already_done = 0;
 	global_table[OUTPUT_SCREEN]		= (Function_ptr) &output_screen;
 	global_table[SCREEN_LIST]		= (Function_ptr) &screen_list;
 	global_table[DOING_NOTICE]      = (Function_ptr) &doing_notice;
-	global_table[SENT_NICK]         = 0;	/* No longer used */
-	global_table[LAST_SENT_MSG_BODY]    = 0;	/* No longer used */
                                 
 	global_table[IRCLOG_FP]			= (Function_ptr) &irclog_fp;
-#ifdef WANT_DLL
-	global_table[DLL_FUNCTIONS]		= (Function_ptr) &dll_functions;
-	global_table[DLL_NUMERIC]		= (Function_ptr) &dll_numeric_list;
-	global_table[DLL_COMMANDS]		= (Function_ptr) &dll_commands;
-	global_table[DLL_WINDOW]		= (Function_ptr) &dll_window;
-	global_table[DLL_VARIABLE]		= (Function_ptr) &dll_variable;
-	global_table[DLL_CTCP]			= (Function_ptr) &dll_ctcp;
-#endif
 	global_table[WINDOW_DISPLAY]		= (Function_ptr) &window_display;
 	global_table[STATUS_UPDATE_FLAG]	= (Function_ptr) &status_update_flag;
 	global_table[TABKEY_ARRAY]		= (Function_ptr) &tabkey_array;

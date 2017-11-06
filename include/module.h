@@ -10,7 +10,7 @@
  * if we change the table below, we change this module number to the 
  * current date (YYYYMMDDxx where xx is a serial number).
  */
-#define MODULE_VERSION 2017110601UL
+#define MODULE_VERSION 2017110602UL
 
 #include "struct.h"
 
@@ -616,15 +616,7 @@ enum FUNCTION_VALUE
 	SCREEN_LIST,
 	IRCLOG_FP,
 	DOING_NOTICE,
-	LAST_SENT_MSG_BODY, /* NO LONGER USED */
-	SENT_NICK, /* NO LONGER USED */
 
-	DLL_FUNCTIONS,
-	DLL_NUMERIC,
-	DLL_COMMANDS,
-	DLL_VARIABLE,
-	DLL_CTCP,
-	DLL_WINDOW,
 	WINDOW_DISPLAY,
 	STATUS_UPDATE_FLAG,
 	TABKEY_ARRAY,

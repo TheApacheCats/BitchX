@@ -1,5 +1,8 @@
 [Changes 1.2.2]
 
+* Remove dll_functions, dll_numeric, dll_commands, dll_variable, dll_ctcp,
+  and dll_window variables from the module exports table. (caf)
+
 * Add save_dllvar() function exported to modules, and switch cavlink
   and nap plugins to use it. (caf)
 
