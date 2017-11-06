@@ -10,7 +10,7 @@
  * if we change the table below, we change this module number to the 
  * current date (YYYYMMDDxx where xx is a serial number).
  */
-#define MODULE_VERSION 2017071701UL
+#define MODULE_VERSION 2017110601UL
 
 #include "struct.h"
 
@@ -92,6 +92,7 @@ char *BX_get_dllstring_var(char *);
 int BX_get_dllint_var(char *);
 void BX_set_dllstring_var(char *, char *);
 void BX_set_dllint_var(char *, unsigned int);
+void BX_save_dllvar(FILE *, char *);
 RawDll *find_raw_proc(char *, char **);
 
 int check_version(unsigned long);
@@ -418,6 +419,7 @@ enum FUNCTION_VALUE
 	SET_DLLINT_VAR,
 	GET_DLLSTRING_VAR,
 	SET_DLLSTRING_VAR,
+	SAVE_DLLVAR,
 	GET_INT_VAR,
 	SET_INT_VAR,
 	GET_STRING_VAR,

@@ -463,6 +463,7 @@ extern Function_ptr *global;
 #define set_dllint_var (*(void (*)(char *, unsigned int ))global[SET_DLLINT_VAR])
 #define get_dllstring_var (*(char *(*)(char *))global[GET_DLLSTRING_VAR])
 #define set_dllstring_var (*(void (*)(char *, char *))global[SET_DLLSTRING_VAR])
+#define save_dllvar (*(void (*)(FILE *, char *))global[SAVE_DLLVAR])
 
 #define get_int_var (*(int (*)(enum VAR_TYPES ))global[GET_INT_VAR])
 #define set_int_var (*(void (*)(enum VAR_TYPES , unsigned int ))global[SET_INT_VAR])

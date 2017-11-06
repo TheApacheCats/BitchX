@@ -548,11 +548,13 @@ static int already_done = 0;
 	global_table[SET_DLLINT_VAR]		= (Function_ptr) BX_set_dllint_var;
 	global_table[GET_DLLSTRING_VAR]		= (Function_ptr) BX_get_dllstring_var;
 	global_table[SET_DLLSTRING_VAR]		= (Function_ptr) BX_set_dllstring_var;
+	global_table[SAVE_DLLVAR]			= (Function_ptr) BX_save_dllvar;
 #else
 	global_table[GET_DLLINT_VAR]		= (Function_ptr) null_function;
 	global_table[SET_DLLINT_VAR]		= (Function_ptr) null_function;
 	global_table[GET_DLLSTRING_VAR]		= (Function_ptr) null_function;
 	global_table[SET_DLLSTRING_VAR]		= (Function_ptr) null_function;
+	global_table[SAVE_DLLVAR]			= (Function_ptr) null_function;
 #endif
 	global_table[GET_INT_VAR]		= (Function_ptr) BX_get_int_var;
 	global_table[SET_INT_VAR]		= (Function_ptr) BX_set_int_var;
@@ -756,6 +758,33 @@ void BX_set_dllint_var(char *typestr, unsigned int value)
 	if (dll)
 	{
 		dll->integer = value;
+	}
+}
+
+void BX_save_dllvar(FILE *fp, char *var)
+{
+	IrcVariableDll *dll = lookup_dllvar(var);
+
+	if (dll)
+	{
+		switch (dll->type)
+		{
+			case BOOL_TYPE_VAR:
+				fprintf(fp, "SET %s %s\n", dll->name, dll->integer ? "ON" : "OFF");
+				break;
+			case CHAR_TYPE_VAR:
+				fprintf(fp, "SET %s %c\n", dll->name, dll->integer);
+				break;
+			case INT_TYPE_VAR:
+				fprintf(fp, "SET %s %d\n", dll->name, dll->integer);
+				break;
+			case STR_TYPE_VAR:
+				if (dll->string)
+					fprintf(fp, "SET %s %s\n", dll->name, dll->string);
+				else
+					fprintf(fp, "SET -%s\n", dll->name);
+				break;
+		}
 	}
 }
 
