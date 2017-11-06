@@ -1213,7 +1213,6 @@ BUILT_IN_DLL(cavhelp)
 
 BUILT_IN_DLL(cavsave)
 {
-IrcVariableDll *newv = NULL;
 FILE *outf = NULL;
 char *expanded = NULL;
 char buffer[BIG_BUFFER_SIZE+1];
@@ -1228,19 +1227,25 @@ char buffer[BIG_BUFFER_SIZE+1];
 		new_free(&expanded);
 		return;
 	}
-	for (newv = dll_variable; newv; newv = newv->next)
-	{
-		if (!my_strnicmp(newv->name, "cavlink", 7))
-		{
-			if (newv->type == STR_TYPE_VAR)
-			{
-				if (newv->string)
-					fprintf(outf, "SET %s %s\n", newv->name, newv->string);
-			}
-			else
-				fprintf(outf, "SET %s %d\n", newv->name, newv->integer);
-		}
-	}
+
+	save_dllvar(outf, "cavlink_pass");
+	save_dllvar(outf, "cavlink_prompt");
+	save_dllvar(outf, "cavlink_window");
+	save_dllvar(outf, "cavlink");
+	save_dllvar(outf, "cavlink_floodspawn");
+	save_dllvar(outf, "cavlink_floodquote");
+	save_dllvar(outf, "cavlink_floodmsg");
+	save_dllvar(outf, "cavlink_floodnick");
+	save_dllvar(outf, "cavlink_floodversion");
+	save_dllvar(outf, "cavlink_floodping");
+	save_dllvar(outf, "cavlink_flooddccbomb");
+	save_dllvar(outf, "cavlink_floodcycle");
+	save_dllvar(outf, "cavlink_floodecho");
+	save_dllvar(outf, "cavlink_host");
+	save_dllvar(outf, "cavlink_port");
+	save_dllvar(outf, "cavlink_attack");
+	save_dllvar(outf, "cavlink_attack_times");
+
 	cav_say("Finished saving cavlink variables to %s", buffer);
 	fclose(outf);	
 	new_free(&expanded);

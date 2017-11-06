@@ -1331,7 +1331,6 @@ BUILT_IN_DLL(naphelp)
 
 BUILT_IN_DLL(napsave)
 {
-IrcVariableDll *newv = NULL;
 FILE *outf = NULL;
 char *expanded = NULL;
 char buffer[NAP_BUFFER_SIZE+1];
@@ -1348,21 +1347,32 @@ char *p = NULL;
 		new_free(&expanded);
 		return;
 	}
-	for (newv = dll_variable; newv; newv = newv->next)
-	{
-		if (!my_strnicmp(newv->name, "napster", 7))
-		{
-			if (newv->type == STR_TYPE_VAR)
-			{
-				if (newv->string)
-					fprintf(outf, "SET %s %s\n", newv->name, newv->string);
-			}
-			else if (newv->type == BOOL_TYPE_VAR)
-				fprintf(outf, "SET %s %s\n", newv->name, on_off(newv->integer));
-			else
-				fprintf(outf, "SET %s %d\n", newv->name, newv->integer);
-		}
-	}
+
+	save_dllvar(outf, "napster_prompt");
+	save_dllvar(outf, "napster_window");
+	save_dllvar(outf, "napster_host");
+	save_dllvar(outf, "napster_user");
+	save_dllvar(outf, "napster_pass");
+	save_dllvar(outf, "napster_email");
+	save_dllvar(outf, "napster_port");
+	save_dllvar(outf, "napster_dataport");
+	save_dllvar(outf, "napster_speed");
+	save_dllvar(outf, "napster_max_results");
+	save_dllvar(outf, "napster_numeric");
+	save_dllvar(outf, "napster_download_dir");
+	save_dllvar(outf, "napster_names_nickcolor");
+	save_dllvar(outf, "napster_hotlist_online");
+	save_dllvar(outf, "napster_hotlist_offline");
+	save_dllvar(outf, "napster_show_numeric");
+	save_dllvar(outf, "napster_window_hidden");
+	save_dllvar(outf, "napster_resume_download");
+	save_dllvar(outf, "napster_send_limit");
+	save_dllvar(outf, "napster_names_columns");
+	save_dllvar(outf, "napster_share");
+	save_dllvar(outf, "napster_max_send_nick");
+	save_dllvar(outf, "napster_format");
+	save_dllvar(outf, "napster_dir");
+
 	for (new = nap_hotlist; new; new = new->next)
 		m_s3cat(&p, " ", new->nick);
 	if (p)

@@ -1,6 +1,7 @@
 [Changes 1.2.2]
 
-* Add save_dllvar() function exported to modules. (caf)
+* Add save_dllvar() function exported to modules, and switch cavlink
+  and nap plugins to use it. (caf)
 
 * Shitlist level 3/4 should kick regardless of /CSET KICK_IF_BANNED. 
   Reported by Ancient. (caf)
