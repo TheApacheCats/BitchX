@@ -953,7 +953,7 @@ BUILT_IN_COMMAND(dll_load)
 	else 
 	{
 		if (code == INVALID_MODVERSION)
-			bitchsay("Error module version is wrong for [%s]", procname);
+			bitchsay("Module ABI version is wrong for [%s].  This likely means that the module needs to be recompiled.", procname);
 		else
 			bitchsay("Error initializing module [%s:%d]", procname, code);
 		if (handle)
