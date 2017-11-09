@@ -1341,8 +1341,6 @@ void BX_previous_window(char key, char *ptr)
 	set_input_prompt(current_window, get_string_var(INPUT_PROMPT_VAR), 0);
 }
 
-
-
 /*
  * update_window_status: This updates the status line for the given window.
  * If the refresh flag is true, the entire status line is redrawn.  If not,
@@ -1359,7 +1357,9 @@ void BX_update_window_status(Window *window, int refresh)
 		new_free(&(window->wset->status_line[0]));
 		new_free(&(window->wset->status_line[1]));
 		new_free(&(window->wset->status_line[2]));
+		window->update &= ~REDRAW_STATUS;
 	}
+	window->update &= ~UPDATE_STATUS;
 	make_status(window);
 }
 
@@ -4661,8 +4661,6 @@ void	BX_set_hold_mode (Window *window, int flag, int update)
 		{
 			window->last_lines_held = window->lines_held;
 			update_window_status(window, 0);
-			if (window->update | UPDATE_STATUS)
-				window->update -= UPDATE_STATUS;
 			cursor_in_display(window);
 			update_input(NO_UPDATE);
 		}
