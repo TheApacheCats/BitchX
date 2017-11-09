@@ -3694,11 +3694,6 @@ Window *window_query (Window *window, char **args, char *usage)
 	/*
 	 * Nuke the old query list
 	 */
-	if (*args && !my_strnicmp(*args, "-cmd", 4))
-	{
-		cmd = next_arg(*args, args);
-		cmd = next_arg(*args, args);
-	}
 	if ((nick = window->query_nick))
 	{
 		say("Ending conversation with %s", current_window->query_nick);
@@ -3721,10 +3716,18 @@ Window *window_query (Window *window, char **args, char *usage)
 		new_free(&window->query_cmd);
 	}
 
+	nick = next_arg(*args, args);
+
+	if (nick && !my_strnicmp(nick, "-cmd", 4))
+	{
+		cmd = next_arg(*args, args);
+		nick = next_arg(*args, args);
+	}
+
 	if (cmd)
 		malloc_strcpy(&window->query_cmd, cmd);
 
-	if ((nick = next_arg(*args, args)))
+	if (nick)
 	{
 
 		if (args && *args)
@@ -3753,8 +3756,6 @@ Window *window_query (Window *window, char **args, char *usage)
 		if (!nick)
 			return window;
 
-
-
 		/*
 		 * Create the new query list
 		 */
@@ -3763,10 +3764,10 @@ Window *window_query (Window *window, char **args, char *usage)
 		malloc_strcpy(&window->query_host, host);
 
 		window->update |= UPDATE_STATUS;
-		ptr = nick;
+
 		while ((ptr = next_in_comma_list(nick, &nick)))
 		{
-			if (!ptr || !*ptr)
+			if (!*ptr)
 				break;
 			tmp = (NickList *) new_malloc(sizeof(NickList));
 			tmp->nick = m_strdup(ptr);
