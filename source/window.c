@@ -1591,7 +1591,7 @@ const char	*BX_set_current_channel_by_refnum(unsigned int refnum, char *channel)
 		tmp = current_window;
 
 	oldc = tmp->current_channel;
-	if (!channel || (channel && !strcmp(channel, zero)))
+	if (!channel || !strcmp(channel, zero))
 		tmp->current_channel = NULL;
 	else
 		tmp->current_channel = m_strdup(channel);
