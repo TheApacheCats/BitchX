@@ -1204,14 +1204,13 @@ Window	* BX_get_window_by_refnum(unsigned int refnum)
 {
 	Window	*tmp = NULL;
 
-	if (refnum < 0)
-		return NULL;
 	if (refnum == 0)
 		return current_window;
-	else while ((traverse_all_windows(&tmp)))
+
+	while ((traverse_all_windows(&tmp)))
 	{
 		if (tmp->refnum == refnum)
-			return (tmp);
+			return tmp;
 	}
 	return NULL;
 }
