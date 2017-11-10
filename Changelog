@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Fix crash when passing $mychannels() a non-existent window refnum. (caf)
+
 * Remove dll_functions, dll_numeric, dll_commands, dll_variable, dll_ctcp,
   and dll_window variables from the module exports table. (caf)
 

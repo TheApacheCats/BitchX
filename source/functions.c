@@ -1886,18 +1886,28 @@ BUILT_IN_FUNCTION(function_curpos, input)
 	RETURN_INT(current_window->screen->buffer_pos);
 }
 
+/* $mychannels([window refnum])
+ *
+ * Returns the list of channels associated with the server for the given window.
+ *
+ * Note that this differs from the EPIC4/EPIC5 function of the same name, which
+ * takes a server refnum instead.
+ */
 BUILT_IN_FUNCTION(function_channels, input)
 {
-	long	winnum;
-	Window  *window = current_window;
+	Window *window = current_window;
 
 	if (isdigit((unsigned char)*input))
 	{
+		long winnum;
+
 		GET_INT_ARG(winnum, input);
 		window = get_window_by_refnum(winnum);
 	}
-	if (window->server <= -1)
+
+	if (!window)
 		RETURN_EMPTY;
+
 	return create_channel_list(window);	/* DON'T USE RETURN_STR HERE! */
 }
 
