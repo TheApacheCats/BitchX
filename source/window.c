@@ -1078,7 +1078,8 @@ void BX_hide_window(Window *window)
 {
 	if (!window->screen)
 	{
-		say("You can't hide an invisible window.");
+		if (!get_int_var(WINDOW_QUIET_VAR))
+			say("You can't hide an invisible window.");
 		return;
 	}
 	if (window->screen->visible_windows == 1)
@@ -1087,11 +1088,9 @@ void BX_hide_window(Window *window)
 			say("You can't hide the last window.");
 		return;
 	}
-	if (window->screen)
-	{
-		remove_window_from_screen(window);
-		add_to_invisible_list(window);
-	}
+
+	remove_window_from_screen(window);
+	add_to_invisible_list(window);
 }
 
 /*

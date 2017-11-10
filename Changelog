@@ -1,5 +1,8 @@
 [Changes 1.2.2]
 
+* Make "You can't hide an invisible window" message respect
+  /SET WINDOW_QUIET. (caf)
+
 * Allow $mychannels() to query a window attached to a different server. (caf)
 
 * Fix crash when passing $mychannels() a non-existent window refnum. (caf)
