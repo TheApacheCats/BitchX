@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Allow $mychannels() to query a window attached to a different server. (caf)
+
 * Fix crash when passing $mychannels() a non-existent window refnum. (caf)
 
 * Remove dll_functions, dll_numeric, dll_commands, dll_variable, dll_ctcp,

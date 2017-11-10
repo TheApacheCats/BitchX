@@ -1731,14 +1731,13 @@ extern	char	* BX_create_channel_list(Window *window)
 {
 	ChannelList *chan;
 	char buffer[BIG_BUFFER_SIZE];
+
+	buffer[0] = 0;
 	
-	for (*buffer = 0, chan = get_server_channels(window->server); chan; chan = chan->next)
+	for (chan = get_server_channels(window->server); chan; chan = chan->next)
 	{
-		if (chan->server == from_server)
-		{
-			strlcat(buffer, chan->channel, sizeof buffer);
-			strlcat(buffer, space, sizeof buffer);
-		}
+		strlcat(buffer, chan->channel, sizeof buffer);
+		strlcat(buffer, space, sizeof buffer);
 	}
 	return m_strdup(buffer);
 }
