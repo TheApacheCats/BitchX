@@ -1175,21 +1175,13 @@ char *BX_get_status_by_refnum(unsigned refnum, unsigned line)
 /*
  * get_window_by_desc: Given either a refnum or a name, find that window
  */
-Window *BX_get_window_by_desc (const char *stuff)
+Window *BX_get_window_by_desc(const char *desc)
 {
-Window *w = NULL;
-	do 
-	{
-		if ((w = get_window_by_name(stuff)))
-			break;
-		if (is_number(stuff) && (w = get_window_by_refnum(my_atol(stuff))))
-			break;
-		if (*stuff == '#')
-		{
-			stuff++;
-			continue;
-		}	
-	} while (0);
+	Window *w = get_window_by_name(desc);
+
+	if (!w && is_number(desc))
+		w = get_window_by_refnum(my_atol(desc));
+
 	return w;
 }
 
