@@ -80,48 +80,54 @@ extern char	*BX_move_to_abs_word (const register char *start, char **mark, int w
 	return pointer;
 }
 
-/* Move a relative number of words from the present mark */
-extern char	*BX_move_word_rel (const register char *start, char **mark, int word)
+/* move_word_rel()
+ *
+ * Take a string and return a pointer offset a number of words relative to a given mark.
+ * Positive offset N returns a pointer to Nth next word (not counting the current word,
+ * if the mark is within a word).  Negative offset -N returns a pointer to the Nth
+ * previous word, counting the current word.  Offset 0 leaves the mark unchanged.
+ */
+extern char	*BX_move_word_rel (const char *start, char **mark, int word)
 {
-	register char *pointer = *mark;
-	register int counter = word;
-	char *end = (char *)start + strlen((char *)start);
+	const char *pointer = *mark;
 
-	if (end == start) 	/* null string, return it */
+	if (!*start) 	/* null string, return it */
 		return (char *)start;
 
-	/* 
-	 * XXXX - this is utterly pointless at best, and
-	 * totally wrong at worst.
- 	 */
-
-	if (counter > 0)
+	if (word >= 0)
 	{
-		for (;counter > 0 && pointer;counter--)
+		for (;word > 0 && *pointer;word--)
 		{
+			/* Move pointer to first space after current word */
 			while (*pointer && !my_isspace(*pointer))
 				pointer++;
+			/* Move pointer to first character of next word */
 			while (*pointer && my_isspace(*pointer)) 
 				pointer++;
 		}
 	}
-	else if (counter == 0)
-		pointer = *mark;
-	else /* counter < 0 */
+	else /* word < 0 */
 	{
-		for (;counter < 0 && pointer > start;counter++)
+		/* If we are in between words, find the previous word */
+		while (pointer > start && my_isspace(pointer[0]))
+			pointer--;
+		/* Move pointer to first character of current word */
+		while (pointer > start && !my_isspace(pointer[-1]))
+			pointer--;
+
+		for (word++; word < 0 && pointer > start; word++)
 		{
-			while (pointer >= start && my_isspace(*pointer))
+			/* Move pointer to first space after previous word. */
+			while (pointer > start && my_isspace(pointer[-1]))
 				pointer--;
-			while (pointer >= start && !my_isspace(*pointer))
+
+			/* Move pointer to first character of word */
+			while (pointer > start && !my_isspace(pointer[-1]))
 				pointer--;
 		}
-		pointer++; /* bump up to the word we just passed */
 	}
 
-	if (mark)
-		*mark = pointer;
-	return pointer;
+	return *mark = (char *)pointer;
 }
 
 /*

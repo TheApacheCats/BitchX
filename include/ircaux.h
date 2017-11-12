@@ -134,7 +134,7 @@ char *	base64_encode	(const void *data, size_t size);
 #define EOS 32767
 char	*BX_strsearch			(register char *, char *, char *, int);
 char	*BX_move_to_abs_word	(const register char *, char **, int);
-char	*BX_move_word_rel		(const register char *, char **, int);
+char	*BX_move_word_rel		(const char *, char **, int);
 char	*BX_extract		(char *, int, int);
 char	*BX_extract2		(const char *, int, int);
 int	BX_wild_match		(const char *, const char *);
