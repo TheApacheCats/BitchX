@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Rename exported function move_to_abs_word() to move_to_word(). (caf)
+
 * Make "You can't hide an invisible window" message respect
   /SET WINDOW_QUIET. (caf)
 

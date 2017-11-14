@@ -47,12 +47,14 @@ extern char	*BX_strsearch(register char *start, char *mark, char *chars, int how
 	return mark;
 }
 
-/* Move to an absolute word number from start */
-/* First word is always numbered zero. */
-extern char	*BX_move_to_abs_word (const register char *start, char **mark, int word)
+/* move_to_word()
+ *
+ * Return a pointer to the first character of the Nth word in a string.
+ * The first word is always numbered zero.
+ */
+extern char	*BX_move_to_word(const char *start, int word)
 {
-	register char *pointer = (char *)start;
-	register int counter = word;
+	const char *pointer = start;
 
 	/* This fixes a bug that counted leading spaces as
 	 * a word, when they're really not a word.... 
@@ -64,10 +66,10 @@ extern char	*BX_move_to_abs_word (const register char *start, char **mark, int w
 	 * my foot in this one... I'm just going to go with
 	 * what the stock client does...
 	 */
-	 while (pointer && *pointer && my_isspace(*pointer))
+	while (*pointer && my_isspace(*pointer))
 		pointer++;
 
-	for (;counter > 0 && *pointer;counter--)
+	for (; word > 0 && *pointer; word--)
 	{
 		while (*pointer && !my_isspace(*pointer))
 			pointer++;
@@ -75,9 +77,7 @@ extern char	*BX_move_to_abs_word (const register char *start, char **mark, int w
 			pointer++;
 	}
 
-	if (mark)
-		*mark = pointer;
-	return pointer;
+	return (char *)pointer;
 }
 
 /* move_word_rel()
@@ -179,7 +179,7 @@ extern char	*BX_extract2(const char *start, int firstword, int lastword)
 	/* If the firstword is positive, move to that word */
 	else if (firstword >= 0)
 	{
-		move_to_abs_word(start, &mark, firstword);
+		mark = move_to_word(start, firstword);
 		if (!*mark)
 			return m_strdup(empty_string);
 	}
@@ -221,7 +221,7 @@ extern char	*BX_extract2(const char *start, int firstword, int lastword)
 	else 
 	{
 		if (lastword >= 0)
-			move_to_abs_word(start, &mark2, lastword+1);
+			mark2 = move_to_word(start, lastword + 1);
 		else
 		{
 			mark2 = (char *)start + strlen(start);
@@ -297,7 +297,7 @@ extern char	*BX_extract(char *start, int firstword, int lastword)
 
 	/* If the firstword is positive, move to that word */
 	else if (firstword >= 0)
-		move_to_abs_word(start, &mark, firstword);
+		mark = move_to_word(start, firstword);
 
 	/* Its negative.  Hold off right now. */
 	else
@@ -314,7 +314,7 @@ extern char	*BX_extract(char *start, int firstword, int lastword)
 	else 
 	{
 		if (lastword >= 0)
-			move_to_abs_word(start, &mark2, lastword+1);
+			mark2 = move_to_word(start, lastword + 1);
 		else
 			/* it's negative -- that's not valid */
 			return m_strdup(empty_string);

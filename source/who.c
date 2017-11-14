@@ -845,7 +845,7 @@ void BX_userhostbase(char *args, void (*line) (UserhostItem *, char *, char *), 
 		{
 			UserhostEntry *new_uh = get_new_userhost_entry();
 
-			move_to_abs_word(ptr, &next_ptr, 5);
+			next_ptr = move_to_word(ptr, 5);
 			if (next_ptr && *next_ptr && next_ptr > ptr)
 				next_ptr[-1] = 0;
 

@@ -10,7 +10,7 @@
  * if we change the table below, we change this module number to the 
  * current date (YYYYMMDDxx where xx is a serial number).
  */
-#define MODULE_VERSION 2017110602UL
+#define MODULE_VERSION 2017111401UL
 
 #include "struct.h"
 
@@ -201,7 +201,7 @@ enum FUNCTION_VALUE
 	
 /* words.c */
 	STRSEARCH,
-	MOVE_TO_ABS_WORD,
+	MOVE_TO_WORD,
 	MOVE_WORD_REL,
 	EXTRACT,
 	EXTRACT2,

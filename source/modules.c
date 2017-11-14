@@ -201,7 +201,7 @@ static int already_done = 0;
 	
 /* words.c reg.c */
 	global_table[STRSEARCH]			= (Function_ptr) BX_strsearch;
-	global_table[MOVE_TO_ABS_WORD]		= (Function_ptr) BX_move_to_abs_word;
+	global_table[MOVE_TO_WORD]		= (Function_ptr) BX_move_to_word;
 	global_table[MOVE_WORD_REL]		= (Function_ptr) BX_move_word_rel;
 	global_table[EXTRACT]			= (Function_ptr) BX_extract;
 	global_table[EXTRACT2]			= (Function_ptr) BX_extract2;
