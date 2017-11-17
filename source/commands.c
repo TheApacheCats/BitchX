@@ -4352,8 +4352,7 @@ void BX_parse_line (const char *name, char *org_line, const char *args, int hist
 {
 	char	*line = NULL,
 			*stuff,
-			*s,
-			*t;
+			*s;
 	int	args_flag = 0,
 		die = 0;
 
@@ -4416,13 +4415,10 @@ void BX_parse_line (const char *name, char *org_line, const char *args, int hist
 		{
 			while ((s = line))
 			{
-				if ((t = sindex(line, "\r\n")))
-				{
-					*t++ = '\0';
-					line = t;
-				}
-				else
-					line = NULL;
+				line = strpbrk(line, "\r\n");
+				if (line)
+					*line++ = '\0';
+
 				parse_command(s, hist_flag, (char *)args);
 
 				if ((will_catch_break_exceptions && break_exception) ||
@@ -4945,7 +4941,7 @@ BUILT_IN_COMMAND(BX_load)
 				char    *optr = start;
 
 				/* Skip slashed brackets */
-				while ((ptr = sindex(optr, "{};/")) && 
+				while ((ptr = strpbrk(optr, "{};/")) &&
 				      ptr != optr && ptr[-1] == '\\')
 					optr = ptr+1;
 

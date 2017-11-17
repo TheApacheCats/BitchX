@@ -832,11 +832,11 @@ static char *cut_n_fix_glob ( char *nickuserhost )
 		/* doh! */
 		user = userhost;
 
-		if ((host = sindex(userhost, "@")))
+		if ((host = strchr(userhost, '@')))
 			/* USER IS CORRECT HERE */
 			*host++ = 0;
 
-		else if (sindex(userhost, "."))
+		else if (strchr(userhost, '.'))
 		{
 			user = "*";
 			host = userhost;
@@ -850,14 +850,14 @@ static char *cut_n_fix_glob ( char *nickuserhost )
 	else
 	{
 		user = copy;
-		if ((host = sindex(user, "@")))
+		if ((host = strchr(user, '@')))
 		{
 			nick = "*";
 			*host++ = 0;
 		}
 		else
 		{
-			if (sindex(user, "."))
+			if (strchr(user, '.'))
 			{
 				nick = "*";
 				host = user;

@@ -460,25 +460,28 @@ extern  int     word_scount (char *str)
 }
 #endif
 
-char	*BX_next_arg (char *str, char **new_ptr)
+char *BX_next_arg(char *str, char **new_ptr)
 {
-	char	*ptr;
+	char *ptr;
 
-	/* added by Sheik (kilau@prairie.nodak.edu) -- sanity */
-	if (!str || !*str)
+	if (!str)
 		return NULL;
 
 	if ((ptr = sindex(str, "^ ")) != NULL)
 	{
-		if ((str = sindex(ptr, space)) != NULL)
-			*str++ = (char) 0;
+		if ((str = strchr(ptr, ' ')) != NULL)
+			*str++ = 0;
 		else
 			str = empty_string;
 	}
 	else
+	{
 		str = empty_string;
+	}
+
 	if (new_ptr)
 		*new_ptr = str;
+
 	return ptr;
 }
 
@@ -616,7 +619,7 @@ char	*safe_new_next_arg (char *str, char **new_ptr)
 		if (*ptr == '"')
 		{
 			start = ++ptr;
-			while ((str = sindex(ptr, "\"\\")) != NULL)
+			while ((str = strpbrk(ptr, "\"\\")) != NULL)
 			{
 				switch (*str)
 				{
@@ -637,7 +640,7 @@ char	*safe_new_next_arg (char *str, char **new_ptr)
 		}
 		else
 		{
-			if ((str = sindex(ptr, " \t")) != NULL)
+			if ((str = strpbrk(ptr, " \t")) != NULL)
 				*str++ = '\0';
 			else
 				str = empty_string;
@@ -667,14 +670,11 @@ char	*BX_new_new_next_arg (char *str, char **new_ptr, char *type)
 	{
 		if ((*ptr == '"') || (*ptr == '\''))
 		{
-			char blah[3];
-			blah[0] = *ptr;
-			blah[1] = '\\';
-			blah[2] = '\0';
+			char accept[] = { *ptr, '\\', 0 };
 
 			*type = *ptr;
 			start = ++ptr;
-			while ((str = sindex(ptr, blah)) != NULL)
+			while ((str = strpbrk(ptr, accept)) != NULL)
 			{
 				switch (*str)
 				{
@@ -697,7 +697,7 @@ char	*BX_new_new_next_arg (char *str, char **new_ptr, char *type)
 		else
 		{
 			*type = '\"';
-			if ((str = sindex(ptr, " \t")) != NULL)
+			if ((str = strpbrk(ptr, " \t")) != NULL)
 				*str++ = 0;
 			else
 				str = empty_string;

@@ -194,8 +194,8 @@ void add_to_history(char *line)
 	{
 		while (line && *line)
 		{
-			if ((ptr = sindex(line, "\n\r")) != NULL)
-				*(ptr++) = '\0';
+			if ((ptr = strpbrk(line, "\r\n")) != NULL)
+				*ptr++ = '\0';
 			add_to_history_list(hist_count, line);
 			last_dir = PREV;
 			hist_count++;
