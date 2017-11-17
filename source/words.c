@@ -15,36 +15,45 @@ CVS_REVISION(words_c)
 #include "ircaux.h"
 #include "modval.h"
 
-/*
- * search() looks for a character forward or backward from mark 
+/* strsearch()
+ *
+ * If how > 0, returns a pointer to the how'th matching character forwards
+ * from mark, in the string starting at start.
+ * If how < 0, returns a pointer to the -how'th matching character backwards
+ * from mark, in the string starting at start.
+ * If how == 0, returns NULL.
+ *
+ * NULL mark begins the search at start.
+ *
+ * A matching character is any character in chars, unless chars starts with ^, 
+ * in which case a matching character is any character NOT in chars.
+ *
+ * If there are insufficient matching characters, NULL is returned.
  */
-extern char	*BX_strsearch(register char *start, char *mark, char *chars, int how)
+extern char	*BX_strsearch(const char *start, const char *mark, const char *chars, int how)
 {
-        if (!mark)
-                mark = start;
+	const char *ptr = NULL;
 
-        if (how > 0)   /* forward search */
-        {
-		mark = sindex(mark, chars);
-		how--;
-		for (; how > 0 && mark && *mark; how--)
-			mark = sindex(mark + 1, chars);
-	}
+	if (!mark)
+		mark = start;
 
-	else if (how == 0)
-		return NULL;
-
-	else  /* how < 0 */
+	if (how > 0)   /* forward search */
 	{
-		mark = rsindex(mark, start, chars, -how);
-#if 0
-		how++;
-		for (;(how < 0) && *mark && **mark;how++)
-			*mark = rsindex(*mark-1, start, chars);
-#endif
+		for (; how > 0 && mark; how--)
+		{
+			ptr = sindex(mark, chars);
+			if (ptr)
+				mark = ptr + 1;
+			else
+				mark = NULL;
+		}
+	}
+	else if (how < 0)
+	{
+		ptr = rsindex(mark, start, chars, -how);
 	}
 
-	return mark;
+	return (char *)ptr;
 }
 
 /* move_to_word()

@@ -199,7 +199,7 @@ extern Function_ptr *global;
 
 
 /* words.c reg.c */
-#define strsearch (*(char *(*)(char *, char *, char *, int ))global[STRSEARCH])
+#define strsearch (*(char *(*)(const char *, const char *, const char *, int ))global[STRSEARCH])
 #define move_to_word (*(char *(*)(const char *, int))global[MOVE_TO_WORD])
 #define move_word_rel (*(char *(*)(const char *, char **, int ))global[MOVE_WORD_REL])
 #define extract (*(char *(*)(char *, int , int ))global[EXTRACT])

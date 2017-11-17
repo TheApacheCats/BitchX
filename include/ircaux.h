@@ -132,12 +132,12 @@ char *	base64_encode	(const void *data, size_t size);
 /* From words.c */
 #define SOS -32767
 #define EOS 32767
-char	*BX_strsearch			(register char *, char *, char *, int);
-char	*BX_move_to_word	(const char *, int);
-char	*BX_move_word_rel		(const char *, char **, int);
-char	*BX_extract		(char *, int, int);
-char	*BX_extract2		(const char *, int, int);
-int	BX_wild_match		(const char *, const char *);
+char *BX_strsearch(const char *, const char *, const char *, int);
+char *BX_move_to_word(const char *, int);
+char *BX_move_word_rel(const char *, char **, int);
+char *BX_extract(char *, int, int);
+char *BX_extract2(const char *, int, int);
+int BX_wild_match(const char *, const char *);
 
 /* Used for connect_by_number */
 #define SERVICE_SERVER 0
