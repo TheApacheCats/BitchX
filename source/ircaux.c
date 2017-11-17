@@ -297,36 +297,48 @@ char	*BX_m_3cat(char **one, const char *two, const char *three)
 	return ((*one = str));
 }
 
-char	*BX_upper (char *str)
+/* upper()
+ *
+ * Convert in-place every lower-case character in a string to upper-case.
+ */
+char *BX_upper(char *str)
 {
-register char	*ptr = NULL;
+	char *ptr;
 
 	if (str)
 	{
-		ptr = str;
-		for (; *str; str++)
+		for (ptr = str; *ptr; ptr++)
 		{
-			if (islower((unsigned char)*str))
-				*str = toupper(*str);
+			unsigned char c = *ptr;
+
+			if (islower(c))
+				*ptr = toupper(c);
 		}
 	}
-	return (ptr);
+
+	return str;
 }
 
-char	*BX_lower (char *str)
+/* lower()
+ *
+ * Convert in-place every upper-case character in a string to lower-case.
+ */
+char *BX_lower(char *str)
 {
-register char	*ptr = NULL;
+	char *ptr;
 
 	if (str)
 	{
-		ptr = str;
-		for (; *str; str++)
+		for (ptr = str; *ptr; ptr++)
 		{
-			if (isupper((unsigned char)*str))
-				*str = tolower(*str);
+			unsigned char c = *ptr;
+
+			if (isupper(c))
+				*ptr = tolower(c);
 		}
 	}
-	return (ptr);
+
+	return str;
 }
 
 char *BX_malloc_sprintf (char **to, const char *pattern, ...)
