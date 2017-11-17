@@ -505,12 +505,14 @@ void reattach_tty(char *tty, char *password)
 				if (FD_ISSET(0, &rd_fd))
 				{
 					len = read(0, buffer, sizeof(buffer)-1);
-					write(s, buffer, len);
+					if (len > 0)
+						write(s, buffer, len);
 				}
 				if (FD_ISSET(s, &rd_fd))
 				{
 					len = read(s, buffer, sizeof(buffer)-1);
-					write(1, buffer, len);
+					if (len > 0)
+						write(1, buffer, len);
 				}
 			}
 		}
