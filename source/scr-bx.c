@@ -231,7 +231,7 @@ char *find_detach_socket(const char *path, char *name)
 	DIR	*dptr;
 	struct	dirent	*dir;
 	struct	stat	st;
-	char *ret = NULL, *p;
+	char *ret;
 	int count = 0;
 
 	if (!(dptr = opendir(path)))
@@ -246,35 +246,15 @@ char *find_detach_socket(const char *path, char *name)
 		if (dir->d_name[0] == '.')
 			continue;
 		sprintf(ret, "%s/%s", path, dir->d_name);
-		p = strrchr(ret, '/'); p++;
 		if ((stat(ret, &st) == -1) || (st.st_uid != getuid()) || S_ISDIR(st.st_mode))
 		{
 			*ret = 0;
 			continue;
 		}
-		if (name)
+		if (name && !strstr(dir->d_name, name))
 		{
-			char *pid, *n_tty, *h_name;
-			pid = LOCAL_COPY(p);
-			n_tty = strchr(pid, '.'); *n_tty++ = 0;
-			h_name = strchr(n_tty, '.'); *h_name++ = 0;
-			if (strcmp(name, pid))
-			{
-				if (strcmp(n_tty, name))
-				{
-					if (strcmp(h_name, name))
-					{
-						if (strcmp(p, name))
-						{
-							if (!strstr(p, name))
-							{
-								*ret = 0;
-								continue;
-							}
-						}
-					}
-				}
-			}
+			*ret = 0;
+			continue;
 		}
 		if ((st.st_mode & 0700) == 0600)
 			break;
