@@ -1,5 +1,8 @@
 [Changes 1.2.2]
 
+* scr-bx now lists the detached screens if there is more than one that matches
+  the string supplied by the user. (caf)
+
 * Rename exported function move_to_abs_word() to move_to_word(). (caf)
 
 * Make "You can't hide an invisible window" message respect

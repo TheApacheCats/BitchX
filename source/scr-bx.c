@@ -228,55 +228,56 @@ void display_socket_list(const char *path, int unl, char *arg)
 
 char *find_detach_socket(const char *path, char *name)
 {
+	const size_t path_len = strlen(path);
 	DIR	*dptr;
 	struct	dirent	*dir;
 	struct	stat	st;
-	char *ret;
+	char *ret = NULL;
+	char *path_name = NULL;
 	int count = 0;
 
 	if (!(dptr = opendir(path)))
 		return NULL;
-	ret = malloc(2000);
-	*ret = 0;
+
+	/* Count matching detach sockets */
 	while ((dir = readdir(dptr)))
 	{
-		*ret = 0;
 		if (!dir->d_ino)
 			continue;
 		if (dir->d_name[0] == '.')
 			continue;
-		sprintf(ret, "%s/%s", path, dir->d_name);
-		if ((stat(ret, &st) == -1) || (st.st_uid != getuid()) || S_ISDIR(st.st_mode))
-		{
-			*ret = 0;
-			continue;
-		}
+
 		if (name && !strstr(dir->d_name, name))
-		{
-			*ret = 0;
 			continue;
+
+		path_name = realloc(path_name, path_len + 2 + strlen(dir->d_name));
+		sprintf(path_name, "%s/%s", path, dir->d_name);
+
+		if (stat(path_name, &st) == -1)
+			continue;
+
+		if (((st.st_mode & 0700) == 0600) && (st.st_uid == getuid()) && !S_ISDIR(st.st_mode))
+		{
+			count++;
+			free(ret);
+			ret = path_name;
+			path_name = NULL;
 		}
-		if ((st.st_mode & 0700) == 0600)
-			break;
-		count++;
-		*ret = 0;
 	}
+	free(path_name);
 	closedir(dptr);
-	if (ret && !*ret)
-	{
-		free(ret);
-		ret = NULL;
-	}
+
 	switch (count)
 	{
+		default:
+			display_socket_list(path, 0, name);
+			/* fallthrough */
 		case 0:
+			free(ret);
+			ret = NULL;
 			break;
 		case 1:
 			break;
-		default:
-			display_socket_list(path, 0, name);
-			if (ret) free(ret);
-			ret = NULL;
 	}
 	return ret;
 }
