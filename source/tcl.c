@@ -145,7 +145,7 @@ int i;
 		{
 			DCC_int *n;
 			n = (DCC_int *)s->info;
-			snprintf(buff, sizeof buff, "%d %s", n->dccnum, s->server);
+			snprintf(buff, sizeof buff, "%u %s", n->dccnum, s->server);
 			Tcl_AppendElement(irp, buff);
 			count++;
 		}
@@ -174,7 +174,7 @@ int count = 0;
 		if ((s->flags & DCC_TYPES) == DCC_CHAT)
 		{
 			n = (DCC_int *) s->info;
-			snprintf(buff, sizeof buff, "%d %s", n->dccnum, s->server);
+			snprintf(buff, sizeof buff, "%u %s", n->dccnum, s->server);
 			Tcl_AppendElement(irp, buff);
 			count++;
 		}
@@ -1141,7 +1141,7 @@ int tcl_unixtime STDVAR
 
 	
 	BADARGS(1,1,"");
-	snprintf(s, sizeof s, "%lu", now);
+	snprintf(s, sizeof s, "%lu", (unsigned long)now);
 	Tcl_AppendResult(irp,s,NULL);
 	return TCL_OK;
 }
