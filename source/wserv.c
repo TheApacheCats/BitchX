@@ -88,19 +88,25 @@ int main (int argc, char **argv)
 		FD_SET(0, &reads);
 		FD_SET(s, &reads);
 		if (select(s + 1, &reads, NULL, NULL, NULL) <= 0)
+		{
 			if (errno == EINTR)
 				continue;
+			else
+				break;
+		}
 
 		if (FD_ISSET(0, &reads))
 		{
-			if ((nread = read(0, buffer, sizeof(buffer))))
+			nread = read(0, buffer, sizeof buffer);
+			if (nread > 0)
 				write(s, buffer, nread);
 			else
 				my_exit(3);
 		}
 		if (FD_ISSET(s, &reads))
 		{
-			if ((nread = read(s, buffer, sizeof(buffer))))
+			nread = read(s, buffer, sizeof buffer);
+			if (nread > 0)
 				write(1, buffer, nread);
 			else
 				my_exit(4);
