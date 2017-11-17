@@ -28,6 +28,7 @@ char *	BX_last_arg 		(char **);
 char *	BX_expand_twiddle 		(char *);
 char *	BX_upper 			(char *);
 char *	BX_lower 			(char *);
+char *inv_strpbrk(const char *s, const char *reject);
 char *	BX_sindex			(const char *, const char *);
 char *	BX_rsindex 		(const char *, const char *, const char *, int);
 char *	BX_path_search 		(char *, char *);

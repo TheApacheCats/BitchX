@@ -467,7 +467,7 @@ char *BX_next_arg(char *str, char **new_ptr)
 	if (!str)
 		return NULL;
 
-	if ((ptr = sindex(str, "^ ")) != NULL)
+	if ((ptr = inv_strpbrk(str, " ")) != NULL)
 	{
 		if ((str = strchr(ptr, ' ')) != NULL)
 			*str++ = 0;
@@ -614,7 +614,7 @@ char	*safe_new_next_arg (char *str, char **new_ptr)
 	if (!str || !*str)
 		return empty_string;
 
-	if ((ptr = sindex(str, "^ \t")) != NULL)
+	if ((ptr = inv_strpbrk(str, " \t")) != NULL)
 	{
 		if (*ptr == '"')
 		{
@@ -666,7 +666,7 @@ char	*BX_new_new_next_arg (char *str, char **new_ptr, char *type)
 	if (!str || !*str)
 		return NULL;
 
-	if ((ptr = sindex(str, "^ \t")) != NULL)
+	if ((ptr = inv_strpbrk(str, " \t")) != NULL)
 	{
 		if ((*ptr == '"') || (*ptr == '\''))
 		{
@@ -1066,6 +1066,23 @@ char	*BX_check_nickname (char *nick)
 	return *nick ? nick : NULL;
 }
 
+/* inv_strcpbrk()
+ *
+ * Returns a pointer to the first character in a string which is NOT found
+ * in 'reject'.
+ *
+ * This is the inverse of the standard function strpbrk().
+ */
+char *inv_strpbrk(const char *s, const char *reject)
+{
+	s += strspn(s, reject);
+
+	if (!*s)
+		return NULL;
+
+	return (char *)s;
+}
+
 /* sindex()
  *
  * Returns a pointer to the first matching character in a string, or NULL if
@@ -1081,18 +1098,9 @@ char *BX_sindex(const char *string, const char *group)
 		return NULL;
 
 	if (*group == '^')
-	{
-		string += strspn(string, group + 1);
-	}
+		return inv_strpbrk(string, group + 1);
 	else
-	{
-		string += strcspn(string, group);
-	}
-
-	if (*string)
-		return (char *)string;
-	else
-		return NULL;
+		return strpbrk(string, group);
 }
 
 /* rsindex()

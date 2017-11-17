@@ -3526,7 +3526,7 @@ BUILT_IN_COMMAND(untopic)
 	ChannelList *chan;
 	int server;
 	
-	args = sindex(args, "^ ");
+	args = inv_strpbrk(args, " ");
 
 	if (is_channel(args))
 		channel = next_arg(args, &args);
@@ -3543,12 +3543,12 @@ BUILT_IN_COMMAND(e_topic)
 	ChannelList *chan;
 	int server;
 
-	args = sindex(args, "^ ");
+	args = inv_strpbrk(args, " ");
 
 	if (is_channel(args))
 	{
 		channel = next_arg(args, &args);
-		args = sindex(args, "^ ");
+		args = inv_strpbrk(args, " ");
 	}
 
 	if (!(chan = prepare_command(&server, channel, args ? PC_TOPIC : NO_OP)))
