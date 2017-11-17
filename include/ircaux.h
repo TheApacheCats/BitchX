@@ -28,8 +28,8 @@ char *	BX_last_arg 		(char **);
 char *	BX_expand_twiddle 		(char *);
 char *	BX_upper 			(char *);
 char *	BX_lower 			(char *);
-char *	BX_sindex			(register char *, char *);
-char *	BX_rsindex 		(register char *, char *, char *, int);
+char *	BX_sindex			(const char *, const char *);
+char *	BX_rsindex 		(const char *, const char *, const char *, int);
 char *	BX_path_search 		(char *, char *);
 char *	BX_double_quote 		(const char *, const char *, char *);
 

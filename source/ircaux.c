@@ -1066,53 +1066,47 @@ char	*BX_check_nickname (char *nick)
 	return *nick ? nick : NULL;
 }
 
-/*
- * sindex: much like index(), but it looks for a match of any character in
- * the group, and returns that position.  If the first character is a ^, then
- * this will match the first occurrence not in that group.
+/* sindex()
+ *
+ * Returns a pointer to the first matching character in a string, or NULL if
+ * there are no matching characters.
+ *
+ * A matching character is any character in 'group', unless the first
+ * character of 'group' is a ^, in which case a matching character is any
+ * character NOT in 'group'.
  */
-char	*BX_sindex (register char *string, char *group)
+char *BX_sindex(const char *string, const char *group)
 {
-	char	*ptr;
-
 	if (!string || !group)
-		return (char *) NULL;
+		return NULL;
+
 	if (*group == '^')
 	{
-		group++;
-		for (; *string; string++)
-		{
-			for (ptr = group; *ptr; ptr++)
-			{
-				if (*ptr == *string)
-					break;
-			}
-			if (*ptr == '\0')
-				return string;
-		}
+		string += strspn(string, group + 1);
 	}
 	else
 	{
-		for (; *string; string++)
-		{
-			for (ptr = group; *ptr; ptr++)
-			{
-				if (*ptr == *string)
-					return string;
-			}
-		}
+		string += strcspn(string, group);
 	}
-	return (char *) NULL;
+
+	if (*string)
+		return (char *)string;
+	else
+		return NULL;
 }
 
-/*
- * rsindex: much like rindex(), but it looks for a match of any character in
- * the group, and returns that position.  If the first character is a ^, then
- * this will match the first occurrence not in that group.
+/* rsindex()
+ *
+ * Returns a pointer to the howmany'th last matching character in a string, or
+ * NULL if there are less than howmany matching characters.  Returns NULL
+ * if howmany is zero.
+ *
+ * A matching character is any character in 'group', unless the first character of 'group'
+ * is a ^, in which case a matching character is any character NOT in 'group'.
  */
-char	*BX_rsindex (register char *string, char *start, char *group, int howmany)
+char *BX_rsindex(const char *string, const char *start, const char *group, int howmany)
 {
-	register char	*ptr;
+	const char *ptr;
 
 	if (howmany && string && start && group && start <= string)
 	{
@@ -1124,7 +1118,7 @@ char	*BX_rsindex (register char *string, char *start, char *group, int howmany)
 				if (!strchr(group, *ptr))
 				{
 					if (--howmany == 0)
-						return ptr;
+						return (char *)ptr;
 				}
 			}
 		}
@@ -1135,7 +1129,7 @@ char	*BX_rsindex (register char *string, char *start, char *group, int howmany)
 				if (strchr(group, *ptr))
 				{
 					if (--howmany == 0)
-						return ptr;
+						return (char *)ptr;
 				}
 			}
 		}
