@@ -1117,41 +1117,32 @@ char *BX_sindex(const char *string, const char *group)
 
 /* rsindex()
  *
- * Returns a pointer to the howmany'th last matching character in a string, or
- * NULL if there are less than howmany matching characters.  Returns NULL
- * if howmany is zero.
+ * Returns a pointer to the last matching character that appears in a string BEFORE the
+ * initial search point (to search the entire string, set the initial search point to
+ * the terminating NUL). Returns NULL if no matching characters are found.
+ *
+ * The string to be searched starts at 'start' and the initial search point is 'ptr'.
  *
  * A matching character is any character in 'group', unless the first character of 'group'
  * is a ^, in which case a matching character is any character NOT in 'group'.
  */
-char *BX_rsindex(const char *string, const char *start, const char *group, int howmany)
+char *BX_rsindex(const char *ptr, const char *start, const char *group)
 {
-	const char *ptr;
-
-	if (howmany && string && start && group && start <= string)
+	if (ptr && start && group && start <= ptr)
 	{
+		int invert = 0;
+
 		if (*group == '^')
 		{
 			group++;
-			for (ptr = string; (ptr >= start) && howmany; ptr--)
-			{
-				if (!strchr(group, *ptr))
-				{
-					if (--howmany == 0)
-						return (char *)ptr;
-				}
-			}
+			invert = 1;
 		}
-		else
+
+		while (ptr > start)
 		{
-			for (ptr = string; (ptr >= start) && howmany; ptr--)
-			{
-				if (strchr(group, *ptr))
-				{
-					if (--howmany == 0)
-						return (char *)ptr;
-				}
-			}
+			ptr--;
+			if (invert == !strchr(group, *ptr))
+				return (char *)ptr;
 		}
 	}
 	return NULL;

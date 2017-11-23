@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Simplify rsindex() and strsearch() exported functions. (caf)
+
 * scr-bx now lists the detached screens if there is more than one that matches
   the string supplied by the user. (caf)
 

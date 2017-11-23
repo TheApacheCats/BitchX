@@ -146,7 +146,7 @@ extern Function_ptr *global;
 #define expand_twiddle (*(char * (*)(char *))global[EXPAND_TWIDDLE])
 #define check_nickname (*(char * (*)(char *))global[CHECK_NICKNAME])
 #define sindex (*(char * (*)(const char *, const char *))global[SINDEX])
-#define rsindex (*(char * (*)(const char *, const char *, const char *, int))global[RSINDEX])
+#define rsindex (*(char * (*)(const char *, const char *, const char *))global[RSINDEX])
 #define is_number (*(int (*)(const char *))global[ISNUMBER])
 #define rfgets (*(char * (*)(char *, int , FILE *))global[RFGETS])
 #define path_search (*(char * (*)(char *, char *))global[PATH_SEARCH])
@@ -199,7 +199,7 @@ extern Function_ptr *global;
 
 
 /* words.c reg.c */
-#define strsearch (*(char *(*)(const char *, const char *, const char *, int ))global[STRSEARCH])
+#define strsearch (*(char *(*)(const char *, const char *, int))global[STRSEARCH])
 #define move_to_word (*(char *(*)(const char *, int))global[MOVE_TO_WORD])
 #define move_word_rel (*(char *(*)(const char *, char **, int ))global[MOVE_WORD_REL])
 #define extract (*(char *(*)(char *, int , int ))global[EXTRACT])

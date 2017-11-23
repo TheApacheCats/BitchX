@@ -1520,7 +1520,7 @@ BUILT_IN_FUNCTION(function_rindex, word)
 
 	/* need to find out why ^x doesn't work */
 	GET_STR_ARG(chars, word);
-	last = rsindex(word + strlen(word) - 1, word, chars, 1);
+	last = rsindex(word + strlen(word), word, chars);
 	RETURN_INT(last ? last - word : -1);
 }
 
@@ -1993,7 +1993,7 @@ BUILT_IN_FUNCTION(function_idle, input)
  */
 BUILT_IN_FUNCTION(function_before, word)
 {
-	char	*pointer = NULL;
+	char	*pointer;
 	char	*chars;
 	char	*tmp;
 	long	numint;
@@ -2011,10 +2011,7 @@ BUILT_IN_FUNCTION(function_before, word)
 		chars = tmp;
 	}
 
-	if (numint < 0 && strlen(word))
-		pointer = word + strlen(word) - 1;
-
-	pointer = strsearch(word, pointer, chars, numint);
+	pointer = strsearch(word, chars, numint);
 
 	if (!pointer)
 		RETURN_EMPTY;
@@ -2031,7 +2028,7 @@ BUILT_IN_FUNCTION(function_before, word)
 BUILT_IN_FUNCTION(function_after, word)
 {
 	char	*chars;
-	char	*pointer = NULL;
+	char	*pointer;
 	char 	*tmp;
 	long	numint;
 
@@ -2046,10 +2043,7 @@ BUILT_IN_FUNCTION(function_after, word)
 		chars = tmp;
 	}
 
-	if (numint < 0 && strlen(word))
-		pointer = word + strlen(word) - 1;
-
-	pointer = strsearch(word, pointer, chars, numint);
+	pointer = strsearch(word, chars, numint);
 
 	if (!pointer || !*pointer)
 		RETURN_EMPTY;

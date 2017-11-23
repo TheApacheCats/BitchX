@@ -18,27 +18,24 @@ CVS_REVISION(words_c)
 /* strsearch()
  *
  * If how > 0, returns a pointer to the how'th matching character forwards
- * from mark, in the string starting at start.
+ * from the beginning of the string starting at start.
  * If how < 0, returns a pointer to the -how'th matching character backwards
- * from mark, in the string starting at start.
+ * from the end of the string starting at start.
  * If how == 0, returns NULL.
- *
- * NULL mark begins the search at start.
  *
  * A matching character is any character in chars, unless chars starts with ^, 
  * in which case a matching character is any character NOT in chars.
  *
  * If there are insufficient matching characters, NULL is returned.
  */
-extern char	*BX_strsearch(const char *start, const char *mark, const char *chars, int how)
+extern char	*BX_strsearch(const char *start, const char *chars, int how)
 {
 	const char *ptr = NULL;
 
-	if (!mark)
-		mark = start;
-
 	if (how > 0)   /* forward search */
 	{
+		const char *mark = start;
+
 		for (; how > 0 && mark; how--)
 		{
 			ptr = sindex(mark, chars);
@@ -50,7 +47,10 @@ extern char	*BX_strsearch(const char *start, const char *mark, const char *chars
 	}
 	else if (how < 0)
 	{
-		ptr = rsindex(mark, start, chars, -how);
+		ptr = start + strlen(start);
+
+		for (; how < 0 && ptr; how++)
+			ptr = rsindex(ptr, start, chars);
 	}
 
 	return (char *)ptr;
