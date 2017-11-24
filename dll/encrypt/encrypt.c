@@ -17,7 +17,7 @@
 
 #define cparse convert_output_format
 char encode_version[] = "Encode 0.001";
-unsigned char *encode_string = NULL;
+unsigned char encode_string[256];
 
 BUILT_IN_FUNCTION(func_encode)
 {
@@ -25,7 +25,7 @@ char *new;
 	if (!input)
 		return m_strdup(empty_string);
 	new = m_strdup(input);
-	my_encrypt(new, strlen(new), encode_string);
+	my_encrypt(new, strlen(new), (char *)encode_string);
 	return new;
 }
 
@@ -35,7 +35,7 @@ char *new;
 	if (!input)
 		return m_strdup(empty_string);
 	new = m_strdup(input);
-	my_decrypt(new, strlen(new), encode_string);
+	my_decrypt(new, strlen(new), (char *)encode_string);
 	return new;
 }
 
@@ -47,24 +47,25 @@ char *Encode_Version(IrcCommandDll **intp)
 
 int Encrypt_Init(IrcCommandDll **intp, Function_ptr *global_table)
 {
-int i, j;
-char buffer[BIG_BUFFER_SIZE+1];
+	int i;
+	char buffer[BIG_BUFFER_SIZE+1];
+
 	initialize_module("encrypt");
 	
 	add_module_proc(ALIAS_PROC, "encrypt", "MENCODE", NULL, 0, 0, func_encode, NULL);
 	add_module_proc(ALIAS_PROC, "encrypt", "MDECODE", NULL, 0, 0, func_decode, NULL);
-	encode_string = (char *)new_malloc(512);
-	for (i = 1, j = 255; i <= 255; i++, j--)
+
+	for (i = 1; i <= 255; i++)
 	{
 		switch (i)
 		{
 			case 27:
 			case 127:
 			case 255:
-				encode_string[i-1] = i;
+				encode_string[i - 1] = i;
 				break;
 			default:
-				encode_string[i-1] = j;
+				encode_string[i - 1] = 256 - i;
 				break;
 		}
 	}
