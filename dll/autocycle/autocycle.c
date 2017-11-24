@@ -21,7 +21,7 @@
 int auto_cycle(IrcCommandDll *interp, char *command, char *args, char *subargs)
 {
 	char *		channel	= current_window->current_channel;
-	int		netsplit = (int)next_arg(args, &args);
+	int		netsplit = (next_arg(args, &args) != NULL);
 	int		this_server = current_window->server;
 	ChannelList *	chan = lookup_channel(channel, this_server, 0);
 	NickList *	tmp = NULL;
