@@ -273,10 +273,8 @@ int connectbynumber(char *hostn, unsigned short *portnum, int service, int proto
 	/* Inet domain client */
 	else if (service == SERVICE_CLIENT)
 	{
-		struct sockaddr_foobar server;
+		struct sockaddr_foobar server = { 0 };
 		struct hostent *hp;
-
-		memset(&server, 0, sizeof(struct sockaddr_in));
 
 		if (isdigit(hostn[strlen(hostn)-1]))
 			inet_aton(hostn, (struct in_addr *)&server.sf_addr);
@@ -313,15 +311,15 @@ int connectbynumber(char *hostn, unsigned short *portnum, int service, int proto
 	return fd;
 }
 
-
-
 char    *numeric_banner(int curr)
 {
-	static  char    thing[4];
+	static char thing[4];
+
 	if (!get_dllint_var("napster_show_numeric"))
-		return (nap_ansi?nap_ansi:empty_string);
-	sprintf(thing, "%3.3u", curr);
-	return (thing);
+		return nap_ansi ? nap_ansi : empty_string;
+
+	snprintf(thing, sizeof thing, "%3.3d", curr);
+	return thing;
 }
 
 static void set_numeric_string(Window *win, char *value, int unused)
@@ -1015,11 +1013,13 @@ char *chan;
 	if (!(chan = next_arg(args, &args)))
 		return 0;
 	ch = (ChannelStruct *)find_in_list((List **)&nchannels, chan, 0);
+	if (!ch)
+		return 0;
+
 	ch->injoin = 0;
 	if (do_hook(MODULE_LIST, "NAP ENDNAMES %s", chan))
 	{
-		if (ch)
-			name_print(ch->nicks, 0);
+		name_print(ch->nicks, 0);
 	}
 	malloc_strcpy(&nap_current_channel, chan);
 	return 0;
@@ -1746,7 +1746,7 @@ char *type = NULL;
 		}
 		else if (strstr(cmd, "line"))
 		{
-			if (value < 0 || value > 10)
+			if (value > 10)
 			{
 				nap_say("%s", cparse("Allowed linespeed 0-10", NULL));
 				return;

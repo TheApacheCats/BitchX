@@ -482,12 +482,11 @@ unsigned long nbytes = 0;
 	if (gf && gf->count)
 	{
 		int flags = O_WRONLY;
-		memset(&indata, 0, 200);
 		if ((rc = read(snum, &indata, gf->count)) != gf->count)
 			return;
 		if (!isdigit(*indata) || !*(indata+1) || !isdigit(*(indata+1)))
 		{
-			rc += read(snum, &indata[gf->count], sizeof(indata)-1);
+			rc += read(snum, &indata[gf->count], sizeof indata - gf->count);
 			indata[rc] = 0;
 			nap_say("Request from %s is %s", gf->nick, indata);
 			gf = find_in_getfile(&getfile_struct, 1, gf->nick, gf->checksum, gf->filename, -1, NAP_DOWNLOAD);
@@ -525,7 +524,8 @@ unsigned long nbytes = 0;
 		send_ncommand(CMDS_UPDATE_GET, NULL);
 		return;
 	}
-        if ((rc = ioctl(snum, FIONREAD, &nbytes) != -1))
+    rc = ioctl(snum, FIONREAD, &nbytes);
+	if (rc != -1)
 	{
 		if (nbytes)
 		{
