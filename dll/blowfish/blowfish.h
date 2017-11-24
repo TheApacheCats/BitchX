@@ -11,18 +11,11 @@
 #include "output.h"
 #include "module.h"
 #include "hash2.h"
+#include "tcl_bx.h"
 
 #include <sys/time.h>
 #include <stdlib.h>
 #include <stdio.h>
-
-#ifdef WANT_TCL
-#	include <tcl.h>
-#	include "tcl_bx.h"
-
-#ifndef STDVAR
-#	define STDVAR (ClientData cd, Tcl_Interp *irp, int argc, char *argv[])
-#endif
 
 #ifndef BADARGS
 #define BADARGS(nl,nh,example) \
@@ -32,8 +25,6 @@
 		return TCL_ERROR; \
 	}
 #endif /* BADARGS */
-
-#endif /* WANT_TCL */
 
 #define INIT_MODULE
 #include "modval.h"
