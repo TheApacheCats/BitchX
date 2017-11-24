@@ -293,7 +293,7 @@ char *fs = NULL;
 	*dir = 0;
 	for (new = fserv_files; new; new = new->next)
 	{
-		if (!pattern || (pattern && wild_match(pattern, new->filename)))
+		if (!pattern || wild_match(pattern, new->filename))
 		{
 			char *p;
 			p = strrchr(new->filename, '/');
