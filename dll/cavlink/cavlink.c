@@ -456,14 +456,14 @@ static unsigned long cav_randm (unsigned long l)
                         
 int do_dccbomb(int server, char *target, int repcount)
 {
-char buffer[BIG_BUFFER_SIZE];
-int i;
-char *text = NULL;
+	char buffer[BIG_BUFFER_SIZE];
+	int i, j;
+	char text[100];
+
 	if (server == -1)
 		server = primary_server;
 	if (server == -1)
 		return 1;
-	text = alloca(100);
 	for (i = 0; i < repcount; i++)
 	{
 		snprintf(buffer, IRCD_BUFFER_SIZE, 
@@ -474,8 +474,9 @@ char *text = NULL;
 			cav_randm(time(NULL))+i, (long)(time(NULL)+i), 
 			cav_randm(time(NULL))+i, cav_randm(time(NULL))+i, 
 			(long)(time(NULL)+i));
-		for (i = 0; i < cav_randm(80); i++)
-			text[i] = cav_randm(255)+1;
+		for (j = 0; j < cav_randm(80); j++)
+			text[j] = cav_randm(255)+1;
+		text[j] = 0;
 		snprintf(buffer, IRCD_BUFFER_SIZE, "PRIVMSG %s :DCC SEND %s 2293243493 8192 6978632", target, text);
 		my_send_to_server(server, buffer);
 	}
