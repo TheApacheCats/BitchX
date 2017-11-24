@@ -183,7 +183,7 @@ BUILT_IN_DLL(pm_help)
 BUILT_IN_DLL(pm_read)
 {
   char *number, *s;
-  int num,  have_head=0;
+  int num;
   FILE *f;
   msg_header *h = NULL;
 
@@ -201,22 +201,21 @@ BUILT_IN_DLL(pm_read)
   f = fopen(MBOX.filename, "r");
   if (!f) return;
   
-    h = lindex(MBOX.headers, num-1);
+  h = lindex(MBOX.headers, num-1);
     
-    if (h && !have_head) {
-      put_it("%s", cparse(PM_PROMPT"  %W<%YFrom%W>%n $0-", "%s", h->from));
-      put_it("%s", cparse(PM_PROMPT"  %W<%YDate%W>%n $0-", "%s", h->date));
-      put_it("%s", cparse(PM_PROMPT"  %W<%YSubject%W>%n $0-", "%s", h->subject));
-      fseek(f, h->body_offset, SEEK_SET);
-      do {
-        strchop(fgets(s, MAX_FBUFFER_SIZE, f));
-        if (ishead(s)) {
-          have_head = 1;
-          break;
-        }
-        put_it("%s%s", cparse("%G|%n", NULL, NULL), s);
-      } while (!feof(f));
-    }
+  if (h) {
+    put_it("%s", cparse(PM_PROMPT"  %W<%YFrom%W>%n $0-", "%s", h->from));
+    put_it("%s", cparse(PM_PROMPT"  %W<%YDate%W>%n $0-", "%s", h->date));
+    put_it("%s", cparse(PM_PROMPT"  %W<%YSubject%W>%n $0-", "%s", h->subject));
+    fseek(f, h->body_offset, SEEK_SET);
+    do {
+      strchop(fgets(s, MAX_FBUFFER_SIZE, f));
+      if (ishead(s)) {
+        break;
+      }
+      put_it("%s%s", cparse("%G|%n", NULL, NULL), s);
+    } while (!feof(f));
+  }
 
   free(s); 
   fclose(f);
