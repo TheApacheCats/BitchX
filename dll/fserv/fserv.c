@@ -191,7 +191,7 @@ char *make_mp3_string(FILE *fp, Files *f, char *fs, char *dirbuff)
 					*s++ = *fs;
 					break;
 				case 'b':
-					sprintf(s, "%*u", prec, f->bitrate);
+					sprintf(s, "%*d", prec, f->bitrate);
 					break;
 				case 's':
 					if (!prec) prec = 3;
@@ -216,7 +216,7 @@ char *make_mp3_string(FILE *fp, Files *f, char *fs, char *dirbuff)
 					sprintf(s, "%*.*f", prec, fl, ((double)f->freq) / ((double)1000.0));
 					break;
 				case 'h':
-					sprintf(s, "%*u", prec, f->freq);
+					sprintf(s, "%*d", prec, f->freq);
 					break;
 				default:
 					*s++ = *fs;
@@ -1044,8 +1044,8 @@ char *fserv_savname = NULL;
 		fprintf(fp, "%s%s %s\n", bogus, "_filename", p);
 	if ((p = get_dllstring_var("fserv_format")))
 		fprintf(fp, "%s%s %s\n", bogus, "_format", p);
-	fprintf(fp, "%s%s %u\n", bogus, "_time", get_dllint_var("fserv_time"));
-	fprintf(fp, "%s%s %u\n", bogus, "_max_match", get_dllint_var("fserv_max_match"));
+	fprintf(fp, "%s%s %d\n", bogus, "_time", get_dllint_var("fserv_time"));
+	fprintf(fp, "%s%s %d\n", bogus, "_max_match", get_dllint_var("fserv_max_match"));
 	fprintf(fp, "%s%s %s\n", bogus, "_impress", on_off(get_dllint_var("fserv_impress")));
 	if (statistics.files_served)
 	{
