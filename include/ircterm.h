@@ -62,8 +62,8 @@ void avio_refresh_screen(void);
 
 #ifdef TRANSLATE
 #include "translat.h"
-__inline__
-static int putchar_x (int c) {
+static inline int putchar_x (int c)
+{
 #ifdef GUI
 #if 1
 	return gui_putc((int) (translation ? transToClient[c] : c));
@@ -79,8 +79,8 @@ static int putchar_x (int c) {
 #endif
 }
 #else
-__inline__ 
-static int putchar_x (int c) { 
+static inline int putchar_x (int c)
+{
 #ifdef GUI
 	return gui_putc((int) c);
 #else
@@ -89,8 +89,10 @@ static int putchar_x (int c) {
 }
 #endif
 
-__inline__
-static void term_flush (void) { fflush(current_ftarget); }
+static inline void term_flush (void)
+{
+	fflush(current_ftarget);
+}
 
 #define	TERM_SGR_BOLD_ON	1
 #define TERM_SGR_BOLD_OFF	2

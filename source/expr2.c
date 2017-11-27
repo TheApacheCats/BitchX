@@ -164,8 +164,8 @@ typedef struct
 	int	*args_flag;
 } expr_info;
 
-__inline static	TOKEN	tokenize (expr_info *c, const char *t);
-	 static char *	after_expando_special (expr_info *c);
+static inline	TOKEN	tokenize (expr_info *c, const char *t);
+static char *	after_expando_special (expr_info *c);
 
 void	setup_expr_info (expr_info *c)
 {
@@ -363,7 +363,7 @@ static 	int 	assoc[TOKCOUNT] =
  * here and the index into the 'token' table is returned.
  */
 /* THIS FUNCTION MAKES A NEW COPY OF 'T'.  YOU MUST DISPOSE OF 'T' YOURSELF */
-__inline static	TOKEN		tokenize (expr_info *c, const char *t)
+static inline	TOKEN		tokenize (expr_info *c, const char *t)
 {
 	if (c->token >= TOKENCOUNT)
 	{
@@ -376,7 +376,7 @@ __inline static	TOKEN		tokenize (expr_info *c, const char *t)
 
 /* get_token gets the ``lvalue'', or original text, of a token */
 /* YOU MUST _NOT_ FREE THE RETURN VALUE FROM THIS FUNCTION! */
-__inline static	const char *		get_token (expr_info *c, TOKEN v)
+static inline	const char *		get_token (expr_info *c, TOKEN v)
 {
 	if (v == MAGIC_TOKEN)	/* Magic token */
 		return c->args;
@@ -524,7 +524,7 @@ static	char *	getsval2 (expr_info *c, TOKEN s)
 	return NULL /* <whatever> */;
 }
 
-__inline static  NUMBER	getnval (expr_info *c, TOKEN s)
+static inline  NUMBER	getnval (expr_info *c, TOKEN s)
 {
 	char	*t;
 	NUMBER	retval;
@@ -541,7 +541,7 @@ __inline static  NUMBER	getnval (expr_info *c, TOKEN s)
 }
 
 #ifdef notused
-__inline static  BooL	getbval (expr_info *c, TOKEN s)
+static inline  BooL	getbval (expr_info *c, TOKEN s)
 {
 	char	*t;
 	long	retval;
@@ -569,7 +569,7 @@ __inline static  BooL	getbval (expr_info *c, TOKEN s)
  * you and go from there.  Note that the "result" of an assignment is the
  * rvalue token.  This is then pushed back onto the stack.
  */
-__inline static	TOKEN	setvar (expr_info *c, TOKEN l, TOKEN r)
+static inline	TOKEN	setvar (expr_info *c, TOKEN l, TOKEN r)
 {
 	char *t = expand_alias(get_token(c, l), c->args, c->args_flag, NULL);
 	char *u = getsval(c, r);
@@ -592,12 +592,12 @@ __inline static	TOKEN	setvar (expr_info *c, TOKEN l, TOKEN r)
 	return tokenize(c, s);
 }
 
-__inline static TOKEN 	setnvar (expr_info *c, TOKEN l, NUMBER v) 
+static inline TOKEN 	setnvar (expr_info *c, TOKEN l, NUMBER v) 
 {
 	 return setvar(c, l, tokenize(c, NTOS(v)));
 }
 
-__inline static	TOKEN	setsvar (expr_info *c, TOKEN l, char *v)
+static inline	TOKEN	setsvar (expr_info *c, TOKEN l, char *v)
 {
 	char	*s;
 
@@ -620,7 +620,7 @@ __inline static	TOKEN	setsvar (expr_info *c, TOKEN l, char *v)
  * when you want to shift a value that has not been tokenized.  So you call
  * one of the other functions that will do this for you.
  */
-__inline static	TOKEN	pusht (expr_info *c, TOKEN t)
+static inline	TOKEN	pusht (expr_info *c, TOKEN t)
 {
 	if (c->sp == STACKSZ - 1)
 	{
@@ -635,12 +635,12 @@ __inline static	TOKEN	pusht (expr_info *c, TOKEN t)
 	return ((c->stack[c->sp] = t));
 }
 
-__inline static	TOKEN	pushn (expr_info *c, NUMBER val)
+static inline	TOKEN	pushn (expr_info *c, NUMBER val)
 { 
 	return pusht(c, tokenize(c, NTOS(val)));
 }
 
-__inline static	TOKEN	pushs (expr_info *c, char *val)
+static inline	TOKEN	pushs (expr_info *c, char *val)
 {
 	char	*blah;
 	blah = alloca(strlen(val) + 2);
@@ -648,7 +648,7 @@ __inline static	TOKEN	pushs (expr_info *c, char *val)
 	return pusht(c, tokenize(c, blah)); 
 }
 
-__inline static TOKEN	top (expr_info *c)
+static inline TOKEN	top (expr_info *c)
 {
 	if (c->sp < 0)
 	{
@@ -659,7 +659,7 @@ __inline static TOKEN	top (expr_info *c)
 		return c->stack[c->sp];
 }
 
-__inline static	TOKEN	pop (expr_info *c)
+static inline	TOKEN	pop (expr_info *c)
 {
 	if (c->sp < 0)
 	{
@@ -675,7 +675,7 @@ __inline static	TOKEN	pop (expr_info *c)
 		return c->stack[c->sp--];
 }
 
-__inline static	double	popn (expr_info *c)
+static inline	double	popn (expr_info *c)
 {
 	char *	x = getsval(c, pop(c));
 	NUMBER	i = atof(x);
@@ -685,12 +685,12 @@ __inline static	double	popn (expr_info *c)
 }
 
 /* YOU MUST FREE THE RETURN VALUE FROM THIS FUNCTION */
-__inline static	char *	pops (expr_info *c)
+static inline	char *	pops (expr_info *c)
 {
 	return getsval(c, pop(c));
 }
 
-__inline static BooL	popb (expr_info *c)
+static inline BooL	popb (expr_info *c)
 {
 	char *	x = getsval(c, pop(c));
 	BooL	i = check_val(x);
@@ -699,13 +699,13 @@ __inline static BooL	popb (expr_info *c)
 	return i;
 }
 
-__inline static void	pop2 (expr_info *c, TOKEN *t1, TOKEN *t2)
+static inline void	pop2 (expr_info *c, TOKEN *t1, TOKEN *t2)
 {
 	*t2 = pop(c);
 	*t1 = pop(c);
 }
 
-__inline static	void	pop2n (expr_info *c, NUMBER *a, NUMBER *b)
+static inline	void	pop2n (expr_info *c, NUMBER *a, NUMBER *b)
 {
 	TOKEN	t1, t2;
 	char	*x, *y;
@@ -719,7 +719,7 @@ __inline static	void	pop2n (expr_info *c, NUMBER *a, NUMBER *b)
 	new_free(&y);
 }
 
-__inline static void	pop2s (expr_info *c, char **s, char **t)
+static inline void	pop2s (expr_info *c, char **s, char **t)
 {
 	TOKEN	t1, t2;
 	char	*x, *y;
@@ -731,7 +731,7 @@ __inline static void	pop2s (expr_info *c, char **s, char **t)
 	*t = y;
 }
 
-__inline static void	pop2b (expr_info *c, BooL *a, BooL *b)
+static inline void	pop2b (expr_info *c, BooL *a, BooL *b)
 {
 	TOKEN	t1, t2;
 	char	*x, *y;
@@ -745,7 +745,7 @@ __inline static void	pop2b (expr_info *c, BooL *a, BooL *b)
 	new_free(&y);
 }
 
-__inline static	void	pop2n_a (expr_info *c, NUMBER *a, NUMBER *b, TOKEN *v)
+static inline	void	pop2n_a (expr_info *c, NUMBER *a, NUMBER *b, TOKEN *v)
 {
 	TOKEN	t1, t2;
 	char	*x, *y;
@@ -760,7 +760,7 @@ __inline static	void	pop2n_a (expr_info *c, NUMBER *a, NUMBER *b, TOKEN *v)
 	new_free(&y);
 }
 
-__inline static	void	pop2s_a (expr_info *c, char **s, char **t, TOKEN *v)
+static inline	void	pop2s_a (expr_info *c, char **s, char **t, TOKEN *v)
 {
 	TOKEN	t1, t2;
 	char	*x, *y;
@@ -773,7 +773,7 @@ __inline static	void	pop2s_a (expr_info *c, char **s, char **t, TOKEN *v)
 	*v = t1;
 }
 
-__inline static void	pop2b_a (expr_info *c, BooL *a, BooL *b, TOKEN *v)
+static inline void	pop2b_a (expr_info *c, BooL *a, BooL *b, TOKEN *v)
 {
 	TOKEN	t1, t2;
 	char	*x, *y;
@@ -788,7 +788,7 @@ __inline static void	pop2b_a (expr_info *c, BooL *a, BooL *b, TOKEN *v)
 	new_free(&y);
 }
 
-__inline static	void	pop3 (expr_info *c, NUMBER *a, TOKEN *v, TOKEN *w)
+static inline	void	pop3 (expr_info *c, NUMBER *a, TOKEN *v, TOKEN *w)
 {
 	TOKEN	t1, t2, t3;
 	char	*x;
@@ -1204,7 +1204,7 @@ int	lexerr (expr_info *c, char *format, ...)
  * case 'operand' is set to 1.  When an operand is lexed, then the next token
  * is expected to be a binary operator, so 'operand' is set to 0. 
  */
-static __inline int	check_implied_arg (expr_info *c)
+static inline int	check_implied_arg (expr_info *c)
 {
 	if (c->operand == 2)
 	{
@@ -1217,7 +1217,7 @@ static __inline int	check_implied_arg (expr_info *c)
 	return c->operand;
 }
 
-static __inline TOKEN 	operator (expr_info *c, char *x, int y, TOKEN z)
+static inline TOKEN 	operator (expr_info *c, char *x, int y, TOKEN z)
 {
 	check_implied_arg(c);
 	if (c->operand)
@@ -1228,7 +1228,7 @@ static __inline TOKEN 	operator (expr_info *c, char *x, int y, TOKEN z)
 	return z;
 }
 
-static __inline TOKEN 	unary (expr_info *c, char *x, int y, TOKEN z)
+static inline TOKEN 	unary (expr_info *c, char *x, int y, TOKEN z)
 {
 	if (!c->operand)
 		return lexerr(c, "An operator (%s) was found where "

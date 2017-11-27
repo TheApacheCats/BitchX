@@ -13,7 +13,7 @@
  */
 
 #ifdef _cs_alist_hash_
-static __inline u_32int_t 	cs_alist_hash (const char *s, u_32int_t *mask)
+static inline u_32int_t 	cs_alist_hash (const char *s, u_32int_t *mask)
 {
 	u_32int_t x;
 
@@ -43,7 +43,7 @@ static __inline u_32int_t 	cs_alist_hash (const char *s, u_32int_t *mask)
 #endif
 
 #ifdef _ci_alist_hash_
-static __inline u_32int_t 	ci_alist_hash (const char *s, u_32int_t *mask)
+static inline u_32int_t 	ci_alist_hash (const char *s, u_32int_t *mask)
 {
 	u_32int_t x;
 

@@ -96,10 +96,8 @@
  * First try to figure out if we can use GNU CC special features...
  */
 #ifndef __GNUC__
-# define __inline		/* delete gcc keyword */
 # define _printf_(x)
 # define _noreturn_
-# define __inline__
 #else
 # if (__GNUC__ > 2) || ((__GNUC__ == 2) && (__GNUC_MINOR__ >= 7))
 #  define _printf_(x) __attribute__ ((format (printf, x, x + 1)))
@@ -107,7 +105,6 @@
 # else
 #  define _printf_(x)
 #  define _noreturn_
-#  define __inline
 # endif
 #endif
 

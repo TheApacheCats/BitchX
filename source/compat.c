@@ -897,7 +897,7 @@ int   bsd_setenv(const char *name, const char *value, int rewrite);
  *
  *	This routine *should* be a static; don't use it.
  */
-__inline__ static char *__findenv(const char *name, int *offset)
+static char *__findenv(const char *name, int *offset)
 {
 	extern char **environ;
 	register int len, i;
