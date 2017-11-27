@@ -933,44 +933,30 @@ const IrcCommand *BX_find_command(const char *com, int *cnt)
 #ifdef WANT_DLL
 IrcCommandDll *find_dll_command(const char *com, int *cnt)
 {
-	int len = 0;
+	const size_t len = com ? strlen(com) : 0;
+	IrcCommandDll *first_match = NULL;
+
+	*cnt = 0;
 	
-	if (com && (len = strlen(com)) && dll_commands)
+	if (len)
 	{
-		int	min,
-			max;
-		IrcCommandDll *old, *old_next = NULL;
+		IrcCommandDll *cmd;
 		
-		*cnt = 0;
-		min = 1;
-		max = 0;
-		for (old = dll_commands; old; old = old->next)
-			max++;
-		
-		old = dll_commands;
-		while (1)
+		for (cmd = dll_commands; cmd; cmd = cmd->next)
 		{
-			if (!my_strnicmp(com, old->name, len))
+			if (!my_strnicmp(com, cmd->name, len))
 			{
-				if (!old_next)
-					old_next = old;
+				if (!first_match)
+					first_match = cmd;
 				(*cnt)++;
 			}
-			if (old->next == NULL)
-			{
-				if (old_next && strlen(old_next->name) == len)
-					*cnt *= -1;
-				return (old_next);
-			}
-			else
-				old = old->next;
 		}
+
+		if (first_match && strlen(first_match->name) == len)
+			*cnt *= -1;
 	}
-	else
-	{
-		*cnt = -1;
-		return (NULL);
-	}
+
+	return first_match;
 }
 #endif
 

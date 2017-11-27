@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Show correct count of matching commands in /HELP. (caf)
+
 * Simplify rsindex() and strsearch() exported functions. (caf)
 
 * scr-bx now lists the detached screens if there is more than one that matches
