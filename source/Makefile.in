@@ -410,7 +410,8 @@ commands.o: commands.c ../include/irc.h ../include/defs.h \
  ../include/list.h ../include/userlist.h ../include/misc.h \
  ../include/alist.h ../include/tcl_bx.h ../include/hash2.h \
  ../include/whowas.h ../include/cset.h ../include/notice.h \
- ../include/translat.h ../include/modval.h ../include/module.h
+ ../include/module.h ../include/translat.h ../include/modval.h \
+ ../include/module.h
 compat.o: compat.c ../include/irc_std.h ../include/defs.h
 cset.o: cset.c ../include/irc.h ../include/defs.h ../include/config.h \
  ../include/../.config.h ../include/bsdglob.h ../include/irc_std.h \
@@ -997,7 +998,7 @@ tcl.o: tcl.c ../include/irc.h ../include/defs.h ../include/config.h \
  ../include/alias.h ../include/queue.h ../include/timer.h \
  ../include/list.h ../include/userlist.h ../include/misc.h \
  ../include/whowas.h ../include/hash2.h ../include/whowas.h \
- ../include/modval.h ../include/module.h ../include/tcl_bx.h
+ ../include/tcl_bx.h ../include/modval.h ../include/module.h
 tcl_public.o: tcl_public.c ../include/irc.h ../include/defs.h \
  ../include/config.h ../include/../.config.h ../include/bsdglob.h \
  ../include/irc_std.h ../include/debug.h ../include/newio.h \

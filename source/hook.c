@@ -26,9 +26,7 @@ CVS_REVISION(hook_c)
 #include "parse.h"
 #include "misc.h"
 #include "stack.h"
-#ifdef WANT_TCL
 #include "tcl_bx.h"
-#endif
 #define MAIN_SOURCE
 #include "modval.h"
 

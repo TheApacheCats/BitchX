@@ -43,6 +43,7 @@
 #include "who.h"
 #include "whowas.h"
 #include "hash2.h"
+#include "tcl_bx.h"
 #define MAIN_SOURCE
 #include "modval.h"
 
@@ -50,8 +51,6 @@
 char tcl_versionstr[] = "Tcl 2.1";
 
 #ifdef WANT_TCL
-/*#define TCL_PLUS*/
-#include "tcl_bx.h"
 
 Tcl_HashTable *gethashtable (int, int *, char *);
 

@@ -45,10 +45,7 @@ CVS_REVISION(ctcp_c)
 #include "misc.h"
 #include "userlist.h"
 #include "hash2.h"
-
-#ifdef WANT_TCL
 #include "tcl_bx.h"
-#endif
 
 #define MAIN_SOURCE
 #include "modval.h"
