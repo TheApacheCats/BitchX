@@ -41,6 +41,7 @@ CVS_REVISION(modules_c)
 #define MAIN_SOURCE
 #include "modval.h"
 
+IrcCommandDll *dll_commands = NULL;
 IrcVariableDll *dll_variable = NULL;
 extern void *default_output_function;
 extern void *default_status_output_function;
@@ -706,6 +707,34 @@ int BX_check_module_version(unsigned long number)
 }
 
 #ifdef WANT_DLL
+IrcCommandDll *find_dll_command(const char *com, int *cnt)
+{
+	const size_t len = com ? strlen(com) : 0;
+	IrcCommandDll *first_match = NULL;
+
+	*cnt = 0;
+
+	if (len)
+	{
+		IrcCommandDll *cmd;
+
+		for (cmd = dll_commands; cmd; cmd = cmd->next)
+		{
+			if (!my_strnicmp(com, cmd->name, len))
+			{
+				if (!first_match)
+					first_match = cmd;
+				(*cnt)++;
+			}
+		}
+
+		if (first_match && strlen(first_match->name) == len)
+			*cnt *= -1;
+	}
+
+	return first_match;
+}
+
 static IrcVariableDll *lookup_dllvar(char *name)
 {
 	IrcVariableDll *dll = NULL;

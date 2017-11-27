@@ -87,7 +87,7 @@ extern CtcpEntryDll *dll_ctcp;
 extern WindowDll *dll_window;
 extern IrcVariableDll *dll_variable;
 
-
+IrcCommandDll *find_dll_command(const char *, int *);
 char *BX_get_dllstring_var(char *);
 int BX_get_dllint_var(char *);
 void BX_set_dllstring_var(char *, char *);

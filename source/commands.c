@@ -85,6 +85,7 @@ CVS_REVISION(commands_c)
 #include "hash2.h"
 #include "cset.h"
 #include "notice.h"
+#include "module.h"
 
 #ifdef TRANSLATE
 #include "translat.h"
@@ -151,11 +152,6 @@ static	WaitCmd	*start_wait_list = NULL,
 
 char	lame_wait_nick[] = "***LW***";
 char	wait_nick[] = "***W***";
-
-#ifdef WANT_DLL
-	IrcCommandDll *find_dll_command (const char *, int *);
-	IrcCommandDll *dll_commands = NULL;
-#endif
 
 AJoinList *ajoin_list = NULL;
 
@@ -929,36 +925,6 @@ const IrcCommand *BX_find_command(const char *com, int *cnt)
 	retval = (IrcCommand *)find_fixed_array_item ((void *)irc_command, sizeof(IrcCommand), NUMBER_OF_COMMANDS + 1, com, cnt, &loc);
 	return retval;
 }
-
-#ifdef WANT_DLL
-IrcCommandDll *find_dll_command(const char *com, int *cnt)
-{
-	const size_t len = com ? strlen(com) : 0;
-	IrcCommandDll *first_match = NULL;
-
-	*cnt = 0;
-	
-	if (len)
-	{
-		IrcCommandDll *cmd;
-		
-		for (cmd = dll_commands; cmd; cmd = cmd->next)
-		{
-			if (!my_strnicmp(com, cmd->name, len))
-			{
-				if (!first_match)
-					first_match = cmd;
-				(*cnt)++;
-			}
-		}
-
-		if (first_match && strlen(first_match->name) == len)
-			*cnt *= -1;
-	}
-
-	return first_match;
-}
-#endif
 
 /* IRCUSER command. Changes your userhost on the fly.  Takes effect
  * the next time you connect to a server 
