@@ -62,32 +62,25 @@ void avio_refresh_screen(void);
 
 #ifdef TRANSLATE
 #include "translat.h"
+static inline int xlate_char(int c)
+{
+	return translation ? transToClient[c] : c;
+}
+#else
+static inline int xlate_char(int c)
+{
+	return c;
+}
+#endif
+
 static inline int putchar_x (int c)
 {
 #ifdef GUI
-#if 1
-	return gui_putc((int) (translation ? transToClient[c] : c));
+	return gui_putc(xlate_char(c));
 #else
-	return gui_putc((int) c);
-#endif
-#else
-#if 1
-	return fputc((int) (translation ? transToClient[c] : c), current_ftarget);
-#else
-	return fputc((int) c, current_ftarget);
-#endif
+	return fputc(xlate_char(c), current_ftarget);
 #endif
 }
-#else
-static inline int putchar_x (int c)
-{
-#ifdef GUI
-	return gui_putc((int) c);
-#else
-	return fputc((unsigned int) c, current_ftarget); 
-#endif
-}
-#endif
 
 static inline void term_flush (void)
 {
