@@ -643,7 +643,6 @@ static	char	*parse_args (char *argv[], int argc, char **envp)
 	struct passwd *entry;
 #endif
 	char *channel = NULL;
-	struct hostent * hp;
 	char *ptr;
 	
 	*nickname = 0;
@@ -1102,17 +1101,25 @@ static	char	*parse_args (char *argv[], int argc, char **envp)
 	if (LocalHostName)
 	{
 		printf("Your hostname appears to be [%s]\n", LocalHostName);
+	}
+
 #ifndef IPV6
-		memset((void *)&LocalHostAddr, 0, sizeof(LocalHostAddr));
+	if (LocalHostName)
+	{
+		struct hostent *hp;
+
+		memset(&LocalHostAddr, 0, sizeof(LocalHostAddr));
 		if ((hp = gethostbyname(LocalHostName)))
 			memcpy((void *)&LocalHostAddr.sf_addr, hp->h_addr, sizeof(struct in_addr));
 	} 
 	else
 	{
+		struct hostent *hp;
+
 		if ((hp = gethostbyname(hostname)))
-			memcpy((char *) &MyHostAddr.sf_addr, hp->h_addr, sizeof(struct in_addr));
-#endif
+			memcpy(&MyHostAddr.sf_addr, hp->h_addr, sizeof(struct in_addr));
 	}
+#endif
 
 	if (!*nickname)
 		strlcpy(nickname, username, sizeof nickname);
