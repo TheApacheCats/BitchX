@@ -821,22 +821,19 @@ static int show_list (int which)
 
 int 	BX_do_hook (int which, char *format, ...)
 {
-	Hook		*tmp = NULL,
-			*next = NULL, 
-			**list;
-	char		buffer		[BIG_BUFFER_SIZE * 10 + 1],
-			*name 		= NULL;
-	int		retval 		= DONT_SUPPRESS_DEFAULT;
-	unsigned	display		= window_display;
-	int		i;
-	Hook		*hook_array	[2048] = { 0 };
-	int		hook_num = 0;
-	char		*result = NULL;
-	int		old_debug_count = debug_count;
+	Hook *tmp = NULL;
+	Hook *next = NULL;
+	Hook **list;
+	char buffer[BIG_BUFFER_SIZE * 10 + 1];
+	char *name = NULL;
+	int retval = DONT_SUPPRESS_DEFAULT;
+	unsigned display = window_display;
+	int i;
+	Hook *hook_array[2048] = { 0 };
+	int hook_num = 0;
+	char *result = NULL;
+	int old_debug_count = debug_count;
 	
-#ifdef WANT_TCL
-	int		tcl_ret = 0;
-#endif	
 	/*
 	 * Figure out where the hooks are for the event type were asserting
 	 */
@@ -895,7 +892,7 @@ int 	BX_do_hook (int which, char *format, ...)
 
 #ifdef WANT_TCL
 	if (tcl_interp)
-		tcl_ret = check_on_hook(which, format?buffer:NULL);
+		check_on_hook(which, format?buffer:NULL);
 #endif
 
 	/*
