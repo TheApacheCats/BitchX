@@ -2575,7 +2575,6 @@ static int ar_procanswer(struct reslist *rptr, HEADER *hptr, unsigned char *buf,
 	char **alias;
 	int	class, type, dlen, len, ans = 0, n;
 	unsigned int ttl, dr, *adr;
-	struct	hent	*hp;
 
 	cp = buf + HFIXEDSZ;
 	adr = (unsigned int *)rptr->re_he.h_addr_list;
@@ -2586,9 +2585,6 @@ static int ar_procanswer(struct reslist *rptr, HEADER *hptr, unsigned char *buf,
 	alias = rptr->re_he.h_aliases;
 	while (*alias)
 		alias++;
-
-	hp = &rptr->re_he;
-
 
 	/*
 	 * Skip over the original question.
@@ -2621,6 +2617,7 @@ static int ar_procanswer(struct reslist *rptr, HEADER *hptr, unsigned char *buf,
 		GETLONG(ttl, cp);
 		GETSHORT(dlen, cp);
 		rptr->re_type = type;
+		(void)ttl; /* unused */
 
 		switch(type)
 		{
