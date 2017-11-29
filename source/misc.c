@@ -3022,10 +3022,10 @@ void userhost_nsl(UserhostItem *stuff, char *nick, char *args)
 BUILT_IN_COMMAND(nslookup)
 {
 #ifdef WANT_NSLOOKUP
-	char	*host, 
-		*hostname, 
-		*cmd = NULL;
+	char *host;
+	char *cmd = NULL;
 	int count = 0;
+
 	while ((host = next_arg(args, &args)))
 	{
 		if (count == 0)
@@ -3047,7 +3047,7 @@ BUILT_IN_COMMAND(nslookup)
 		if (!strchr(host, '.'))
 			userhostbase(host, userhost_nsl, 1, "%s%s%s", host, cmd ? space:empty_string, cmd?cmd:empty_string);
 		else
-			hostname = do_nslookup(host, NULL, NULL, NULL, from_server, NULL, cmd ? cmd : NULL);
+			do_nslookup(host, NULL, NULL, NULL, from_server, NULL, cmd ? cmd : NULL);
 		count++;
 	}
 #else
