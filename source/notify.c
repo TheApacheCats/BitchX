@@ -47,37 +47,34 @@ void dispatch_notify_userhosts (void);
 void notify_userhost_dispatch (UserhostItem *, char *, char *);
 void notify_userhost_reply (char *, char *);
 
-void	rebuild_notify_ison (int server)
+static void rebuild_notify_ison(int server)
 {
-	char *stuff;
+	NotifyList *notify_list;
 	int i;
-	if (from_server == -1)
+
+	if (server < 0 || server >= server_list_size())
 		return;
-	stuff = NOTIFY_LIST(from_server)->ison;
 
-	if (NOTIFY_LIST(from_server)->ison)
-		NOTIFY_LIST(from_server)->ison[0] = 0;
+	notify_list = NOTIFY_LIST(server);
 
-	for (i = 0; i < NOTIFY_MAX(from_server); i++)
+	if (notify_list->ison)
+		notify_list->ison[0] = 0;
+
+	for (i = 0; i < notify_list->max; i++)
 	{
-		m_s3cat(&(NOTIFY_LIST(from_server)->ison),
-			space, NOTIFY_ITEM(from_server, i)->nick);
+		m_s3cat(&notify_list->ison, space, notify_list->list[i]->nick);
 	}
 }
 
-void	rebuild_all_ison (void)
+static void rebuild_notify_ison_all(void)
 {
 	int i;
-	int ofs = from_server;
+
 	for (i = 0; i < server_list_size(); i++)
 	{
-		from_server = i;
 		rebuild_notify_ison(i);
 	}
-	from_server = ofs;
 }
-
-
 
 void ison_notify(char *AskedFor, char *AreOn)
 {
@@ -324,7 +321,7 @@ BUILT_IN_COMMAND(notify)
 	}
 	
 	new_free(&list);	
-	rebuild_all_ison();
+	rebuild_notify_ison_all();
 	if (no_nicks)
 		show_notify_list(0);
 }

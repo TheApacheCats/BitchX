@@ -49,8 +49,6 @@ typedef struct notify_alist
 extern	char	*get_notify_nicks (int, int, char *, int);
 	void	add_delay_notify (int);
 	void	notify_count (int, int *, int *);
-	void	rebuild_notify_ison (int);
-	void	rebuild_all_ison (void);
 	void	save_watch(FILE *);
 	BUILT_IN_COMMAND(watchcmd);
 	void	show_watch_list (int);
