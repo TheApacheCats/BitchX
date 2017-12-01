@@ -154,7 +154,7 @@ int		inbound_line_mangler = 0,
 
 char	*invite_channel = NULL,		/* last channel of an INVITE */
 	*ircrc_file = NULL,		/* full path .ircrc file */
-	*bircrc_file = NULL,		/* full path .ircrc file */
+	*bircrc_file = NULL,		/* full path .bitchxrc file */
 	*my_path = NULL,		/* path to users home dir */
 	*irc_path = NULL,		/* paths used by /load */
 	*irc_lib = NULL,		/* path to the ircII library */
@@ -220,22 +220,14 @@ static		char	*switch_help[] = {
 "   -N do not auto-connect to the first server\n",
 "   -A do not display the startup ansi\n",
 "   -c <channel>\tjoins <channel> on startup. don\'t forget to escape the # using \\\n",
-#if defined(WINNT) || defined(__EMX__)
-"   -b\t\tload bx-rc or irc-rc after connecting to a server\n",
-#else
-"   -b\t\tload .bitchxrc  or .ircrc after connecting to a server\n",
-#endif
+"   -b\t\tload " BITCHXRC_NAME " or " IRCRC_NAME " after connecting to a server\n",
 "   -p <port>\tdefault server connection port (usually 6667)\n",
 #ifndef WINNT
 "   -f\t\tyour terminal uses flow controls (^S/^Q), so BitchX shouldn't\n",
 "   -F\t\tyour terminal doesn't use flow control (default)\n",
 #endif
 	"   -d\t\truns BitchX in \"dumb\" terminal mode\n",
-#if defined(WINNT) || defined(__EMX__)
-"   -q\t\tdoes not load ~/irc-rc\n",
-#else
-"   -q\t\tdoes not load ~/.ircrc\n",
-#endif
+"   -q\t\tdoes not load ~/" IRCRC_NAME "\n",
 "   -r file\tload file as list of servers\n",
 "   -n nickname\tnickname to use\n",
 "   -a\t\tadds default servers and command line servers to server list\n",
@@ -247,13 +239,8 @@ static		char	*switch_help[] = {
 "   -s\t\tnext server specified is SSL (may be used multiple times)\n",
 #endif
 "   -i\t\tignores the autojoin list entries\n",
-#if defined(WINNT) || defined(__EMX__)
-"   -l <file>\tloads <file> in place of your irc-rc\n\
-   -L <file>\tloads <file> in place of your irc-rc and expands $ expandos\n",
-#else
-"   -l <file>\tloads <file> in place of your .ircrc\n\
-   -L <file>\tloads <file> in place of your .ircrc and expands $ expandos\n",
-#endif
+"   -l <file>\tloads <file> in place of your " IRCRC_NAME "\n\
+   -L <file>\tloads <file> in place of your " IRCRC_NAME " and expands $ expandos\n",
 #if !defined(WINNT) && !defined(__EMX__)
 "   -B\t\tforce BitchX to fork and return you to shell. pid check on.\n",
 #endif
@@ -1133,18 +1120,12 @@ static	char	*parse_args (char *argv[], int argc, char **envp)
 		fprintf(stderr, "Please restart IRC II with a valid nickname\n");
 		exit(1);
 	}
+
 	if (ircrc_file == NULL)
-	{
-		ircrc_file = (char *) new_malloc(strlen(my_path) + strlen(IRCRC_NAME) + 1);
-		strcpy(ircrc_file, my_path);
-		strcat(ircrc_file, IRCRC_NAME);
-	}
+		ircrc_file = m_sprintf("%s/%s", my_path, IRCRC_NAME);
+
 	if (bircrc_file == NULL)
-#if defined(WINNT) || defined(__EMX__)
-		malloc_sprintf(&bircrc_file, "%s/bx-rc", my_path);
-#else
-		malloc_sprintf(&bircrc_file, "%s/.bitchxrc", my_path);
-#endif
+		bircrc_file = m_sprintf("%s/%s", my_path, BITCHXRC_NAME);
 
 	if ((ptr = getenv("IRCPORT")))
 		irc_port = my_atol(ptr);

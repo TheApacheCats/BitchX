@@ -322,9 +322,11 @@
  * Define the name of your ircrc file here.
  */
 #if defined(WINNT) || defined(__EMX__)
-#define IRCRC_NAME "/irc-rc"
+#define IRCRC_NAME "irc-rc"
+#define BITCHXRC_NAME "bx-rc"
 #else
-#define IRCRC_NAME "/.ircrc"
+#define IRCRC_NAME ".ircrc"
+#define BITCHXRC_NAME ".bitchxrc"
 #endif
 
 #define DEFAULT_PING_TYPE 1
