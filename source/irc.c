@@ -209,42 +209,42 @@ static	volatile int	cntl_c_hit = 0;
 
 	char	version[] = _VERSION_;
 	
-static		char	*switch_help[] = {
-"Usage: BitchX [switches] [nickname] [server list] \n",
-"  The [nickname] can be at most 15 characters long\n",
-"  The [server list] is a whitespace separate list of server name\n",
-"  The [switches] may be any or all of the following\n",
+static const char * const switch_help =
+	"Usage: BitchX [switches] [nickname] [server list] \n"
+	"  The [nickname] can be at most 15 characters long\n"
+	"  The [server list] is a whitespace separate list of server name\n"
+	"  The [switches] may be any or all of the following\n"
 #ifndef WINNT
-"   -H <hostname>\tuses the virtual hostname if possible\n",
+	"   -H <hostname>\tuses the virtual hostname if possible\n"
 #endif
-"   -N do not auto-connect to the first server\n",
-"   -A do not display the startup ansi\n",
-"   -c <channel>\tjoins <channel> on startup. don\'t forget to escape the # using \\\n",
-"   -b\t\tload " BITCHXRC_NAME " or " IRCRC_NAME " after connecting to a server\n",
-"   -p <port>\tdefault server connection port (usually 6667)\n",
+	"   -N do not auto-connect to the first server\n"
+	"   -A do not display the startup ansi\n"
+	"   -c <channel>\tjoins <channel> on startup. don\'t forget to escape the # using \\\n"
+	"   -b\t\tload " BITCHXRC_NAME " or " IRCRC_NAME " after connecting to a server\n"
+	"   -p <port>\tdefault server connection port (usually 6667)\n"
 #ifndef WINNT
-"   -f\t\tyour terminal uses flow controls (^S/^Q), so BitchX shouldn't\n",
-"   -F\t\tyour terminal doesn't use flow control (default)\n",
+	"   -f\t\tyour terminal uses flow controls (^S/^Q), so BitchX shouldn't\n"
+	"   -F\t\tyour terminal doesn't use flow control (default)\n"
 #endif
-	"   -d\t\truns BitchX in \"dumb\" terminal mode\n",
-"   -q\t\tdoes not load ~/" IRCRC_NAME "\n",
-"   -r file\tload file as list of servers\n",
-"   -n nickname\tnickname to use\n",
-"   -a\t\tadds default servers and command line servers to server list\n",
-"   -x\t\truns BitchX in \"debug\" mode\n",
-"   -Z\t\tuse NAT address when doing DCC\n",
-"   -P\t\ttoggle check pid.nickname for running program\n",
-"   -v\t\ttells you about the client's version\n",
+		"   -d\t\truns BitchX in \"dumb\" terminal mode\n"
+	"   -q\t\tdoes not load ~/" IRCRC_NAME "\n"
+	"   -r file\tload file as list of servers\n"
+	"   -n nickname\tnickname to use\n"
+	"   -a\t\tadds default servers and command line servers to server list\n"
+	"   -x\t\truns BitchX in \"debug\" mode\n"
+	"   -Z\t\tuse NAT address when doing DCC\n"
+	"   -P\t\ttoggle check pid.nickname for running program\n"
+	"   -v\t\ttells you about the client's version\n"
 #ifdef HAVE_LIBSSL
-"   -s\t\tnext server specified is SSL (may be used multiple times)\n",
+	"   -s\t\tnext server specified is SSL (may be used multiple times)\n"
 #endif
-"   -i\t\tignores the autojoin list entries\n",
-"   -l <file>\tloads <file> in place of your " IRCRC_NAME "\n\
-   -L <file>\tloads <file> in place of your " IRCRC_NAME " and expands $ expandos\n",
+	"   -i\t\tignores the autojoin list entries\n"
+	"   -l <file>\tloads <file> in place of your " IRCRC_NAME "\n"
+	"   -L <file>\tloads <file> in place of your " IRCRC_NAME " and expands $ expandos\n"
 #if !defined(WINNT) && !defined(__EMX__)
-"   -B\t\tforce BitchX to fork and return you to shell. pid check on.\n",
+	"   -B\t\tforce BitchX to fork and return you to shell. pid check on.\n"
 #endif
-NULL };
+	;
 
 char	*time_format = NULL;	/* XXX Bogus XXX */
 #ifdef __EMX__
@@ -918,16 +918,8 @@ static	char	*parse_args (char *argv[], int argc, char **envp)
 			default:
 				fprintf(stderr, "Unknown flag: %s\n",argv[ac]);
 			case 'h':
-				{
-					int t = 0;
-
-					while(switch_help[t])
-					{
-						fprintf(stderr, "%s", switch_help[t]);
-						t++;
-					}
-					exit(1);
-				}
+				fputs(switch_help, stderr);
+				exit(1);
 		   } /* End of switch */
 		}
 		else
