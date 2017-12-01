@@ -240,13 +240,13 @@ static		char	*switch_help[] = {
 "   -n nickname\tnickname to use\n",
 "   -a\t\tadds default servers and command line servers to server list\n",
 "   -x\t\truns BitchX in \"debug\" mode\n",
-"   -Z\t\tuse NAT address when doing dcc.\n",
-"   -P\t\ttoggle check pid.nickname for running program.\n",
+"   -Z\t\tuse NAT address when doing DCC\n",
+"   -P\t\ttoggle check pid.nickname for running program\n",
 "   -v\t\ttells you about the client's version\n",
 #ifdef HAVE_LIBSSL
-"   -s\t\tservers specified are SSL.\n",
+"   -s\t\tnext server specified is SSL (may be used multiple times)\n",
 #endif
-"   -i\t\tignores the autojoin list entries.\n",
+"   -i\t\tignores the autojoin list entries\n",
 #if defined(WINNT) || defined(__EMX__)
 "   -l <file>\tloads <file> in place of your irc-rc\n\
    -L <file>\tloads <file> in place of your irc-rc and expands $ expandos\n",
@@ -948,10 +948,13 @@ static	char	*parse_args (char *argv[], int argc, char **envp)
 			if (!strchr(argv[ac], '.') && !strchr(argv[ac], ',') && !*nickname)
 				strlcpy(nickname, argv[ac], sizeof nickname);
 			else
+			{
 				build_server_list(argv[ac]);
 #ifdef HAVE_LIBSSL
-			do_use_ssl = 0;
+				/* -s flag only applies to next server specified */
+				do_use_ssl = 0;
 #endif
+			}
 		}
 	}
 

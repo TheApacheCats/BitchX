@@ -1,5 +1,8 @@
 [Changes 1.2.2]
 
+* Correctly handle case when a nick comes between a -s flag and a server name
+  on the command line (reported by gauze). (caf)
+
 * Show correct count of matching commands in /HELP. (caf)
 
 * Simplify rsindex() and strsearch() exported functions. (caf)
