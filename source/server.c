@@ -152,15 +152,19 @@ void	BX_close_server (int cs_index, char *message)
 			strlcat(buffer, "\r\n", sizeof buffer);
 #ifdef HAVE_LIBSSL
 			if (get_server_ssl(cs_index))
-			{
 				SSL_write(server_list[cs_index].ssl_fd, buffer, strlen(buffer));
-				say("Closing SSL connection");
-				SSL_shutdown(server_list[cs_index].ssl_fd);
-			}
 			else
 #endif
-				send(server_list[cs_index].write, buffer, strlen(buffer), 0);
+				write(server_list[cs_index].write, buffer, strlen(buffer));
 		}
+#ifdef HAVE_LIBSSL
+		if (get_server_ssl(cs_index))
+		{
+			SSL_shutdown(server_list[cs_index].ssl_fd);
+			SSL_free(server_list[cs_index].ssl_fd);
+			server_list[cs_index].ssl_fd = NULL;
+		}
+#endif
 		new_close(server_list[cs_index].write);
 	}
 	if (server_list[cs_index].read > -1)
@@ -2441,11 +2445,10 @@ void 	got_my_userhost (UserhostItem *item, char *nick, char *stuff)
 	lame_resolv(item->host, &server_list[from_server].uh_addr);
 }
 
-
-
 static int write_to_server(int server, int des, char *buffer)
 {
-int err = 0;
+	int err = 0;
+
 	if (do_hook(SEND_TO_SERVER_LIST, "%d %d %s", server, des, buffer))
 	{
 		if (serv_output_func)
@@ -2465,14 +2468,10 @@ int err = 0;
 			else
 #endif
 				err = write(des, buffer, strlen(buffer));
-	}
+		}
 		if ((err == -1) && !get_int_var(NO_FAIL_DISCONNECT_VAR))
 		{
 			say("Write to server failed.  Closing connection.");
-#ifdef HAVE_LIBSSL
-			if(get_server_ssl(server))
-				SSL_shutdown (server_list[server].ssl_fd);
-#endif
 			close_server(server, strerror(errno));
 			get_connected(server, server);
 		}

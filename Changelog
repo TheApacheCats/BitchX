@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Fix memory leak when reconnecting to SSL servers. (caf)
+
 * Add SSL version and cipher to SSL connect message. (caf)
 
 * Add BITCHXRC_NAME to config.h. (caf)
