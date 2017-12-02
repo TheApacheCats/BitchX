@@ -146,8 +146,7 @@ void	BX_close_server (int cs_index, char *message)
 		{
 			server_list[cs_index].closing = 1;
 			if (x_debug & DEBUG_OUTBOUND)
-				yell("Closing server %d because [%s]",
-					   cs_index, message ? message : empty_string);
+				yell("Closing server %d because [%s]", cs_index, message);
 			snprintf(buffer, MAX_PROTOCOL_SIZE + 1, "QUIT :%s", message);
 			strlcat(buffer, "\r\n", sizeof buffer);
 #ifdef HAVE_LIBSSL
@@ -158,7 +157,7 @@ void	BX_close_server (int cs_index, char *message)
 				write(server_list[cs_index].write, buffer, strlen(buffer));
 		}
 #ifdef HAVE_LIBSSL
-		if (get_server_ssl(cs_index))
+		if (server_list[cs_index].ssl_fd)
 		{
 			SSL_shutdown(server_list[cs_index].ssl_fd);
 			SSL_free(server_list[cs_index].ssl_fd);
@@ -503,7 +502,7 @@ void	do_server (fd_set *rd, fd_set *wr)
 			if (getpeername(des, (struct sockaddr *) &sa, &salen) != -1)
 			{
 #ifdef HAVE_LIBSSL
-				if(!server_list[i].ctx || server_list[i].ssl_error == SSL_ERROR_WANT_WRITE)
+				if (!server_list[i].ssl_fd || server_list[i].ssl_error == SSL_ERROR_WANT_WRITE)
 				{
 #endif
 					server_list[i].connect_wait = 0;
@@ -530,9 +529,9 @@ void	do_server (fd_set *rd, fd_set *wr)
 				{
 #ifdef NON_BLOCKING_CONNECTS
 					/* If we get here before getting above we have problems. */
-					if(!(server_list[i].login_flags & SF_LOGGED_IN))
+					if (!(server_list[i].login_flags & SF_LOGGED_IN))
 					{
-						if(!server_list[i].ctx || server_list[i].ssl_error == SSL_ERROR_WANT_READ)
+						if (!server_list[i].ssl_fd || server_list[i].ssl_error == SSL_ERROR_WANT_READ)
 						{
 							server_list[i].connect_wait = 0;
 							finalize_server_connect(i, server_list[i].c_server, i);
@@ -868,7 +867,8 @@ void 	remove_from_server_list (int i)
 	new_free(&server_list[i].sent_nick);
 	new_free(&server_list[i].sent_body);
 #ifdef HAVE_LIBSSL
-	SSL_CTX_free(server_list[i].ctx);
+	if (server_list[i].ctx)
+		SSL_CTX_free(server_list[i].ctx);
 #endif
 	clear_server_sping(i, NULL);
 		
@@ -1341,27 +1341,60 @@ int finalize_server_connect(int refnum, int c_server, int my_from_server)
 	}
 
 #ifdef HAVE_LIBSSL
-	if(get_server_ssl(refnum))
+	if (get_server_ssl(refnum))
 	{
 		int err = 0;
 
-		if(!server_list[refnum].ctx)
+		if (!server_list[refnum].ssl_fd)
 		{
-			server_list[refnum].ctx = SSL_CTX_new (SSLv23_client_method());
-			CHK_NULL(server_list[refnum].ctx);
-			server_list[refnum].ssl_fd = SSL_new (server_list[refnum].ctx);
-			CHK_NULL(server_list[refnum].ssl_fd);
+			/* Lazily allocate an SSL_CTX the first time this server connects. This
+			 * is reused for subsequent connections to this server.
+			 */
+			if (!server_list[refnum].ctx)
+			{
+				server_list[refnum].ctx = SSL_CTX_new(SSLv23_client_method());
+
+				if (!server_list[refnum].ctx)
+				{
+					say("SSL error - failed to allocate SSL_CTX");	
+					SSL_show_errors();
+					close_server(refnum, NULL);
+					return -1;
+				}
+			}
+
+			/* Allocate an SSL for this connection.  This will be freed at close time. */
+			server_list[refnum].ssl_fd = SSL_new(server_list[refnum].ctx);
+			if (!server_list[refnum].ssl_fd)
+			{
+				say("SSL error - failed to create SSL");
+				SSL_show_errors();
+				close_server(refnum, NULL);
+				return -1;
+			}
+
 			SSL_set_fd (server_list[refnum].ssl_fd, server_list[refnum].read);
 		}
-		err = SSL_connect (server_list[refnum].ssl_fd);
-		if(err == -1)
+
+		err = SSL_connect(server_list[refnum].ssl_fd);
+
+		if (err < 1)
 		{
 			server_list[refnum].ssl_error = SSL_get_error(server_list[refnum].ssl_fd, err);
-			if(server_list[refnum].ssl_error == SSL_ERROR_WANT_READ || server_list[refnum].ssl_error == SSL_ERROR_WANT_WRITE)
+
+			/* The SSL_connect can't complete yet.  Return without calling register_server(),
+			 * and this function will be called again later.
+			 */
+			if (server_list[refnum].ssl_error == SSL_ERROR_WANT_READ ||
+			    server_list[refnum].ssl_error == SSL_ERROR_WANT_WRITE)
 				return 0;
+
+			say("SSL_connect error: %d", err, server_list[refnum].ssl_error);
+			SSL_show_errors();
+			close_server(refnum, NULL);
+			return -2;
 		}
-		SSL_show_errors();
-		CHK_SSL(err);
+
 		say("SSL server connected using %s (%s)",
 			SSL_get_version(server_list[refnum].ssl_fd),
 			SSL_get_cipher(server_list[refnum].ssl_fd));
@@ -1552,15 +1585,10 @@ void	try_connect (int server, int old_server)
 {
 	if (server_list)
 	{
-		if (server >= number_of_servers)
-			server = 0;
-		else if (server < 0)
+		if (server < 0 || server >= number_of_servers)
 			server = 0;
 
-#ifdef HAVE_LIBSSL
-		server_list[server].ctx = NULL;
-#endif
-		if(server_list[server].server_change_refnum > -1)
+		if (server_list[server].server_change_refnum > -1)
 			set_display_target_by_winref(server_list[server].server_change_refnum);
 
 		set_server_old_server(server, old_server);
