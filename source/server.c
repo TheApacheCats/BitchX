@@ -1352,13 +1352,15 @@ int finalize_server_connect(int refnum, int c_server, int my_from_server)
 		err = SSL_connect (server_list[refnum].ssl_fd);
 		if(err == -1)
 		{
-			server_list[refnum].ssl_error = SSL_get_error((SSL *)server_list[refnum].ssl_fd, err);
+			server_list[refnum].ssl_error = SSL_get_error(server_list[refnum].ssl_fd, err);
 			if(server_list[refnum].ssl_error == SSL_ERROR_WANT_READ || server_list[refnum].ssl_error == SSL_ERROR_WANT_WRITE)
 				return 0;
 		}
 		SSL_show_errors();
 		CHK_SSL(err);
-		say("SSL server connected");
+		say("SSL server connected using %s (%s)",
+			SSL_get_version(server_list[refnum].ssl_fd),
+			SSL_get_cipher(server_list[refnum].ssl_fd));
 	}
 #endif
 
