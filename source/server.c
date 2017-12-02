@@ -2456,14 +2456,12 @@ static int write_to_server(int server, int des, char *buffer)
 		else
 		{
 #ifdef HAVE_LIBSSL
-			if(get_server_ssl(server))
+			if (get_server_ssl(server))
 			{
-				if(!server_list[server].ssl_fd)
-				{
-					say ("SSL write error");
-					return -1;
-				}
-				err = SSL_write(server_list[server].ssl_fd, buffer, strlen(buffer));
+				int ret = SSL_write(server_list[server].ssl_fd, buffer, strlen(buffer));
+
+				if (ret <= 0)
+					err = -1;
 			}
 			else
 #endif
