@@ -1536,7 +1536,7 @@ static	void p_mode(char *from, char **ArgList)
 				put_it("%s", convert_output_format(fget_string_var(fset), "%s %s %s %s %s", update_clock(GET_TIME), from, display_uh, target, line));
 			}
 			if (!my_stricmp(target, get_server_nickname(from_server)))
-				update_user_mode(line);
+				update_user_mode(from_server, line);
 			logmsg(LOG_MODE_USER, from, 0, "%s %s", target, line);
 		}
 		update_all_status(current_window, NULL, 0);

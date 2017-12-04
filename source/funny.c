@@ -408,40 +408,34 @@ void funny_mode(char *from, char **ArgList)
 	}
 }
 
-void update_user_mode(char *modes)
+void update_user_mode(int server, const char *modes)
 {
 	int	onoff = 1;
-	char	*p_umodes = get_possible_umodes(from_server);
+	const char *p_umodes = get_possible_umodes(server);
+	const char *p;
 
 	for (; *modes; modes++)
 	{
-		if (*modes == '-')
-			onoff = 0;
-		else if (*modes == '+')
-			onoff = 1;
+		char c = *modes;
 
-		else if   ((*modes >= 'a' && *modes <= 'z')
-			|| (*modes >= 'A' && *modes <= 'Z'))
+		switch (c)
 		{
-			size_t 	idx;
-			int 	c = *modes;
-
-			idx = ccspan(p_umodes, c);
-			if (p_umodes[idx] == 0)
-				ircpanic("Invalid user mode referenced");
-			set_server_flag(from_server, idx, onoff);
-
-			if (c == 'o' || c == 'O')
-				set_server_operator(from_server, onoff);
-#if 0
-			char c = tolower(*modes);
-			size_t idx = (size_t) (strchr(umodes, c) - umodes);
-
-			set_server_flag(from_server, USER_MODE << idx, onoff);
-
-			if (c == 'o' || c == 'O')
-				set_server_operator(from_server, onoff);
-#endif
+			case '-':
+				onoff = 0;
+				break;
+			case '+':
+				onoff = 1;
+				break;
+			case 'o':
+			case 'O':
+				set_server_operator(server, onoff);
+				/* fallthrough */
+			default:
+				p = strchr(p_umodes, c);
+				if (p)
+					set_server_flag(server, p - p_umodes, onoff);
+				else
+					yell("Ignoring invalid user mode '%c' from server", c);
 		}
 	}
 }

@@ -29,6 +29,6 @@
 	void	funny_list (char *, char **);
 	void	funny_mode (char *, char **);
 	void	funny_namreply (char *, char **);
-	void	update_user_mode (char *);
+	void	update_user_mode (int, const char *);
 
 #endif /* FUNNY_H_ */
