@@ -24,11 +24,9 @@
 	int	funny_is_ignore_channel (void);
 	void	funny_set_ignore_channel (char *);
 	void	funny_match (char *);
-	void	reinstate_user_modes (void);
 	void	funny_print_widelist (void);
 	void	funny_list (char *, char **);
 	void	funny_mode (char *, char **);
 	void	funny_namreply (char *, char **);
-	void	update_user_mode (int, const char *);
 
 #endif /* FUNNY_H_ */

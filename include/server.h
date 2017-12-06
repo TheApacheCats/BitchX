@@ -249,6 +249,7 @@ extern	SGroup	*server_group_list;
 	void	disconnectcmd (char *, char *, char *, char *);
 	char	*BX_get_umode (int);
 	int	BX_server_list_size (void);
+	void	reinstate_user_modes (int);
 
 	void    BX_set_server_away                 (int, char *, int);
 	char *  BX_get_server_away                 (int);

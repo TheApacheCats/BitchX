@@ -1462,6 +1462,38 @@ static void check_bitch_mode(char *from, char *uh, char *channel, char *line, Ch
 	reset_display_target();
 }
 
+static void update_user_mode(int server, const char *modes)
+{
+	int	onoff = 1;
+	const char *p_umodes = get_possible_umodes(server);
+	const char *p;
+
+	for (; *modes; modes++)
+	{
+		char c = *modes;
+
+		switch (c)
+		{
+			case '-':
+				onoff = 0;
+				break;
+			case '+':
+				onoff = 1;
+				break;
+			case 'o':
+			case 'O':
+				set_server_operator(server, onoff);
+				/* fallthrough */
+			default:
+				p = strchr(p_umodes, c);
+				if (p)
+					set_server_flag(server, p - p_umodes, onoff);
+				else
+					yell("Ignoring invalid user mode '%c' from server", c);
+		}
+	}
+}
+
 static	void p_mode(char *from, char **ArgList)
 {
 	char *target;

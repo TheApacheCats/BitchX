@@ -1918,6 +1918,13 @@ void clear_user_modes (int gindex)
 	set_umode(gindex);
 }
 
+void reinstate_user_modes(int server)
+{
+	char *modes = get_umode(server);
+	if (modes && *modes)
+		my_send_to_server(server, "MODE %s +%s", get_server_nickname(server), modes);
+}
+
 /*
  * Encapsulates everything we need to change our AWAY status.
  * This improves greatly on having everyone peek into that member.

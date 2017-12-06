@@ -581,7 +581,7 @@ static void got_initial_version_28(char *server, char *sversion, char *channel_m
 	reconnect_all_channels(from_server);
 
 	reset_display_target();
-	reinstate_user_modes();
+	reinstate_user_modes(from_server);
 	if (use_nat_address == 1)
 		userhostbase(get_server_nickname(from_server), get_nat_address, 1, "%s", get_server_nickname(from_server));
 	update_all_status(current_window, NULL, 0);
