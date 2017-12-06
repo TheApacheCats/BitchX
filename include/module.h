@@ -10,7 +10,7 @@
  * if we change the table below, we change this module number to the 
  * current date (YYYYMMDDxx where xx is a serial number).
  */
-#define MODULE_VERSION 2017120601UL
+#define MODULE_VERSION 2017120602UL
 
 #include "struct.h"
 
@@ -285,7 +285,7 @@ enum FUNCTION_VALUE
 	GET_SERVER_MOTD,
 	GET_SERVER_OPERATOR,
 	GET_SERVER_VERSION,
-	GET_SERVER_FLAG,
+	GET_SERVER_UMODE,
 	GET_SERVER_PORT,
 	GET_SERVER_LAG,
 	GET_SERVER2_8,

@@ -1,5 +1,8 @@
 [Changes 1.2.2]
 
+* Only echo sent WALLOPS if we are _not_ +w, because otherwise the server will
+  echo it to us anyway. (caf)
+
 * Fix problem where reconnecting to SSL servers could stall. (caf)
 
 * Fix memory leak when reconnecting to SSL servers. (caf)

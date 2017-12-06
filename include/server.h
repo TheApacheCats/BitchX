@@ -270,7 +270,7 @@ extern	SGroup	*server_group_list;
 	void	clear_sent_to_server		(int);
 	int	sent_to_server			(int);
 	void	BX_update_server_umode			(int, char, int);
-	int	BX_get_server_flag			(int, int);
+	int	BX_get_server_umode			(int, char);
 	char *	get_server_userhost		(int);
 	void	got_my_userhost			(UserhostItem *item, char *nick, char *stuff);
 	void	BX_set_server_version		(int, int);
@@ -387,36 +387,7 @@ struct sockaddr_foobar	get_server_uh_addr		(int);
 //	void set_server_sasl_pass(int, const char *);
 	char *get_server_sasl_pass(int);
 				
-#define USER_MODE	0x0001
-#define USER_MODE_A	USER_MODE << 0
-#define USER_MODE_B	USER_MODE << 1
-#define USER_MODE_C	USER_MODE << 2
-#define USER_MODE_D	USER_MODE << 3
-#define USER_MODE_E	USER_MODE << 4
-#define USER_MODE_F	USER_MODE << 5
-#define USER_MODE_G	USER_MODE << 6
-#define USER_MODE_H	USER_MODE << 7
-#define USER_MODE_I	USER_MODE << 8
-#define USER_MODE_J	USER_MODE << 9
-#define USER_MODE_K	USER_MODE << 10
-#define USER_MODE_L	USER_MODE << 11
-#define USER_MODE_M	USER_MODE << 12
-#define USER_MODE_N	USER_MODE << 13
-#define USER_MODE_O	USER_MODE << 14
-#define USER_MODE_P	USER_MODE << 15
-#define USER_MODE_Q	USER_MODE << 16
-#define USER_MODE_R	USER_MODE << 17
-#define USER_MODE_S	USER_MODE << 18
-#define USER_MODE_T	USER_MODE << 19
-#define USER_MODE_U	USER_MODE << 20
-#define USER_MODE_V	USER_MODE << 21
-#define USER_MODE_W	USER_MODE << 22
-#define USER_MODE_X	USER_MODE << 23
-#define USER_MODE_Y	USER_MODE << 24
-#define USER_MODE_Z	USER_MODE << 25
-
-#define SF_LOGGED_IN	(USER_MODE << 29)
-extern const char *umodes;
+#define SF_LOGGED_IN	0x0001U
 
 #define IMMED_SEND	0
 #define QUEUE_SEND	1

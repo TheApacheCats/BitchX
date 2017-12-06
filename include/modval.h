@@ -532,7 +532,7 @@ extern Function_ptr *global;
 #define get_server_motd (*(int (*)(int ))global[GET_SERVER_MOTD])
 #define get_server_operator (*(int (*)(int ))global[GET_SERVER_OPERATOR])
 #define get_server_version (*(int (*)(int ))global[GET_SERVER_VERSION])
-#define get_server_flag (*(int (*)(int , int ))global[GET_SERVER_FLAG])
+#define get_server_umode (*(int (*)(int , char))global[GET_SERVER_UMODE])
 #define get_server_port (*(int (*)(int ))global[GET_SERVER_PORT])
 #define get_server_lag (*(int (*)(int ))global[GET_SERVER_LAG])
 #define get_server2_8 (*(int (*)(int ))global[GET_SERVER2_8])

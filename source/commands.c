@@ -3251,7 +3251,10 @@ BUILT_IN_COMMAND(e_wall)
 
 	set_display_target(NULL, LOG_WALLOP);
 	send_to_server("%s :%s", command, args);
-	if (get_server_flag(from_server, USER_MODE_W))
+
+	/* Only show the message if we are _not_ +w, because if we are the server
+	 * will echo our WALLOPS back to us. */
+	if (!get_server_umode(from_server, 'w'))
 		put_it("!! %s", args);
 	add_last_type(&last_sent_wall[0], 1, get_server_nickname(from_server), NULL, "*", args);
 	reset_display_target();

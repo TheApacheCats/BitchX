@@ -57,7 +57,7 @@ CVS_REVISION(server_c)
 
 static	char *	set_umode (int du_index);
 
-const	char *  umodes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+static const char umodes[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 /* server_list: the list of servers that the user can connect to,etc */
  	Server	*server_list = NULL;
@@ -2007,53 +2007,68 @@ time_t get_server_awaytime(int server)
 	return server_list[server].awaytime;
 }
 
+static int umode_index(char mode)
+{
+	const char *p = strchr(umodes, mode);
+
+	if (p)
+		return p - umodes;
+	else
+		return -1;
+}
+
 /* update_server_umode()
  *
  * Updates the client's idea of the status of a single umode flag.
  */
 void BX_update_server_umode(int server, char mode, int value)
 {
-	const char *p = strchr(umodes, mode);
+	const int flag = umode_index(mode);
 
 	if (server <= -1 || server > number_of_servers)
 		return;
 
-	if (p)
-	{
-		const int flag = p - umodes;
-
-		if (flag > 31)
-		{
-			if (value)
-				server_list[server].flags2 |= 0x1L << (flag - 32);
-			else
-				server_list[server].flags2 &= ~(0x1L << (flag - 32));
-		}
-		else
-		{
-			if (value)
-				server_list[server].flags |= 0x1L << flag;
-			else
-				server_list[server].flags &= ~(0x1L << flag);
-		}
-		set_umode(server);
-	}
-	else
+	if (flag < 0)
 	{
 		yell("Ignoring invalid user mode '%c' from server", mode);
+		return;
 	}
-}
-		
-int	BX_get_server_flag (int gsf_index, int flag)
-{
-	if (gsf_index == -1)
-		gsf_index = primary_server;
-	else if (gsf_index >= number_of_servers)
-		return 0;
+
 	if (flag > 31)
-		return !!(server_list[gsf_index].flags2 & (0x1L << (flag - 32)));
+	{
+		if (value)
+			server_list[server].flags2 |= 0x1L << (flag - 32);
+		else
+			server_list[server].flags2 &= ~(0x1L << (flag - 32));
+	}
 	else
-		return !!(server_list[gsf_index].flags & (0x1L << flag));
+	{
+		if (value)
+			server_list[server].flags |= 0x1L << flag;
+		else
+			server_list[server].flags &= ~(0x1L << flag);
+	}
+	set_umode(server);
+}
+
+/* get_server_umode()
+ *
+ * Returns the status (set/unset) of a given umode flag.
+ */
+int	BX_get_server_umode(int server, char mode)
+{
+	const int flag = umode_index(mode);
+
+	if (server <= -1 || server > number_of_servers)
+		return 0;
+
+	if (flag < 0)
+		return 0;
+
+	if (flag > 31)
+		return !!(server_list[server].flags2 & (0x1L << (flag - 32)));
+	else
+		return !!(server_list[server].flags & (0x1L << flag));
 }
 
 /*
