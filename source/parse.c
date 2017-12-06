@@ -1462,11 +1462,9 @@ static void check_bitch_mode(char *from, char *uh, char *channel, char *line, Ch
 	reset_display_target();
 }
 
-static void update_user_mode(int server, const char *modes)
+static void update_user_modes(int server, const char *modes)
 {
 	int	onoff = 1;
-	const char *p_umodes = get_possible_umodes(server);
-	const char *p;
 
 	for (; *modes; modes++)
 	{
@@ -1485,11 +1483,7 @@ static void update_user_mode(int server, const char *modes)
 				set_server_operator(server, onoff);
 				/* fallthrough */
 			default:
-				p = strchr(p_umodes, c);
-				if (p)
-					set_server_flag(server, p - p_umodes, onoff);
-				else
-					yell("Ignoring invalid user mode '%c' from server", c);
+				update_server_umode(server, c, onoff);
 		}
 	}
 }
@@ -1568,7 +1562,7 @@ static	void p_mode(char *from, char **ArgList)
 				put_it("%s", convert_output_format(fget_string_var(fset), "%s %s %s %s %s", update_clock(GET_TIME), from, display_uh, target, line));
 			}
 			if (!my_stricmp(target, get_server_nickname(from_server)))
-				update_user_mode(from_server, line);
+				update_user_modes(from_server, line);
 			logmsg(LOG_MODE_USER, from, 0, "%s %s", target, line);
 		}
 		update_all_status(current_window, NULL, 0);

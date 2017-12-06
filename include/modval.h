@@ -514,7 +514,7 @@ extern Function_ptr *global;
 #define reset_nickname (*(void (*)(int ))global[RESET_NICKNAME])
 
 #define set_server_cookie (*(void (*)(int , char *))global[SET_SERVER_COOKIE])
-#define set_server_flag (*(void (*)(int , int , int ))global[SET_SERVER_FLAG])
+#define update_server_umode (*(void (*)(int , char , int ))global[UPDATE_SERVER_UMODE])
 #define set_server_motd (*(void (*)(int , int ))global[SET_SERVER_MOTD])
 #define set_server_operator (*(void (*)(int , int ))global[SET_SERVER_OPERATOR])
 #define set_server_itsname (*(void (*)(int , char *))global[SET_SERVER_ITSNAME])
@@ -533,7 +533,6 @@ extern Function_ptr *global;
 #define get_server_operator (*(int (*)(int ))global[GET_SERVER_OPERATOR])
 #define get_server_version (*(int (*)(int ))global[GET_SERVER_VERSION])
 #define get_server_flag (*(int (*)(int , int ))global[GET_SERVER_FLAG])
-#define get_possible_umodes (*(char *(*)(int ))global[GET_POSSIBLE_UMODES])
 #define get_server_port (*(int (*)(int ))global[GET_SERVER_PORT])
 #define get_server_lag (*(int (*)(int ))global[GET_SERVER_LAG])
 #define get_server2_8 (*(int (*)(int ))global[GET_SERVER2_8])

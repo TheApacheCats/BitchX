@@ -10,7 +10,7 @@
  * if we change the table below, we change this module number to the 
  * current date (YYYYMMDDxx where xx is a serial number).
  */
-#define MODULE_VERSION 2017112301UL
+#define MODULE_VERSION 2017120601UL
 
 #include "struct.h"
 
@@ -267,7 +267,7 @@ enum FUNCTION_VALUE
 	RESET_NICKNAME,
 /* various set server struct functions */
 	SET_SERVER_COOKIE,
-	SET_SERVER_FLAG,
+	UPDATE_SERVER_UMODE,
 	SET_SERVER_MOTD,
 	SET_SERVER_OPERATOR,
 	SET_SERVER_ITSNAME,
@@ -286,7 +286,6 @@ enum FUNCTION_VALUE
 	GET_SERVER_OPERATOR,
 	GET_SERVER_VERSION,
 	GET_SERVER_FLAG,
-	GET_POSSIBLE_UMODES,
 	GET_SERVER_PORT,
 	GET_SERVER_LAG,
 	GET_SERVER2_8,

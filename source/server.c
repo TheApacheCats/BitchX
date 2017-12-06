@@ -1887,16 +1887,6 @@ static char *set_umode (int du_index)
 	return server_list[du_index].umode;
 }
 
-char *BX_get_possible_umodes (int gu_index)
-{
-	if (gu_index == -1)
-		gu_index = primary_server;
-	else if (gu_index >= number_of_servers)
-		return empty_string;
-
-	return server_list[gu_index].umodes;
-}
-
 char *BX_get_umode (int gu_index)
 {
 	if (gu_index == -1)
@@ -2017,30 +2007,43 @@ time_t get_server_awaytime(int server)
 	return server_list[server].awaytime;
 }
 
-void	BX_set_server_flag (int ssf_index, int flag, int value)
+/* update_server_umode()
+ *
+ * Updates the client's idea of the status of a single umode flag.
+ */
+void BX_update_server_umode(int server, char mode, int value)
 {
-	if (ssf_index == -1)
-		ssf_index = primary_server;
-	else if (ssf_index >= number_of_servers)
+	const char *p = strchr(umodes, mode);
+
+	if (server <= -1 || server > number_of_servers)
 		return;
 
-	if (flag > 31)
+	if (p)
 	{
-		if (value)
-			server_list[ssf_index].flags2 |= 0x1L << (flag - 32);
+		const int flag = p - umodes;
+
+		if (flag > 31)
+		{
+			if (value)
+				server_list[server].flags2 |= 0x1L << (flag - 32);
+			else
+				server_list[server].flags2 &= ~(0x1L << (flag - 32));
+		}
 		else
-			server_list[ssf_index].flags2 &= ~(0x1L << (flag - 32));
+		{
+			if (value)
+				server_list[server].flags |= 0x1L << flag;
+			else
+				server_list[server].flags &= ~(0x1L << flag);
+		}
+		set_umode(server);
 	}
 	else
 	{
-		if (value)
-			server_list[ssf_index].flags |= 0x1L << flag;
-		else
-			server_list[ssf_index].flags &= ~(0x1L << flag);
+		yell("Ignoring invalid user mode '%c' from server", mode);
 	}
-	set_umode(ssf_index);
 }
-
+		
 int	BX_get_server_flag (int gsf_index, int flag)
 {
 	if (gsf_index == -1)

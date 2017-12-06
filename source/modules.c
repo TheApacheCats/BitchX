@@ -262,7 +262,7 @@ static int already_done = 0;
 	global_table[RESET_NICKNAME]		= (Function_ptr) BX_reset_nickname;
 /* various set server struct functions */
 	global_table[SET_SERVER_COOKIE]		= (Function_ptr) BX_set_server_cookie;
-	global_table[SET_SERVER_FLAG]		= (Function_ptr) BX_set_server_flag;
+	global_table[UPDATE_SERVER_UMODE]	= (Function_ptr) BX_update_server_umode;
 	global_table[SET_SERVER_MOTD]		= (Function_ptr) BX_set_server_motd;
 	global_table[SET_SERVER_OPERATOR]	= (Function_ptr) BX_set_server_operator;
 	global_table[SET_SERVER_ITSNAME]	= (Function_ptr) BX_set_server_itsname;
@@ -282,7 +282,6 @@ static int already_done = 0;
 	global_table[GET_SERVER_OPERATOR]	= (Function_ptr) BX_get_server_operator;
 	global_table[GET_SERVER_VERSION]	= (Function_ptr) BX_get_server_version;
 	global_table[GET_SERVER_FLAG]		= (Function_ptr) BX_get_server_flag;
-	global_table[GET_POSSIBLE_UMODES]	= (Function_ptr) BX_get_possible_umodes;
 	global_table[GET_SERVER_PORT]		= (Function_ptr) BX_get_server_port;
 	global_table[GET_SERVER_LAG]		= (Function_ptr) BX_get_server_lag;
 	global_table[GET_SERVER2_8]		= (Function_ptr) BX_get_server2_8;

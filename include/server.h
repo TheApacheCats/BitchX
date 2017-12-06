@@ -230,7 +230,6 @@ extern	SGroup	*server_group_list;
 	void set_server_bits (fd_set *rd, fd_set *wr, struct timeval *wake_time);
 	void	BX_set_server_itsname (int, char *);
 	void	BX_set_server_version (int, int);
-	char	*BX_get_possible_umodes(int);
 		
 	int	BX_is_server_open (int);
 	int	BX_get_server_port (int);
@@ -270,7 +269,7 @@ extern	SGroup	*server_group_list;
 	void	send_from_server_queue		(void);
 	void	clear_sent_to_server		(int);
 	int	sent_to_server			(int);
-	void	BX_set_server_flag			(int, int, int);
+	void	BX_update_server_umode			(int, char, int);
 	int	BX_get_server_flag			(int, int);
 	char *	get_server_userhost		(int);
 	void	got_my_userhost			(UserhostItem *item, char *nick, char *stuff);
