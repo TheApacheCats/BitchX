@@ -1233,7 +1233,7 @@ int isme(char *nick)
 enum REDIR_TYPES { PRIVMSG = 0, KICK, TOPIC, WALL, WALLOP, NOTICE, KBOOT, KILL, DCC, LIST};
 void userhost_ban(UserhostItem *stuff, char *nick1, char *args);
 
-int redirect_msg(char *to, enum REDIR_TYPES what, char *str, int showansi)
+static int redirect_msg(char *to, enum REDIR_TYPES what, char *str, int showansi)
 {
 char *new_str;
 	if (showansi)
@@ -1243,16 +1243,20 @@ char *new_str;
 	switch(what)
 	{
 		case PRIVMSG:
-			if (is_channel(to))
-				put_it("%s", convert_output_format(fget_string_var(FORMAT_SEND_PUBLIC_FSET), "%s %s %s %s", update_clock(GET_TIME), to, get_server_nickname(from_server), new_str));
-			else if ((*to == '=') && dcc_activechat(to+1))
-				;
+			if (*to == '=')
+			{
+				to++;
+				if (dcc_activechat(to))
+					dcc_chat_transmit(to, new_str, new_str, 0);
+			}
 			else
-				put_it("%s", convert_output_format(fget_string_var(FORMAT_SEND_MSG_FSET), "%s %s %s %s", update_clock(GET_TIME), to, get_server_nickname(from_server), new_str));
-			if ((*to == '=') && dcc_activechat(to+1))
-				dcc_chat_transmit(to + 3, new_str, new_str, 0);
-			else
+			{
+				if (is_channel(to))
+					put_it("%s", convert_output_format(fget_string_var(FORMAT_SEND_PUBLIC_FSET), "%s %s %s %s", update_clock(GET_TIME), to, get_server_nickname(from_server), new_str));
+				else
+					put_it("%s", convert_output_format(fget_string_var(FORMAT_SEND_MSG_FSET), "%s %s %s %s", update_clock(GET_TIME), to, get_server_nickname(from_server), new_str));
 				send_to_server("PRIVMSG %s :%s", to, new_str);
+			}
 			break;
 		case KILL:
 			send_to_server("KILL %s :%s", to, new_str);

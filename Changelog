@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Fix redirecting to DCC CHATs with /REL* commands. (caf)
+
 * Update arcfour example module to use exported dcc_chat_socketread()
   callback. (caf)
 
