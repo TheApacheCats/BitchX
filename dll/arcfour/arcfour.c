@@ -120,7 +120,7 @@ int Arcfour_Init(IrcCommandDll **intp, Function_ptr *global_table)
 {
 	initialize_module("arcfour");
 	memset(keyboxes, 0, sizeof(keyboxes));
-	typenum = add_dcc_bind("SCHAT", "schat", NULL, start_dcc_crypt, get_dcc_encrypt, send_dcc_encrypt, end_dcc_crypt);
+	typenum = add_dcc_bind("SCHAT", "schat", NULL, start_dcc_crypt, dcc_schat_input, send_dcc_encrypt, end_dcc_crypt);
 	add_module_proc(DCC_PROC, "schat", "schat", "Secure DCC Chat", 0, 0, dcc_sdcc, NULL);
 	return 0;
 }
@@ -163,7 +163,7 @@ static int send_dcc_encrypt (int type, int sock, char *buf, int len)
 	return -1;
 }
 
-static int get_dcc_encrypt (int type, int sock, char *buf, int parm, int len)
+static int dcc_schat_input (int type, int sock, char *buf, int parm, int len)
 {
 	if (type == DCC_CHAT) {
 		if ((len = dgets(buf, sock, parm, BIG_BUFFER_SIZE, NULL)) > 0) {
@@ -245,7 +245,10 @@ SocketList *sa;
 	new_s = accept(s, (struct sockaddr *) &remaddr, &sra);
 	type = flags & DCC_TYPES;
 	n = get_socketinfo(s);
-	if ((add_socketread(new_s, ntohs(remaddr.sin_port), flags, nick, get_dcc_encrypt, NULL)) < 0)
+
+	/* This uses the ordinary dcc_chat_socketread() function - it will call our
+	 * input filter function dcc_schat_input(). */
+	if ((add_socketread(new_s, ntohs(remaddr.sin_port), flags, nick, dcc_chat_socketread, NULL)) < 0)
 	{
 		erase_dcc_info(s, 0, "%s", convert_output_format("$G %RDCC error: accept() failed. punt!!", NULL, NULL));
 		close_socketread(s);
