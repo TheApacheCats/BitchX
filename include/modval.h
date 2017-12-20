@@ -612,6 +612,8 @@ extern Function_ptr *global;
 #define add_to_queue (*(int (*)(char *, char *, pack *))global[ADD_TO_QUEUE])
 #define dcc_filesend (*(void (*)(char *, char *))global[DCC_FILESEND])
 #define dcc_resend (*(void (*)(char *, char *))global[DCC_RESEND])
+#define dcc_chat_socketread (*(void (*)(int))global[DCC_CHAT_SOCKETREAD])
+#define dcc_send_socketread (*(void (*)(int))global[DCC_SEND_SOCKETREAD])
 
 /* irc.c */
 #define irc_exit (*(void (*)(int, char *, char *, ...))global[IRC_EXIT_FUNC])

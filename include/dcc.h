@@ -159,8 +159,10 @@ struct dcc_offer {
 	int BX_remove_all_dcc_binds(char *);
 	int BX_remove_dcc_bind(char *, int);
 	
-	
 	int	BX_add_dcc_bind(char *, char *, void *, void *, void *, void *, void *);
+/* add_socketread() callbacks for ordinary CHAT and SEND DCCs */
+extern void BX_dcc_chat_socketread(int);
+extern void BX_dcc_send_socketread(int);
 
 	SocketList *BX_find_dcc(const char *, const char *, const char *, int, int, int, int);	
 	void	BX_erase_dcc_info(int, int, char *, ...);

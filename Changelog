@@ -1,5 +1,8 @@
 [Changes 1.2.2]
 
+* Export dcc_chat_socketread() and dcc_send_socketread() callbacks to modules,
+  so that modules implementing new DCC types can use these. (caf)
+
 * Only echo sent WALLOPS if we are _not_ +w, because otherwise the server will
   echo it to us anyway. (caf)
 

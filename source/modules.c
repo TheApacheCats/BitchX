@@ -620,6 +620,8 @@ static int already_done = 0;
 	global_table[GET_ACTIVE_COUNT]		= (Function_ptr) BX_get_active_count;
 	global_table[DCC_FILESEND]		= (Function_ptr) BX_dcc_filesend;
 	global_table[DCC_RESEND]		= (Function_ptr) BX_dcc_resend;
+	global_table[DCC_CHAT_SOCKETREAD]		= (Function_ptr) BX_dcc_chat_socketread;
+	global_table[DCC_SEND_SOCKETREAD]		= (Function_ptr) BX_dcc_send_socketread;
 
 /* cdcc.c */
 	global_table[GET_NUM_QUEUE]		= (Function_ptr) BX_get_num_queue;

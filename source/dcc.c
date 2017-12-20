@@ -142,8 +142,6 @@ typedef struct _DCC_List
 
 static DCC_List *pending_dcc = NULL;
 
-
-static void dcc_chat_socketread(int);
 #ifndef BITCHX_LITE
 static void dcc_bot_socketread(int);
 #endif
@@ -767,7 +765,7 @@ void	(*func)(int) = dcc_chat_socketread;
 #define DCC_CTCP_MESSAGE "CTCP_MESSAGE "
 #define DCC_CTCP_REPLY "CTCP_REPLY "
 
-static void dcc_chat_socketread(int s)
+void BX_dcc_chat_socketread(int s)
 {
 	unsigned long flags;
 	char tmp[BIG_BUFFER_SIZE+1];
@@ -1098,7 +1096,6 @@ static const char *dcc_type_name(int type, int tdcc)
 	return dcc_types[type]->name;
 }
 
-void dcc_send_socketread(int s);
 void start_dcc_get(int s);
 
 /* dcc_fullname()
@@ -1796,7 +1793,7 @@ void close_dcc_file(int snum)
  * following 3 functions process dcc filesends.
  */
 
-void dcc_send_socketread(int snum)
+void BX_dcc_send_socketread(int snum)
 {
 SocketList *s;
 DCC_int *n;

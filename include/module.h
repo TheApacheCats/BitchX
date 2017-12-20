@@ -10,7 +10,7 @@
  * if we change the table below, we change this module number to the 
  * current date (YYYYMMDDxx where xx is a serial number).
  */
-#define MODULE_VERSION 2017120602UL
+#define MODULE_VERSION 2017122001UL
 
 #include "struct.h"
 
@@ -585,6 +585,8 @@ enum FUNCTION_VALUE
 	ADD_TO_QUEUE,
 	DCC_FILESEND,
 	DCC_RESEND,
+	DCC_CHAT_SOCKETREAD,
+	DCC_SEND_SOCKETREAD,
 		
 /* who.c */
 	WHOBASE,
