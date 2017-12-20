@@ -143,9 +143,9 @@ typedef struct _DCC_List
 static DCC_List *pending_dcc = NULL;
 
 
-static void process_dcc_chat(int);
+static void dcc_chat_socketread(int);
 #ifndef BITCHX_LITE
-static void process_dcc_bot(int);
+static void dcc_bot_socketread(int);
 #endif
 static void start_dcc_chat(int);
 static unsigned char byte_order_test (void);
@@ -711,7 +711,7 @@ char	*nick = NULL;
 unsigned long flags;
 DCC_int *n = NULL;
 SocketList *sa, *new_sa;
-void	(*func)(int) = process_dcc_chat;
+void	(*func)(int) = dcc_chat_socketread;
 
 	sa = get_socket(s);
 	flags = sa->flags;
@@ -723,7 +723,7 @@ void	(*func)(int) = process_dcc_chat;
 	n->user = m_strdup(nick);
 	set_display_target(NULL, LOG_DCC);
 #ifndef BITCHX_LITE
-	if (type == DCC_BOTMODE) func = process_dcc_bot;
+	if (type == DCC_BOTMODE) func = dcc_bot_socketread;
 #endif			
 	if ((add_socketread(new_s, ntohs(remaddr.sin_port), flags, nick, func, NULL)) < 0)
 	{
@@ -767,7 +767,7 @@ void	(*func)(int) = process_dcc_chat;
 #define DCC_CTCP_MESSAGE "CTCP_MESSAGE "
 #define DCC_CTCP_REPLY "CTCP_REPLY "
 
-static void process_dcc_chat(int s)
+static void dcc_chat_socketread(int s)
 {
 	unsigned long flags;
 	char tmp[BIG_BUFFER_SIZE+1];
@@ -894,7 +894,7 @@ static void process_dcc_chat(int s)
 }
 
 #ifndef BITCHX_LITE
-static void process_dcc_bot(int s)
+static void dcc_bot_socketread(int s)
 {
 unsigned long	flags;
 char		tmp[BIG_BUFFER_SIZE+1];
@@ -1098,7 +1098,7 @@ static const char *dcc_type_name(int type, int tdcc)
 	return dcc_types[type]->name;
 }
 
-void process_dcc_send1(int s);
+void dcc_send_socketread(int s);
 void start_dcc_get(int s);
 
 /* dcc_fullname()
@@ -1293,10 +1293,10 @@ static void dcc_chat_offer(const struct dcc_offer *offer, int server)
 	}
 
 	n->dccnum = ++dcc_count;
-	add_dcc_pending(n, Ctype|DCC_OFFER, process_dcc_chat);
+	add_dcc_pending(n, Ctype|DCC_OFFER, dcc_chat_socketread);
 
 	if (autoget)
-		dcc_create(offer->nick, n->filename, NULL, n->filesize, 0, Ctype, DCC_OFFER, process_dcc_chat);
+		dcc_create(offer->nick, n->filename, NULL, n->filesize, 0, Ctype, DCC_OFFER, dcc_chat_socketread);
 }
 
 #ifndef BITCHX_LITE
@@ -1326,7 +1326,7 @@ static void dcc_bot_offer(const struct dcc_offer *offer, int server)
 	}
 
 	n->dccnum = ++dcc_count;
-	add_dcc_pending(n, Ctype|DCC_OFFER, process_dcc_bot);
+	add_dcc_pending(n, Ctype|DCC_OFFER, dcc_bot_socketread);
 }
 #endif
 
@@ -1796,7 +1796,7 @@ void close_dcc_file(int snum)
  * following 3 functions process dcc filesends.
  */
 
-void process_dcc_send1(int snum)
+void dcc_send_socketread(int snum)
 {
 SocketList *s;
 DCC_int *n;
@@ -1930,7 +1930,7 @@ void start_dcc_send(int s)
 	n = get_socketinfo(s);		
 
 	set_display_target(NULL, LOG_DCC);
-	if ((add_socketread(new_s, ntohs(remaddr.sin_port), flags, nick, process_dcc_send1, NULL)) < 0)
+	if ((add_socketread(new_s, ntohs(remaddr.sin_port), flags, nick, dcc_send_socketread, NULL)) < 0)
 	{
 		erase_dcc_info(s, 1, "%s", convert_output_format("$G %RDCC error: accept() failed. punt!!", NULL, NULL));
 		close_socketread(s);
@@ -1994,7 +1994,7 @@ void start_dcc_send(int s)
 	get_time(&n->starttime);
 	get_time(&n->lasttime);
 	close_socketread(s);
-	process_dcc_send1(new_s);
+	dcc_send_socketread(new_s);
 	reset_display_target();
 }
 
