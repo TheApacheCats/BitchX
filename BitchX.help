@@ -594,13 +594,12 @@ KILL
    %gUsage%n: %W/%nkill %Y<%Cnick%Y>%n %R[%nreason%R]%n
    %Y*%n Requires irc operator status
    - Kills %Y<%Cnick%Y>%n for %R[%nreason%R]%n
-     If no reason is given, a quote from the random kick file is used
-     *hopefully in a latter version of BitchX*
+     If no reason is given, a quote from the random kill file is used
 L
    See %YLEAVE%n
 LASTLOG
    %gUsage%n: %W/%nlastlog -file filename%G|%n-clear%G|%n-max #%G|%n
-                           -liternal pat%G|%n-beep%G|%nlevel
+                           -literal pat%G|%n-beep%G|%nlevel
    - Shows more than a few pages back
 LEAVE
    %gUsage%n: %W/%nleave %Y<%Bchannel%Y>%n
