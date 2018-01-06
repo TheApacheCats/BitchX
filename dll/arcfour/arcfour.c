@@ -163,15 +163,17 @@ static int send_dcc_encrypt (int type, int sock, char *buf, int len)
 	return -1;
 }
 
-static int dcc_schat_input (int type, int sock, char *buf, int parm, int len)
+static int dcc_schat_input(int type, int sock, char *buf, int parm, int buf_size)
 {
-	if (type == DCC_CHAT) {
-		if ((len = dgets(buf, sock, parm, BIG_BUFFER_SIZE, NULL)) > 0) {
-			buf[len-1] = '\0';
-			dcc_crypt(sock, buf, len);
-			if (buf[len])
-				buf[len] = '\0';
-		}
+	int len;
+
+	len = dgets(buf, sock, parm, buf_size - 1, NULL);
+
+	if (len > 0)
+	{
+		buf[len-1] = '\0';
+		dcc_crypt(sock, buf, len);
+		buf[len] = '\0';
 	}
 	return len;
 }
