@@ -76,16 +76,17 @@ HashEntry dcc_no_flood[DCC_HASHSIZE];
 
 struct _dcc_types_ 
 {
-	char	*name;
-	char	*module;
-	int	type;
-	int 	(*init_func)();
-	int	(*open_func)();
-	int	(*input)();
-	int	(*output)();
-	int	(*close_func)();
-	
-} _dcc_types[] =
+	char *name;
+	char *module;
+	int type;
+	int (*init_func)(const char *, const char *, const char *, const char *, const char *, const char *, unsigned long, unsigned short);
+	int (*open_func)(int, int, unsigned long, unsigned short);
+	int (*input)(int, int, char *, int, int);
+	int (*output)(int, int, char *, int);
+	int (*close_func)(int, unsigned long, unsigned short);
+};
+
+struct _dcc_types_  _dcc_types[] =
 {
 	{"<none>",	NULL, 0,		NULL, NULL, NULL, NULL, NULL},
 	{"CHAT",	NULL, DCC_CHAT,		NULL, NULL, NULL, NULL, NULL},
