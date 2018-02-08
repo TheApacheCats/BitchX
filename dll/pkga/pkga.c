@@ -130,8 +130,10 @@ int new_dcc_output(int type, int s, char *buf, int len)
 
 int Pkga_Init(IrcCommandDll **intp, Function_ptr *global_table)
 {
-int i;
-Server *sptr;
+	static const struct dcc_ops pkga_ops = { NULL, NULL, NULL, new_dcc_output, NULL };
+	int i;
+	Server *sptr;
+
 	initialize_module("pkga");
 	sptr = get_server_list();
 	for (i = 0; i < server_list_size(); i++)
@@ -144,6 +146,6 @@ Server *sptr;
 	add_module_proc(HOOK_PROC, "pkga", NULL, NULL, 1, 0, Pkga_numeric, NULL);
 	add_module_proc(VAR_PROC, "pkga", "new_variable", "TEST VALUE", STR_TYPE_VAR, 0, NULL, NULL);
 	add_module_proc(RAW_PROC, "pkga", "PRIVMSG", NULL, 0, 0, Pkga_raw, NULL);
-	add_dcc_bind("CHAT", "pkga", NULL, NULL, NULL, new_dcc_output, NULL);
+	add_dcc_bind("CHAT", "pkga", &pkga_ops);
 	return 0;
 }

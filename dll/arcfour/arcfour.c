@@ -118,9 +118,11 @@ static inline char *arcfourCrypt(arckey *arc, char *data, int len)
 
 int Arcfour_Init(IrcCommandDll **intp, Function_ptr *global_table)
 {
+	static const struct dcc_ops schat_ops = { NULL, start_dcc_crypt, dcc_schat_input, send_dcc_encrypt, end_dcc_crypt };
+
 	initialize_module("arcfour");
 	memset(keyboxes, 0, sizeof(keyboxes));
-	typenum = add_dcc_bind("SCHAT", "schat", NULL, start_dcc_crypt, dcc_schat_input, send_dcc_encrypt, end_dcc_crypt);
+	typenum = add_dcc_bind("SCHAT", "schat", &schat_ops);
 	add_module_proc(DCC_PROC, "schat", "schat", "Secure DCC Chat", 0, 0, dcc_sdcc, NULL);
 	return 0;
 }
@@ -183,8 +185,7 @@ static int dcc_schat_input(int type, int sock, char *buf, int parm, int buf_size
  * an encrypted connection.
  */
 
-
-static int start_dcc_crypt (int s, int type, unsigned long d_addr, int d_port)
+static int start_dcc_crypt (int s, int type, unsigned long d_addr, unsigned short d_port)
 {
 	arclist *tmpbox;
 	put_it("start_dcc_crypt");
@@ -214,7 +215,7 @@ static int start_dcc_crypt (int s, int type, unsigned long d_addr, int d_port)
 	return -1;
 }
 
-static int end_dcc_crypt (int s, unsigned long d_addr, int d_port)
+static int end_dcc_crypt(int s, unsigned long d_addr, unsigned short d_port)
 {
 	int i;
 	for(i = 0; i < 16; i++) {	
@@ -227,7 +228,6 @@ static int end_dcc_crypt (int s, unsigned long d_addr, int d_port)
 	}
 	return -1;
 }
-
 
 static void start_dcc_chat(int s)
 {

@@ -604,7 +604,7 @@ extern Function_ptr *global;
 #define dcc_create (*(DCC_int *(*)(char *, char *, char *, unsigned long, int, int, unsigned long, void (*)(int)))global[DCC_CREATE_FUNC])
 #define find_dcc (*(SocketList *(*)(const char *, const char *, const char *, int, int, int, int))global[FIND_DCC_FUNC])
 #define erase_dcc_info (*(void (*)(int, int, char *, ...))global[ERASE_DCC_INFO])
-#define add_dcc_bind (*(int (*)(char *, char *, void *, void *, void *, void *, void *))global[ADD_DCC_BIND])
+#define add_dcc_bind (*(int (*)(char *, char *, const struct dcc_ops *))global[ADD_DCC_BIND])
 #define remove_dcc_bind (*(int (*)(char *, int ))global[REMOVE_DCC_BIND])
 #define remove_all_dcc_binds (*(int (*)(char *))global[REMOVE_ALL_DCC_BINDS])
 #define get_active_count (*(int (*)(void ))global[GET_ACTIVE_COUNT])

@@ -1,5 +1,8 @@
 [Changes 1.2.2]
 
+* Change add_dcc_bind() to collect all function pointer arguments into a
+  single struct. (caf)
+
 * Fix redirecting to DCC CHATs with /REL* commands. (caf)
 
 * Update arcfour example module to use exported dcc_chat_socketread()

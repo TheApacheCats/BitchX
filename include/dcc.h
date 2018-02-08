@@ -158,8 +158,27 @@ struct dcc_offer {
 	void	init_dcc_table(void);
 	int BX_remove_all_dcc_binds(char *);
 	int BX_remove_dcc_bind(char *, int);
+
+/* Function pointers for the operations implementing a DCC type.
+ * This structure is part of the module ABI - if you change it,
+ * you need to roll MODULE_VERSION in <module.h>.
+ *
+ * .init() is called when a matching DCC offer is received over IRC
+ * .open() is called when a DCC connection is established
+ * .input() is called to fetch some data when the socket becomes readable
+ * .output() is called to write a message to the socket
+ * .close() is called when the DCC connection is closed
+ */
+struct dcc_ops
+{
+	int (*init)(const char *, const char *, const char *, const char *, const char *, const char *, unsigned long, unsigned short);
+	int (*open)(int, int, unsigned long, unsigned short);
+	int (*input)(int, int, char *, int, int);
+	int (*output)(int, int, char *, int);
+	int (*close)(int, unsigned long, unsigned short);
+};
 	
-	int	BX_add_dcc_bind(char *, char *, void *, void *, void *, void *, void *);
+	int	BX_add_dcc_bind(char *, char *, const struct dcc_ops *);
 /* add_socketread() callbacks for ordinary CHAT and SEND DCCs */
 extern void BX_dcc_chat_socketread(int);
 extern void BX_dcc_send_socketread(int);

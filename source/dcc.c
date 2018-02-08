@@ -79,28 +79,26 @@ struct _dcc_types_
 	char *name;
 	char *module;
 	int type;
-	int (*init_func)(const char *, const char *, const char *, const char *, const char *, const char *, unsigned long, unsigned short);
-	int (*open_func)(int, int, unsigned long, unsigned short);
-	int (*input)(int, int, char *, int, int);
-	int (*output)(int, int, char *, int);
-	int (*close_func)(int, unsigned long, unsigned short);
+	const struct dcc_ops *dcc_ops;
 };
+
+const struct dcc_ops null_ops = { NULL, NULL, NULL, NULL, NULL };
 
 struct _dcc_types_  _dcc_types[] =
 {
-	{"<none>",	NULL, 0,		NULL, NULL, NULL, NULL, NULL},
-	{"CHAT",	NULL, DCC_CHAT,		NULL, NULL, NULL, NULL, NULL},
-	{"SEND",	NULL, DCC_FILEOFFER,	NULL, NULL, NULL, NULL, NULL},
-	{"GET",		NULL, DCC_FILEREAD,	NULL, NULL, NULL, NULL, NULL},
-	{"RAW_LISTEN",	NULL, DCC_RAW_LISTEN,	NULL, NULL, NULL, NULL, NULL},
-	{"RAW",		NULL, DCC_RAW,		NULL, NULL, NULL, NULL, NULL},
-	{"RESEND",	NULL, DCC_REFILEOFFER,	NULL, NULL, NULL, NULL, NULL},
-	{"REGET",	NULL, DCC_REFILEREAD,	NULL, NULL, NULL, NULL, NULL},
-	{"BOT",		NULL, DCC_BOTMODE,	NULL, NULL, NULL, NULL, NULL},
-	{"FTP",		NULL, DCC_FTPOPEN, 	NULL, NULL, NULL, NULL, NULL},
-	{"FTPGET",	NULL, DCC_FTPGET,	NULL, NULL, NULL, NULL, NULL},
-	{"FTPSEND",	NULL, DCC_FTPSEND,	NULL, NULL, NULL, NULL, NULL},
-	{NULL,		NULL, 0,		NULL, NULL, NULL, NULL, NULL}
+	{"<none>",	NULL, 0,		NULL},
+	{"CHAT",	NULL, DCC_CHAT,		&null_ops},
+	{"SEND",	NULL, DCC_FILEOFFER,	&null_ops},
+	{"GET",		NULL, DCC_FILEREAD,	&null_ops},
+	{"RAW_LISTEN",	NULL, DCC_RAW_LISTEN,	&null_ops},
+	{"RAW",		NULL, DCC_RAW,		&null_ops},
+	{"RESEND",	NULL, DCC_REFILEOFFER,	&null_ops},
+	{"REGET",	NULL, DCC_REFILEREAD,	&null_ops},
+	{"BOT",		NULL, DCC_BOTMODE,	&null_ops},
+	{"FTP",		NULL, DCC_FTPOPEN, 	&null_ops},
+	{"FTPGET",	NULL, DCC_FTPGET,	&null_ops},
+	{"FTPSEND",	NULL, DCC_FTPSEND,	&null_ops},
+	{NULL,		NULL, 0,		NULL}
 };
 
 struct _dcc_types_ **dcc_types = NULL;
@@ -159,23 +157,6 @@ static void output_reject_ctcp (UserhostItem *, char *, char *);
 
 extern int use_nat_address;
 extern struct in_addr nat_address;
-
-#if 0
-			/* sock num, type, address, port */
-int (*dcc_open_func) (int, int, struct sockaddr_foobar, int) = NULL;
-			/* type, sock num, buffer, buff_len */
-int (*dcc_output_func) (int, int, char *, int) = NULL;
-			/* sock num, type, buffer, new line, len buffer */
-int (*dcc_input_func)  (int, int, char *, int, int) = NULL;
-			/* socket num, address, port */
-int (*dcc_close_func) (int, sockaddr_foobar, int) = NULL;
-#endif
-
-
-#define DCC_OPEN 1
-#define DCC_INPUT 2
-#define DCC_OUTPUT 3
-#define DCC_CLOSE 4
 
 #ifndef O_BINARY
 #define O_BINARY 0
@@ -334,8 +315,8 @@ static time_t last_reject = 0;
 	s1 = get_socket(s);
 	if (check_dcc_socket(s) && (n = (DCC_int *)get_socketinfo(s)))
 	{
-		if (dcc_types[s1->flags & DCC_TYPES]->close_func)
-			(*dcc_types[s1->flags & DCC_TYPES]->close_func)(s, n->remote.s_addr, n->remport);
+		if (dcc_types[s1->flags & DCC_TYPES]->dcc_ops->close)
+			(*dcc_types[s1->flags & DCC_TYPES]->dcc_ops->close)(s, n->remote.s_addr, n->remport);
 		if (reject && ((now - last_reject) < 2))
 			send_reject_ctcp(s1->server, 
 				(((s1->flags & DCC_TYPES) == DCC_FILEOFFER) ? "GET" :
@@ -568,8 +549,8 @@ DCC_List		*new_i;
 						inet_ntoa(remaddr.sin_addr), (int)ntohs(remaddr.sin_port)));
 			}
 		}
-		if (dcc_types[type]->open_func)
-			(*dcc_types[type]->open_func)(new_s, type, new->remote.s_addr, ntohs(remaddr.sin_port));
+		if (dcc_types[type]->dcc_ops->open)
+			(*dcc_types[type]->dcc_ops->open)(new_s, type, new->remote.s_addr, ntohs(remaddr.sin_port));
 		if (type == DCC_REFILEREAD)
 			refileread_send_start(new_s, new);
 		if (get_int_var(DCC_FAST_VAR)
@@ -757,8 +738,8 @@ void	(*func)(int) = dcc_chat_socketread;
 	get_time(&n->starttime);
 	close_socketread(s);
 
-	if (dcc_types[type]->open_func)
-		(*dcc_types[type]->open_func)(new_s, type, n->remote.s_addr, ntohs(remaddr.sin_port));
+	if (dcc_types[type]->dcc_ops->open)
+		(*dcc_types[type]->dcc_ops->open)(new_s, type, n->remote.s_addr, ntohs(remaddr.sin_port));
 	reset_display_target();
 }
 
@@ -781,8 +762,8 @@ void BX_dcc_chat_socketread(int s)
 	type = flags & DCC_TYPES;
 	sl = get_socket(s);	
 	bufptr = tmp;
-	if (dcc_types[type]->input)
-		bytesread = (*dcc_types[type]->input)(s, type, bufptr, 1, BIG_BUFFER_SIZE);
+	if (dcc_types[type]->dcc_ops->input)
+		bytesread = (*dcc_types[type]->dcc_ops->input)(s, type, bufptr, 1, BIG_BUFFER_SIZE);
 	else
 #ifdef HAVE_LIBSSL
 		bytesread = dgets(bufptr, s, 1, BIG_BUFFER_SIZE, sl->ssl_fd);
@@ -909,8 +890,8 @@ SocketList *sl;
 	sl = get_socket(s);
 
 	bufptr = tmp;
-	if (dcc_types[type]->input)
-		bytesread = (*dcc_types[type]->input) (type, s, bufptr, 1, BIG_BUFFER_SIZE);
+	if (dcc_types[type]->dcc_ops->input)
+		bytesread = (*dcc_types[type]->dcc_ops->input) (type, s, bufptr, 1, BIG_BUFFER_SIZE);
 	else
 #ifdef HAVE_LIBSSL
 		bytesread = dgets(bufptr, s, 1, BIG_BUFFER_SIZE, sl->ssl_fd);
@@ -1009,8 +990,8 @@ char		thing = 0;
 	len = strlen(tmp);
 	my_encrypt(tmp, len, n->encrypt);
 
-	if (dcc_types[type]->output)
-		(*dcc_types[type]->output) (type, s->is_read, tmp, len);
+	if (dcc_types[type]->dcc_ops->output)
+		(*dcc_types[type]->dcc_ops->output)(type, s->is_read, tmp, len);
 	else
 #ifdef HAVE_LIBSSL
 		if(s->ssl_fd)
@@ -1516,14 +1497,14 @@ static int check_dcc_init(const struct dcc_offer *offer)
 			break;
 	}
 
-	if (dcc_types[i]->name && dcc_types[i]->init_func)
+	if (dcc_types[i]->name && dcc_types[i]->dcc_ops->init)
 	{
 		unsigned long filesize;
 		unsigned long address;
 		unsigned short port;
 
 		if (parse_offer_params(offer, &address, &port, &filesize))
-			return dcc_types[i]->init_func(offer->type, offer->nick, offer->userhost, offer->description, offer->size, offer->extra, address, port);
+			return dcc_types[i]->dcc_ops->init(offer->type, offer->nick, offer->userhost, offer->description, offer->size, offer->extra, address, port);
 	}
 	return 0;
 }
@@ -4263,7 +4244,7 @@ char	*nick,
 	}
 }
 
-int BX_add_dcc_bind(char *name, char *module, void *init_func, void *open_func, void *input, void *output, void *close_func)
+int BX_add_dcc_bind(char *name, char *module, const struct dcc_ops *dcc_ops)
 {
 int i;
 	for (i = 0; dcc_types[i]->name; i++)
@@ -4280,11 +4261,7 @@ int i;
 	if (!dcc_types[i]->name)
 		malloc_strcpy(&dcc_types[i]->name, name);
 	malloc_strcpy(&dcc_types[i]->module, module);
-	dcc_types[i]->init_func = init_func;
-	dcc_types[i]->open_func = open_func;
-	dcc_types[i]->input = input;
-	dcc_types[i]->output = output;
-	dcc_types[i]->close_func = close_func;
+	dcc_types[i]->dcc_ops = dcc_ops;
 	dcc_types[i]->type = i;	
 	return i;
 }
@@ -4294,12 +4271,8 @@ int BX_remove_dcc_bind(char *name, int type)
 int i = type & DCC_TYPES;
 	if (!dcc_types[i]->module)
 		return 0;
-	dcc_types[i]->init_func = NULL;
-	dcc_types[i]->open_func = NULL;
-	dcc_types[i]->input = NULL;
-	dcc_types[i]->output = NULL;
-	dcc_types[i]->close_func = NULL;
 	new_free(&dcc_types[i]->module);
+	dcc_types[i]->dcc_ops = &null_ops;
 	if (i > DCC_FTPSEND)
 	{
 		new_free(&dcc_types[i]->name);
@@ -4323,14 +4296,13 @@ int i, j;
 
 void init_dcc_table(void)
 {
-int i;
+	int i;
+
 	for (i = 0; _dcc_types[i].name; i++);
 	RESIZE(dcc_types, struct _dcc_types_ *, i + 1);
 	for (i = 0; _dcc_types[i].name; i++)
 	{
-		dcc_types[i] = new_malloc(sizeof(struct _dcc_types_));
-		dcc_types[i]->name = m_strdup(_dcc_types[i].name);
-		dcc_types[i]->type = _dcc_types[i].type;
+		dcc_types[i] = &_dcc_types[i]; 
 	}
 	dcc_types[i] = new_malloc(sizeof(struct _dcc_types_));
 }
