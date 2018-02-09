@@ -277,6 +277,24 @@ int done = 0;
 }
 #endif
 
+/* get_dcc_type()
+ *
+ * Look up the given DCC name and return the corresponding DCC type, or -1 if the
+ * name is not found.
+ */
+static int get_dcc_type(const char *name)
+{
+	int i;
+
+	for (i = 0; dcc_types[i]->name; i++)
+	{
+		if (!my_stricmp(name, dcc_types[i]->name))
+			return i;
+	}
+
+	return -1;
+}
+
 void send_ctcp_booster(char *nick, char *type, char *file, unsigned long address, unsigned short portnum, unsigned long filesize)
 {
 	if (filesize)
@@ -1489,15 +1507,9 @@ static void dcc_resend_offer(const struct dcc_offer *offer, int server)
 
 static int check_dcc_init(const struct dcc_offer *offer)
 {
-	int i;
+	int i = get_dcc_type(offer->type);
 
-	for (i = 0; dcc_types[i]->name; i++)
-	{
-		if (!my_stricmp(offer->type, dcc_types[i]->name))
-			break;
-	}
-
-	if (dcc_types[i]->name && dcc_types[i]->dcc_ops->init)
+	if (i >= 0 && dcc_types[i]->dcc_ops->init)
 	{
 		unsigned long filesize;
 		unsigned long address;
@@ -3396,10 +3408,9 @@ int num = -1;
 	}
 	if (!any_type)
 	{
-		for (i = 0; dcc_types[i]->name; i++)
-			if (!my_stricmp(dcc_types[i]->name, type))
-				break;
-		if (!dcc_types[i]->name)
+		i  = get_dcc_type(type);
+
+		if (i < 0)
 		{
 			bitchsay("Unknown dcc type for close");
 			return;
