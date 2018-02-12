@@ -72,7 +72,7 @@ CVS_REVISION(dcc_c)
 extern int use_socks;
 
 #define DCC_HASHSIZE 11
-HashEntry dcc_no_flood[DCC_HASHSIZE];
+static HashEntry dcc_no_flood[DCC_HASHSIZE];
 
 struct _dcc_types_ 
 {
@@ -82,9 +82,9 @@ struct _dcc_types_
 	const struct dcc_ops *dcc_ops;
 };
 
-const struct dcc_ops null_ops = { NULL, NULL, NULL, NULL, NULL };
+static const struct dcc_ops null_ops = { NULL, NULL, NULL, NULL, NULL };
 
-struct _dcc_types_  _dcc_types[] =
+static struct _dcc_types_  _dcc_types[] =
 {
 	{"<none>",	NULL, 0,		NULL},
 	{"CHAT",	NULL, DCC_CHAT,		&null_ops},
@@ -101,12 +101,12 @@ struct _dcc_types_  _dcc_types[] =
 	{NULL,		NULL, 0,		NULL}
 };
 
-struct _dcc_types_ **dcc_types = NULL;
+static struct _dcc_types_ **dcc_types = NULL;
 
 static	char		DCC_current_transfer_buffer[BIG_BUFFER_SIZE/4];
 	unsigned int	send_count_stat = 0;
 	unsigned int	get_count_stat = 0;
-	char		*last_chat_req = NULL;
+static	char		*last_chat_req = NULL;
 static	int		dcc_quiet = 0;
 static	int		dcc_paths = 0;
 static	int		dcc_overwrite_var = 0;
@@ -197,7 +197,7 @@ void dcc_help1(char *command, char *args);
 void dcc_exempt(char *command, char *args);
 void dcc_ftpopen(char *command, char *args);
 
-DCC_commands	dcc_commands[] =
+static const DCC_commands dcc_commands[] =
 {
 #ifndef BITCHX_LITE
 	{ "BOT",	dcc_chat,		NULL },
