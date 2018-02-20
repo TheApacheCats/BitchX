@@ -1,5 +1,10 @@
 [Changes 1.2.2]
 
+* Fix various problems with adding and removing module DCC bindings.  The
+  same DCC type cannot be bound by more than one module simultaneously.  The
+  remove_all_dcc_binds() function now only removes all DCC bindings for the
+  given module. (caf)
+
 * Fix crash when unloading the arcfour module. (caf)
 
 * Change add_dcc_bind() to collect all function pointer arguments into a

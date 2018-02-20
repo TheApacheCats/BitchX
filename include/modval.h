@@ -606,7 +606,7 @@ extern Function_ptr *global;
 #define erase_dcc_info (*(void (*)(int, int, char *, ...))global[ERASE_DCC_INFO])
 #define add_dcc_bind (*(int (*)(char *, char *, const struct dcc_ops *))global[ADD_DCC_BIND])
 #define remove_dcc_bind (*(int (*)(char *, int ))global[REMOVE_DCC_BIND])
-#define remove_all_dcc_binds (*(int (*)(char *))global[REMOVE_ALL_DCC_BINDS])
+#define remove_all_dcc_binds (*(int (*)(const char *))global[REMOVE_ALL_DCC_BINDS])
 #define get_active_count (*(int (*)(void ))global[GET_ACTIVE_COUNT])
 #define get_num_queue (*(int (*)(void ))global[GET_NUM_QUEUE])
 #define add_to_queue (*(int (*)(char *, char *, pack *))global[ADD_TO_QUEUE])

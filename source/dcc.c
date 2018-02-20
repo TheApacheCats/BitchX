@@ -74,7 +74,7 @@ extern int use_socks;
 #define DCC_HASHSIZE 11
 static HashEntry dcc_no_flood[DCC_HASHSIZE];
 
-struct _dcc_types_ 
+struct dcc_type
 {
 	char *name;
 	char *module;
@@ -84,7 +84,7 @@ struct _dcc_types_
 
 static const struct dcc_ops null_ops = { NULL, NULL, NULL, NULL, NULL };
 
-static struct _dcc_types_  _dcc_types[] =
+static struct dcc_type  builtin_dcc_types[] =
 {
 	{"<none>",	NULL, 0,		NULL},
 	{"CHAT",	NULL, DCC_CHAT,		&null_ops},
@@ -98,10 +98,11 @@ static struct _dcc_types_  _dcc_types[] =
 	{"FTP",		NULL, DCC_FTPOPEN, 	&null_ops},
 	{"FTPGET",	NULL, DCC_FTPGET,	&null_ops},
 	{"FTPSEND",	NULL, DCC_FTPSEND,	&null_ops},
-	{NULL,		NULL, 0,		NULL}
 };
 
-static struct _dcc_types_ **dcc_types = NULL;
+static const size_t n_builtin_dcc_types = sizeof builtin_dcc_types / sizeof builtin_dcc_types[0];
+static struct dcc_type **dcc_types = NULL;
+static size_t n_dcc_types = 0;
 
 static	char		DCC_current_transfer_buffer[BIG_BUFFER_SIZE/4];
 	unsigned int	send_count_stat = 0;
@@ -286,9 +287,10 @@ static int get_dcc_type(const char *name)
 {
 	int i;
 
-	for (i = 0; dcc_types[i]->name; i++)
+	/* Start at 1 to ignore the <none> type */
+	for (i = 1; i < n_dcc_types; i++)
 	{
-		if (!my_stricmp(name, dcc_types[i]->name))
+		if (dcc_types[i] && !my_stricmp(name, dcc_types[i]->name))
 			return i;
 	}
 
@@ -4255,53 +4257,89 @@ char	*nick,
 	}
 }
 
+/* add_dcc_bind()
+ *
+ * Bind a new set of DCC operations to a DCC name.  This can either be a completely new DCC type,
+ * or a new set of operations for a builtin DCC type.  This fails if the given DCC name is already
+ * bound by another module.
+ */
 int BX_add_dcc_bind(char *name, char *module, const struct dcc_ops *dcc_ops)
 {
-int i;
-	for (i = 0; dcc_types[i]->name; i++)
+	int i;
+
+	i = get_dcc_type(name);
+
+	if (i < 0)
 	{
-		if (!my_stricmp(dcc_types[i]->name, name))
-			break;
-	}
-	if (i >= 0xfe) return 0;
-	if (!dcc_types[i])
-	{
-		RESIZE(dcc_types, struct _dcc_types_ *, i + 2);
-		dcc_types[i] = new_malloc(sizeof(struct _dcc_types_));
-	}
-	if (!dcc_types[i]->name)
+		/* New DCC type, requires a new entry in the list */
+		for (i = 0; i < n_dcc_types; i++)
+		{
+			if (!dcc_types[i])
+				break;
+		}
+
+		if (i & ~DCC_TYPES)
+		{
+			yell("Failed to add DCC binding [%s] for module [%s], too many DCC bindings.", 
+				name, module);
+			return 0;
+		}
+
+		if (i >= n_dcc_types)
+		{
+			n_dcc_types = i + 1;
+			RESIZE(dcc_types, struct dcc_type *, n_dcc_types);
+		}
+
+		dcc_types[i] = new_malloc(sizeof(struct dcc_type));
 		malloc_strcpy(&dcc_types[i]->name, name);
+		dcc_types[i]->type = i;
+	}
+	else
+	{
+		if (dcc_types[i]->module)
+		{
+			yell("Failed to add DCC binding [%s] for module [%s], already bound by module [%s].", 
+				name, module, dcc_types[i]->module);
+			return 0;
+		}
+	}
+
 	malloc_strcpy(&dcc_types[i]->module, module);
 	dcc_types[i]->dcc_ops = dcc_ops;
-	dcc_types[i]->type = i;	
 	return i;
 }
 
 int BX_remove_dcc_bind(char *name, int type)
 {
-int i = type & DCC_TYPES;
-	if (!dcc_types[i]->module)
+	if (type >= n_dcc_types || !dcc_types[type] || !dcc_types[type]->module)
 		return 0;
-	new_free(&dcc_types[i]->module);
-	dcc_types[i]->dcc_ops = &null_ops;
-	if (i > DCC_FTPSEND)
+
+	new_free(&dcc_types[type]->module);
+	dcc_types[type]->dcc_ops = &null_ops;
+	if (type >= n_builtin_dcc_types)
 	{
-		new_free(&dcc_types[i]->name);
-		new_free(&dcc_types[i]);
-/*		RESIZE(dcc_types, struct _dcc_types *, i - 1);*/
+		new_free(&dcc_types[type]->name);
+		new_free(&dcc_types[type]);
 	}
 	return 1;
 }
 
-int BX_remove_all_dcc_binds(char *name)
+/* remove_all_dcc_binds()
+ *
+ * Remove all DCC bindings added by a given module.
+ */
+int BX_remove_all_dcc_binds(const char *module)
 {
-int ret = 0;
-int i, j;
-	/* scan to end of list */
-	for (i = 0; dcc_types[i]->name; i++);
-	i--;
-	for (j = i; j > 0; j--)
-		ret += remove_dcc_bind(dcc_types[j]->name, dcc_types[j]->type);
+	int ret = 0;
+	int i;
+
+	for (i = 0; i < n_dcc_types; i++)
+	{
+		if (dcc_types[i] && dcc_types[i]->module && !strcasecmp(dcc_types[i]->module, module))
+			ret += remove_dcc_bind(dcc_types[i]->name, i);
+	}
+
 	return ret;
 }
 
@@ -4309,13 +4347,12 @@ void init_dcc_table(void)
 {
 	int i;
 
-	for (i = 0; _dcc_types[i].name; i++);
-	RESIZE(dcc_types, struct _dcc_types_ *, i + 1);
-	for (i = 0; _dcc_types[i].name; i++)
+	n_dcc_types = n_builtin_dcc_types;
+	RESIZE(dcc_types, struct dcc_type *, n_dcc_types);
+	for (i = 0; i < n_dcc_types; i++)
 	{
-		dcc_types[i] = &_dcc_types[i]; 
+		dcc_types[i] = &builtin_dcc_types[i];
 	}
-	dcc_types[i] = new_malloc(sizeof(struct _dcc_types_));
 }
 
 char *get_dcc_info(SocketList *s, DCC_int *n, int i)

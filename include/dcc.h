@@ -156,7 +156,7 @@ struct dcc_offer {
 	int	check_dcc_socket(int);
 	char	*get_dcc_info(SocketList *, DCC_int *, int);
 	void	init_dcc_table(void);
-	int BX_remove_all_dcc_binds(char *);
+	int BX_remove_all_dcc_binds(const char *);
 	int BX_remove_dcc_bind(char *, int);
 
 /* Function pointers for the operations implementing a DCC type.
