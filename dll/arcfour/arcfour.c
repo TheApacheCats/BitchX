@@ -31,6 +31,8 @@
 #define INIT_MODULE
 #include "modval.h"
 
+#define MODULE_NAME "arcfour"
+
 typedef struct {
 	int sock;
 	char ukey[16];
@@ -120,17 +122,11 @@ int Arcfour_Init(IrcCommandDll **intp, Function_ptr *global_table)
 {
 	static const struct dcc_ops schat_ops = { NULL, start_dcc_crypt, dcc_schat_input, send_dcc_encrypt, end_dcc_crypt };
 
-	initialize_module("arcfour");
+	initialize_module(MODULE_NAME);
 	memset(keyboxes, 0, sizeof(keyboxes));
-	typenum = add_dcc_bind("SCHAT", "schat", &schat_ops);
-	add_module_proc(DCC_PROC, "schat", "schat", "Secure DCC Chat", 0, 0, dcc_sdcc, NULL);
+	typenum = add_dcc_bind("SCHAT", MODULE_NAME, &schat_ops);
+	add_module_proc(DCC_PROC, MODULE_NAME, "SCHAT", "Secure DCC Chat", 0, 0, dcc_sdcc, NULL);
 	return 0;
-}
-
-int Arcfour_Cleanup(IrcCommandDll **intp)
-{
-/*	remove_dcc_bind("SCHAT", typenum); */
-	return 1;
 }
 
 static arclist *find_box(int sock)
