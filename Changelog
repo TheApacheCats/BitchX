@@ -1,5 +1,8 @@
 [Changes 1.2.2]
 
+* Change arcfour example module to use ARC4CHAT instead of SCHAT as the DCC
+  type (SCHAT is already used by some other clients for SSL CHAT). (caf)
+
 * Fix various problems with adding and removing module DCC bindings.  The
   same DCC type cannot be bound by more than one module simultaneously.  The
   remove_all_dcc_binds() function now only removes all DCC bindings for the

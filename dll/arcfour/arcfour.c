@@ -124,8 +124,8 @@ int Arcfour_Init(IrcCommandDll **intp, Function_ptr *global_table)
 
 	initialize_module(MODULE_NAME);
 	memset(keyboxes, 0, sizeof(keyboxes));
-	typenum = add_dcc_bind("SCHAT", MODULE_NAME, &schat_ops);
-	add_module_proc(DCC_PROC, MODULE_NAME, "SCHAT", "Secure DCC Chat", 0, 0, dcc_sdcc, NULL);
+	typenum = add_dcc_bind("ARC4CHAT", MODULE_NAME, &schat_ops);
+	add_module_proc(DCC_PROC, MODULE_NAME, "ARC4CHAT", "ArcFour DCC Chat", 0, 0, dcc_sdcc, NULL);
 	return 0;
 }
 
@@ -282,6 +282,6 @@ void dcc_sdcc (char *name, char *args)
 			if (p && *p)
 				*p = 0;
 		}
-		dcc_create(args, "SCHAT", NULL, 0, 0, typenum, DCC_TWOCLIENTS, start_dcc_chat);
+		dcc_create(args, "ARC4CHAT", NULL, 0, 0, typenum, DCC_TWOCLIENTS, start_dcc_chat);
 	}
 }
