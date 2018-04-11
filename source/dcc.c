@@ -1791,66 +1791,70 @@ void close_dcc_file(int snum)
 
 void BX_dcc_send_socketread(int snum)
 {
-SocketList *s;
-DCC_int *n;
-u_32int_t bytes = 0;
-int bytesread = 0;
-char *buffer = alloca(MAX_DCC_BLOCK_SIZE+1);
+	SocketList *s;
+	DCC_int *n;
+	int bytesread = 0;
+	char buffer[MAX_DCC_BLOCK_SIZE+1];
+
 	s = get_socket(snum);
 	n = (DCC_int *)s->info;
-	if (n->readwaiting || n->eof)
+
+	if (!(s->flags & DCC_TDCC) && n->readwaiting)
 	{
+		/* n->readwaiting is set when we have sent a block and are waiting for an acknowledgement. */
 		int numbytes = 0;
-		if (!(s->flags & DCC_TDCC) && n->readwaiting)
+		u_32int_t bytes = 0;
+	
+		if ((ioctl(snum, FIONREAD, &numbytes)) == -1)
 		{
-			if ((ioctl(snum, FIONREAD, &numbytes)) == -1)
-			{
-				erase_dcc_info(snum, 1, convert_output_format("$G %RDCC%n Remote $0 closed dcc send", "%s", s->server));
-				close_socketread(snum);
-				return;
-			}
-			if (numbytes)
-			{	
-				if (read(snum, &bytes, sizeof bytes) < (int)sizeof bytes)
-				{
-					erase_dcc_info(snum, 1, convert_output_format("$G %RDCC%n Remote closed dcc send", NULL));
-					close_socketread(snum);
-				}
-				bytes = (unsigned long)ntohl(bytes);
-				get_time(&n->lasttime);
-				if (bytes == (n->filesize - n->transfer_orders.byteoffset))
-				{
-					close_dcc_file(snum);
-					return;
-				}
-				else if (!n->dcc_fast && (bytes != n->bytes_sent))
-					return;
-				n->readwaiting = 0;
-			}
+			erase_dcc_info(snum, 1, convert_output_format("$G %RDCC%n Remote $0 closed dcc send", "%s", s->server));
+			close_socketread(snum);
+			return;
 		}
-		else if (n->eof)
-		{
-			u_32int_t *buf;
-			n->readwaiting = 1;
-			if ((ioctl(snum, FIONREAD, &numbytes) == -1))
+		if (numbytes)
+		{	
+			if (read(snum, &bytes, sizeof bytes) < (int)sizeof bytes)
+			{
+				erase_dcc_info(snum, 1, convert_output_format("$G %RDCC%n Remote closed dcc send", NULL));
+				close_socketread(snum);
+			}
+			bytes = (unsigned long)ntohl(bytes);
+			get_time(&n->lasttime);
+			if (bytes == (n->filesize - n->transfer_orders.byteoffset))
 			{
 				close_dcc_file(snum);
 				return;
 			}
-			buf = alloca(numbytes+1);
-			numbytes = read(snum, buf, numbytes);
-			switch(numbytes)
-			{
-				case -1:
-					erase_dcc_info(snum, 1, convert_output_format("$G %RDCC%n Remote $0 closed dcc send", "%s", s->server));
-					close_socketread(snum);
-					break;
-				case 0:
-					close_dcc_file(snum);
-					break;
-			}
+			else if (!n->dcc_fast && (bytes != n->bytes_sent))
+				return;
+			n->readwaiting = 0;
+		}
+	}
+	else if (n->eof)
+	{
+		/* n->eof is set if read() on the file we are sending returns EOF or error. */
+		int numbytes = 0;
+		u_32int_t *buf;
+
+		n->readwaiting = 1;
+		if ((ioctl(snum, FIONREAD, &numbytes) == -1))
+		{
+			close_dcc_file(snum);
 			return;
 		}
+		buf = alloca(numbytes+1);
+		numbytes = read(snum, buf, numbytes);
+		switch(numbytes)
+		{
+			case -1:
+				erase_dcc_info(snum, 1, convert_output_format("$G %RDCC%n Remote $0 closed dcc send", "%s", s->server));
+				close_socketread(snum);
+				break;
+			case 0:
+				close_dcc_file(snum);
+				break;
+		}
+		return;
 	}
 
 	if ((bytesread = read(n->file, buffer, n->blocksize)) > 0)
