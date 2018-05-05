@@ -1351,15 +1351,16 @@ void term_gotoxy (int col, int row)
 }
 
 /* A no-brainer. Clear the screen. */
-void term_clrscr (void)
+void term_clear_screen(void)
 {
 #if defined(__EMX__) && !defined(__EMXX__) && !defined(GUI)
 	VioScrollUp(0, 0, -1, -1, -1, &default_pair, vio_screen);
 #elif defined(GUI)
 	gui_clrscr();
 #else
-
 	int i;
+	/* This is called from scr-bx with output_screen == NULL */
+	const long li = output_screen ? output_screen->li : current_term->li;
 
 	/* We have a specific cap for clearing the screen */
 	if (current_term->TI_clear)
@@ -1379,27 +1380,27 @@ void term_clrscr (void)
 	/* We can also clear by deleteing lines ... */
 	else if (current_term->TI_dl)
 	{
-		tputs_x(tparm1(current_term->TI_dl, current_term->TI_lines));
+		tputs_x(tparm1(current_term->TI_dl, li));
 		return;
 	}
 	/* ... in this case one line at a time */
 	else if (current_term->TI_dl1)
 	{
-		for (i = 0; i < current_term->TI_lines; i++)
+		for (i = 0; i < li; i++)
 			tputs_x(current_term->TI_dl1);
 		return;
 	}
 	/* As a last resort we can insert lines ... */
 	else if (current_term->TI_il)
 	{
-		tputs_x(tparm1(current_term->TI_il, current_term->TI_lines));
+		tputs_x(tparm1(current_term->TI_il, li));
 		term_gotoxy (0, 0);
 		return;
 	}
 	/* ... one line at a time */
 	else if (current_term->TI_il1)
 	{
-		for (i = 0; i < current_term->TI_lines; i++)
+		for (i = 0; i < li; i++)
 			tputs_x(current_term->TI_il1);
 		term_gotoxy (0, 0);
 	}

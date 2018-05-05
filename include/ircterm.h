@@ -698,7 +698,6 @@ int	tputs_x(char *);
 #define term_cursor_left()	term_left(1)
 #define term_cursor_right()	term_right(1)
 #define term_clear_to_eol()	term_clreol()
-#define term_clear_screen()	term_clrscr()
 
 #ifdef __EMX__
 extern int vio_screen;
@@ -720,7 +719,7 @@ SIGNAL_HANDLER(term_cont);
 	void		term_right		(int);
 	void		term_left		(int);
 	void		term_clreol		(void);
-	void		term_clrscr		(void);
+	void		term_clear_screen		(void);
 	void		term_gotoxy		(int, int);
 	void		term_reset		(void);
 	int		term_eight_bit		(void);
