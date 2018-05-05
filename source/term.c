@@ -1509,8 +1509,8 @@ void term_scroll (int top, int bot, int n)
       char thing[128], final[128], start[128];
 #ifdef __EMX__
       pair[0] = ' '; pair[1] = 7;
-      if (n > 0) VioScrollUp(top, 0, bot, current_term->TI_cols, n, (PBYTE)&pair, (HVIO) vio_screen);
-      else if (n < 0) { n = -n; VioScrollDn(top, 0, bot, current_term->TI_cols, n, (PBYTE)&pair, (HVIO) vio_screen); }
+      if (n > 0) VioScrollUp(top, 0, bot, output_screen->co, n, (PBYTE)&pair, (HVIO) vio_screen);
+      else if (n < 0) { n = -n; VioScrollDn(top, 0, bot, output_screen->co, n, (PBYTE)&pair, (HVIO) vio_screen); }
 #ifndef __EMXX__
       return;
 #endif
@@ -1565,7 +1565,7 @@ void term_scroll (int top, int bot, int n)
 		 * because we never scroll the bottom line of the screen.
 		 */
 		strcpy(start, tparm2(current_term->TI_csr, top, bot));
-		strcpy(final, tparm2(current_term->TI_csr, 0, current_term->TI_lines-1));
+		strcpy(final, tparm2(current_term->TI_csr, 0, output_screen->li-1));
 
 		if (n > 0)
 		{
@@ -1595,8 +1595,8 @@ void term_scroll (int top, int bot, int n)
 
 	else if (current_term->TI_wind && (current_term->TI_ri || current_term->TI_rin) && (current_term->TI_ind || current_term->TI_indn))
 	{
-		strcpy(start, tparm4(current_term->TI_wind, top, bot, 0, current_term->TI_cols-1));
-		strcpy(final, tparm4(current_term->TI_wind, 0, current_term->TI_lines-1, 0, current_term->TI_cols-1));
+		strcpy(start, tparm4(current_term->TI_wind, top, bot, 0, output_screen->co-1));
+		strcpy(final, tparm4(current_term->TI_wind, 0, output_screen->li-1, 0, output_screen->co-1));
 
 		if (n > 0)
 		{
