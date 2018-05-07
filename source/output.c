@@ -94,7 +94,7 @@ void unflash (void)
  */
 void refresh_screen (unsigned char dumb, char *dumber)
 {
-extern int need_redraw;
+	extern int need_redraw;
 
 #if !defined(WINNT) && !defined(__EMX__)
 	term_clear_screen();
@@ -104,16 +104,14 @@ extern int need_redraw;
 	term_clear_screen();
 #endif
 
-#if 0
-	for (tmp = screen_list; tmp; tmp = tmp->next)
-		tmp->co = TI_cols, tmp->li = TI_lines;
-#endif
 	if (term_resize())
 		recalculate_windows(current_window->screen);
 	else
 		redraw_all_windows();
+
 	if (need_redraw)
 		need_redraw = 0;
+
 	update_all_windows();
 	update_input(UPDATE_ALL);
 }
