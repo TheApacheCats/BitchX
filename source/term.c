@@ -708,8 +708,8 @@ void	term_putchar (unsigned char c)
 void term_reset (void)
 {
 	if (current_term->TI_csr)
-		tputs_x(tparm2(current_term->TI_csr, 0, current_term->TI_lines - 1));
-	term_gotoxy(0, current_term->TI_lines - 1);
+		tputs_x(tparm2(current_term->TI_csr, 0, current_term->li - 1));
+	term_gotoxy(0, current_term->li - 1);
 #if use_alt_screen
 	if (current_term->TI_rmcup)
 		tputs_x(current_term->TI_rmcup);
