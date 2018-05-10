@@ -91,9 +91,10 @@ static	int funny_widelist_names(WideList **left, WideList **right)
 void funny_print_widelist(void)
 {
 	int	i;
-	char	buffer1[BIG_BUFFER_SIZE];
-	char	buffer2[BIG_BUFFER_SIZE];
-	char	*ptr;
+	char buffer1[BIG_BUFFER_SIZE];
+	char buffer2[BIG_BUFFER_SIZE];
+	char *ptr;
+	int cols;
 
 	if (!wide_list)
 		return;
@@ -106,13 +107,15 @@ void funny_print_widelist(void)
 		(int (*) (const void *, const void *)) funny_widelist_users);
 
 	set_display_target(NULL, LOG_CRAP);
+	cols = window_columns(target_window);
+
 	*buffer1 = '\0';
 	for (i = 1; i < wl_elements; i++)
 	{
 		snprintf(buffer2, sizeof buffer2, "%s(%d) ", wide_list[i]->channel,
 				wide_list[i]->users);
 		ptr = strchr(buffer1, '\0');
-		if (strlen(buffer1) + strlen(buffer2) > current_term->TI_cols - 5)
+		if (strlen(buffer1) + strlen(buffer2) + 5 > cols)
 		{
 			if (do_hook(WIDELIST_LIST, "%s", buffer1))
 				put_it("%s", convert_output_format(fget_string_var(FORMAT_WIDELIST_FSET), "%s %s", update_clock(GET_TIME), buffer1));

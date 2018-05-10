@@ -1,5 +1,8 @@
 [Changes 1.2.2]
 
+* Use target window width rather than terminal width to wrap /list -wide
+  output. (caf)
+
 * Change arcfour example module to use ARC4CHAT instead of SCHAT as the DCC
   type (SCHAT is already used by some other clients for SSL CHAT). (caf)
 
