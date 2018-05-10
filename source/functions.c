@@ -6308,12 +6308,9 @@ BUILT_IN_FUNCTION(function_numlines, input)
 	char *s = NULL;
 	if (input && *input)
 	{
-		int cols;
+		int cols = window_columns(current_window);
+
 		s = LOCAL_COPY(input);
-		if (current_window->screen)
-			cols = current_window->screen->co;
-		else
-			cols = current_window->columns;
 		for (lines = split_up_line(s, cols + 1); *lines; lines++)
 			count++;
 	}

@@ -37,6 +37,7 @@
 	Window	*BX_new_window			(struct ScreenStru *);
 	void	BX_delete_window			(Window *);
 	void	BX_add_to_invisible_list		(Window *);
+int window_columns(Window *window);
 	Window	*BX_add_to_window_list		(struct ScreenStru *, Window *);
 	void	BX_remove_from_window_from_screen	(Window *);
 	void	BX_recalculate_window_positions	(struct ScreenStru *);

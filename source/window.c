@@ -427,6 +427,18 @@ void BX_add_to_invisible_list(Window *window)
 	window->screen = NULL;
 }
 
+/* window_columns()
+ *
+ * Returns the number of columns in the window for wrapping output.  For
+ * visible windows, this is the number of columns on the screen; for
+ * invisible windows, this is the saved size the window had when it was last
+ * visible.
+ */
+int window_columns(Window *window)
+{
+	return window->screen ? window->screen->co : window->columns;
+}
+
 /*
  * add_to_window_list: This inserts the given window into the visible window
  * list (and thus adds it to the displayed windows on the screen).  The

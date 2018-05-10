@@ -218,10 +218,7 @@ void BX_add_to_window(Window *window, const char *str)
 		display_standout(OFF);
 		display_bold(OFF);
 
-		if (window->screen)
-			cols = window->screen->co;
-		else
-			cols = window->columns;
+		cols = window_columns(window);
 
 		for (lines = split_up_line(str, cols/* + 1*/); *lines; lines++)
 		{
