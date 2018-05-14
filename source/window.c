@@ -419,11 +419,16 @@ void BX_add_to_invisible_list(Window *window)
 		invisible_list->prev = window;
 	invisible_list = window;
 	window->prev = NULL;
+
 	window->visible = 0;
+
+	/* Save the width of the screen the window was last on, to use for
+	 * wrapping output while the window is hidden.
+	 */
 	if (window->screen)
 		window->columns = window->screen->co;
 	else
-		window->columns = current_term->TI_cols;
+		window->columns = main_screen->co;
 	window->screen = NULL;
 }
 
