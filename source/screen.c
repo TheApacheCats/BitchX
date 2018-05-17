@@ -500,10 +500,11 @@ char **BX_prepare_display(const char *orig_str,
 				/*
 				 * Just swallop up any ND's over the max
 				 */
-				if ((nds_max > 0) && (nds_count > nds_max))
-					;
-				else
+				if ((nds_count <= nds_max) || (nds_max <= 0))
+				{
 					buffer[pos++] = ND_SPACE;
+					col++;
+				}
 				break;
 			}
 			case '\n':      /* Forced newline */
