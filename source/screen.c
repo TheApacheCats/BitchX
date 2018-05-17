@@ -480,10 +480,13 @@ char **BX_prepare_display(const char *orig_str,
 				else
 				{
 					if (indent == 0)
+					{
 						indent = -1;
+						firstwb = pos;
+					}
 					word_break = pos;
 
-				/* Only go as far as the edge of the screen */
+					/* Only go as far as the edge of the screen */
 					len = 8 - (col % 8);
 					for (i = 0; i < len; i++)
 					{
