@@ -368,11 +368,8 @@ char **BX_prepare_display(const char *orig_str,
 		word_break = 0,     /* Last end of word             */
 		indent = 0,         /* Start of second word         */
 		firstwb = 0,
-		beep_cnt = 0,       /* Number of beeps              */
-		beep_max,           /* Maximum number of beeps      */
-		tab_cnt = 0,        /* TAB counter                  */
-		tab_max,            /* Maximum number of tabs       */
-		nds_count = 0,
+		beep_max = 0,       /* Maximum number of beeps      */
+		tab_max = 0,        /* Maximum number of tabs       */
 		nds_max,
 		line = 0,           /* Current pos in "output"      */
 		len, i,             /* Used for counting tabs       */
@@ -392,9 +389,22 @@ char **BX_prepare_display(const char *orig_str,
 		ircpanic("prepare_display() called recursively");
 	recursion++;
 
-	beep_max = get_int_var(BEEP_VAR)? get_int_var(BEEP_MAX_VAR) : -1;
-	tab_max = get_int_var(TAB_VAR) ? get_int_var(TAB_MAX_VAR) : -1;
+	if (get_int_var(BEEP_VAR))
+		beep_max = get_int_var(BEEP_MAX_VAR);
+
+	if (get_int_var(TAB_VAR))
+	{
+		tab_max = get_int_var(TAB_MAX_VAR);
+		/* TAB_MAX = 0 means "unlimited" */
+		if (tab_max == 0)
+			tab_max = -1;
+	}
+
 	nds_max = get_int_var(ND_SPACE_MAX_VAR);
+	/* NS_SPACE_MAX = 0 means "unlimited" */
+	if (nds_max == 0)
+		nds_max = -1;
+
 	do_indent = get_int_var(INDENT_VAR);
 	words = get_string_var(WORD_BREAK_VAR);
 
@@ -450,8 +460,14 @@ char **BX_prepare_display(const char *orig_str,
 		{
 			case BELL_CHAR:      /* bell */
 			{
-				beep_cnt++;
-				if ((beep_max == -1) || (beep_cnt > beep_max))
+				if (beep_max)
+				{
+					if (beep_max > 0)
+						beep_max--;
+
+					buffer[pos++] = *ptr;
+				}
+				else
 				{
 					if (!in_rev)
 						buffer[pos++] = REV_TOG;
@@ -460,25 +476,15 @@ char **BX_prepare_display(const char *orig_str,
 						buffer[pos++] = REV_TOG;
 					col++;
 				}
-				else
-					buffer[pos++] = *ptr;
-
 				break; /* case '\a' */
 			}
 			case '\t':    /* TAB */
 			{
-				tab_cnt++;
-				if ((tab_max > 0) && (tab_cnt > tab_max))
+				if (tab_max)
 				{
-					if (!in_rev)
-						buffer[pos++] = REV_TOG;
-					buffer[pos++] = (*ptr & 0x7f) | 64;
-					if (!in_rev)
-						buffer[pos++] = REV_TOG;
-					col++;
-				}
-				else
-				{
+					if (tab_max > 0)
+						tab_max--;
+
 					if (indent == 0)
 					{
 						indent = -1;
@@ -495,19 +501,28 @@ char **BX_prepare_display(const char *orig_str,
 							break;
 					}
 				}
+				else
+				{
+					if (!in_rev)
+						buffer[pos++] = REV_TOG;
+					buffer[pos++] = (*ptr & 0x7f) | 64;
+					if (!in_rev)
+						buffer[pos++] = REV_TOG;
+					col++;
+				}
 				break; /* case '\t' */
 			}
 			case ND_SPACE:
 			{
-				nds_count++;
-				/*
-				 * Just swallop up any ND's over the max
-				 */
-				if ((nds_count <= nds_max) || (nds_max <= 0))
+				if (nds_max)
 				{
+					if (nds_max > 0)
+						nds_max--;
+
 					buffer[pos++] = ND_SPACE;
 					col++;
 				}
+				/* Just swallop up any ND's over the max */
 				break;
 			}
 			case '\n':      /* Forced newline */
