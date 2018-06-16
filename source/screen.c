@@ -284,6 +284,16 @@ char **BX_split_up_line(const char *str, int max_cols)
 	return prepare_display(str, max_cols, &nl, 0);
 }
 
+struct prepare_display_state
+{
+	int pos;			/* Position in destination buffer */
+	const char *src;	/* Position in source buffer */
+	int col;			/* Current column in display */
+	int beep_max;		/* Maximum number of beeps */
+	int tab_max;		/* Maximum number of tabs */
+	int nds_max;		/* Maximum number of non-destructive spaces */
+	int in_rev;			/* Are we in reverse mode? */
+};
 
 /*
  * Given an input string, prepare it for display. This involves several
@@ -363,21 +373,15 @@ char **BX_prepare_display(const char *orig_str,
 {
 	static int recursion = 0, 
 		output_size = 0;
-	int pos = 0,            /* Current position in "buffer" */
-		col = 0,            /* Current column in display    */
-		word_break = 0,     /* Last end of word             */
+	struct prepare_display_state pds = { 0 };
+	int	word_break = 0,     /* Last end of word             */
 		indent = 0,         /* Start of second word         */
 		firstwb = 0,
-		beep_max = 0,       /* Maximum number of beeps      */
-		tab_max = 0,        /* Maximum number of tabs       */
-		nds_max,
 		line = 0,           /* Current pos in "output"      */
 		len, i,             /* Used for counting tabs       */
 		do_indent,          /* Use indent or continued line? */
-		in_rev = 0,         /* Are we in reverse mode?      */
 		newline = 0;        /* Number of newlines           */
 	static char **output = NULL;
-	const char *ptr = NULL;
 	char buffer[BIG_BUFFER_SIZE + 1],
 		*cont_ptr = NULL,
 		*cont = empty_string,
@@ -390,20 +394,20 @@ char **BX_prepare_display(const char *orig_str,
 	recursion++;
 
 	if (get_int_var(BEEP_VAR))
-		beep_max = get_int_var(BEEP_MAX_VAR);
+		pds.beep_max = get_int_var(BEEP_MAX_VAR);
 
 	if (get_int_var(TAB_VAR))
 	{
-		tab_max = get_int_var(TAB_MAX_VAR);
+		pds.tab_max = get_int_var(TAB_MAX_VAR);
 		/* TAB_MAX = 0 means "unlimited" */
-		if (tab_max == 0)
-			tab_max = -1;
+		if (pds.tab_max == 0)
+			pds.tab_max = -1;
 	}
 
-	nds_max = get_int_var(ND_SPACE_MAX_VAR);
+	pds.nds_max = get_int_var(ND_SPACE_MAX_VAR);
 	/* NS_SPACE_MAX = 0 means "unlimited" */
-	if (nds_max == 0)
-		nds_max = -1;
+	if (pds.nds_max == 0)
+		pds.nds_max = -1;
 
 	do_indent = get_int_var(INDENT_VAR);
 	words = get_string_var(WORD_BREAK_VAR);
@@ -454,73 +458,73 @@ char **BX_prepare_display(const char *orig_str,
 	/*
 	 * Start walking through the entire string.
 	 */
-	for (ptr = str; *ptr && (pos < BIG_BUFFER_SIZE - 8); ptr++)
+	for (pds.src = str; *pds.src && (pds.pos < BIG_BUFFER_SIZE - 8); pds.src++)
 	{
-		switch (*ptr)
+		switch (*pds.src)
 		{
 			case BELL_CHAR:      /* bell */
 			{
-				if (beep_max)
+				if (pds.beep_max)
 				{
-					if (beep_max > 0)
-						beep_max--;
+					if (pds.beep_max > 0)
+						pds.beep_max--;
 
-					buffer[pos++] = *ptr;
+					buffer[pds.pos++] = *pds.src;
 				}
 				else
 				{
-					if (!in_rev)
-						buffer[pos++] = REV_TOG;
-					buffer[pos++] = (*ptr & 127) | 64;
-					if (!in_rev)
-						buffer[pos++] = REV_TOG;
-					col++;
+					if (!pds.in_rev)
+						buffer[pds.pos++] = REV_TOG;
+					buffer[pds.pos++] = (*pds.src & 127) | 64;
+					if (!pds.in_rev)
+						buffer[pds.pos++] = REV_TOG;
+					pds.col++;
 				}
 				break; /* case '\a' */
 			}
 			case '\t':    /* TAB */
 			{
-				if (tab_max)
+				if (pds.tab_max)
 				{
-					if (tab_max > 0)
-						tab_max--;
+					if (pds.tab_max > 0)
+						pds.tab_max--;
 
 					if (indent == 0)
 					{
 						indent = -1;
-						firstwb = pos;
+						firstwb = pds.pos;
 					}
-					word_break = pos;
+					word_break = pds.pos;
 
 					/* Only go as far as the edge of the screen */
-					len = 8 - (col % 8);
+					len = 8 - (pds.col % 8);
 					for (i = 0; i < len; i++)
 					{
-						buffer[pos++] = ' ';
-						if (col++ >= max_cols)
+						buffer[pds.pos++] = ' ';
+						if (pds.col++ >= max_cols)
 							break;
 					}
 				}
 				else
 				{
-					if (!in_rev)
-						buffer[pos++] = REV_TOG;
-					buffer[pos++] = (*ptr & 0x7f) | 64;
-					if (!in_rev)
-						buffer[pos++] = REV_TOG;
-					col++;
+					if (!pds.in_rev)
+						buffer[pds.pos++] = REV_TOG;
+					buffer[pds.pos++] = (*pds.src & 0x7f) | 64;
+					if (!pds.in_rev)
+						buffer[pds.pos++] = REV_TOG;
+					pds.col++;
 				}
 				break; /* case '\t' */
 			}
 			case ND_SPACE:
 			{
-				if (nds_max)
+				if (pds.nds_max)
 				{
-					if (nds_max > 0)
-						nds_max--;
+					if (pds.nds_max > 0)
+						pds.nds_max--;
 
-					buffer[pos++] = ND_SPACE;
-					col++;
+					buffer[pds.pos++] = ND_SPACE;
+					pds.col++;
 				}
 				/* Just swallop up any ND's over the max */
 				break;
@@ -530,16 +534,16 @@ char **BX_prepare_display(const char *orig_str,
 				newline = 1;
 				if (indent == 0)
 					indent = -1;
-				word_break = pos;
+				word_break = pds.pos;
 				break; /* case '\n' */
 			}
 			case COLOR_CHAR:
 			{
 				int lhs = 0, rhs = 0;
-				const char *end = skip_ctl_c_seq(ptr, &lhs, &rhs, 0);
-				while (ptr < end)
-					buffer[pos++] = *ptr++;
-				ptr = end - 1;
+				const char *end = skip_ctl_c_seq(pds.src, &lhs, &rhs, 0);
+				while (pds.src < end)
+					buffer[pds.pos++] = *pds.src++;
+				pds.src = end - 1;
 				break; /* case COLOR_CHAR */
 			}
 			case ROM_CHAR:
@@ -551,21 +555,21 @@ char **BX_prepare_display(const char *orig_str,
 				 * chars, we fake it with zeros.  This is the
 				 * wrong thing, but its better than crashing.
 				 */
-				buffer[pos++] = *ptr++;  /* Copy the \R ...  */
-				if (*ptr)
-					buffer[pos++] = *ptr++;
+				buffer[pds.pos++] = *pds.src++;  /* Copy the \R ...  */
+				if (*pds.src)
+					buffer[pds.pos++] = *pds.src++;
 				else
-					buffer[pos++] = '0';
-				if (*ptr)
-					buffer[pos++] = *ptr++;
+					buffer[pds.pos++] = '0';
+				if (*pds.src)
+					buffer[pds.pos++] = *pds.src++;
 				else
-					buffer[pos++] = '0';
-				if (*ptr)
-					buffer[pos++] = *ptr;
+					buffer[pds.pos++] = '0';
+				if (*pds.src)
+					buffer[pds.pos++] = *pds.src;
 				else
-					buffer[pos++] = '0';
+					buffer[pds.pos++] = '0';
 
-				col++;   /* This is a printable   */
+				pds.col++;   /* This is a printable   */
 				break; /* case ROM_CHAR */
 			}
 
@@ -576,40 +580,40 @@ char **BX_prepare_display(const char *orig_str,
 			case BLINK_TOG:
 			case ALT_TOG:
 			{
-				buffer[pos++] = *ptr;
-				if (*ptr == ALL_OFF)
-					in_rev = 0;
-				else if (*ptr == REV_TOG)
-					in_rev = !in_rev;
+				buffer[pds.pos++] = *pds.src;
+				if (*pds.src == ALL_OFF)
+					pds.in_rev = 0;
+				else if (*pds.src == REV_TOG)
+					pds.in_rev = !pds.in_rev;
 				break;
 			}
 
 			default:
 			{
-				if (*ptr == ' ' || strchr(words, *ptr))
+				if (*pds.src == ' ' || strchr(words, *pds.src))
 				{
 					if (indent == 0)
 					{
 						indent = -1;
-						firstwb = pos;
+						firstwb = pds.pos;
 					}
-					if (*ptr == ' ')
-						word_break = pos;
-					if (*ptr != ' ' && ptr[1] &&
-					    (col + 1 < max_cols))
-						word_break = pos + 1;
-					buffer[pos++] = *ptr;
+					if (*pds.src == ' ')
+						word_break = pds.pos;
+					if (*pds.src != ' ' && pds.src[1] &&
+					    (pds.col + 1 < max_cols))
+						word_break = pds.pos + 1;
+					buffer[pds.pos++] = *pds.src;
 				}
 				else
 				{
 					if (indent == -1)
-						indent = col;
-					buffer[pos++] = *ptr;
+						indent = pds.col;
+					buffer[pds.pos++] = *pds.src;
 				}
-				col++;
+				pds.col++;
 				break;
 			}
-		} /* End of switch (*ptr) */
+		} /* End of switch (*pds.src) */
 
 		/*
 		 * Must check for cols >= maxcols+1 because we can have a 
@@ -617,14 +621,14 @@ char **BX_prepare_display(const char *orig_str,
 		 * want to treat this exactly as 1 line, and cols has already 
 		 * been incremented.
 		 */
-		if ((col >= max_cols) || newline)
+		if ((pds.col >= max_cols) || newline)
 		{
 			char *pos_copy;
 			
 			if (!word_break || (flags & PREPARE_NOWRAP))
-				word_break = max_cols /*pos - 1*/;
-			else if (col > max_cols)
-				word_break = pos - 1;
+				word_break = max_cols /*pds.pos - 1*/;
+			else if (pds.col > max_cols)
+				word_break = pds.pos - 1;
 								
 			/*
 			 * XXXX Massive hackwork here.
@@ -648,7 +652,7 @@ char **BX_prepare_display(const char *orig_str,
 			 * it all comes down to it.  Good thing its cheap. ;-)
 			 */
 			if (!*cont && (firstwb == word_break) && do_indent) 
-				word_break = pos;
+				word_break = pds.pos;
 
 			/*
 			 * If we are approaching the number of lines that
@@ -678,16 +682,16 @@ char **BX_prepare_display(const char *orig_str,
 			}
 			else if (!*cont && *cont_ptr)
 				cont = cont_ptr;
-			while (word_break < pos && buffer[word_break] == ' ')
+			while (word_break < pds.pos && buffer[word_break] == ' ')
 				word_break++;
-			buffer[pos] = 0;
+			buffer[pds.pos] = 0;
 
 			pos_copy = alloca(strlen(buffer) + strlen(cont) + 20);
 			strcpy(pos_copy, buffer+word_break);
 			
 			strcpy (buffer, cont);
 			strcat (buffer, pos_copy);
-			col = pos = strlen(buffer);
+			pds.col = pds.pos = strlen(buffer);
 
 			word_break = 0;
 			newline = 0;
@@ -699,10 +703,10 @@ char **BX_prepare_display(const char *orig_str,
 				break;
 			}
 		}
-	} /* End of (ptr = str; *ptr && (pos < BIG_BUFFER_SIZE - 8); ptr++) */
+	} /* End of (pds.src = str; *pds.src && (pds.pos < BIG_BUFFER_SIZE - 8); pds.src++) */
 
-	buffer[pos++] = ALL_OFF;
-	buffer[pos] = 0;
+	buffer[pds.pos++] = ALL_OFF;
+	buffer[pds.pos] = 0;
 	if (*buffer)
 		malloc_strcpy(&(output[line++]),buffer);
 
