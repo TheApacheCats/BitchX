@@ -269,17 +269,16 @@ char	*get_from_history(int which)
 /* history: the /HISTORY command, shows the command history buffer. */
 BUILT_IN_COMMAND(history)
 {
-	int	cnt,
-		max = 0;
-	char	*value;
-	char	*match = NULL;
+	int	cnt;
+	int max = get_int_var(HISTORY_VAR);
+	char *value;
+	char *match = NULL;
 	
-	if (get_int_var(HISTORY_VAR))
+	if (max)
 	{
-		say("Command History:");
 		if ((value = next_arg(args, &args)) != NULL)
 		{
-			if (my_strnicmp(value, "-CLEAR", 3))
+			if (!my_stricmp(value, "-CLEAR"))
 			{
 				for (tmp = command_history_head; command_history_head; tmp = command_history_head)
 				{
@@ -295,15 +294,15 @@ BUILT_IN_COMMAND(history)
 			}
 			if (isdigit((unsigned char)*value))
 			{
-				max = my_atol(value);
-				if (max > get_int_var(HISTORY_VAR))
-					max = get_int_var(HISTORY_VAR);
+				int limit = my_atol(value);
+				if (limit < max)
+					max = limit;
 			} 
 			else
 				match = value;
 		}
-		else
-			max = get_int_var(HISTORY_VAR);
+
+		say("Command History:");
 		for (tmp = command_history_tail, cnt = 0; tmp && (match || (cnt < max));
 				tmp = tmp->prev, cnt++)
 		{

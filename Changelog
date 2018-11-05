@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Fix /HISTORY *pattern* and /HISTORY -CLEAR. (caf)
+
 * Fix /SET TAB OFF. (caf)
 
 * Count columns used by ND_SPACE character when splitting lines. (caf)
