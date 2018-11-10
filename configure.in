@@ -83,7 +83,6 @@ AC_CHECK_DECLARATION(getpass, getpass, getpass, unistd.h, GETPASS_DECLARED)
 AC_CHECK_DECLARATION(errno, errno, [int?( |	)_?_?errno], errno.h, ERRNO_DECLARED)
 AC_CHECK_DECLARATION(struct linger, struct_linger, [struct( |	)*linger], sys/socket.h, STRUCT_LINGER_DECLARED)
 AC_CHECK_DECLARATION(sun_len, sun_len, sun_len, sys/un.h, HAVE_SUN_LEN)
-AC_CHECK_DECLARATION(bcopy, bcopy, bcopy, string.h, BCOPY_DECLARED)
 
 AC_CHECK_DECLS([strsignal, sys_siglist, _sys_siglist], , ,
 [AC_INCLUDES_DEFAULT

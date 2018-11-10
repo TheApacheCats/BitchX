@@ -4519,42 +4519,6 @@ _ACEOF
  fi
 
 
-  echo "$as_me:$LINENO: checking for bcopy in string.h" >&5
-echo $ECHO_N "checking for bcopy in string.h... $ECHO_C" >&6
-if test "${ac_cv_bcopy_declared+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-
-    cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-#include <string.h>
-
-_ACEOF
-if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
-  $EGREP "bcopy" >/dev/null 2>&1; then
-  ac_cv_bcopy_declared="yes"
-else
-  ac_cv_bcopy_declared="no"
-fi
-rm -f conftest*
-
-
-fi
-echo "$as_me:$LINENO: result: $ac_cv_bcopy_declared" >&5
-echo "${ECHO_T}$ac_cv_bcopy_declared" >&6
- if test x"$ac_cv_bcopy_declared" = x"yes"; then
-
-cat >>confdefs.h <<\_ACEOF
-#define BCOPY_DECLARED 1
-_ACEOF
-
- fi
-
-
 echo "$as_me:$LINENO: checking whether strsignal is declared" >&5
 echo $ECHO_N "checking whether strsignal is declared... $ECHO_C" >&6
 if test "${ac_cv_have_decl_strsignal+set}" = set; then

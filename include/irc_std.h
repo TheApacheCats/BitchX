@@ -204,10 +204,6 @@ int	killpg (int pgrp, int sig);
 char *	getpass (const char * prompt);
 #endif
 
-#ifndef BCOPY_DECLARED
-void	bcopy (const void *src, void *dest, size_t n);
-#endif
-
 #define BUILT_IN_COMMAND(x) \
 	void x (char *command, char *args, char *subargs, char *helparg)
 
