@@ -322,7 +322,7 @@ int handle_socks(int fd, struct sockaddr_in addr, char *host, int portnum)
 		bitchsay("Unable to resolve SOCKS proxy host address: %s", host);
 		return -1;
 	}
-	bcopy(hp->h_addr, (char *)&proxy.sin_addr, hp->h_length);
+	memcpy(&proxy.sin_addr, hp->h_addr, hp->h_length);
 	proxy.sin_family = AF_INET;
 	proxy.sin_port = htons(portnum);
 	alarm(get_int_var(CONNECT_TIMEOUT_VAR));
@@ -600,8 +600,7 @@ int BX_connect_by_number(char *hostn, unsigned short *portnum, int service, int 
 			if ((hp = gethostbyname(hostn)) != NULL)
 			{
 				memset(&server, 0, sizeof(server));
-				bcopy(hp->h_addr, (char *) &server.sf_addr,
-					hp->h_length);
+				memcpy(&server.sf_addr, hp->h_addr, hp->h_length);
 				server.sf_family = hp->h_addrtype;
 			}
 			else

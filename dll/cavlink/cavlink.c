@@ -1111,7 +1111,7 @@ SocketList *cavlink_connect(char *host, u_short port)
 			set_lastlog_msg_level(lastlog_level);
 			return NULL;
 		}
-		bcopy(hp->h_addr, (char *)&address, sizeof(address));
+		memcpy(&address, hp->h_addr, sizeof(address));
 	}
 	cav_socket = connect_by_number(host, &port, SERVICE_CLIENT, PROTOCOL_TCP, 1);
 	if (cav_socket < 0)

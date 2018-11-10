@@ -1129,7 +1129,7 @@ SocketList *naplink_connect(char *host, u_short port)
 			set_lastlog_msg_level(lastlog_level);
 			return NULL;
 		}
-		bcopy(hp->h_addr, (char *)&address, sizeof(address));
+		memcpy(&address, hp->h_addr, sizeof(address));
 	}
 	nap_socket = connectbynumber(host, &port, SERVICE_CLIENT, PROTOCOL_TCP, 0);
 	if (nap_socket < 0)
@@ -1233,7 +1233,7 @@ void naplink_getserver(char *host, u_short port, int create)
 			set_lastlog_msg_level(lastlog_level);
 			return;
 		}
-		bcopy(hp->h_addr, (char *)&address, sizeof(address));
+		memcpy(&address, hp->h_addr, sizeof(address));
 	}
 	nap_socket = connectbynumber(host, &port, SERVICE_CLIENT, PROTOCOL_TCP, 1);
 	if (nap_socket < 0)

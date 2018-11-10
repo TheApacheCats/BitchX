@@ -1778,7 +1778,7 @@ struct in_addr ip;
 		{
 			if (rptr->re_he.h_addr_list[0].s_addr)
 			{
-				bcopy(&rptr->re_he.h_addr_list[0], (char *)&ip, sizeof(ip));
+				memcpy(&ip, &rptr->re_he.h_addr_list[0], sizeof ip);
 				nick->ip = m_strdup(inet_ntoa(ip));
 #ifdef WANT_USERLIST
 				check_auto(chan->channel, nick, chan);
@@ -1812,7 +1812,7 @@ struct in_addr ip;
 			sprintf(buffer, "%s ", h);
 		for (i = 0; rptr->re_he.h_addr_list[i].s_addr; i++)
 		{
-			bcopy(&rptr->re_he.h_addr_list[i], (char *)&ip, sizeof(ip));
+			memcpy(&ip, &rptr->re_he.h_addr_list[i], sizeof ip);
 			BX_strpcat(buffer, "%s ", inet_ntoa(ip));
 			if (strlen(buffer) > 490)
 				break;
@@ -1830,7 +1830,7 @@ struct in_addr ip;
 			bitchsay("%s is %s (%s)", h, rptr->re_he.h_name ? rptr->re_he.h_name:"invalid hostname", (char *)inet_ntoa(rptr->re_he.h_addr_list[0]));
 		for (i = 0; rptr->re_he.h_addr_list[i].s_addr; i++)
 		{
-			bcopy(&rptr->re_he.h_addr_list[i], (char *)&ip, sizeof(ip));
+			memcpy(&ip, &rptr->re_he.h_addr_list[i], sizeof ip);
 			BX_strpcat(buffer, "[%s] ", inet_ntoa(ip));
 			if (strlen(buffer) > 490)
 				break;
@@ -2276,7 +2276,7 @@ long	ar_timeout(time_t now, char *info, int size, void (*func)(struct reslist *)
 			{
 				ar_reinfo.re_timeouts++;
 				if (info && rptr->re_rinfo.ri_ptr)
-					bcopy(rptr->re_rinfo.ri_ptr, info,
+					memcpy(info, rptr->re_rinfo.ri_ptr,
 						MIN(rptr->re_rinfo.ri_size, size));
 				if (rptr->func)
 					(*rptr->func)(rptr);
@@ -2431,24 +2431,21 @@ static	int	ar_query_name(char *name, int class, int type, struct reslist *rptr)
  */
 int	ar_gethostbyname(char *name, char *info, int size, char *nick, char *user, char *h, char *chan, int server, void (*func)(), char *command)
 {
-	char	host[HOSTLEN+1];
-	struct	resinfo	resi;
-	register struct resinfo *rp = &resi;
+	char host[HOSTLEN+1];
+	struct resinfo resi = { 0 };
 
 	if (size && info)
 	{
-		rp->ri_ptr = (char *)new_malloc(size+1);
+		resi.ri_ptr = new_malloc(size + 1);
 		if (*info)
-			bcopy(info, rp->ri_ptr, size);
-		rp->ri_size = size;
+			memcpy(resi.ri_ptr, info, size);
+		resi.ri_size = size;
 	}
-	else
-		memset((char *)rp, 0, sizeof(resi));
 	ar_reinfo.re_na_look++;
 	(void)strncpy(host, name, 64);
 	host[64] = '\0';
 
-	return (do_query_name(rp, host, NULL, nick, user, h, chan, server, func, command));
+	return do_query_name(&resi, host, NULL, nick, user, h, chan, server, func, command);
 }
 
 static	int	do_query_name(struct resinfo *resi, char *name, register struct reslist *rptr, char *nick, char *user, char *h, char *chan, int server, void (*func)(), char *command)
@@ -2496,20 +2493,17 @@ static	int	do_query_name(struct resinfo *resi, char *name, register struct resli
  */
 int	ar_gethostbyaddr(char *addr, char *info, int size, char *nick, char *user, char *h, char *chan, int server, void (*func)(), char *command)
 {
-	struct	resinfo	resi;
-	register struct resinfo *rp = &resi;
+	struct resinfo resi = { 0 };
 
 	if (size && info)
 	{
-		rp->ri_ptr = (char *)new_malloc(size+1);
+		resi.ri_ptr = new_malloc(size + 1);
 		if (*info)
-			bcopy(info, rp->ri_ptr, size);
-		rp->ri_size = size;
+			memcpy(resi.ri_ptr, info, size);
+		resi.ri_size = size;
 	}
-	else
-		memset((char *)rp, 0, sizeof(resi));
 	ar_reinfo.re_nu_look++;
-	return (do_query_number(rp, addr, NULL, nick, user, h, chan, server, func, command));
+	return do_query_number(&resi, addr, NULL, nick, user, h, chan, server, func, command);
 }
 
 /*
