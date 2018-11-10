@@ -872,8 +872,8 @@ static	char	*status_notify_windows(Window *window)
 
 	if (get_int_var(SHOW_STATUS_ALL_VAR) || window == window->screen->current_window)
 	{
-		*notes = 0;
 		Window *notify_win = NULL;
+		*notes = 0;
 		while ((traverse_all_windows(&notify_win)))
 		{
 			if (notify_win->miscflags & WINDOW_NOTIFIED)
