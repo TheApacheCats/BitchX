@@ -1,5 +1,8 @@
 [Changes 1.2.2]
 
+* Update command-line help text to explain server descriptions.
+  Reported by Ant.  (caf)
+
 * Replace last uses of bcopy() with memcpy(). (caf)
 
 * Fix /HISTORY *pattern* and /HISTORY -CLEAR. (caf)

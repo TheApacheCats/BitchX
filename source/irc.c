@@ -211,9 +211,10 @@ static	volatile int	cntl_c_hit = 0;
 	
 static const char * const switch_help =
 	"Usage: BitchX [switches] [nickname] [server list] \n"
-	"  The [nickname] can be at most 15 characters long\n"
-	"  The [server list] is a whitespace separate list of server name\n"
-	"  The [switches] may be any or all of the following\n"
+	"  The [nickname] can be at most 15 characters long.\n"
+	"  The [server list] is a whitespace-separated list of server descriptions.  Each\n"
+	"    server description is of the form hostname[:port[:password[:nick[:network]]]].\n"
+	"  The [switches] may be any or all of the following:\n"
 #ifndef WINNT
 	"   -H <hostname>\tuses the virtual hostname if possible\n"
 #endif
@@ -226,7 +227,7 @@ static const char * const switch_help =
 	"   -f\t\tyour terminal uses flow controls (^S/^Q), so BitchX shouldn't\n"
 	"   -F\t\tyour terminal doesn't use flow control (default)\n"
 #endif
-		"   -d\t\truns BitchX in \"dumb\" terminal mode\n"
+	"   -d\t\truns BitchX in \"dumb\" terminal mode\n"
 	"   -q\t\tdoes not load ~/" IRCRC_NAME "\n"
 	"   -r file\tload file as list of servers\n"
 	"   -n nickname\tnickname to use\n"
