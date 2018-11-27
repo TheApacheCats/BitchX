@@ -2332,17 +2332,11 @@ char *BX_strmopencat (char *dest, int maxlen, ...)
 }
 
 /*
- * An strcpy that is guaranteed to be safe for overlaps.
+ * A strcpy that is guaranteed to be safe for overlaps.
  */
 char *BX_ov_strcpy (char *one, const char *two)
 {
-	if (two > one)
-	{
-		while (two && *two)
-			*one++ = *two++;
-		*one = 0;
- 	}
-	return one;
+	return memmove(one, two, strlen(two) + 1);
 }
 
 char *BX_next_in_comma_list (char *str, char **after)
