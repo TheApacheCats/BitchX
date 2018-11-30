@@ -236,6 +236,24 @@ BUILT_IN_COMMAND(execcmd)
 		}
 
 		/*
+		 * /EXEC -WINTARGET sends all output for an /exec to
+		 * a given target window
+		 */
+		else if (my_strnicmp(flag, "WINTARGET", len) == 0)
+		{
+			const char *desc = next_arg(args, &args);
+			Window *w;
+
+			if (!desc || !(w = get_window_by_desc(desc)))
+			{
+				say("Target window not found");
+				return;
+			}
+			refnum_flag = 1;
+			refnum = w->refnum;
+		}
+
+		/*
 		 * /EXEC -MSG <target> redirects the output of an /exec 
 		 * to the given target.
 		 */

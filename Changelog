@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Add /EXEC -WINTARGET <target> argument. (caf)
+
 * Update command-line help text to explain server descriptions.
   Reported by Ant.  (caf)
 
