@@ -27,7 +27,7 @@
 /* keybinding functions */
 	void 	backward_character 	(char, char *);
 	void 	backward_history 	(char, char *);
-	void 	clear_screen 		(char, char *);
+	void 	input_clear_screen 	(char, char *);
 	void	command_completion 	(char, char *);
 	void 	forward_character	(char, char *);
 	void 	forward_history 	(char, char *);

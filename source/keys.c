@@ -190,7 +190,7 @@ static KeyMapNames 	key_names[] =
 #ifdef WANT_CHELP
 	{ "CHELP",			do_chelp },
 #endif
-	{ "CLEAR_SCREEN",		clear_screen 			},
+	{ "CLEAR_SCREEN",		input_clear_screen 			},
 	{ "COMMAND_COMPLETION",		command_completion 		},
 	{ "CPU_SAVER",			cpu_saver_on 			},
 	{ "DCC_PLIST",			dcc_plist },

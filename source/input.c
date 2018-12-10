@@ -1300,10 +1300,10 @@ BUILT_IN_KEYBINDING(type_text)
 }
 
 /*
- * clear_screen: the CLEAR_SCREEN function for BIND.  Clears the screen and
+ * input_clear_screen: the CLEAR_SCREEN function for BIND.  Clears the screen and
  * starts it if it is held 
  */
-BUILT_IN_KEYBINDING(clear_screen)
+BUILT_IN_KEYBINDING(input_clear_screen)
 {
 	set_hold_mode(NULL, OFF, 1);
 	clear_window_by_refnum(0);
