@@ -5089,18 +5089,6 @@ BUILT_IN_COMMAND(sendlinecmd)
 	from_server = server;
 }
 
-/*
- * irc_clear_screen: the CLEAR_SCREEN function for BIND.  Clears the screen and
- * starts it if it is held 
- */
-/*ARGSUSED*/
-void irc_clear_screen(char key, char *ptr)
-{
-	
-	set_hold_mode(NULL, OFF, 1);
-	my_clear(NULL, empty_string, empty_string, NULL);
-}
-
 BUILT_IN_COMMAND(cd)
 {
 	char	*arg,

@@ -20,7 +20,6 @@ extern	char	*recv_nick;
 	void	quote_char (char, char *);
 	void	type_text (char, char *);
 	void	parse_text (char, char *);
-	void	irc_clear_screen (char, char *);
 	int	check_wait_command (char *);
 	void	ExecuteTimers (void);
 	int	check_mode_lock (char *, char *, int);
