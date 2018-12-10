@@ -635,7 +635,7 @@ typedef	struct	WindowStru
 	unsigned long window_level;		/* The LEVEL of the window, determines what
 						 * messages go to it */
 	int	skip;
-	int	columns;	
+	int	saved_columns;		/* Columns on the last screen used by this window */
 	char	*prompt;		/* A prompt string, usually set by EXEC'd process */
 	int	double_status;		/* number of status lines */
 	int	status_split;		/* split status to top and bottom */

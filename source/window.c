@@ -426,9 +426,9 @@ void BX_add_to_invisible_list(Window *window)
 	 * wrapping output while the window is hidden.
 	 */
 	if (window->screen)
-		window->columns = window->screen->co;
+		window->saved_columns = window->screen->co;
 	else
-		window->columns = main_screen->co;
+		window->saved_columns = main_screen->co;
 	window->screen = NULL;
 }
 
@@ -441,7 +441,7 @@ void BX_add_to_invisible_list(Window *window)
  */
 int window_columns(Window *window)
 {
-	return window->screen ? window->screen->co : window->columns;
+	return window->screen ? window->screen->co : window->saved_columns;
 }
 
 /*
