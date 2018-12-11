@@ -5717,14 +5717,14 @@ BUILT_IN_FUNCTION(function_count, input)
 BUILT_IN_FUNCTION(function_leftpc, word)
 {
 	char **prepared;
-	int	lines = 1;
+	int	prepared_lines = 1;
 	int	count;
 
 	GET_INT_ARG(count, word);
 	if (count <= 0 || !*word)
 		RETURN_EMPTY;
 
-	prepared = prepare_display(word, count, &lines, PREPARE_NOWRAP);
+	prepared = prepare_display(word, count, &prepared_lines, PREPARE_NOWRAP);
 	RETURN_STR(prepared[0]);
 }
 /*
@@ -6304,14 +6304,14 @@ BUILT_IN_FUNCTION(function_getflags, input)
 BUILT_IN_FUNCTION(function_numlines, input)
 {
 	int count = 0;
-	char **lines = NULL;
+	char **split_lines = NULL;
 	char *s = NULL;
 	if (input && *input)
 	{
 		int cols = window_columns(current_window);
 
 		s = LOCAL_COPY(input);
-		for (lines = split_up_line(s, cols + 1); *lines; lines++)
+		for (split_lines = split_up_line(s, cols + 1); *split_lines; split_lines++)
 			count++;
 	}
 	RETURN_INT(count);
