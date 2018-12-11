@@ -1831,16 +1831,15 @@ char *BX_my_ltoa (long foo)
  * zero, nothing happens.  Sure, i cheat, but its cheaper then doing
  * two sprintf's.
  */
-char *BX_strformat (char *dest, const char *src, int length, char pad_char)
+char *BX_strformat (char *dest, const char *src, int length, char padc)
 {
 	char *ptr1 = dest, 
 	     *ptr2 = (char *)src;
 	int tmplen = length;
 	int abslen;
-	char padc;
 		
 	abslen = (length >= 0 ? length : -length);
-	if (!(padc = pad_char))
+	if (!padc)
 		padc = ' ';
 
 	/* Cheat by spacing out 'dest' */
