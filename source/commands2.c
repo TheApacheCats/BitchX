@@ -1849,7 +1849,7 @@ int clones = 0;
 		bitchsay("Found %d clones", clones);
 }
 
-void get_range(char *line, int *start, int *end)
+static void get_range(char *line, int *start, int *end)
 {
 char *q = line, *p = line;
 	while (*p && isdigit((unsigned char)*p))
@@ -1864,7 +1864,7 @@ char *q = line, *p = line;
 
 BUILT_IN_COMMAND(pastecmd)
 {
-	char *lines;
+	char *line_range;
 	char *channel = NULL;
 	Window *win;
 	int	winref = 0;
@@ -1877,8 +1877,8 @@ BUILT_IN_COMMAND(pastecmd)
 #else
 	Display *start_pos;
 #endif        
-	if ((lines = next_arg(args, &args)))
-		get_range(lines, &start_line, &end_line);
+	if ((line_range = next_arg(args, &args)))
+		get_range(line_range, &start_line, &end_line);
 	if (!args || !*args)
 		channel = get_current_channel_by_refnum(0);
 	else
