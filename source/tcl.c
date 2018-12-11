@@ -8,7 +8,6 @@
 #include "irc.h"
 #include "struct.h"
 #include "parse.h"
-#include "ircterm.h"
 #include "server.h"
 #include "chelp.h"
 #include "commands.h"

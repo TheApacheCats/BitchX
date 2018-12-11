@@ -31,7 +31,6 @@ CVS_REVISION(alias_c)
 #include "status.h"
 #include "vars.h"
 #include "window.h"
-#include "ircterm.h"
 #include "server.h"
 #include "list.h"
 #include "keys.h"

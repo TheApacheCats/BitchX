@@ -281,7 +281,6 @@ alias.o: alias.c ../include/irc.h ../include/defs.h ../include/config.h \
  ../include/server.h ../include/who.h ../include/names.h \
  ../include/struct.h ../include/notify.h ../include/status.h \
  ../include/vars.h ../include/cset.h ../include/window.h \
- ../include/ircterm.h ../include/screen.h ../include/translat.h \
  ../include/list.h ../include/keys.h ../include/misc.h ../include/newio.h \
  ../include/stack.h ../include/hook.h ../include/alias.h \
  ../include/module.h ../include/timer.h ../include/modval.h \
@@ -453,8 +452,7 @@ dcc.o: dcc.c ../include/irc.h ../include/defs.h ../include/config.h \
  ../include/lastlog.h ../include/notify.h ../include/alist.h \
  ../include/ircaux.h ../include/status.h ../include/vars.h \
  ../include/cset.h ../include/who.h ../include/window.h \
- ../include/screen.h ../include/ircterm.h ../include/screen.h \
- ../include/translat.h ../include/misc.h ../include/tcl_bx.h \
+ ../include/screen.h ../include/misc.h ../include/tcl_bx.h \
  ../include/userlist.h ../include/hash2.h ../include/whowas.h \
  ../include/gui.h ../include/modval.h ../include/module.h
 debug.o: debug.c ../include/irc.h ../include/defs.h ../include/config.h \
@@ -550,8 +548,7 @@ funny.o: funny.c ../include/irc.h ../include/defs.h ../include/config.h \
  ../include/names.h ../include/window.h ../include/lastlog.h \
  ../include/server.h ../include/who.h ../include/names.h \
  ../include/notify.h ../include/alist.h ../include/ircaux.h \
- ../include/lastlog.h ../include/ircterm.h ../include/screen.h \
- ../include/translat.h ../include/output.h ../include/parse.h \
+ ../include/lastlog.h ../include/output.h ../include/parse.h \
  ../include/status.h ../include/misc.h ../include/screen.h \
  ../include/modval.h ../include/module.h
 glob.o: glob.c ../include/defs.h ../include/config.h ../include/defs.h \
@@ -761,8 +758,7 @@ modules.o: modules.c ../include/irc.h ../include/defs.h \
  ../include/server.h ../include/who.h ../include/names.h \
  ../include/notify.h ../include/alist.h ../include/ircaux.h \
  ../include/timer.h ../include/status.h ../include/window.h \
- ../include/tcl_bx.h ../include/ircterm.h ../include/screen.h \
- ../include/translat.h ../include/modval.h ../include/module.h \
+ ../include/tcl_bx.h ../include/modval.h ../include/module.h \
  ../include/dlfcn.h
 names.o: names.c ../include/irc.h ../include/defs.h ../include/config.h \
  ../include/../.config.h ../include/bsdglob.h ../include/irc_std.h \
@@ -784,10 +780,9 @@ network.o: network.c ../include/irc.h ../include/defs.h \
  ../include/config.h ../include/../.config.h ../include/bsdglob.h \
  ../include/irc_std.h ../include/debug.h ../include/newio.h \
  ../include/ssl.h ../include/struct.h ../include/irc.h ../include/hash.h \
- ../include/ircterm.h ../include/screen.h ../include/window.h \
- ../include/lastlog.h ../include/translat.h ../include/ircaux.h \
- ../include/output.h ../include/vars.h ../include/cset.h \
- ../include/struct.h ../include/modval.h ../include/module.h
+ ../include/ircaux.h ../include/output.h ../include/vars.h \
+ ../include/cset.h ../include/struct.h ../include/modval.h \
+ ../include/module.h
 newio.o: newio.c ../include/irc.h ../include/defs.h ../include/config.h \
  ../include/../.config.h ../include/bsdglob.h ../include/irc_std.h \
  ../include/debug.h ../include/newio.h ../include/ssl.h \
@@ -863,8 +858,7 @@ parse.o: parse.c ../include/irc.h ../include/defs.h ../include/config.h \
  ../include/cset.h ../include/cdcc.h ../include/ctcp.h ../include/hook.h \
  ../include/log.h ../include/commands.h ../include/ignore.h \
  ../include/who.h ../include/lastlog.h ../include/input.h \
- ../include/ircaux.h ../include/funny.h ../include/ircterm.h \
- ../include/screen.h ../include/translat.h ../include/flood.h \
+ ../include/ircaux.h ../include/funny.h ../include/flood.h \
  ../include/window.h ../include/screen.h ../include/output.h \
  ../include/numbers.h ../include/parse.h ../include/notify.h \
  ../include/status.h ../include/list.h ../include/userlist.h \
@@ -893,9 +887,8 @@ readlog.o: readlog.c ../include/irc.h ../include/defs.h \
  ../include/config.h ../include/../.config.h ../include/bsdglob.h \
  ../include/irc_std.h ../include/debug.h ../include/newio.h \
  ../include/ssl.h ../include/struct.h ../include/irc.h ../include/hash.h \
- ../include/ircterm.h ../include/screen.h ../include/window.h \
- ../include/lastlog.h ../include/translat.h ../include/server.h \
- ../include/who.h ../include/names.h ../include/struct.h \
+ ../include/server.h ../include/who.h ../include/names.h \
+ ../include/window.h ../include/lastlog.h ../include/struct.h \
  ../include/notify.h ../include/alist.h ../include/ircaux.h \
  ../include/vars.h ../include/cset.h ../include/ircaux.h \
  ../include/input.h ../include/window.h ../include/screen.h \
@@ -982,9 +975,8 @@ tcl.o: tcl.c ../include/irc.h ../include/defs.h ../include/config.h \
  ../include/../.config.h ../include/bsdglob.h ../include/irc_std.h \
  ../include/debug.h ../include/newio.h ../include/ssl.h \
  ../include/struct.h ../include/irc.h ../include/hash.h \
- ../include/parse.h ../include/ircterm.h ../include/screen.h \
- ../include/window.h ../include/lastlog.h ../include/translat.h \
- ../include/server.h ../include/who.h ../include/names.h \
+ ../include/parse.h ../include/server.h ../include/who.h \
+ ../include/names.h ../include/window.h ../include/lastlog.h \
  ../include/struct.h ../include/notify.h ../include/alist.h \
  ../include/ircaux.h ../include/chelp.h ../include/commands.h \
  ../include/vars.h ../include/cset.h ../include/ircaux.h \
@@ -1152,10 +1144,9 @@ wnetwork.o: network.c ../include/irc.h ../include/defs.h \
  ../include/config.h ../include/../.config.h ../include/bsdglob.h \
  ../include/irc_std.h ../include/debug.h ../include/newio.h \
  ../include/ssl.h ../include/struct.h ../include/irc.h ../include/hash.h \
- ../include/ircterm.h ../include/screen.h ../include/window.h \
- ../include/lastlog.h ../include/ircaux.h ../include/output.h \
- ../include/vars.h ../include/cset.h ../include/struct.h \
- ../include/modval.h ../include/module.h
+ ../include/ircaux.h ../include/output.h ../include/vars.h \
+ ../include/cset.h ../include/struct.h ../include/modval.h \
+ ../include/module.h
 sterm.o: term.c ../include/irc.h ../include/defs.h ../include/config.h \
  ../include/../.config.h ../include/bsdglob.h ../include/irc_std.h \
  ../include/debug.h ../include/newio.h ../include/ssl.h \

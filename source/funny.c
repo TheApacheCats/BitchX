@@ -21,7 +21,6 @@ CVS_REVISION(funny_c)
 #include "names.h"
 #include "server.h"
 #include "lastlog.h"
-#include "ircterm.h"
 #include "output.h"
 #include "parse.h"
 #include "status.h"

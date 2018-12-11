@@ -9,7 +9,6 @@ CVS_REVISION(readlog_c)
 
 #include <sys/stat.h>
 
-#include "ircterm.h"
 #include "server.h"
 #include "vars.h"
 #include "ircaux.h"

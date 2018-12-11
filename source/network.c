@@ -10,7 +10,6 @@
 static char cvsrevision[] = "$Id$";
 CVS_REVISION(network_c)
 #include "struct.h"
-#include "ircterm.h"
 
 #include "ircaux.h"
 #include "output.h"

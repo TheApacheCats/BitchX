@@ -53,7 +53,6 @@ CVS_REVISION(dcc_c)
 #include "who.h"
 #include "window.h"
 #include "screen.h"
-#include "ircterm.h"
 #include "hook.h"
 #include "misc.h"
 #include "tcl_bx.h"

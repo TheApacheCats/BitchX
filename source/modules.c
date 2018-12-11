@@ -37,7 +37,6 @@ CVS_REVISION(modules_c)
 #include "status.h"
 #include "window.h"
 #include "tcl_bx.h"
-#include "ircterm.h"
 #define MAIN_SOURCE
 #include "modval.h"
 

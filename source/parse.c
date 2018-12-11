@@ -29,7 +29,6 @@ CVS_REVISION(parse_c)
 #include "ircaux.h"
 #include "funny.h"
 #include "input.h"
-#include "ircterm.h"
 #include "flood.h"
 #include "window.h"
 #include "screen.h"
