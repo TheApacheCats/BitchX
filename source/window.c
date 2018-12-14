@@ -4472,7 +4472,7 @@ Display *new_display_line (Display *prev)
 }
 
 /* * * * * * * * * * * Scrollback functionality * * * * * * * * * * */
-void 	BX_scrollback_backwards_lines (int lines)
+void 	BX_scrollback_backwards_lines (int scroll_lines)
 {
 	Window	*window = current_window;
 	Display *new_top = window->top_of_display;
@@ -4493,7 +4493,7 @@ void 	BX_scrollback_backwards_lines (int lines)
 	if (!window->scrollback_point)
 		window->scrollback_point = window->top_of_display;
 
-	for (new_lines = 0; new_lines < lines; new_lines++)
+	for (new_lines = 0; new_lines < scroll_lines; new_lines++)
 	{
 		if (new_top == window->top_of_scrollback)
 			break;
@@ -4514,7 +4514,7 @@ void 	BX_scrollback_backwards_lines (int lines)
 #endif
 }
 
-void 	BX_scrollback_forwards_lines (int lines)
+void 	BX_scrollback_forwards_lines (int scroll_lines)
 {
 	Window	*window = current_window;
 	Display *new_top = window->top_of_display;
@@ -4532,7 +4532,7 @@ void 	BX_scrollback_forwards_lines (int lines)
 		return;
 	}
 
-	for (new_lines = 0; new_lines < lines; new_lines++)
+	for (new_lines = 0; new_lines < scroll_lines; new_lines++)
 	{
 		if (new_top == window->scrollback_point/*display_ip*/)
 			break;
@@ -4554,34 +4554,32 @@ void 	BX_scrollback_forwards_lines (int lines)
 #endif
 }
 
-void 	BX_scrollback_forwards (char dumb, char *dumber)
+/* window_scrollback_count:
+ *
+ * Returns the number of lines forwards or backwards that the window should scroll
+ * in one increment.
+ */
+static int window_scrollback_count(Window *w)
 {
-	int 	ratio = get_int_var(SCROLLBACK_RATIO_VAR);
-	int	lines;
+	int ratio = get_int_var(SCROLLBACK_RATIO_VAR);
 
-	if (ratio < 10 ) 
+	if (ratio < 10) 
 		ratio = 10;
 	if (ratio > 100) 
 		ratio = 100;
 
-	lines = current_window->display_size * ratio / 100;
-	scrollback_forwards_lines(lines);
+	return w->display_size * ratio / 100;
+}	
+
+void 	BX_scrollback_forwards (char dumb, char *dumber)
+{
+	scrollback_forwards_lines(window_scrollback_count(current_window));
 }
 
 void 	BX_scrollback_backwards (char dumb, char *dumber)
 {
-	int 	ratio = get_int_var(SCROLLBACK_RATIO_VAR);
-	int	lines;
-
-	if (ratio < 10 ) 
-		ratio = 10;
-	if (ratio > 100) 
-		ratio = 100;
-
-	lines = current_window->display_size * ratio / 100;
-	scrollback_backwards_lines(lines);
+	scrollback_backwards_lines(window_scrollback_count(current_window));
 }
-
 
 void 	BX_scrollback_end (char dumb, char *dumber)
 {
