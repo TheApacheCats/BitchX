@@ -473,8 +473,55 @@ void	do_idle_server (void)
 }
 
 /*
- *
- do_server: check the given fd_set against the currently open servers in
+ * server_lost()
+ * Called when the connection to a server has been closed, and this was not initiated 
+ * by the client.
+ */
+static void server_lost(int s)
+{
+#ifdef NON_BLOCKING_CONNECTS
+	if (server_list[s].server_change_pending == 2)
+	{
+		/* If the previous server gets closed while
+		 * we are waiting for another server to connect
+		 * we don't want to try a new connection, so
+		 * just close down this connection and quit.
+		 */
+		close_server(s, empty_string);
+	}
+	else if (server_list[s].connect_wait)
+	{
+		set_server_reconnect(s, 1);
+
+		if (server_list[s].from_server != -1)
+		{
+			if ((server_list[server_list[s].from_server].read != -1) &&
+					(server_list[s].from_server != s))
+			{
+				/* Set the windows back to the old server */
+				say("Connection to server %s resumed...", server_list[server_list[s].from_server].name);
+				change_server_channels(s, server_list[s].old_server);
+				set_window_server(-1, s, 1);
+				set_server_reconnect(s, 0);
+			}
+			else if (server_list[s].from_server != s)
+			{
+				close_server(server_list[s].from_server, empty_string);
+			}
+		}
+
+	}
+	else
+#endif
+	{
+		set_server_reconnect(s, 1);
+		server_list[s].old_server = s;
+	}
+}
+
+/*
+ * do_server()
+ * Check the given fd_set against the currently open servers in
  * the server list.  If one have information available to be read, it is read
  * and and parsed appropriately.  If an EOF is detected from an open server,
  * one of two things occurs. 1) If the server was the primary server,
@@ -505,8 +552,10 @@ void	do_server (fd_set *rd, fd_set *wr)
 				if (!server_list[i].ssl_fd || server_list[i].ssl_error == SSL_ERROR_WANT_WRITE)
 				{
 #endif
+					int try_once = server_list[i].try_once;
 					server_list[i].connect_wait = 0;
-					finalize_server_connect(i, server_list[i].c_server, i);
+					if (finalize_server_connect(i, server_list[i].c_server, i) && !try_once)
+						server_lost(i);
 #ifdef HAVE_LIBSSL
 				}
 #endif
@@ -533,8 +582,10 @@ void	do_server (fd_set *rd, fd_set *wr)
 					{
 						if (!server_list[i].ssl_fd || server_list[i].ssl_error == SSL_ERROR_WANT_READ)
 						{
+							int try_once = server_list[i].try_once;
 							server_list[i].connect_wait = 0;
-							finalize_server_connect(i, server_list[i].c_server, i);
+							if (finalize_server_connect(i, server_list[i].c_server, i) && !try_once)
+								server_lost(i);
 						}
 					}
 					else
@@ -560,46 +611,8 @@ void	do_server (fd_set *rd, fd_set *wr)
 
 						server_list[i].reconnecting = 1;
 						close_server(i, empty_string);
-						if(!try_once)
-						{
-#ifdef NON_BLOCKING_CONNECTS
-							if(server_list[i].server_change_pending == 2)
-							{
-								/* If the previous server gets closed while
-								 * we are waiting for another server to connect
-								 * we don't want to try a new connection, so
-								 * just close down this connection and quit.
-								 */
-								close_server(i, empty_string);
-							}
-							else if(server_list[i].connect_wait)
-							{
-								set_server_reconnect(i, 1);
-
-								if ((server_list[i].from_server != -1))
-								{
-									if((server_list[server_list[i].from_server].read != -1) &&
-									   (server_list[i].from_server != i))
-									{
-										/* Set the windows back to the old server */
-										say("Connection to server %s resumed...", server_list[server_list[i].from_server].name);
-										change_server_channels(i, server_list[i].old_server);
-										set_window_server(-1, i, 1);
-										set_server_reconnect(i, 0);
-									} else if(server_list[i].from_server != i)
-									{
-										close_server(server_list[i].from_server, empty_string);
-									}
-								}
-
-							}
-							else
-#endif
-							{
-								set_server_reconnect(i, 1);
-								server_list[i].old_server = i;
-							}
-						}
+						if (!try_once)
+							server_lost(i);
 						break;
 					}
 				default:
@@ -1474,7 +1487,8 @@ int 	BX_connect_to_server_by_refnum (int refnum, int c_server)
 		if(c_server > -1)
 			server_list[c_server].server_change_pending = 2;
 #else
-		finalize_server_connect(refnum, c_server, from_server);
+		if (finalize_server_connect(refnum, c_server, from_server) != 0)
+			return -1;
 #endif
 	}
 	else

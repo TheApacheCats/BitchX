@@ -1,5 +1,8 @@
 [Changes 1.2.2]
 
+* Correctly handle reconnection after failure of SSL connection setup. 
+  Reported by g0z. (caf)
+
 * Add /EXEC -WINTARGET <target> argument. (caf)
 
 * Update command-line help text to explain server descriptions.
