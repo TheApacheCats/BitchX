@@ -472,6 +472,125 @@ void	do_idle_server (void)
 	}
 }
 
+/* 
+ * finalize_server_connect()
+ * This code either gets called from connect_to_server_by_refnum()
+ * or from the main loop once a nonblocking connect has been verified.
+ */
+static int finalize_server_connect(int refnum, int c_server, int my_from_server)
+{
+	if (serv_open_func)
+		(*serv_open_func)(my_from_server, server_list[my_from_server].local_addr, server_list[my_from_server].port);
+	if ((c_server > -1) && (c_server != my_from_server))
+	{
+		server_list[c_server].reconnecting = 1;
+		server_list[c_server].old_server = -1;
+#ifdef NON_BLOCKING_CONNECTS
+		server_list[c_server].server_change_pending = 0;
+		server_list[refnum].from_server = -1;
+#endif
+		close_server(c_server, "changing servers");
+	}
+
+#ifdef HAVE_LIBSSL
+	if (get_server_ssl(refnum))
+	{
+		int err = 0;
+
+		if (!server_list[refnum].ssl_fd)
+		{
+			/* Lazily allocate an SSL_CTX the first time this server connects. This
+			 * is reused for subsequent connections to this server.
+			 */
+			if (!server_list[refnum].ctx)
+			{
+				server_list[refnum].ctx = SSL_CTX_new(SSLv23_client_method());
+
+				if (!server_list[refnum].ctx)
+				{
+					say("SSL error - failed to allocate SSL_CTX");	
+					SSL_show_errors();
+					close_server(refnum, NULL);
+					return -1;
+				}
+			}
+
+			/* Allocate an SSL for this connection.  This will be freed at close time. */
+			server_list[refnum].ssl_fd = SSL_new(server_list[refnum].ctx);
+			if (!server_list[refnum].ssl_fd)
+			{
+				say("SSL error - failed to create SSL");
+				SSL_show_errors();
+				close_server(refnum, NULL);
+				return -1;
+			}
+
+			SSL_set_fd (server_list[refnum].ssl_fd, server_list[refnum].read);
+		}
+
+		err = SSL_connect(server_list[refnum].ssl_fd);
+
+		if (err < 1)
+		{
+			server_list[refnum].ssl_error = SSL_get_error(server_list[refnum].ssl_fd, err);
+
+			/* The SSL_connect can't complete yet.  Return without calling register_server(),
+			 * and this function will be called again later.
+			 */
+			if (server_list[refnum].ssl_error == SSL_ERROR_WANT_READ ||
+			    server_list[refnum].ssl_error == SSL_ERROR_WANT_WRITE)
+				return 0;
+
+			say("SSL_connect error: %d", err, server_list[refnum].ssl_error);
+			SSL_show_errors();
+			close_server(refnum, NULL);
+			return -2;
+		}
+
+		say("SSL server connected using %s (%s)",
+			SSL_get_version(server_list[refnum].ssl_fd),
+			SSL_get_cipher(server_list[refnum].ssl_fd));
+	}
+#endif
+
+	if (!server_list[my_from_server].d_nickname)
+		malloc_strcpy(&(server_list[my_from_server].d_nickname), nickname);
+
+	register_server(my_from_server, server_list[my_from_server].d_nickname);
+	server_list[refnum].last_msg = now;
+	server_list[refnum].eof = 0;
+/*	server_list[refnum].connected = 1; XXX: not registered yet */
+	server_list[refnum].try_once = 0;
+	server_list[refnum].reconnecting = 0;
+	server_list[refnum].old_server = -1;
+#ifdef NON_BLOCKING_CONNECTS
+	server_list[refnum].server_change_pending = 0;
+#endif
+	*server_list[refnum].umode = 0;
+	server_list[refnum].operator = 0;
+	set_umode(refnum);
+
+	/* This used to be in get_connected() */
+	change_server_channels(c_server, my_from_server);
+	set_window_server(server_list[refnum].server_change_refnum, my_from_server, 0);
+	server_list[my_from_server].reconnects++;
+	if (c_server > -1)
+	{
+		server_list[my_from_server].orignick = server_list[c_server].orignick;
+		if (server_list[my_from_server].orignick)
+			server_list[c_server].orignick = NULL;
+	}
+	set_server_req_server(refnum, 0);
+	if (channel)
+	{
+		set_current_channel_by_refnum(0, channel);
+		add_channel(channel, primary_server, 0);
+		new_free(&channel);
+		xterm_settitle();
+	}
+	return 0;
+}
+
 /*
  * server_lost()
  * Called when the connection to a server has been closed, and this was not initiated 
@@ -1331,124 +1450,6 @@ noidentwd:
 	
 	if (identd != -1)
 		set_socketflags(identd, now);
-	return 0;
-}
-
-/* This code either gets called from connect_to_server_by_refnum()
- * or from the main loop once a nonblocking connect has been
- * verified.
- */
-int finalize_server_connect(int refnum, int c_server, int my_from_server)
-{
-	if (serv_open_func)
-		(*serv_open_func)(my_from_server, server_list[my_from_server].local_addr, server_list[my_from_server].port);
-	if ((c_server > -1) && (c_server != my_from_server))
-	{
-		server_list[c_server].reconnecting = 1;
-		server_list[c_server].old_server = -1;
-#ifdef NON_BLOCKING_CONNECTS
-		server_list[c_server].server_change_pending = 0;
-		server_list[refnum].from_server = -1;
-#endif
-		close_server(c_server, "changing servers");
-	}
-
-#ifdef HAVE_LIBSSL
-	if (get_server_ssl(refnum))
-	{
-		int err = 0;
-
-		if (!server_list[refnum].ssl_fd)
-		{
-			/* Lazily allocate an SSL_CTX the first time this server connects. This
-			 * is reused for subsequent connections to this server.
-			 */
-			if (!server_list[refnum].ctx)
-			{
-				server_list[refnum].ctx = SSL_CTX_new(SSLv23_client_method());
-
-				if (!server_list[refnum].ctx)
-				{
-					say("SSL error - failed to allocate SSL_CTX");	
-					SSL_show_errors();
-					close_server(refnum, NULL);
-					return -1;
-				}
-			}
-
-			/* Allocate an SSL for this connection.  This will be freed at close time. */
-			server_list[refnum].ssl_fd = SSL_new(server_list[refnum].ctx);
-			if (!server_list[refnum].ssl_fd)
-			{
-				say("SSL error - failed to create SSL");
-				SSL_show_errors();
-				close_server(refnum, NULL);
-				return -1;
-			}
-
-			SSL_set_fd (server_list[refnum].ssl_fd, server_list[refnum].read);
-		}
-
-		err = SSL_connect(server_list[refnum].ssl_fd);
-
-		if (err < 1)
-		{
-			server_list[refnum].ssl_error = SSL_get_error(server_list[refnum].ssl_fd, err);
-
-			/* The SSL_connect can't complete yet.  Return without calling register_server(),
-			 * and this function will be called again later.
-			 */
-			if (server_list[refnum].ssl_error == SSL_ERROR_WANT_READ ||
-			    server_list[refnum].ssl_error == SSL_ERROR_WANT_WRITE)
-				return 0;
-
-			say("SSL_connect error: %d", err, server_list[refnum].ssl_error);
-			SSL_show_errors();
-			close_server(refnum, NULL);
-			return -2;
-		}
-
-		say("SSL server connected using %s (%s)",
-			SSL_get_version(server_list[refnum].ssl_fd),
-			SSL_get_cipher(server_list[refnum].ssl_fd));
-	}
-#endif
-
-	if (!server_list[my_from_server].d_nickname)
-		malloc_strcpy(&(server_list[my_from_server].d_nickname), nickname);
-
-	register_server(my_from_server, server_list[my_from_server].d_nickname);
-	server_list[refnum].last_msg = now;
-	server_list[refnum].eof = 0;
-/*	server_list[refnum].connected = 1; XXX: not registered yet */
-	server_list[refnum].try_once = 0;
-	server_list[refnum].reconnecting = 0;
-	server_list[refnum].old_server = -1;
-#ifdef NON_BLOCKING_CONNECTS
-	server_list[refnum].server_change_pending = 0;
-#endif
-	*server_list[refnum].umode = 0;
-	server_list[refnum].operator = 0;
-	set_umode(refnum);
-
-	/* This used to be in get_connected() */
-	change_server_channels(c_server, my_from_server);
-	set_window_server(server_list[refnum].server_change_refnum, my_from_server, 0);
-	server_list[my_from_server].reconnects++;
-	if (c_server > -1)
-	{
-		server_list[my_from_server].orignick = server_list[c_server].orignick;
-		if (server_list[my_from_server].orignick)
-			server_list[c_server].orignick = NULL;
-	}
-	set_server_req_server(refnum, 0);
-	if (channel)
-	{
-		set_current_channel_by_refnum(0, channel);
-		add_channel(channel, primary_server, 0);
-		new_free(&channel);
-		xterm_settitle();
-	}
 	return 0;
 }
 
