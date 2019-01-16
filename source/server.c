@@ -508,7 +508,7 @@ static int finalize_server_connect(int refnum, int c_server, int my_from_server)
 
 				if (!server_list[refnum].ctx)
 				{
-					say("SSL error - failed to allocate SSL_CTX");	
+					say("SSL connection failed to %s: Could not allocate SSL_CTX", server_list[refnum].name);
 					SSL_show_errors();
 					close_server(refnum, NULL);
 					return -1;
@@ -519,7 +519,7 @@ static int finalize_server_connect(int refnum, int c_server, int my_from_server)
 			server_list[refnum].ssl_fd = SSL_new(server_list[refnum].ctx);
 			if (!server_list[refnum].ssl_fd)
 			{
-				say("SSL error - failed to create SSL");
+				say("SSL connection failed to %s: Could not create SSL object", server_list[refnum].name);
 				SSL_show_errors();
 				close_server(refnum, NULL);
 				return -1;
@@ -532,6 +532,7 @@ static int finalize_server_connect(int refnum, int c_server, int my_from_server)
 
 		if (err < 1)
 		{
+			const char *err_string;
 			server_list[refnum].ssl_error = SSL_get_error(server_list[refnum].ssl_fd, err);
 
 			/* The SSL_connect can't complete yet.  Return without calling register_server(),
@@ -541,13 +542,19 @@ static int finalize_server_connect(int refnum, int c_server, int my_from_server)
 			    server_list[refnum].ssl_error == SSL_ERROR_WANT_WRITE)
 				return 0;
 
-			say("SSL_connect error: %d", err, server_list[refnum].ssl_error);
+			if (server_list[refnum].ssl_error == SSL_ERROR_SYSCALL)
+				err_string = strerror(errno);
+			else
+				err_string = ltoa(server_list[refnum].ssl_error);
+
+			say("SSL connection failed to %s: %s", server_list[refnum].name, err_string);
 			SSL_show_errors();
 			close_server(refnum, NULL);
 			return -2;
 		}
 
-		say("SSL server connected using %s (%s)",
+		say("SSL server %s connected using %s (%s)",
+			server_list[refnum].name,
 			SSL_get_version(server_list[refnum].ssl_fd),
 			SSL_get_cipher(server_list[refnum].ssl_fd));
 	}

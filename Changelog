@@ -1,5 +1,7 @@
 [Changes 1.2.2]
 
+* Improve error messages for SSL connection failures. (caf)
+
 * Correctly handle reconnection after failure of SSL connection setup. 
   Reported by g0z. (caf)
 
