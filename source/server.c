@@ -1509,51 +1509,45 @@ int 	BX_connect_to_server_by_refnum (int refnum, int c_server)
 	return 0;
 }
 
-/* This function should only be called from next_server! */
-int next_server_internal(int server, int depth, int original)
+/*
+ * next_server_ok()
+ * Test whether the given server is OK to return from next_server().
+ * Server must not be connected, and if snetwork is not NULL it must have a matching
+ * snetwork.
+ */
+static int next_server_ok(int server, const char *snetwork)
 {
-int been_here = 0;
+	if (is_server_open(server))
+		return 0;
 
-	server++;
-	if (server == number_of_servers)
-	{
-		server = 0;
-		been_here++;
-	}
+	if (snetwork && (!server_list[server].snetwork || strcmp(server_list[server].snetwork, snetwork)))
+		return 0;
 
-	if (get_int_var(SERVER_GROUPS_VAR) && server_list[original].snetwork)
-	{
-		while (!server_list[server].snetwork || strcmp(server_list[server].snetwork, server_list[original].snetwork))
-		{
-			server++;
-			if (server == number_of_servers)
-			{
-				server = 0;
-				if (been_here)
-					break;
-			}
-		}
-	}
-	if(is_server_open(server))
-	{
-		/* The depth allows us to make sure we don't
-		 * recurse forever if there are no servers in
-		 * the list that meet the requirements.
-		 */
-		if(depth && server == original)
-			return original;
-		return next_server_internal(server, depth + 1, original);
-	}
-	return server;
+	return 1;
 }
 
-/* Find the next server in the list that is not connected
+/*
+ * next_server()
+ * Find the next server in the list that is not connected
  * and if SERVER_GROUPS is enabled, that is of the same group
  * as your original server.
  */
 int next_server(int server)
 {
-	return next_server_internal(server, 0, server);
+	const int original = server;
+	const char *snetwork = NULL;
+
+	if (get_int_var(SERVER_GROUPS_VAR))
+		snetwork = server_list[original].snetwork;
+
+	do {
+		server++;
+
+		if (server >= number_of_servers)
+			server = 0;
+	} while (!next_server_ok(server, snetwork) && server != original);
+
+	return server;
 }
 
 /*
