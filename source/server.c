@@ -322,7 +322,7 @@ int find_old_server(int old_server)
 	return -1;
 }
 
-int advance_server(int i)
+static int advance_server(int i)
 {
 	int server = i;
 
@@ -331,10 +331,10 @@ int advance_server(int i)
 	 * try again or move to the next server.
 	 */
 
-	server_list[i].retries++;
 	if (server_list[i].retries >= get_int_var(MAX_SERVER_RECONNECT_VAR))
 	{
 		server = next_server(i);
+		set_server_retries(server, 0);
 
 		if (server != i)
 		{
@@ -346,7 +346,6 @@ int advance_server(int i)
 			set_server_req_server(server, server_list[i].req_server);
 			set_server_old_server(server, server_list[i].old_server);
 			set_server_change_refnum(server, server_list[i].server_change_refnum);
-			set_server_retries(server, 0);
 #ifdef NON_BLOCKING_CONNECTS
 			server_list[server].from_server = server_list[i].from_server;
 			server_list[server].c_server = server_list[i].c_server;
@@ -363,6 +362,7 @@ int advance_server(int i)
 #endif
 		}
 	}
+	server_list[server].retries++;
 
 	if (!get_int_var(AUTO_RECONNECT_VAR) && (server_list[server].req_server != server || server_list[server].retries > 1))
 	{

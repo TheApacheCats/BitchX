@@ -1,5 +1,8 @@
 [Changes 1.2.2]
 
+* Fix bug where the initial server connection was only retried one less than
+  MAX_SERVER_RECONNECT times. (caf)
+
 * Improve error messages for SSL connection failures. (caf)
 
 * Correctly handle reconnection after failure of SSL connection setup. 
