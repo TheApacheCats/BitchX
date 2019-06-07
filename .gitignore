@@ -1,0 +1,11 @@
+*.o
+Makefile
+include/defs.h
+config.log
+.config.h
+config.status
+doc/BitchX.bat
+source/scr-bx
+source/wserv
+source/BitchX
+stamp-h
